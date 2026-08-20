@@ -206,10 +206,10 @@
 
 <aside id="hotspots" class="panneau" aria-label="Hotspots mondiaux">
   <div class="micro" data-t="hotspots"></div>
-  <button class="hotspot fa-lien" data-spot="paris"><span class="code">48.85°N · 2.35°E</span>Paris — le piège des flux</button>
-  <button class="hotspot fa-lien" data-spot="amazonie"><span class="code">3.4°S · 62.2°O</span>Amazonie — mégafeux</button>
-  <button class="hotspot fa-lien" data-spot="bangladesh"><span class="code">22.8°N · 90.3°E</span>Bangladesh — submersion</button>
-  <button class="hotspot fa-lien" data-spot="bretagne"><span class="code">48.2°N · 2.9°O</span>Bretagne — paradoxe hivernal</button>
+  <button class="hotspot fa-lien" data-spot="paris"><span class="code">48.85°N · 2.35°E</span><span data-t-hotspot>paris</span></button>
+  <button class="hotspot fa-lien" data-spot="amazonie"><span class="code">3.4°S · 62.2°O</span><span data-t-hotspot>amazonie</span></button>
+  <button class="hotspot fa-lien" data-spot="bangladesh"><span class="code">22.8°N · 90.3°E</span><span data-t-hotspot>bangladesh</span></button>
+  <button class="hotspot fa-lien" data-spot="bretagne"><span class="code">48.2°N · 2.9°O</span><span data-t-hotspot>bretagne</span></button>
   <div id="fiche">
     <div class="metrique" id="fiche-metrique">Sélectionnez un hotspot</div>
     <h2 id="fiche-titre">Vue globale</h2>
@@ -341,21 +341,30 @@ const FLUX = [
   [[31.0, 74.0], [28.61,  77.21]],  // Pendjab → Delhi
 ];
 
-// Hotspots (panneau droit) : cible caméra + fiche
+// Hotspots (panneau droit) : cible caméra + fiche, en deux langues
 const HOTSPOTS = {
-  paris:      { lat:48.85, lon:  2.35, zoom:2.6, titre:'Paris — le piège des flux',
-                metrique:'ICU +4.2°C · autonomie 3 jours',
-                texte:'Dense et approvisionnée « juste-à-temps », la métropole tient trois jours sans flux externes. Îlot de chaleur urbain jusqu’à +6°C en 2050, sols argileux du bassin en retrait.' },
-  amazonie:   { lat:-3.4,  lon:-62.2,  zoom:2.7, titre:'Amazonie — mégafeux',
-                metrique:'sécheresse boréale & tropicale',
-                texte:'L’humidité du sous-bois s’effondre. Les particules que vous voyez sont des foyers de combustion qui se multiplient avec la projection.' },
-  bangladesh: { lat:22.8,  lon: 90.3,  zoom:2.7, titre:'Bangladesh — submersion',
-                metrique:'+0.5 m → +1 m · delta du Gange',
-                texte:'Le bleu néon monte sur les terres basses à mesure que la projection avance : 0.5 m à l’horizon 2040, 1 m en 2050 sur les deltas.' },
-  bretagne:   { lat:48.2,  lon: -2.9,  zoom:2.6, titre:'Bretagne — paradoxe hivernal',
-                metrique:'pluie hivernale · sols rocheux',
-                texte:'Il pleut plus en hiver, mais les sols rocheux ruissellent sans retenir l’eau : la recharge n’alimente plus l’été. Le calque sécheresse le visualise.' },
+  paris: { lat: 48.85, lon: 2.35, zoom: 2.6,
+    fr: { titre: 'Paris — le piège des flux', metrique: 'ICU +4.2°C · autonomie 3 jours',
+          texte: 'Dense et approvisionnée « juste-à-temps », la métropole tient trois jours sans flux externes. Îlot de chaleur urbain jusqu’à +6°C en 2050, sols argileux du bassin en retrait.' },
+    en: { titre: 'Paris — the supply-chain trap', metrique: 'UHI +4.2°C · 3 days of autonomy',
+          texte: 'Dense and supplied just-in-time, the city holds three days without external flows. Urban heat island up to +6°C by 2050, with the basin’s clay soils shrinking underneath.' } },
+  amazonie: { lat: -3.4, lon: -62.2, zoom: 2.7,
+    fr: { titre: 'Amazonie — mégafeux', metrique: 'sécheresse boréale & tropicale',
+          texte: 'L’humidité du sous-bois s’effondre. Les particules que vous voyez sont des foyers de combustion qui se multiplient avec la projection.' },
+    en: { titre: 'Amazonia — megafires', metrique: 'boreal & tropical drought',
+          texte: 'Understorey humidity collapses. The particles you see are combustion fronts, multiplying as the projection advances.' } },
+  bangladesh: { lat: 22.8, lon: 90.3, zoom: 2.7,
+    fr: { titre: 'Bangladesh — submersion', metrique: 'delta du Gange · cote submersible',
+          texte: 'Les terres basses du delta passent sous la cote de submersion à mesure que le niveau marin monte : la grille ETOPO en donne le contour réel.' },
+    en: { titre: 'Bangladesh — coastal flooding', metrique: 'Ganges delta · flood line',
+          texte: 'The delta’s low-lying land drops below the flood line as the sea rises: the ETOPO grid gives its real contour.' } },
+  bretagne: { lat: 48.2, lon: -2.9, zoom: 2.6,
+    fr: { titre: 'Bretagne — paradoxe hivernal', metrique: 'pluie hivernale · sols rocheux',
+          texte: 'Il pleut plus en hiver, mais les sols rocheux ruissellent sans retenir l’eau : la recharge n’alimente plus l’été. Le calque sécheresse le visualise.' },
+    en: { titre: 'Brittany — the winter paradox', metrique: 'winter rain · rocky soils',
+          texte: 'More rain falls in winter, but rocky ground sheds it without holding any: recharge no longer carries the summer. The drought layer shows it.' } },
 };
+
 
 /* =====================================================================
    1 bis. LANGUES — tout le texte d'interface passe par T(). Les éléments
@@ -746,10 +755,12 @@ function chargerGrille(fichier){
   t.generateMipmaps = false;
   return t;
 }
-const texRisque2026 = chargerGrille('./data/risques_2026.png');
-const texRisque2050 = chargerGrille('./data/risques_2050.png');
-const texRisqueMer  = chargerGrille('./data/risques_mer.png');
-const texRisqueStat = chargerGrille('./data/risques_stat.png');
+// a = chaleur ressentie / gel / déficit hydrique ; b = feu / submersion / fleuves ; c = argiles / masque terre
+const texA2026 = chargerGrille('./data/grille_a_2026.png');
+const texA2050 = chargerGrille('./data/grille_a_2050.png');
+const texB2026 = chargerGrille('./data/grille_b_2026.png');
+const texB2050 = chargerGrille('./data/grille_b_2050.png');
+const texC     = chargerGrille('./data/grille_c.png');
 
 const uniformsGlobe = {
   uMap:        { value: texCouleur },
@@ -759,10 +770,9 @@ const uniformsGlobe = {
   uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },
   uChaleur:    { value: 0 }, uArgile: { value: 0 },
   uSecheresse: { value: 0 }, uMer:    { value: 0 },
-  uRisqueA:    { value: texRisque2026 },
-  uRisqueB:    { value: texRisque2050 },
-  uRisqueMer:  { value: texRisqueMer },
-  uRisqueStat: { value: texRisqueStat },
+  uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
+  uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
+  uC:     { value: texC },
 };
 
 const matGlobe = new THREE.ShaderMaterial({
@@ -780,7 +790,7 @@ const matGlobe = new THREE.ShaderMaterial({
     uniform sampler2D uMap; uniform sampler2D uMasque;
     uniform float uTemps, uProgression, uChaleur, uArgile, uSecheresse, uMer;
     uniform vec3 uSoleil;
-    uniform sampler2D uRisqueA, uRisqueB, uRisqueMer, uRisqueStat;
+    uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
 
     // hachage & bruit 3D (bruit de valeur, 2 octaves — suffisant à cette échelle)
@@ -825,16 +835,16 @@ const matGlobe = new THREE.ShaderMaterial({
       /* Grilles de risques réelles (WorldClim/CMIP6 SSP3-7.0, ETOPO 2022,
          Natural Earth). r = chaleur, g = sécheresse, b = feux, a = submersion ;
          st = fleuves 2026 / fleuves 2050 / argiles / masque terre ETOPO. */
-      vec3 rq = mix(texture2D(uRisqueA, vUv).rgb, texture2D(uRisqueB, vUv).rgb, P);
-      vec3 mr = texture2D(uRisqueMer, vUv).rgb;      // submersion 2026 / 2050 / argiles
-      vec3 st = texture2D(uRisqueStat, vUv).rgb;     // fleuves 2026 / 2050 / masque terre
-      float submersion = mix(mr.r, mr.g, P);
-      terre = max(terre, step(0.5, st.b));
+      vec3 ga = mix(texture2D(uA2026, vUv).rgb, texture2D(uA2050, vUv).rgb, P);  // chaud / gel / sec
+      vec3 gb = mix(texture2D(uB2026, vUv).rgb, texture2D(uB2050, vUv).rgb, P);  // feu / mer / fleuves
+      vec3 gc = texture2D(uC, vUv).rgb;                                          // argiles / terre
+      float submersion = gb.g;
+      terre = max(terre, step(0.5, gc.g));
 
       // R-01 CHALEUR / ICU : gaussiennes thermiques sur les mégapoles, jaune → rouge vif
       if (uChaleur > 0.001){
-        // rq.r = jours/an au-dessus de 35 °C, normalisés sur 0-150
-        float chaud = rq.r * terre;
+        // ga.r = jours/an d'indice de chaleur au-dessus de 32 °C, normalisés sur 0-300
+        float chaud = ga.r * terre;
         vec3 thermique = mix(vec3(0.95, 0.62, 0.16), vec3(1.0, 0.18, 0.07), smoothstep(0.20, 0.80, chaud));
         // lecture en nappe graduée : les zones tempérées restent lisibles
         col = mix(col, thermique, smoothstep(0.06, 0.68, chaud) * uChaleur * 0.62);
@@ -843,7 +853,7 @@ const matGlobe = new THREE.ShaderMaterial({
 
       // R-03 ARGILES : craquelure procédurale voronoï, teinte ocre-brun
       if (uArgile > 0.001){
-        float m = mr.b;                                     // grille argiles (indicatif)
+        float m = gc.r;                                     // grille argiles (indicatif)
         float c = fissure(normalize(vP) * 26.0);
         float craq = 1.0 - smoothstep(0.02, 0.10 + 0.10 * (1.0 - P), c);
         vec3 argile = mix(vec3(0.24, 0.15, 0.08), vec3(0.42, 0.28, 0.13), bruit(vP * 40.0));
@@ -853,8 +863,8 @@ const matGlobe = new THREE.ShaderMaterial({
 
       // R-04 SÉCHERESSE HIVERNALE : le bleu s'éteint vers gris/jaune (ruissellement)
       if (uSecheresse > 0.001){
-        // rq.g = déficit d'aridité (De Martonne inversé), réel
-        float m = smoothstep(0.42, 0.95, rq.g) * terre;
+        // ga.b = déficit hydrique (De Martonne inversé), réel
+        float m = smoothstep(0.42, 0.95, ga.b) * terre;
         float sec = m * uSecheresse * 0.85;
         vec3 solSec = mix(vec3(0.16, 0.15, 0.12), vec3(0.34, 0.28, 0.14), bruit(vP * 30.0));
         col = mix(col, solSec, sec * 0.8);
@@ -862,7 +872,7 @@ const matGlobe = new THREE.ShaderMaterial({
 
       // R-05 SUBMERSION : eau bleu néon animée qui monte avec la projection
       if (uMer > 0.001){
-        /* rq.a = fraction du texel terrestre sous la cote submersible
+        /* gb.g = fraction du texel terrestre sous la cote submersible
            (niveau marin SSP3-7.0 + 2 m de marée/surcote), depuis ETOPO 2022.
            Le bruit ne sert plus qu'à animer la surface, jamais à la définir. */
         float eau = smoothstep(0.06, 0.50, submersion) * terre;
@@ -924,21 +934,21 @@ let feux, feuxUniforms, feuxActifs = 0;
   const graines = new Float32Array(FEUX_MAX);
   for (let i = 0; i < FEUX_MAX; i++) graines[i] = Math.random();
 
-  /* Semis par rejet sur la grille de danger météo de feu (canal bleu de
-     risques_2050.png, dérivée de WorldClim/CMIP6). Un foyer ne peut pas
+  /* Semis par rejet sur la grille de danger météo de feu (canal rouge de
+     grille_b_2050.png, dérivée de WorldClim/CMIP6). Un foyer ne peut pas
      tomber en mer : la grille vaut zéro hors du masque terre. Les points
      sont triés par danger décroissant, de sorte que le drawRange piloté par
      la timeline fasse d'abord apparaître les cœurs, puis l'expansion. */
   const semerFeux = () => {
     const img = new Image();
-    img.src = './data/risques_2050.png';
+    img.src = './data/grille_b_2050.png';
     img.onload = () => {
       const c = document.createElement('canvas');
       c.width = img.width; c.height = img.height;
       const ctx = c.getContext('2d', { willReadFrequently: true });
       ctx.drawImage(img, 0, 0);
       const px = ctx.getImageData(0, 0, c.width, c.height).data;
-      const dangerEn = (x, y) => px[(y * c.width + x) * 4 + 2] / 255;   // canal bleu = feux
+      const dangerEn = (x, y) => px[(y * c.width + x) * 4] / 255;       // canal rouge = danger de feu
 
       const tirages = [];
       let essais = 0;
@@ -1287,9 +1297,10 @@ function volerVers(spot){
   const fiche = document.getElementById('fiche');
   fiche.classList.add('visible');
   gsap.to(fiche, { opacity: 0, y: 6, duration: 0.3, ease: EASE, onComplete: () => {
-    document.getElementById('fiche-metrique').textContent = h.metrique;
-    document.getElementById('fiche-titre').textContent = h.titre;
-    document.getElementById('fiche-texte').textContent = h.texte;
+    const tx = h[langue] || h.fr;
+    document.getElementById('fiche-metrique').textContent = tx.metrique;
+    document.getElementById('fiche-titre').textContent = tx.titre;
+    document.getElementById('fiche-texte').textContent = tx.texte;
     gsap.to(fiche, { opacity: 1, y: 0, duration: 0.5, ease: EASE });
   }});
 }
@@ -1531,6 +1542,9 @@ function tracerTrajectoire(l, an){
   const x = (an - 2026) / 24 * W;
   const y = ech(indiceHabitabilite(l[2], l[3], an));
   svg.innerHTML =
+    `<defs><linearGradient id="grad-traj" x1="0" y1="0" x2="0" y2="1">` +
+      `<stop offset="0" stop-color="#1740A9" stop-opacity="0.55"/>` +
+      `<stop offset="1" stop-color="#1740A9" stop-opacity="0"/></linearGradient></defs>` +
     `<path class="aire" d="${d} L${W} ${H} L0 ${H} Z"/>` +
     `<path class="trait" d="${d}"/>` +
     `<line class="curseur-an" x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}"/>` +
@@ -1672,6 +1686,10 @@ function traduire(){
   }
   for (const btn of document.querySelectorAll('.calque')){
     btn.querySelector('[data-t-calque]').textContent = t.calque[btn.dataset.cle];
+  }
+  for (const btn of document.querySelectorAll('.hotspot')){
+    const h = HOTSPOTS[btn.dataset.spot];
+    btn.querySelector('[data-t-hotspot]').textContent = (h[langue] || h.fr).titre;
   }
   champ.placeholder = t.chercher;
   document.getElementById('dossier-fermer').textContent = t.fermer;

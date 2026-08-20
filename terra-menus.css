@@ -334,7 +334,7 @@ body.recherche-active #caret-dos { animation: caret-dos 1.06s steps(1) infinite;
 /* Trajectoire de l'indice 2026 → 2050 */
 #dossier .trajectoire { display: flex; flex-direction: column; }
 #dossier-courbe { width: 100%; height: 54px; overflow: visible; }
-#dossier-courbe .aire { fill: rgba(23, 64, 169, 0.30); stroke: none; }
+#dossier-courbe .aire { fill: url(#grad-traj); stroke: none; }
 #dossier-courbe .trait { fill: none; stroke: var(--texte); stroke-width: 1;
   vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 #dossier-courbe .curseur-an { stroke: var(--muter); stroke-width: 1;
