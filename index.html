@@ -817,18 +817,19 @@ const matGlobe = new THREE.ShaderMaterial({
     void main(){
       vec3 tex = texture2D(uMap, vUv).rgb;
       float terre = 1.0 - texture2D(uMasque, vUv).r;   // le masque NASA : eau = clair
-      // base « dashboard tactique » : désaturée, très sombre, continents à peine plus clairs
+      // base « dashboard tactique » : désaturée et sombre, mais les continents
+      // doivent rester lisibles y compris sur la face nuit
       float gris = dot(tex, vec3(0.299, 0.587, 0.114));
-      // lisibilité d'abord : continents nettement distincts des océans, jour comme nuit
-      vec3 ocean   = vec3(0.030, 0.052, 0.072);
-      vec3 continent = mix(vec3(0.075, 0.110, 0.125), vec3(0.190, 0.235, 0.240), gris);
+      vec3 ocean   = vec3(0.026, 0.058, 0.132);
+      vec3 continent = mix(vec3(0.110, 0.150, 0.190), vec3(0.320, 0.350, 0.352), gris);
       vec3 base = mix(ocean, continent, terre);
 
-      // éclairage très doux : le jour/nuit module, il ne masque jamais (pas de shadow maps)
+      // éclairage très doux : le jour/nuit module, il ne masque jamais (pas de
+      // shadow maps). Plancher haut : une face nuit ne doit pas devenir noire.
       float lambert = max(dot(vN, uSoleil), 0.0);
       vec3 vue = normalize(cameraPosition - vPm);
       float fresnel = pow(1.0 - max(dot(vN, vue), 0.0), 3.0);
-      vec3 col = base * (0.82 + 0.38 * lambert) + vec3(0.10, 0.35, 0.38) * fresnel * 0.5;
+      vec3 col = base * (0.94 + 0.30 * lambert) + vec3(0.09, 0.25, 0.66) * fresnel * 0.55;
 
       float P = uProgression;
 
@@ -1759,17 +1760,26 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
 });
 
 /* ---- apparition du chrome : vocabulaire de mouvement du site fromanother.
-   Caractères masqués pour le wordmark, lignes décalées pour les rails. ---- */
+   fromTo + clearProps, jamais gsap.from : au moment où cette fonction tourne,
+   la transition CSS de .panneau déclenchée par body.pret n'a pas encore été
+   calculée, donc `from` lirait 0 comme valeur d'arrivée et figerait le
+   chrome invisible. clearProps rend la main au CSS une fois l'entrée jouée
+   (l'opacité au repos d'un calque dépend de son état actif/inactif). ---- */
 function revelerChrome(){
   const tl = gsap.timeline({ delay: 0.55 });
-  tl.from('#wordmark .lettre', { yPercent: 115, duration: 1.2, stagger: 0.015, ease: EASE }, 0);
-  tl.from('#titre .micro', { opacity: 0, y: 8, duration: DUREE.fast, ease: EASE }, 0.25);
-  tl.from('#recherche', { opacity: 0, y: -10, duration: DUREE.fast, ease: EASE }, 0.15);
-  tl.from('.calque', { opacity: 0, x: -14, duration: DUREE.fast, stagger: 0.04, ease: EASE }, 0.35);
-  tl.from('.hotspot', { opacity: 0, x: 14, duration: DUREE.fast, stagger: 0.04, ease: EASE }, 0.45);
-  tl.from('.bouton-ico', { opacity: 0, y: -8, duration: DUREE.fast, stagger: 0.04, ease: EASE }, 0.4);
-  tl.from('#timeline .an', { opacity: 0, y: 18, duration: DUREE.normal, ease: EASE }, 0.3);
-  tl.from('#curseur, #timeline .bornes', { opacity: 0, duration: DUREE.fast, ease: EASE }, 0.6);
+  const entree = (cible, depart, position, extra = {}) =>
+    tl.fromTo(cible, depart,
+      { opacity: 1, x: 0, y: 0, duration: DUREE.fast, ease: EASE,
+        clearProps: 'opacity,transform', ...extra }, position);
+
+  tl.fromTo('#wordmark .lettre', { yPercent: 115 },
+    { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
+  entree('#recherche', { opacity: 0, y: -10 }, 0.15);
+  entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.04 });
+  entree('.hotspot', { opacity: 0, x: 14 }, 0.45, { stagger: 0.04 });
+  entree('.bouton-ico', { opacity: 0, y: -8 }, 0.4, { stagger: 0.04 });
+  entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
+  entree('#curseur, #timeline .bornes', { opacity: 0 }, 0.6);
   return tl;
 }
 
