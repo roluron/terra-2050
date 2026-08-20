@@ -246,3 +246,57 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 
 /* Timeline : remplissage de progression au brand-blue (pas de dégradé) */
 #curseur { background: linear-gradient(90deg, var(--bleu) 0 var(--fill, 0%), var(--hairline) var(--fill, 0%) 100%); }
+
+/* =====================================================================
+   Recherche en verre liquide : le champ est transparent, la lentille est
+   rendue dans le pass post-process WebGL (uVerre* de matPost).
+   ===================================================================== */
+#recherche { width: min(252px, 37vw); }   /* 40 % plus étroit */
+#champ-recherche {
+  /* pas de bordure CSS : le liseré est celui de la lentille WebGL (uVerre*) */
+  background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: none; border-radius: 999px; padding: 14px 24px; text-align: center;
+  transition: text-align 0.4s var(--ease);
+}
+#champ-recherche:focus { text-align: left; }
+#resultats:not(.ouvert) { position: absolute; left: 0; right: 0; }
+#resultats { margin-top: 8px; border-radius: 18px; overflow: hidden;
+  background: rgba(5, 18, 54, 0.72); backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255, 253, 226, 0.12); }
+#resultats li:first-child { border-top: none; }
+
+/* =====================================================================
+   Wordmark irisé : la déformation vit dans les lettres. Au passage du
+   pointeur chaque lettre monte, s'étire et se dédouble en cyan/ambre —
+   effet de film mince, sans halo qui déborde du texte.
+   ===================================================================== */
+#wordmark { position: relative; display: inline-block; cursor: default; }
+#wordmark .lettre {
+  --iris: 0; --decal: 0px;
+  display: inline-block; will-change: transform;
+  text-shadow:
+    calc(var(--decal) * -1.6) 0 0 rgba(47, 208, 255, calc(var(--iris) * 0.85)),
+    var(--decal) 0 0 rgba(255, 154, 60, calc(var(--iris) * 0.7)),
+    0 0 calc(var(--iris) * 14px) rgba(23, 64, 169, calc(var(--iris) * 0.55));
+}
+#wordmark .lettre.barre { color: var(--bleu); }
+#wordmark.irise .lettre.barre { color: #2FD0FF; transition: color 0.4s var(--ease); }
+@media (prefers-reduced-motion: reduce) { #wordmark .lettre { text-shadow: none !important; } }
+
+/* =====================================================================
+   Curseur bloc DOS : au focus le placeholder s'efface et un bloc plein
+   clignote à la position d'insertion (steps(1), ~530 ms comme un VGA).
+   ===================================================================== */
+#recherche { position: relative; }
+#champ-recherche { caret-color: transparent; }
+body.recherche-active #champ-recherche::placeholder { color: transparent; }
+#mesure-recherche {
+  position: absolute; visibility: hidden; white-space: pre; pointer-events: none;
+  font: inherit; font-family: var(--police); font-size: 14px; letter-spacing: -0.02em;
+}
+#caret-dos {
+  position: absolute; top: 50%; width: 8px; height: 17px; margin-top: -8.5px;
+  background: var(--texte); opacity: 0; pointer-events: none;
+}
+body.recherche-active #caret-dos { animation: caret-dos 1.06s steps(1) infinite; }
+@keyframes caret-dos { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }

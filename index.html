@@ -181,13 +181,15 @@
 </div>
 
 <header id="titre" class="panneau">
-  <h1>terra<em>／</em>2050</h1>
+  <h1 id="wordmark"><span>terra<em>／</em>2050</span></h1>
   <div class="micro">Sept calques de risque · projection 2026→2050</div>
 </header>
 
 <div id="recherche" class="panneau">
   <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
     autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu">
+  <span id="mesure-recherche" aria-hidden="true"></span>
+  <span id="caret-dos" aria-hidden="true"></span>
   <ul id="resultats"></ul>
 </div>
 
@@ -320,92 +322,6 @@ function revelerChars(el, texte){
   gsap.fromTo(chars, { yPercent: 115 }, { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE });
 }
 
-/* =====================================================================
-   1. DONNÉES GÉOGRAPHIQUES — emprises réelles (deltas, bassins, foyers historiques) ; intensités stylisées
-   ===================================================================== */
-// Chaleur extrême / ICU : mégapoles + intensité îlot de chaleur urbain (°C)
-const VILLES = [
-  // Europe
-  [48.85,2.35,4.2],[51.50,-0.12,3.8],[40.42,-3.70,4.7],[37.39,-5.99,5.0],[41.90,12.50,4.3],
-  [37.98,23.73,4.8],[41.01,28.98,4.4],[43.30,5.37,4.0],[55.75,37.62,3.6],
-  // Asie
-  [35.68,139.69,5.1],[34.69,135.50,4.6],[37.57,126.98,4.7],[39.90,116.40,4.8],[31.23,121.47,4.9],
-  [30.59,114.30,5.0],[29.56,106.55,5.2],[23.13,113.26,4.9],[28.61,77.21,5.8],[23.02,72.57,5.6],
-  [19.08,72.88,5.4],[22.57,88.36,5.3],[23.81,90.41,5.5],[31.55,74.34,5.5],[24.86,67.01,5.0],
-  [13.76,100.50,5.0],[10.82,106.63,4.8],[-6.21,106.85,5.2],[14.60,120.98,5.3],
-  // Moyen-Orient & Afrique
-  [35.69,51.39,4.9],[33.31,44.36,5.7],[24.71,46.68,5.4],[30.04,31.24,5.6],[15.50,32.56,5.5],[6.52,3.37,4.1],
-  // Amériques & Océanie
-  [40.71,-74.00,4.6],[34.05,-118.24,5.2],[33.45,-112.07,5.9],[29.76,-95.37,4.8],[19.43,-99.13,4.3],
-  [-23.55,-46.63,4.4],[-34.60,-58.38,4.2],[-33.87,151.21,4.0],
-];
-// Foyers d'incendies : [lat, lon, rayon°] — Amazonie, boréal, méditerranéen…
-const ZONES_FEU = [
-  // Amérique du Sud : arc de déforestation, Cerrado, Chaco
-  [-9.0,-63.0,5.5],[-6.5,-53.0,5.5],[-12.5,-46.5,4.5],[-21.5,-61.0,4],
-  // Boréal Amérique du Nord
-  [55.0,-124.0,5],[57.5,-112.0,6],[51.5,-76.0,6],[64.5,-150.0,6],
-  // Boréal Sibérie
-  [63.0,125.0,7.5],[60.5,96.0,6.5],[52.5,114.0,4.5],
-  // Bassin méditerranéen
-  [39.8,-8.0,2.5],[42.6,-7.9,2],[37.6,-5.4,2.5],[43.4,6.1,1.8],[41.0,9.1,2],[38.1,15.4,2.2],[38.6,22.4,2.4],[37.0,29.2,2.8],[36.3,4.6,2.4],
-  // Ouest américain
-  [38.7,-120.6,3],[34.4,-118.6,2.4],[44.2,-121.4,3.2],
-  // Australie & Chili
-  [-36.4,148.2,3.8],[-33.6,116.6,2.8],[-35.5,-71.6,2.6],
-  // Tourbières d'Asie du Sud-Est
-  [-1.0,113.5,3.5],[0.4,102.2,3],
-];
-// Retrait-gonflement des argiles
-const ZONES_ARGILE = [
-  [48.7, 2.6, .10], [43.7, 1.2, .08],   // bassin parisien, Sud-Ouest français
-  [51.6, 0.0, .07],                      // Sud-Est anglais (argiles de Londres)
-  [31.5, -98.5, .12],                    // Texas (vertisols)
-  [19.5, 76.5, .12], [26.5, 80.5, .10],  // Deccan (black cotton soils), plaine indo-gangétique
-  [-34.5, 138.8, .07],                   // Adélaïde
-  [36.5, 108.5, .10],                    // plateau de lœss chinois
-  [14.5, 33.0, .09], [9.0, 39.0, .08],   // Gezira soudanaise, hauts plateaux éthiopiens
-];
-// Sécheresses hivernales / pénuries d'eau
-const ZONES_SECHERESSE = [
-  [39.5, -4.0, .11], [33.5, 3.0, .15],     // Espagne intérieure, Maghreb
-  [15.0, -8.0, .13], [14.5, 15.0, .15],    // Sahel ouest & centre
-  [7.5, 44.0, .12],                         // Corne de l'Afrique
-  [-32.5, 21.0, .11],                       // Afrique australe (Karoo/Cap)
-  [36.0, -117.0, .12], [27.0, -104.0, .11], // Sud-Ouest américain, Nord mexicain
-  [-8.5, -40.0, .10], [-32.0, -71.0, .07],  // Sertão brésilien, Chili central
-  [31.0, 42.0, .15], [32.0, 54.0, .12],     // péninsule Arabique/Irak, plateau iranien
-  [44.0, 60.0, .12],                        // Asie centrale (bassin de l'Aral)
-  [36.5, 114.0, .10], [26.5, 72.0, .09],    // plaine de Chine du Nord, Rajasthan
-  [-31.0, 144.0, .15],                      // Murray-Darling
-];
-// Submersion marine (côtes basses, +0.5 m → +1 m)
-const ZONES_MER = [
-  [31.1, 31.0, .045],                        // delta du Nil
-  [22.5, 90.0, .09], [21.8, 88.8, .055],     // Gange-Brahmapoutre, Sundarbans
-  [24.4, 67.6, .05],                         // delta de l'Indus
-  [9.8, 105.8, .06], [13.8, 100.4, .045],    // Mékong, Chao Phraya (Bangkok)
-  [-6.1, 106.8, .04], [14.6, 120.9, .035],   // Jakarta, Manille
-  [31.5, 121.3, .05], [22.6, 113.6, .045],   // delta du Yangtsé, delta des Perles
-  [35.6, 139.9, .03],                        // baie de Tokyo
-  [26.2, -80.7, .06], [29.6, -90.5, .05],    // Floride Sud, delta du Mississippi
-  [52.5, 4.8, .055], [53.8, 8.5, .045],      // Pays-Bas, baie allemande
-  [45.3, 12.4, .03],                         // Venise
-  [6.45, 3.5, .04],                          // Lagos
-  [6.0, -55.5, .05],                         // côtes Guyane-Suriname
-  [-34.8, -57.8, .05],                       // Río de la Plata
-  [45.2, 12.3, .0],                          // (slot conservé)
-].filter(z => z[2] > 0);
-// Grands fleuves : polylignes simplifiées [lat, lon]
-const FLEUVES = {
-  nil:        [[4.5,32.5],[9.0,31.0],[13.5,32.4],[18.0,33.9],[22.0,31.1],[26.0,31.5],[30.0,31.2],[31.2,30.5],[31.6,31.0]],
-  amazone:    [[-5.1,-75.0],[-4.0,-70.0],[-3.5,-65.0],[-3.0,-60.0],[-2.5,-55.0],[-1.5,-52.0],[0.0,-50.0]],
-  mississippi:[[47.5,-95.2],[44.9,-93.2],[41.5,-91.0],[38.8,-90.2],[35.1,-90.1],[32.3,-91.0],[29.9,-90.1],[29.2,-89.3]],
-  yangtse:    [[33.0,97.0],[31.5,104.0],[30.8,111.0],[30.5,114.3],[31.2,118.7],[31.9,120.9],[32.0,121.5]],
-  gange:      [[30.9,78.0],[29.0,79.5],[27.5,80.5],[26.5,83.0],[25.6,85.1],[24.5,88.0],[23.2,89.5],[22.5,90.0]],
-  rhin:       [[46.6,8.4],[47.6,7.6],[48.9,8.2],[50.1,7.7],[50.9,6.9],[51.7,5.0],[51.9,4.5]],
-  danube:     [[48.1,9.0],[48.3,13.0],[47.5,18.0],[46.2,20.1],[45.2,22.0],[44.8,24.5],[44.0,27.0],[45.2,29.5]],
-};
 // Flux de résilience : zones agricoles → métropoles [de, vers]
 const FLUX = [
   [[48.1,  1.7], [48.85,   2.35]],  // Beauce → Paris
@@ -415,6 +331,7 @@ const FLUX = [
   [[-34.0,-61.0],[-34.60,-58.38]],  // Pampas → Buenos Aires
   [[31.0, 74.0], [28.61,  77.21]],  // Pendjab → Delhi
 ];
+
 // Hotspots (panneau droit) : cible caméra + fiche
 const HOTSPOTS = {
   paris:      { lat:48.85, lon:  2.35, zoom:2.6, titre:'Paris — le piège des flux',
@@ -574,8 +491,20 @@ const texCouleur = texChargeur.load('./assets/textures/earth_color_2048.jpg'); /
 const texMasque  = texChargeur.load('./assets/textures/earth_mask_2048.jpg');  // masque terre/océan
 texCouleur.colorSpace = THREE.SRGBColorSpace;
 
-const NB_VILLES = VILLES.length, NB_ARGILE = ZONES_ARGILE.length,
-      NB_SECH  = ZONES_SECHERESSE.length, NB_MER = ZONES_MER.length;
+/* Grilles de risques précalculées (tools/pipeline.py) : 2160x1080, une valeur
+   par canal. Le shader interpole entre l'horizon 2026 et l'horizon 2050. */
+function chargerGrille(fichier){
+  const t = texChargeur.load(fichier);
+  t.colorSpace = THREE.NoColorSpace;              // ce sont des données, pas des couleurs
+  t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
+  t.minFilter = t.magFilter = THREE.LinearFilter;
+  t.generateMipmaps = false;
+  return t;
+}
+const texRisque2026 = chargerGrille('./data/risques_2026.png');
+const texRisque2050 = chargerGrille('./data/risques_2050.png');
+const texRisqueMer  = chargerGrille('./data/risques_mer.png');
+const texRisqueStat = chargerGrille('./data/risques_stat.png');
 
 const uniformsGlobe = {
   uMap:        { value: texCouleur },
@@ -585,11 +514,10 @@ const uniformsGlobe = {
   uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },
   uChaleur:    { value: 0 }, uArgile: { value: 0 },
   uSecheresse: { value: 0 }, uMer:    { value: 0 },
-  uVillesPos:  { value: VILLES.map(v => latLonVersVec3(v[0], v[1])) },
-  uVillesAmp:  { value: VILLES.map(v => v[2] / 6) },
-  uArgileZones:{ value: ZONES_ARGILE.map(z => { const v = latLonVersVec3(z[0], z[1]); return new THREE.Vector4(v.x, v.y, v.z, z[2]); }) },
-  uSechZones:  { value: ZONES_SECHERESSE.map(z => { const v = latLonVersVec3(z[0], z[1]); return new THREE.Vector4(v.x, v.y, v.z, z[2]); }) },
-  uMerZones:   { value: ZONES_MER.map(z => { const v = latLonVersVec3(z[0], z[1]); return new THREE.Vector4(v.x, v.y, v.z, z[2]); }) },
+  uRisqueA:    { value: texRisque2026 },
+  uRisqueB:    { value: texRisque2050 },
+  uRisqueMer:  { value: texRisqueMer },
+  uRisqueStat: { value: texRisqueStat },
 };
 
 const matGlobe = new THREE.ShaderMaterial({
@@ -607,8 +535,7 @@ const matGlobe = new THREE.ShaderMaterial({
     uniform sampler2D uMap; uniform sampler2D uMasque;
     uniform float uTemps, uProgression, uChaleur, uArgile, uSecheresse, uMer;
     uniform vec3 uSoleil;
-    uniform vec3 uVillesPos[${NB_VILLES}];  uniform float uVillesAmp[${NB_VILLES}];
-    uniform vec4 uArgileZones[${NB_ARGILE}]; uniform vec4 uSechZones[${NB_SECH}]; uniform vec4 uMerZones[${NB_MER}];
+    uniform sampler2D uRisqueA, uRisqueB, uRisqueMer, uRisqueStat;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
 
     // hachage & bruit 3D (bruit de valeur, 2 octaves — suffisant à cette échelle)
@@ -632,11 +559,6 @@ const matGlobe = new THREE.ShaderMaterial({
       }
       return f2 - f1;
     }
-    float masqueZone(vec4 zone, vec3 p){
-      float d = acos(clamp(dot(normalize(p), zone.xyz), -1.0, 1.0));
-      return 1.0 - smoothstep(zone.w * 0.55, zone.w, d);
-    }
-
     void main(){
       vec3 tex = texture2D(uMap, vUv).rgb;
       float terre = 1.0 - texture2D(uMasque, vUv).r;   // le masque NASA : eau = clair
@@ -655,22 +577,28 @@ const matGlobe = new THREE.ShaderMaterial({
 
       float P = uProgression;
 
+      /* Grilles de risques réelles (WorldClim/CMIP6 SSP3-7.0, ETOPO 2022,
+         Natural Earth). r = chaleur, g = sécheresse, b = feux, a = submersion ;
+         st = fleuves 2026 / fleuves 2050 / argiles / masque terre ETOPO. */
+      vec3 rq = mix(texture2D(uRisqueA, vUv).rgb, texture2D(uRisqueB, vUv).rgb, P);
+      vec3 mr = texture2D(uRisqueMer, vUv).rgb;      // submersion 2026 / 2050 / argiles
+      vec3 st = texture2D(uRisqueStat, vUv).rgb;     // fleuves 2026 / 2050 / masque terre
+      float submersion = mix(mr.r, mr.g, P);
+      terre = max(terre, step(0.5, st.b));
+
       // R-01 CHALEUR / ICU : gaussiennes thermiques sur les mégapoles, jaune → rouge vif
       if (uChaleur > 0.001){
-        float chaud = 0.0;
-        for(int i = 0; i < ${NB_VILLES}; i++){
-          float d = distance(normalize(vP), uVillesPos[i]);
-          chaud += uVillesAmp[i] * exp(-d * d * 380.0);
-        }
-        chaud = (1.0 - exp(-chaud * (0.55 + 0.9 * P))) * terre;  // saturation douce + masque terre
-        vec3 thermique = mix(vec3(1.0, 0.75, 0.15), vec3(1.0, 0.16, 0.08), chaud);
-        col = mix(col, thermique, chaud * uChaleur * 0.9);
+        // rq.r = jours/an au-dessus de 35 °C, normalisés sur 0-150
+        float chaud = rq.r * terre;
+        vec3 thermique = mix(vec3(0.95, 0.62, 0.16), vec3(1.0, 0.18, 0.07), smoothstep(0.20, 0.80, chaud));
+        // lecture en nappe graduée : les zones tempérées restent lisibles
+        col = mix(col, thermique, smoothstep(0.06, 0.68, chaud) * uChaleur * 0.62);
+        col += thermique * smoothstep(0.72, 1.0, chaud) * uChaleur * 0.30;   // les extrêmes ressortent
       }
 
       // R-03 ARGILES : craquelure procédurale voronoï, teinte ocre-brun
       if (uArgile > 0.001){
-        float m = 0.0;
-        for(int i = 0; i < ${NB_ARGILE}; i++) m = max(m, masqueZone(uArgileZones[i], vP));
+        float m = mr.b;                                     // grille argiles (indicatif)
         float c = fissure(normalize(vP) * 26.0);
         float craq = 1.0 - smoothstep(0.02, 0.10 + 0.10 * (1.0 - P), c);
         vec3 argile = mix(vec3(0.24, 0.15, 0.08), vec3(0.42, 0.28, 0.13), bruit(vP * 40.0));
@@ -680,24 +608,24 @@ const matGlobe = new THREE.ShaderMaterial({
 
       // R-04 SÉCHERESSE HIVERNALE : le bleu s'éteint vers gris/jaune (ruissellement)
       if (uSecheresse > 0.001){
-        float m = 0.0;
-        for(int i = 0; i < ${NB_SECH}; i++) m = max(m, masqueZone(uSechZones[i], vP));
-        float sec = m * uSecheresse * (0.30 + 0.70 * P);
+        // rq.g = déficit d'aridité (De Martonne inversé), réel
+        float m = smoothstep(0.42, 0.95, rq.g) * terre;
+        float sec = m * uSecheresse * 0.85;
         vec3 solSec = mix(vec3(0.16, 0.15, 0.12), vec3(0.34, 0.28, 0.14), bruit(vP * 30.0));
         col = mix(col, solSec, sec * 0.8);
       }
 
       // R-05 SUBMERSION : eau bleu néon animée qui monte avec la projection
       if (uMer > 0.001){
-        float m = 0.0;
-        for(int i = 0; i < ${NB_MER}; i++) m = max(m, masqueZone(uMerZones[i], vP));
-        float niveau = 0.65 - 0.55 * P;                       // le seuil descend = l'eau monte
-        float n = bruit(vP * 14.0 + vec3(0.0, uTemps * 0.15, uTemps * 0.1));
-        float eau = smoothstep(niveau, niveau - 0.12, n);
-        float bord = smoothstep(niveau + 0.06, niveau, n) - eau;
-        vec3 neon = vec3(0.05, 0.75, 0.95);
-        col = mix(col, neon * (0.5 + 0.5 * bruit(vP * 30.0 + uTemps * 0.3)), eau * m * uMer * 0.85);
-        col += neon * bord * m * uMer * 1.6;                  // liseré lumineux du front d'eau
+        /* rq.a = fraction du texel terrestre sous la cote submersible
+           (niveau marin SSP3-7.0 + 2 m de marée/surcote), depuis ETOPO 2022.
+           Le bruit ne sert plus qu'à animer la surface, jamais à la définir. */
+        float eau = smoothstep(0.06, 0.50, submersion) * terre;
+        float bord = smoothstep(0.03, 0.11, submersion) - smoothstep(0.18, 0.44, submersion);
+        float houle = 0.68 + 0.32 * bruit(vP * 90.0 + vec3(0.0, uTemps * 0.22, uTemps * 0.14));
+        vec3 neon = vec3(0.16, 0.48, 1.0);
+        col = mix(col, neon * houle, eau * uMer * 0.70);
+        col += neon * bord * terre * uMer * 0.85;             // liseré du trait de côte submersible
       }
 
       gl_FragColor = vec4(col, 1.0);
@@ -749,49 +677,48 @@ let feux, feuxUniforms, feuxActifs = 0;
 {
   const positions = new Float32Array(FEUX_MAX * 3);
   const graines = new Float32Array(FEUX_MAX);
-  // masque terre échantillonné sur CPU : aucun foyer en mer
-  let masqueCtx = null, masqueW = 0, masqueH = 0;
-  const imgMasque = new Image();
-  imgMasque.src = './assets/textures/earth_mask_2048.jpg';
-  const estTerre = (lat, lon) => {
-    if (!masqueCtx) return true;
-    const x = Math.min(masqueW - 1, Math.max(0, Math.round((lon + 180) / 360 * masqueW)));
-    const y = Math.min(masqueH - 1, Math.max(0, Math.round((90 - lat) / 180 * masqueH)));
-    return masqueCtx.getImageData(x, y, 1, 1).data[0] > 96;
-  };
+  for (let i = 0; i < FEUX_MAX; i++) graines[i] = Math.random();
+
+  /* Semis par rejet sur la grille de danger météo de feu (canal bleu de
+     risques_2050.png, dérivée de WorldClim/CMIP6). Un foyer ne peut pas
+     tomber en mer : la grille vaut zéro hors du masque terre. Les points
+     sont triés par danger décroissant, de sorte que le drawRange piloté par
+     la timeline fasse d'abord apparaître les cœurs, puis l'expansion. */
   const semerFeux = () => {
-    const parZone = FEUX_MAX / ZONES_FEU.length;
-    for (let i = 0; i < FEUX_MAX; i++){
-      const z = ZONES_FEU[i % ZONES_FEU.length];
-      // l'index dans la zone fixe le rayon : les premiers points (visibles en 2026)
-      // sont le cœur historique, les suivants étendent le foyer vers 2050
-      const part = Math.floor(i / ZONES_FEU.length) / parZone;
-      let lat = z[0], lon = z[1];
-      for (let essai = 0; essai < 24; essai++){
-        const angle = Math.random() * Math.PI * 2;
-        const dist = (0.12 + 0.88 * Math.sqrt(part * Math.random() + part * 0.4)) * z[2];
-        const la = z[0] + Math.cos(angle) * dist, lo = z[1] + Math.sin(angle) * dist / Math.max(0.25, Math.cos(la * Math.PI / 180));
-        if (estTerre(la, lo)){ lat = la; lon = lo; break; }
+    const img = new Image();
+    img.src = './data/risques_2050.png';
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = img.width; c.height = img.height;
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      const px = ctx.getImageData(0, 0, c.width, c.height).data;
+      const dangerEn = (x, y) => px[(y * c.width + x) * 4 + 2] / 255;   // canal bleu = feux
+
+      const tirages = [];
+      let essais = 0;
+      while (tirages.length < FEUX_MAX && essais < FEUX_MAX * 400){
+        essais++;
+        const x = (Math.random() * c.width) | 0;
+        // tirage uniforme en surface : sin(lat) plutôt que lat
+        const lat = Math.asin(Math.random() * 2 - 1) * 180 / Math.PI;
+        const y = Math.min(c.height - 1, Math.max(0, ((90 - lat) / 180 * c.height) | 0));
+        const d = dangerEn(x, y);
+        if (d > 0.06 && Math.random() < d * d){
+          tirages.push([d, (x + Math.random()) / c.width * 360 - 180, lat]);
+        }
       }
-      const v = latLonVersVec3(lat, lon, 1.012);
-      positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
-    }
+      tirages.sort((a, b) => b[0] - a[0]);
+      for (let i = 0; i < FEUX_MAX; i++){
+        const t = tirages[i % Math.max(tirages.length, 1)] || [0, 0, 0];
+        const v = latLonVersVec3(t[2], t[1], 1.012);
+        positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
+      }
+      feux.geometry.attributes.position.needsUpdate = true;
+    };
   };
-  imgMasque.onload = () => {
-    const c = document.createElement('canvas');
-    masqueW = c.width = imgMasque.width; masqueH = c.height = imgMasque.height;
-    masqueCtx = c.getContext('2d', { willReadFrequently: true });
-    masqueCtx.drawImage(imgMasque, 0, 0);
-    semerFeux();
-    feux.geometry.attributes.position.needsUpdate = true;
-  };
-  for (let i = 0; i < FEUX_MAX; i++){
-    const z = ZONES_FEU[i % ZONES_FEU.length];
-    const angle = Math.random() * Math.PI * 2, dist = Math.sqrt(Math.random()) * z[2] * Math.PI / 180;
-    const v = latLonVersVec3(z[0] + Math.cos(angle) * dist * 57.3, z[1] + Math.sin(angle) * dist * 57.3, 1.012);
-    positions.set([v.x, v.y, v.z], i * 3);
-    graines[i] = Math.random();
-  }
+  semerFeux();
+
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geo.setAttribute('aGraine', new THREE.BufferAttribute(graines, 1));
@@ -831,25 +758,39 @@ let feux, feuxUniforms, feuxActifs = 0;
    ===================================================================== */
 const fleuvesUniforms = { uTemps: { value: 0 }, uCrue: { value: 0 } };
 const groupeFleuves = new THREE.Group();
-for (const nom in FLEUVES){
-  const pts = FLEUVES[nom].map(p => latLonVersVec3(p[0], p[1], 1.004));
-  const courbe = new THREE.CatmullRomCurve3(pts);
-  const geo = new THREE.TubeGeometry(courbe, 96, 0.0035, 5, false);
-  const mat = new THREE.ShaderMaterial({
+/* Tracés réels : Natural Earth 10m rivers & lake centerlines, scalerank <= 4
+   (data/rivers.json, produit par tools/pipeline.py). Un seul LineSegments
+   pour les 400+ tronçons : 1 draw call au lieu de 400 tubes. */
+fetch('./data/rivers.json').then(r => r.json()).then(fleuves => {
+  const sommets = [], parcours = [];
+  for (const f of fleuves){
+    let cumul = 0;
+    const pts = f.pts.map(p => latLonVersVec3(p[0], p[1], 1.004));
+    for (let i = 1; i < pts.length; i++){
+      const d = pts[i].distanceTo(pts[i - 1]);
+      sommets.push(pts[i - 1].x, pts[i - 1].y, pts[i - 1].z, pts[i].x, pts[i].y, pts[i].z);
+      parcours.push(cumul, cumul + d);
+      cumul += d;
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(sommets), 3));
+  geo.setAttribute('aParcours', new THREE.BufferAttribute(new Float32Array(parcours), 1));
+  groupeFleuves.add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({
     uniforms: fleuvesUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     vertexShader: /* glsl */`
-      varying vec2 vUv;
-      void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      attribute float aParcours; varying float vL;
+      void main(){ vL = aParcours;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: /* glsl */`
-      uniform float uTemps, uCrue; varying vec2 vUv;
+      uniform float uTemps, uCrue; varying float vL;
       void main(){
-        float onde = 0.5 + 0.5 * sin(uTemps * 2.2 - vUv.x * 26.0);
-        float eclat = (0.25 + 0.75 * onde) * uCrue;
-        gl_FragColor = vec4(vec3(0.15, 0.7, 1.0) * eclat, eclat * (0.35 + 0.65 * uCrue));
+        float onde = 0.5 + 0.5 * sin(uTemps * 1.6 - vL * 26.0);
+        float eclat = (0.30 + 0.70 * onde) * uCrue;
+        gl_FragColor = vec4(vec3(0.15, 0.62, 1.0) * eclat, eclat * (0.45 + 0.55 * uCrue));
       }`,
-  });
-  groupeFleuves.add(new THREE.Mesh(geo, mat));
-}
+  })));
+});
 groupeFleuves.visible = false;
 scene.add(groupeFleuves);
 
@@ -948,12 +889,20 @@ let indiceCible = 0;
 const scenePost = new THREE.Scene();
 const cameraPost = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 const matPost = new THREE.ShaderMaterial({
-  uniforms: { tScene: { value: cibles[0].texture }, tLut: { value: genererLUT() }, uQuantite: { value: 0.5 } },
+  uniforms: { tScene: { value: cibles[0].texture }, tLut: { value: genererLUT() }, uQuantite: { value: 0.5 },
+    uVerre: { value: new THREE.Vector4(0, 0, 0, 0) },   // centre.xy + demi-taille.xy, en UV
+    uVerreRayon: { value: 0.0 }, uVerreForce: { value: 0.0 }, uRatio: { value: 1.0 } },
   vertexShader: /* glsl */`
     varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
   fragmentShader: /* glsl */`
     uniform sampler2D tScene; uniform sampler2D tLut; uniform float uQuantite;
+    uniform vec4 uVerre; uniform float uVerreRayon, uVerreForce, uRatio;
     varying vec2 vUv;
+    /* SDF de rectangle arrondi, en espace corrigé du ratio d'écran */
+    float sdfBoite(vec2 p, vec2 demi, float r){
+      vec2 d = abs(p) - demi + r;
+      return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - r;
+    }
     vec3 grade(vec3 c){
       float b = c.b * 63.0;
       float fb = floor(b), cb = ceil(b);
@@ -963,10 +912,43 @@ const matPost = new THREE.ShaderMaterial({
       return mix(texture2D(tLut, uv0).rgb, texture2D(tLut, uv1).rgb, b - fb);
     }
     void main(){
-      vec4 s = texture2D(tScene, vUv);
+      vec2 uv = vUv;
+      float dedans = 0.0, bord = 0.0;
+
+      /* ---- verre liquide : lentille en rectangle arrondi au-dessus de la
+         recherche. L'UV est réfracté par la pente du SDF, ce qui courbe
+         réellement le globe derrière la barre (pas un flou CSS). ---- */
+      if (uVerreForce > 0.001){
+        vec2 e = vec2(uRatio, 1.0);                       // repère isotrope
+        vec2 p = (vUv - uVerre.xy) * e;
+        vec2 demi = uVerre.zw * e;
+        float sd = sdfBoite(p, demi, uVerreRayon);
+        dedans = smoothstep(0.002, -0.002, sd);
+        if (dedans > 0.0){
+          // gradient du SDF = normale de la lentille ; épaisseur au bord
+          vec2 g = vec2(
+            sdfBoite(p + vec2(0.0015, 0.0), demi, uVerreRayon) - sdfBoite(p - vec2(0.0015, 0.0), demi, uVerreRayon),
+            sdfBoite(p + vec2(0.0, 0.0015), demi, uVerreRayon) - sdfBoite(p - vec2(0.0, 0.0015), demi, uVerreRayon));
+          // la réfraction ne mord que sur les 30 % extérieurs de la lentille
+          float epaisseur = pow(smoothstep(-uVerreRayon * 0.60, 0.0, sd), 2.2);
+          uv -= normalize(g + 1e-6) * epaisseur * 0.020 * uVerreForce / e;
+          bord = smoothstep(0.0028, 0.0, abs(sd)) * dedans;
+        }
+      }
+
+      vec4 s = texture2D(tScene, uv);
       vec3 col = mix(s.rgb, grade(clamp(s.rgb, 0.0, 1.0)), uQuantite);
       float d = distance(vUv, vec2(0.5));
       col *= 1.0 - 0.22 * smoothstep(0.42, 0.85, d);        // vignettage
+
+      if (dedans > 0.0){
+        // dispersion chromatique légère + voile interne + liseré spéculaire
+        vec2 ab = (uv - vUv) * 0.35;
+        col.r = mix(col.r, texture2D(tScene, uv + ab).r, dedans * uVerreForce);
+        col.b = mix(col.b, texture2D(tScene, uv - ab).b, dedans * uVerreForce);
+        col = mix(col, col * 1.18 + vec3(0.014, 0.030, 0.070), dedans * 0.40 * uVerreForce);
+        col += vec3(1.0, 0.99, 0.89) * bord * 0.30 * uVerreForce;
+      }
       gl_FragColor = vec4(col, 1.0);
     }`,
 });
@@ -1167,6 +1149,88 @@ curseur.addEventListener('input', () => {
   }
 });
 
+/* ---- caret bloc façon terminal DOS : le placeholder disparaît au focus,
+   un bloc plein clignote à la position d'insertion ---- */
+{
+  const mesure = document.getElementById('mesure-recherche');
+  const caret = document.getElementById('caret-dos');
+  const placer = () => {
+    mesure.textContent = champ.value;
+    const largeurTexte = mesure.getBoundingClientRect().width;
+    const style = getComputedStyle(champ);
+    const utile = champ.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    // le champ est centré au repos, aligné à gauche au focus (cf. terra-menus.css)
+    const depart = style.textAlign === 'center' ? (utile - largeurTexte) / 2 : 0;
+    caret.style.left = (champ.offsetLeft + parseFloat(style.paddingLeft) + depart + largeurTexte) + 'px';
+  };
+  champ.addEventListener('focus', () => { document.body.classList.add('recherche-active'); placer(); });
+  champ.addEventListener('blur',  () => document.body.classList.remove('recherche-active'));
+  champ.addEventListener('input', placer);
+  champ.addEventListener('keyup', placer);
+  addEventListener('resize', placer);
+}
+
+/* ---- wordmark irisé : chaque lettre se déforme légèrement au passage du
+   pointeur, avec un dédoublement chromatique dont la teinte suit l'écart.
+   Pas de halo : la déformation est portée par le texte lui-même. ---- */
+{
+  const marque = document.getElementById('wordmark');
+  const source = marque.querySelector('span');
+  const lettres = [...source.textContent].map(c => {
+    const sp = document.createElement('span');
+    sp.className = 'lettre';
+    sp.textContent = c;
+    if (c === '／') sp.classList.add('barre');
+    return sp;
+  });
+  source.textContent = '';
+  lettres.forEach(l => source.appendChild(l));
+
+  const RAYON = 78;                                   // portée de la déformation, en px
+  const anims = lettres.map(l => ({
+    y: gsap.quickTo(l, 'y', { duration: 0.5, ease: EASE }),
+    sy: gsap.quickTo(l, 'scaleY', { duration: 0.5, ease: EASE }),
+    sk: gsap.quickTo(l, 'skewX', { duration: 0.5, ease: EASE }),
+  }));
+
+  const deformer = (px) => {
+    lettres.forEach((l, i) => {
+      const r = l.getBoundingClientRect();
+      const d = px === null ? Infinity : Math.abs(px - (r.left + r.width / 2));
+      const f = px === null ? 0 : Math.max(0, 1 - d / RAYON);
+      const onde = f * f * (3 - 2 * f);               // smoothstep, pas de cassure
+      anims[i].y(-onde * 3.2);
+      anims[i].sy(1 + onde * 0.13);
+      anims[i].sk(-onde * 5);
+      l.style.setProperty('--iris', onde.toFixed(3));
+      l.style.setProperty('--decal', (px === null ? 0 : Math.sign(px - (r.left + r.width / 2)) * onde * 1.1).toFixed(2) + 'px');
+    });
+  };
+
+  marque.addEventListener('pointermove', e => { marque.classList.add('irise'); deformer(e.clientX); });
+  marque.addEventListener('pointerleave', () => { marque.classList.remove('irise'); deformer(null); });
+}
+
+/* ---- verre liquide : la lentille du pass post suit le rect réel du champ ---- */
+const etatVerre = { force: 0 };
+function majVerre(){
+  // le rect du CHAMP, pas de #recherche : ce dernier englobe la liste de
+  // résultats repliée, ce qui rendait la lentille bien plus haute que la barre
+  const r = champ.getBoundingClientRect();
+  const marge = 0;                                   // la lentille épouse le bord du champ
+  matPost.uniforms.uRatio.value = innerWidth / innerHeight;
+  matPost.uniforms.uVerre.value.set(
+    (r.left + r.width / 2) / innerWidth,
+    1 - (r.top + r.height / 2) / innerHeight,
+    (r.width / 2 + marge) / innerWidth,
+    (r.height / 2 + marge) / innerHeight);
+  matPost.uniforms.uVerreRayon.value = Math.min(r.height / 2 + marge, r.width / 2) / innerHeight;
+  matPost.uniforms.uVerreForce.value = etatVerre.force;
+}
+addEventListener('resize', majVerre);
+champ.addEventListener('focus', () => gsap.to(etatVerre, { force: 1, duration: DUREE.fast, ease: EASE, onUpdate: majVerre }));
+champ.addEventListener('blur',  () => gsap.to(etatVerre, { force: 0.55, duration: DUREE.fast, ease: EASE, onUpdate: majVerre }));
+
 /* ---- dossier lieu : diagnostic par ville (valeurs illustratives, déterministes) ---- */
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
@@ -1262,6 +1326,7 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   gsap.from(camera.position, { x: 0.3, y: 0.45, z: 5.2, duration: 2, ease: EASE });
   // le rideau se dissout par le bruit, en même temps que le recul caméra
   gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
+  gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
 });
 
 /* ---- boucle unique ---- */
