@@ -1,0 +1,9 @@
+{
+  "name": "terra-2050",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TERRA//2050 — globe tactique des risques climatiques (Three.js + GSAP 3 + Howler)",
+  "scripts": {
+    "dev": "npx --yes serve --no-clipboard --listen 8080 ."
+  }
+}
