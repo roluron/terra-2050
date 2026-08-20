@@ -1,0 +1,158 @@
+/* =====================================================================
+   TERRA／2050 — restyle final des menus (piste 1c ＋ dossier 2a)
+   Système fromanother, surface night. À charger APRÈS le <style>
+   existant de index.html (ou coller à la fin).
+   Prérequis : dossier fonts/ (Herbik + TWK Lausanne) à côté de index.html.
+   Le dossier lieu (#dossier) est un NOUVEAU bloc : markup dans INTEGRATION.md.
+   ===================================================================== */
+
+@font-face { font-family: "Herbik"; src: url("./fonts/Herbik-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Herbik"; src: url("./fonts/Herbik-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-300.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+
+/* ---- Tokens night fromanother. --cyan/--ambre/--alerte restent des
+   couleurs de DONNÉES (shader) ; l'accent UI est le bleu électrique. ---- */
+:root {
+  --encre: #05080F;
+  --encre-2: #0A0F1C;
+  --texte: #E8E5E0;
+  --muter: #8A8A92;
+  --hairline: #1E2534;
+  --bleu: #1B4FE8;
+  --serif: "Herbik", "Cormorant Garamond", serif;
+  --police: "TWK Lausanne", "Inter", -apple-system, sans-serif;
+  --mono: var(--police);
+}
+
+/* ---- Chrome ultra-minimal : plus de verre flou, plus de panneaux ---- */
+.panneau { background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.micro { font-family: var(--police); font-size: 11px; font-weight: 500; letter-spacing: 0.18em; }
+
+/* Titre : wordmark seul */
+#titre h1 { font-family: var(--serif); font-weight: 400; font-size: 26px; letter-spacing: -0.02em; }
+#titre h1 em { color: var(--bleu); }        /* remplacer <em>//</em> par <em>／</em> */
+#titre .micro { display: none; }
+
+/* Voile d'entrée */
+#voile h1 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; }
+#voile h1 em { color: var(--bleu); }
+#voile .sous, #voile .jauge { font-family: var(--police); font-size: 11px; font-weight: 500; letter-spacing: 0.18em; }
+#voile .entree { font-family: var(--police); font-size: 12px; font-weight: 500; letter-spacing: 0;
+  text-transform: none; color: var(--texte); border: 1px solid var(--hairline); border-radius: 999px; padding: 12px 34px; }
+
+/* Calques : rail de dots, sans en-tête */
+#calques { padding: 0; width: auto; }
+#calques .micro { display: none; }
+.calque { padding: 8px 0; gap: 12px; }
+.calque .pastille { width: 9px; height: 9px; background: transparent; border: 1px solid #3A4256; box-sizing: border-box; }
+.calque.actif .pastille { border-color: transparent; transform: none; }
+.calque .nom { font-weight: 400; font-size: 12.5px; letter-spacing: 0; }
+.calque .code { display: none; }
+.calque { opacity: 0.9; }
+.calque:not(.actif) { opacity: 0.38; }
+.calque:hover { opacity: 1; }
+
+/* Hotspots : au repos, seul le sélectionné est mis en avant */
+#hotspots { padding: 0; width: 280px; text-align: right; }
+#hotspots .micro { display: none; }
+.hotspot { border-bottom: none; font-family: var(--police); font-size: 10px; letter-spacing: 0.14em;
+  display: inline-block; width: auto; padding: 0 0 4px; margin-left: 14px; opacity: 0.45; }
+.hotspot:hover { opacity: 1; transform: none; }
+.hotspot .code { display: none; }
+#fiche { display: none; }
+#fiche.visible { display: block; }
+#fiche h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; letter-spacing: -0.02em; }
+#fiche .metrique { color: var(--muter); }
+#fiche p { max-width: 240px; margin-left: auto; }
+#fiche .metrique { font-family: var(--police); font-size: 10px; letter-spacing: 0.14em; color: var(--muter); }
+#fiche p { font-weight: 300; font-size: 13px; }
+
+/* Recherche : repliée en « Chercher un lieu ⌘K », hairline ; champ au focus */
+#champ-recherche { font-family: var(--police); font-size: 14px; letter-spacing: 0; text-transform: none;
+  background: none; border: none; border-bottom: 1px solid var(--hairline); border-radius: 0;
+  padding: 10px 2px; caret-color: var(--bleu); transition: border-color 150ms ease; }
+#champ-recherche:focus { border-bottom-color: var(--muter); }
+#resultats { margin-top: 6px; background: var(--encre-2); border: 1px solid var(--hairline);
+  backdrop-filter: none; -webkit-backdrop-filter: none; }
+#resultats li { padding: 12px 18px; border-top: 1px solid var(--hairline); }
+#resultats li:first-child { border-top: none; }
+#resultats li:hover, #resultats li.choisi { background: #121827; transform: none; opacity: 1; }
+#resultats li .nom-lieu { font-weight: 400; font-size: 14px; }
+#resultats li .type-lieu { font-family: var(--police); font-size: 10px; letter-spacing: 0.14em; }
+#resultats li.choisi .type-lieu { color: var(--bleu); }
+
+/* Timeline nue : année en Herbik, ligne 1px, pas d'arc-en-ciel */
+#timeline { padding: 0; width: min(480px, 60vw); transition: left 480ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+/* dossier ouvert : la timeline se recentre sur l'espace restant à gauche (comme la maquette 3a) */
+body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2); width: min(420px, 34vw); }
+#timeline > .micro { display: none; }
+#timeline .an { font-family: var(--serif); font-weight: 400; font-size: 96px; letter-spacing: -0.02em; }
+#curseur { height: 1px; background: var(--hairline); margin-top: 16px; }
+#curseur::-webkit-slider-thumb { background: var(--texte); border: 3px solid var(--encre); }
+#curseur::-moz-range-thumb { background: var(--texte); border: 3px solid var(--encre); }
+#timeline .bornes { font-size: 10px; letter-spacing: 0.14em; }
+
+/* Boutons utilitaires : liens texte, pas de pilules */
+.bouton-ico { font-family: var(--police); font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
+  color: var(--muter); border: none; padding: 6px 0; white-space: nowrap; }
+.bouton-ico.actif { color: var(--texte); }
+
+/* HUD perf */
+#hud { font-family: var(--police); letter-spacing: 0.1em; }
+#hud b { color: var(--bleu); }
+
+/* =====================================================================
+   DOSSIER LIEU (#dossier) — nouveau bloc, markup dans INTEGRATION.md.
+   Flottant à droite, sans boîte ; masqué tant qu'aucun lieu n'est choisi.
+   ===================================================================== */
+#dossier { position: fixed; right: 64px; top: 116px; bottom: 116px; width: min(440px, 34vw); z-index: 20;
+  display: flex; flex-direction: column; gap: 26px; overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin; scrollbar-color: var(--hairline) transparent;
+  font-family: var(--police); color: var(--texte);
+  opacity: 0; transform: translateX(12px); pointer-events: none;
+  transition: opacity 480ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+#dossier.ouvert { opacity: 1; transform: none; pointer-events: auto; }
+#dossier .coords { font-size: 10px; letter-spacing: 0.14em; color: var(--muter); text-transform: uppercase; }
+#dossier .lieu { font-family: var(--serif); font-weight: 400; font-size: 56px; line-height: 1; letter-spacing: -0.02em; }
+#dossier .score { display: flex; align-items: flex-end; gap: 18px; padding-bottom: 22px; border-bottom: 1px solid var(--hairline); }
+#dossier .score .valeur { font-family: var(--serif); font-size: 92px; line-height: 0.9; letter-spacing: -0.02em; }
+#dossier .score .legende { font-size: 13px; color: var(--muter); white-space: nowrap; }
+#dossier .verdict { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+#dossier .verdict .point { width: 8px; height: 8px; border-radius: 50%; }
+#dossier .verdict.faible .point { background: #2E8F6A; }
+#dossier .verdict.moderee .point { background: #A07830; }
+#dossier .verdict.forte .point { background: #E06A3C; }
+#dossier-risques { flex: 1 0 auto; min-height: 140px; overflow-y: visible; }
+#dossier .risque { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+#dossier .risque .ligne { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
+#dossier .risque .pourcent { font-size: 13px; }
+#dossier .risque .barre { height: 2px; background: var(--hairline); }
+#dossier .risque .barre i { display: block; height: 2px; transition: width 600ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+#dossier .risque .detail { font-size: 12px; font-weight: 300; color: var(--muter); }
+#dossier .sources { margin-top: auto; flex: none; font-size: 10px; letter-spacing: 0.1em; color: var(--muter); text-transform: uppercase; }
+#dossier .actions { display: flex; gap: 22px; font-size: 12px; font-weight: 500; margin-top: 12px; }
+#dossier .actions span { cursor: pointer; border-bottom: 1px solid var(--hairline); padding-bottom: 3px; transition: opacity 150ms ease; }
+#dossier .actions span:hover { opacity: 0.65; }
+
+/* Scrim de lisibilité côté dossier (div #scrim-dossier, voir INTEGRATION.md) */
+#scrim-dossier { position: fixed; inset: 0; z-index: 15; pointer-events: none; opacity: 0;
+  background: linear-gradient(270deg, rgba(5, 8, 15, 0.92) 0%, rgba(5, 8, 15, 0.75) 26%, transparent 46%);
+  transition: opacity 480ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+#scrim-dossier.ouvert { opacity: 1; }
+
+/* =====================================================================
+   Effets de marque (source : fromanother-careers) — apparition décalée
+   des rangées, 0.04s par index, fade + translateY(-8px)
+   ===================================================================== */
+@keyframes fa-apparaitre { from { opacity: 0; transform: translateY(-8px); } }
+#resultats li, #dossier .risque { animation: fa-apparaitre 300ms ease backwards; }
+#resultats li:nth-child(1), #dossier .risque:nth-child(1) { animation-delay: 0s; }
+#resultats li:nth-child(2), #dossier .risque:nth-child(2) { animation-delay: 0.04s; }
+#resultats li:nth-child(3), #dossier .risque:nth-child(3) { animation-delay: 0.08s; }
+#resultats li:nth-child(4), #dossier .risque:nth-child(4) { animation-delay: 0.12s; }
+#resultats li:nth-child(5), #dossier .risque:nth-child(5) { animation-delay: 0.16s; }
+#resultats li:nth-child(6), #dossier .risque:nth-child(6) { animation-delay: 0.20s; }
+#resultats li:nth-child(7), #dossier .risque:nth-child(7) { animation-delay: 0.24s; }
+#resultats li:nth-child(8), #dossier .risque:nth-child(8) { animation-delay: 0.28s; }

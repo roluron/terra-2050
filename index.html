@@ -162,6 +162,11 @@
     #hud{left:20px;bottom:auto;top:110px}
   }
 </style>
+<link rel="stylesheet" href="./terra-menus.css">
+<style>
+  #hotspots{transition:opacity .48s var(--ease)}
+  body.dossier-ouvert #hotspots{opacity:0;pointer-events:none}
+</style>
 </head>
 <body>
 <canvas id="scene"></canvas>
@@ -169,19 +174,19 @@
 <!-- voile d'entrée : sert aussi de geste utilisateur pour l'audio -->
 <div id="voile">
   <div class="sous">Observatoire prospectif</div>
-  <h1>TERRA<em>//</em>2050</h1>
+  <h1>terra<em>／</em>2050</h1>
   <div class="sous">Résilience climatique · simulation interactive</div>
   <div class="jauge" id="jauge">CHARGEMENT 0%</div>
   <button class="entree" id="bouton-entree">Initialiser</button>
 </div>
 
 <header id="titre" class="panneau">
-  <h1>TERRA<em>//</em>2050</h1>
+  <h1>terra<em>／</em>2050</h1>
   <div class="micro">Sept calques de risque · projection 2026→2050</div>
 </header>
 
 <div id="recherche" class="panneau">
-  <input id="champ-recherche" type="text" placeholder="Rechercher un lieu, un pays, une ville…"
+  <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
     autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu">
   <ul id="resultats"></ul>
 </div>
@@ -229,6 +234,23 @@
   <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
 </div>
 
+<div id="scrim-dossier"></div>
+<aside id="dossier" aria-label="Diagnostic du lieu">
+  <div>
+    <div class="coords" id="dossier-coords"></div>
+    <h2 class="lieu" id="dossier-lieu"></h2>
+  </div>
+  <div class="score">
+    <span class="valeur" id="dossier-score"></span>
+    <div>
+      <div class="legende">／100 · indice d'exposition <span id="dossier-annee">2050</span></div>
+      <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
+    </div>
+  </div>
+  <div id="dossier-risques"></div>
+  <div class="sources">Valeurs illustratives · sources à câbler : IPCC AR6 · Copernicus · WRI Aqueduct · BRGM</div>
+  <div class="actions"><span id="dossier-fermer">Fermer ×</span><span>Partager ↗</span></div>
+</aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
 <script type="importmap">
@@ -244,26 +266,81 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const EASE = 'expo.out';            // 0.3s micro · 0.5-0.6s standard · 1.8s vols caméra
 
 /* =====================================================================
-   1. DONNÉES GÉOGRAPHIQUES (mock — lat/lon réelles, valeurs simplifiées)
+   1. DONNÉES GÉOGRAPHIQUES — emprises réelles (deltas, bassins, foyers historiques) ; intensités stylisées
    ===================================================================== */
 // Chaleur extrême / ICU : mégapoles + intensité îlot de chaleur urbain (°C)
 const VILLES = [
-  [48.85,   2.35, 4.2], [35.68, 139.69, 5.1], [28.61,  77.21, 5.8], [31.23, 121.47, 4.9],
-  [-23.55, -46.63, 4.4], [30.04,  31.24, 5.6], [ 6.52,   3.37, 4.1], [40.71, -74.00, 4.6],
-  [34.05,-118.24, 5.2], [19.08,  72.88, 5.4], [39.90, 116.40, 4.8], [19.43, -99.13, 4.3],
-  [23.81,  90.41, 5.5], [51.50,  -0.12, 3.8], [40.42,  -3.70, 4.7], [55.75,  37.62, 3.6],
+  // Europe
+  [48.85,2.35,4.2],[51.50,-0.12,3.8],[40.42,-3.70,4.7],[37.39,-5.99,5.0],[41.90,12.50,4.3],
+  [37.98,23.73,4.8],[41.01,28.98,4.4],[43.30,5.37,4.0],[55.75,37.62,3.6],
+  // Asie
+  [35.68,139.69,5.1],[34.69,135.50,4.6],[37.57,126.98,4.7],[39.90,116.40,4.8],[31.23,121.47,4.9],
+  [30.59,114.30,5.0],[29.56,106.55,5.2],[23.13,113.26,4.9],[28.61,77.21,5.8],[23.02,72.57,5.6],
+  [19.08,72.88,5.4],[22.57,88.36,5.3],[23.81,90.41,5.5],[31.55,74.34,5.5],[24.86,67.01,5.0],
+  [13.76,100.50,5.0],[10.82,106.63,4.8],[-6.21,106.85,5.2],[14.60,120.98,5.3],
+  // Moyen-Orient & Afrique
+  [35.69,51.39,4.9],[33.31,44.36,5.7],[24.71,46.68,5.4],[30.04,31.24,5.6],[15.50,32.56,5.5],[6.52,3.37,4.1],
+  // Amériques & Océanie
+  [40.71,-74.00,4.6],[34.05,-118.24,5.2],[33.45,-112.07,5.9],[29.76,-95.37,4.8],[19.43,-99.13,4.3],
+  [-23.55,-46.63,4.4],[-34.60,-58.38,4.2],[-33.87,151.21,4.0],
 ];
 // Foyers d'incendies : [lat, lon, rayon°] — Amazonie, boréal, méditerranéen…
 const ZONES_FEU = [
-  [-3.4,-62.2, 9], [-8.0,-55.0, 7], [56.0,-105.0, 8], [62.0, 110.0, 9],
-  [38.5, 15.0, 4], [40.0, -4.0, 4], [37.5,  28.0, 3], [37.0,-120.0, 4], [-33.0, 147.0, 5],
+  // Amérique du Sud : arc de déforestation, Cerrado, Chaco
+  [-9.0,-63.0,5.5],[-6.5,-53.0,5.5],[-12.5,-46.5,4.5],[-21.5,-61.0,4],
+  // Boréal Amérique du Nord
+  [55.0,-124.0,5],[57.5,-112.0,6],[51.5,-76.0,6],[64.5,-150.0,6],
+  // Boréal Sibérie
+  [63.0,125.0,7.5],[60.5,96.0,6.5],[52.5,114.0,4.5],
+  // Bassin méditerranéen
+  [39.8,-8.0,2.5],[42.6,-7.9,2],[37.6,-5.4,2.5],[43.4,6.1,1.8],[41.0,9.1,2],[38.1,15.4,2.2],[38.6,22.4,2.4],[37.0,29.2,2.8],[36.3,4.6,2.4],
+  // Ouest américain
+  [38.7,-120.6,3],[34.4,-118.6,2.4],[44.2,-121.4,3.2],
+  // Australie & Chili
+  [-36.4,148.2,3.8],[-33.6,116.6,2.8],[-35.5,-71.6,2.6],
+  // Tourbières d'Asie du Sud-Est
+  [-1.0,113.5,3.5],[0.4,102.2,3],
 ];
 // Retrait-gonflement des argiles
-const ZONES_ARGILE = [ [48.5, 2.5, .16], [51.5, -0.1, .10], [31.5, -99.0, .14], [26.0, 80.0, .13] ];
+const ZONES_ARGILE = [
+  [48.7, 2.6, .10], [43.7, 1.2, .08],   // bassin parisien, Sud-Ouest français
+  [51.6, 0.0, .07],                      // Sud-Est anglais (argiles de Londres)
+  [31.5, -98.5, .12],                    // Texas (vertisols)
+  [19.5, 76.5, .12], [26.5, 80.5, .10],  // Deccan (black cotton soils), plaine indo-gangétique
+  [-34.5, 138.8, .07],                   // Adélaïde
+  [36.5, 108.5, .10],                    // plateau de lœss chinois
+  [14.5, 33.0, .09], [9.0, 39.0, .08],   // Gezira soudanaise, hauts plateaux éthiopiens
+];
 // Sécheresses hivernales / pénuries d'eau
-const ZONES_SECHERESSE = [ [37.0, 10.0, .20], [15.0, 5.0, .22], [36.5, -119.5, .12], [-25.0, 133.0, .24], [36.0, 114.0, .14], [29.0, 47.0, .14] ];
+const ZONES_SECHERESSE = [
+  [39.5, -4.0, .11], [33.5, 3.0, .15],     // Espagne intérieure, Maghreb
+  [15.0, -8.0, .13], [14.5, 15.0, .15],    // Sahel ouest & centre
+  [7.5, 44.0, .12],                         // Corne de l'Afrique
+  [-32.5, 21.0, .11],                       // Afrique australe (Karoo/Cap)
+  [36.0, -117.0, .12], [27.0, -104.0, .11], // Sud-Ouest américain, Nord mexicain
+  [-8.5, -40.0, .10], [-32.0, -71.0, .07],  // Sertão brésilien, Chili central
+  [31.0, 42.0, .15], [32.0, 54.0, .12],     // péninsule Arabique/Irak, plateau iranien
+  [44.0, 60.0, .12],                        // Asie centrale (bassin de l'Aral)
+  [36.5, 114.0, .10], [26.5, 72.0, .09],    // plaine de Chine du Nord, Rajasthan
+  [-31.0, 144.0, .15],                      // Murray-Darling
+];
 // Submersion marine (côtes basses, +0.5 m → +1 m)
-const ZONES_MER = [ [31.2, 30.5, .10], [22.8, 90.3, .12], [26.0, -80.5, .10], [52.2, 4.9, .09], [9.8, 105.8, .10], [45.2, 12.3, .06] ];
+const ZONES_MER = [
+  [31.1, 31.0, .045],                        // delta du Nil
+  [22.5, 90.0, .09], [21.8, 88.8, .055],     // Gange-Brahmapoutre, Sundarbans
+  [24.4, 67.6, .05],                         // delta de l'Indus
+  [9.8, 105.8, .06], [13.8, 100.4, .045],    // Mékong, Chao Phraya (Bangkok)
+  [-6.1, 106.8, .04], [14.6, 120.9, .035],   // Jakarta, Manille
+  [31.5, 121.3, .05], [22.6, 113.6, .045],   // delta du Yangtsé, delta des Perles
+  [35.6, 139.9, .03],                        // baie de Tokyo
+  [26.2, -80.7, .06], [29.6, -90.5, .05],    // Floride Sud, delta du Mississippi
+  [52.5, 4.8, .055], [53.8, 8.5, .045],      // Pays-Bas, baie allemande
+  [45.3, 12.4, .03],                         // Venise
+  [6.45, 3.5, .04],                          // Lagos
+  [6.0, -55.5, .05],                         // côtes Guyane-Suriname
+  [-34.8, -57.8, .05],                       // Río de la Plata
+  [45.2, 12.3, .0],                          // (slot conservé)
+].filter(z => z[2] > 0);
 // Grands fleuves : polylignes simplifiées [lat, lon]
 const FLEUVES = {
   nil:        [[4.5,32.5],[9.0,31.0],[13.5,32.4],[18.0,33.9],[22.0,31.1],[26.0,31.5],[30.0,31.2],[31.2,30.5],[31.6,31.0]],
@@ -528,9 +605,9 @@ const matGlobe = new THREE.ShaderMaterial({
         float chaud = 0.0;
         for(int i = 0; i < ${NB_VILLES}; i++){
           float d = distance(normalize(vP), uVillesPos[i]);
-          chaud += uVillesAmp[i] * exp(-d * d * 90.0);
+          chaud += uVillesAmp[i] * exp(-d * d * 380.0);
         }
-        chaud = clamp(chaud * (0.55 + 0.9 * P), 0.0, 1.0);
+        chaud = (1.0 - exp(-chaud * (0.55 + 0.9 * P))) * terre;  // saturation douce + masque terre
         vec3 thermique = mix(vec3(1.0, 0.75, 0.15), vec3(1.0, 0.16, 0.08), chaud);
         col = mix(col, thermique, chaud * uChaleur * 0.9);
       }
@@ -586,7 +663,7 @@ const matAtmo = new THREE.ShaderMaterial({
     uniform float uIntensite; varying vec3 vN;
     void main(){
       float halo = pow(0.62 - dot(vN, vec3(0.0, 0.0, 1.0)), 2.2);
-      gl_FragColor = vec4(vec3(0.12, 0.55, 0.62) * halo, 1.0) * uIntensite;
+      gl_FragColor = vec4(vec3(0.16, 0.34, 0.85) * halo, 1.0) * uIntensite;
     }`,
 });
 scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
@@ -606,7 +683,7 @@ scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
   }
   const geo = new THREE.BufferGeometry().setFromPoints(pts);
   scene.add(new THREE.LineSegments(geo,
-    new THREE.LineBasicMaterial({ color: 0x39e6d4, transparent: true, opacity: 0.085 })));
+    new THREE.LineBasicMaterial({ color: 0x3E63D9, transparent: true, opacity: 0.085 })));
 }
 /* =====================================================================
    5. R-02 FEUX — un seul THREE.Points (6000 max), scintillement GPU,
@@ -617,6 +694,42 @@ let feux, feuxUniforms, feuxActifs = 0;
 {
   const positions = new Float32Array(FEUX_MAX * 3);
   const graines = new Float32Array(FEUX_MAX);
+  // masque terre échantillonné sur CPU : aucun foyer en mer
+  let masqueCtx = null, masqueW = 0, masqueH = 0;
+  const imgMasque = new Image();
+  imgMasque.src = './assets/textures/earth_mask_2048.jpg';
+  const estTerre = (lat, lon) => {
+    if (!masqueCtx) return true;
+    const x = Math.min(masqueW - 1, Math.max(0, Math.round((lon + 180) / 360 * masqueW)));
+    const y = Math.min(masqueH - 1, Math.max(0, Math.round((90 - lat) / 180 * masqueH)));
+    return masqueCtx.getImageData(x, y, 1, 1).data[0] > 96;
+  };
+  const semerFeux = () => {
+    const parZone = FEUX_MAX / ZONES_FEU.length;
+    for (let i = 0; i < FEUX_MAX; i++){
+      const z = ZONES_FEU[i % ZONES_FEU.length];
+      // l'index dans la zone fixe le rayon : les premiers points (visibles en 2026)
+      // sont le cœur historique, les suivants étendent le foyer vers 2050
+      const part = Math.floor(i / ZONES_FEU.length) / parZone;
+      let lat = z[0], lon = z[1];
+      for (let essai = 0; essai < 24; essai++){
+        const angle = Math.random() * Math.PI * 2;
+        const dist = (0.12 + 0.88 * Math.sqrt(part * Math.random() + part * 0.4)) * z[2];
+        const la = z[0] + Math.cos(angle) * dist, lo = z[1] + Math.sin(angle) * dist / Math.max(0.25, Math.cos(la * Math.PI / 180));
+        if (estTerre(la, lo)){ lat = la; lon = lo; break; }
+      }
+      const v = latLonVersVec3(lat, lon, 1.012);
+      positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
+    }
+  };
+  imgMasque.onload = () => {
+    const c = document.createElement('canvas');
+    masqueW = c.width = imgMasque.width; masqueH = c.height = imgMasque.height;
+    masqueCtx = c.getContext('2d', { willReadFrequently: true });
+    masqueCtx.drawImage(imgMasque, 0, 0);
+    semerFeux();
+    feux.geometry.attributes.position.needsUpdate = true;
+  };
   for (let i = 0; i < FEUX_MAX; i++){
     const z = ZONES_FEU[i % ZONES_FEU.length];
     const angle = Math.random() * Math.PI * 2, dist = Math.sqrt(Math.random()) * z[2] * Math.PI / 180;
@@ -848,6 +961,7 @@ function volerVers(spot){
   });
   // fiche d'information : transform/opacity uniquement
   const fiche = document.getElementById('fiche');
+  fiche.classList.add('visible');
   gsap.to(fiche, { opacity: 0, y: 6, duration: 0.3, ease: EASE, onComplete: () => {
     document.getElementById('fiche-metrique').textContent = h.metrique;
     document.getElementById('fiche-titre').textContent = h.titre;
@@ -895,6 +1009,7 @@ function afficherResultats(){
 function choisirLieu(l){
   liste.classList.remove('ouvert');
   champ.value = l[0]; champ.blur();
+  ouvrirDossier(l);
   SoundManager.play('camera_fly');
   controles.autoRotate = false;
   const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(l[1] === 'pays' ? 3.0 : 2.6);
@@ -939,6 +1054,7 @@ curseur.addEventListener('input', () => {
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
   affichageAn.textContent = an;
+  if (lieuDossier) majDossier();
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE,
     onUpdate: () => { uniformsGlobe.uProgression.value = etat.progression; },
@@ -949,6 +1065,65 @@ curseur.addEventListener('input', () => {
     etat.crise = crise;
     crise ? SoundManager.play('crisis_loop', true) : SoundManager.stop('crisis_loop');
   }
+});
+
+/* ---- dossier lieu : diagnostic par ville (valeurs illustratives, déterministes) ---- */
+const dossierEl = document.getElementById('dossier');
+const scrimEl = document.getElementById('scrim-dossier');
+let lieuDossier = null;
+// graine déterministe par nom : mêmes chiffres à chaque visite, en attendant places.json
+function graine(nom){ let x = 0; for (const c of nom) x = (x * 31 + c.charCodeAt(0)) % 997; return n => { x = (x * 73 + 41 + n * 13) % 997; return x / 997; }; }
+const RISQUES_DIAG = [
+  ['Chaleur extrême',  '#E06A3C', p => `＋${Math.round(p * 0.45)} jours au-dessus de 35°C par an`],
+  ['Sécheresse',       '#A07830', p => `−${Math.round(p * 0.26)}% de recharge des nappes`],
+  ['Incendies de forêt','#C94F2E', p => `saison à risque allongée de ${Math.round(p * 0.33)} jours`],
+  ['Inondations',      '#6FA3FF', p => p > 50 ? 'épisodes intenses plus fréquents' : 'risque modéré'],
+  ['Submersion marine','#4D7CF2', p => `${Math.max(1, Math.round(p * 0.14))}% du territoire sous ＋0.4 m`],
+];
+function diagnostiquer(l, an){
+  const g = graine(l[0]);
+  const prog = 0.3 + 0.7 * (an - 2026) / 24;
+  const risques = RISQUES_DIAG.map(([nom, couleur, detail], i) => {
+    const base = 25 + g(i) * 65;                       // 25..90 à l'horizon 2050
+    const pct = Math.round(base * prog);
+    return { nom, couleur, pct, detail: detail(pct) };
+  });
+  const score = Math.round(risques.reduce((s, r) => s + r.pct, 0) / risques.length);
+  return { risques, score };
+}
+function majDossier(){
+  const l = lieuDossier, an = etat.annee;
+  const { risques, score } = diagnostiquer(l, an);
+  document.getElementById('dossier-coords').textContent =
+    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${l[1].toUpperCase()}`;
+  document.getElementById('dossier-lieu').textContent = l[0];
+  document.getElementById('dossier-annee').textContent = an;
+  document.getElementById('dossier-score').textContent = score;
+  const v = document.getElementById('dossier-verdict');
+  v.className = 'verdict ' + (score < 33 ? 'faible' : score < 66 ? 'moderee' : 'forte');
+  document.getElementById('dossier-verdict-txt').textContent =
+    score < 33 ? 'Exposition faible' : score < 66 ? 'Exposition modérée' : 'Exposition forte';
+  document.getElementById('dossier-risques').innerHTML = risques.map(r => `
+    <div class="risque">
+      <div class="ligne"><span>${r.nom}</span><span class="pourcent" style="color:${r.couleur}">${r.pct}%</span></div>
+      <div class="barre"><i style="width:${r.pct}%;background:${r.couleur}"></i></div>
+      <div class="detail">${r.detail}</div>
+    </div>`).join('');
+}
+function ouvrirDossier(l){
+  lieuDossier = l; majDossier();
+  dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
+  document.body.classList.add('dossier-ouvert');
+}
+function fermerDossier(){
+  lieuDossier = null;
+  dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
+  document.body.classList.remove('dossier-ouvert');
+}
+document.getElementById('dossier-fermer').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
+addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); champ.focus(); champ.select(); }
+  else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ) fermerDossier();
 });
 
 /* ---- son global + HUD perf ---- */
@@ -999,7 +1174,7 @@ function boucle(){
   fluxUniforms.uTemps.value = t;
 
   // densité des feux pilotée par la projection (multiplication réelle via drawRange)
-  const cibleFeux = Math.floor(FEUX_MAX * (0.18 + 0.82 * etat.progression) * feuxUniforms.uIntensite.value);
+  const cibleFeux = Math.floor(FEUX_MAX * Math.pow(0.05 + 0.95 * etat.progression, 1.6) * feuxUniforms.uIntensite.value);
   if (cibleFeux !== feuxActifs){ feuxActifs = cibleFeux; feux.geometry.setDrawRange(0, cibleFeux); }
 
   controles.update();
