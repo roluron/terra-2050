@@ -13,14 +13,14 @@
 <style>
   /* ===== DESIGN SYSTEM (palette originale, 6 teintes max) ===== */
   :root{
-    --encre:#0a0e13;        /* fond profond */
-    --encre-2:#10161d;      /* panneaux */
-    --texte:#e9edf2;        /* texte principal */
-    --muter:#5c6b7a;        /* micro-labels, secondaires */
+    --encre:#051236;        /* fond profond */
+    --encre-2:#071a45;      /* panneaux */
+    --texte:#FFFDE2;        /* texte principal */
+    --muter:rgba(255,253,226,.6);        /* micro-labels, secondaires */
     --cyan:#39e6d4;         /* données eau / structurel */
     --ambre:#ff9d45;        /* accent chaud unique */
     --alerte:#ff5230;       /* chaleur / danger */
-    --ease:cubic-bezier(0.16, 1, 0.3, 1); /* signature unique, famille easeOutExpo */
+    --ease:cubic-bezier(0.165, 0.84, 0.44, 1); /* easeOutQuart — signature fromanother */
     --police:-apple-system,"SF Pro Display","Segoe UI",Inter,Roboto,sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
@@ -204,10 +204,10 @@
 
 <aside id="hotspots" class="panneau" aria-label="Hotspots mondiaux">
   <div class="micro">Hotspots mondiaux</div>
-  <button class="hotspot" data-spot="paris"><span class="code">48.85°N · 2.35°E</span>Paris — le piège des flux</button>
-  <button class="hotspot" data-spot="amazonie"><span class="code">3.4°S · 62.2°O</span>Amazonie — mégafeux</button>
-  <button class="hotspot" data-spot="bangladesh"><span class="code">22.8°N · 90.3°E</span>Bangladesh — submersion</button>
-  <button class="hotspot" data-spot="bretagne"><span class="code">48.2°N · 2.9°O</span>Bretagne — paradoxe hivernal</button>
+  <button class="hotspot fa-lien" data-spot="paris"><span class="code">48.85°N · 2.35°E</span>Paris — le piège des flux</button>
+  <button class="hotspot fa-lien" data-spot="amazonie"><span class="code">3.4°S · 62.2°O</span>Amazonie — mégafeux</button>
+  <button class="hotspot fa-lien" data-spot="bangladesh"><span class="code">22.8°N · 90.3°E</span>Bangladesh — submersion</button>
+  <button class="hotspot fa-lien" data-spot="bretagne"><span class="code">48.2°N · 2.9°O</span>Bretagne — paradoxe hivernal</button>
   <div id="fiche">
     <div class="metrique" id="fiche-metrique">Sélectionnez un hotspot</div>
     <h2 id="fiche-titre">Vue globale</h2>
@@ -223,8 +223,8 @@
 </div>
 
 <div id="util" class="panneau">
-  <button class="bouton-ico" id="bouton-son">Son · off</button>
-  <button class="bouton-ico" id="bouton-perf">Perf</button>
+  <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
+  <button class="bouton-ico fa-lien" id="bouton-perf">Perf</button>
 </div>
 
 <div id="hud" class="panneau"></div>
@@ -249,7 +249,7 @@
   </div>
   <div id="dossier-risques"></div>
   <div class="sources">Valeurs illustratives · sources à câbler : IPCC AR6 · Copernicus · WRI Aqueduct · BRGM</div>
-  <div class="actions"><span id="dossier-fermer">Fermer ×</span><span>Partager ↗</span></div>
+  <div class="actions"><span class="fa-lien" id="dossier-fermer">Fermer ×</span><span class="fa-lien">Partager ↗</span></div>
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
@@ -261,9 +261,64 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* =====================================================================
-   0. EASING SIGNATURE — une seule courbe, famille easeOutExpo (GSAP 3)
+   0. EASING SIGNATURE — courbes du design system fromanother (GSAP 3)
    ===================================================================== */
-const EASE = 'expo.out';            // 0.3s micro · 0.5-0.6s standard · 1.8s vols caméra
+const EASE = 'power3.out';          // Ease.DEFAULT du site fromanother (easeOutQuart)
+const EASE_INOUT = 'power3.inOut';  // Ease.INOUT
+const DUREE = { sfast: 0.6, fast: 0.8, normal: 1.4, slow: 1.6, vslow: 1.8 };  // enum Duration du site
+
+/* =====================================================================
+   0 bis. EFFETS DE MARQUE — repris de roluron/fromanother-website26
+   · Odometre  ← src/animation/components/Counter
+   · revelerChars ← src/animation/components/Typo/Chars/useChars.ts
+   ===================================================================== */
+
+/* Compteur à rouleau : les dix chiffres empilés, glissement horizontal. */
+class Odometre {
+  constructor(el, longueur){
+    this.el = el; this.el.textContent = '';
+    this.colonnes = Array.from({ length: longueur }, () => {
+      const col = document.createElement('span');
+      col.className = 'odo';
+      for (let n = 0; n < 10; n++){
+        const d = document.createElement('span');
+        d.className = 'js-number'; d.textContent = n;
+        col.appendChild(d);
+      }
+      this.el.appendChild(col);
+      return col;
+    });
+    this.valeur = null;
+  }
+  set(valeur, immediat = false){
+    const txt = String(valeur).padStart(this.colonnes.length, ' ');
+    this.colonnes.forEach((col, i) => {
+      const c = txt[i];
+      col.style.width = c === ' ' ? '0' : '';
+      if (c === ' ') return;
+      col.querySelectorAll('.js-number').forEach((d, n) => {
+        gsap.killTweensOf(d);
+        const vars = { xPercent: -100 * (n - +c) };
+        immediat ? gsap.set(d, vars) : gsap.to(d, { ...vars, duration: DUREE.sfast, ease: EASE_INOUT });
+      });
+    });
+    this.valeur = valeur;
+  }
+}
+
+/* Révélation par caractères : yPercent 115 → 0, stagger 0.015, power3.out. */
+function revelerChars(el, texte){
+  el.textContent = '';
+  const boite = document.createElement('span');
+  boite.className = 'fa-chars';
+  const chars = [...texte].map(c => {
+    const sp = document.createElement('span');
+    sp.className = 'char'; sp.textContent = c === ' ' ? ' ' : c;
+    boite.appendChild(sp); return sp;
+  });
+  el.appendChild(boite);
+  gsap.fromTo(chars, { yPercent: 115 }, { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE });
+}
 
 /* =====================================================================
    1. DONNÉES GÉOGRAPHIQUES — emprises réelles (deltas, bassins, foyers historiques) ; intensités stylisées
@@ -663,7 +718,7 @@ const matAtmo = new THREE.ShaderMaterial({
     uniform float uIntensite; varying vec3 vN;
     void main(){
       float halo = pow(0.62 - dot(vN, vec3(0.0, 0.0, 1.0)), 2.2);
-      gl_FragColor = vec4(vec3(0.16, 0.34, 0.85) * halo, 1.0) * uIntensite;
+      gl_FragColor = vec4(vec3(0.090, 0.251, 0.663) * halo, 1.0) * uIntensite;
     }`,
 });
 scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
@@ -683,7 +738,7 @@ scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
   }
   const geo = new THREE.BufferGeometry().setFromPoints(pts);
   scene.add(new THREE.LineSegments(geo,
-    new THREE.LineBasicMaterial({ color: 0x3E63D9, transparent: true, opacity: 0.085 })));
+    new THREE.LineBasicMaterial({ color: 0x1740A9, transparent: true, opacity: 0.085 })));
 }
 /* =====================================================================
    5. R-02 FEUX — un seul THREE.Points (6000 max), scintillement GPU,
@@ -916,6 +971,48 @@ const matPost = new THREE.ShaderMaterial({
     }`,
 });
 scenePost.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), matPost));
+
+/* ---- Rideau d'ouverture : dissolution par bruit depuis le centre.
+   Portage du shader de transition de page du site fromanother
+   (src/animation/components/PageEffect/shaders.ts). ---- */
+const matRideau = new THREE.ShaderMaterial({
+  transparent: true, depthTest: false, depthWrite: false,
+  uniforms: {
+    uProgression: { value: 0 },        // 0 = opaque, 1 = dissous
+    uCouleur: { value: new THREE.Color(0x051236) },
+  },
+  vertexShader: /* glsl */`
+    varying vec2 vUv;
+    void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`,
+  fragmentShader: /* glsl */`
+    uniform float uProgression; uniform vec3 uCouleur; varying vec2 vUv;
+    vec3 permute(vec3 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
+    float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+      vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
+      vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+      vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
+      vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+      m = m*m; m = m*m;
+      vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+      m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+      vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
+    }
+    void main(){
+      if (uProgression >= 1.0) discard;                       // rideau entièrement dissous
+      if (uProgression <= 0.0){ gl_FragColor = vec4(uCouleur, 1.0); return; }
+      float dist = distance(vUv, vec2(0.5)) - snoise(vUv * 4.0) * 0.12;
+      float rayon = uProgression * 0.85;                      // le trou s'ouvre depuis le centre
+      float masque = smoothstep(rayon - 0.05, rayon, dist);
+      gl_FragColor = vec4(uCouleur, masque);
+    }`,
+});
+const rideau = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), matRideau);
+rideau.renderOrder = 10; rideau.frustumCulled = false;
+scenePost.add(rideau);
 /* =====================================================================
    9. ÉTAT & CÂBLAGE UI — toutes les transitions passent par GSAP
       (opacité / transform / uniforms — jamais de switch sec)
@@ -1050,10 +1147,13 @@ document.addEventListener('click', e => {
 
 /* ---- timeline 2026 → 2050 ---- */
 const curseur = document.getElementById('curseur'), affichageAn = document.getElementById('an');
+const odoAn = new Odometre(affichageAn, 4); odoAn.set(2026, true);
+curseur.style.setProperty('--fill', '0%');
 curseur.addEventListener('input', () => {
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
-  affichageAn.textContent = an;
+  odoAn.set(an);
+  curseur.style.setProperty('--fill', ((an - 2026) / 24 * 100) + '%');
   if (lieuDossier) majDossier();
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE,
@@ -1070,6 +1170,7 @@ curseur.addEventListener('input', () => {
 /* ---- dossier lieu : diagnostic par ville (valeurs illustratives, déterministes) ---- */
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
+const odoScore = new Odometre(document.getElementById('dossier-score'), 3);
 let lieuDossier = null;
 // graine déterministe par nom : mêmes chiffres à chaque visite, en attendant places.json
 function graine(nom){ let x = 0; for (const c of nom) x = (x * 31 + c.charCodeAt(0)) % 997; return n => { x = (x * 73 + 41 + n * 13) % 997; return x / 997; }; }
@@ -1096,9 +1197,10 @@ function majDossier(){
   const { risques, score } = diagnostiquer(l, an);
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${l[1].toUpperCase()}`;
-  document.getElementById('dossier-lieu').textContent = l[0];
+  const elLieu = document.getElementById('dossier-lieu');
+  if (elLieu.dataset.lieu !== l[0]){ elLieu.dataset.lieu = l[0]; revelerChars(elLieu, l[0]); }
   document.getElementById('dossier-annee').textContent = an;
-  document.getElementById('dossier-score').textContent = score;
+  odoScore.set(score, !dossierEl.classList.contains('ouvert'));
   const v = document.getElementById('dossier-verdict');
   v.className = 'verdict ' + (score < 33 ? 'faible' : score < 66 ? 'moderee' : 'forte');
   document.getElementById('dossier-verdict-txt').textContent =
@@ -1158,6 +1260,8 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   boutonSon.textContent = 'Son · on'; boutonSon.classList.add('actif');
   // plan d'ouverture : recul caméra progressif
   gsap.from(camera.position, { x: 0.3, y: 0.45, z: 5.2, duration: 2, ease: EASE });
+  // le rideau se dissout par le bruit, en même temps que le recul caméra
+  gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
 });
 
 /* ---- boucle unique ---- */

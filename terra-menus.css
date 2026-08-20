@@ -1,42 +1,57 @@
 /* =====================================================================
-   TERRA／2050 — restyle final des menus (piste 1c ＋ dossier 2a)
-   Système fromanother, surface night. À charger APRÈS le <style>
-   existant de index.html (ou coller à la fin).
-   Prérequis : dossier fonts/ (Herbik + TWK Lausanne) à côté de index.html.
-   Le dossier lieu (#dossier) est un NOUVEAU bloc : markup dans INTEGRATION.md.
+   TERRA／2050 — restyle des menus (piste 1c ＋ dossier 2a)
+   Design system fromanother, aligné sur roluron/fromanother-website26 :
+   palette brand (dark-blue / yellow / blue), TWK Lausanne 600 en display,
+   Herbik Medium Italic en surtitre, easeOutQuart partout.
+   À charger APRÈS le <style> existant de index.html.
    ===================================================================== */
 
 @font-face { font-family: "Herbik"; src: url("./fonts/Herbik-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: "Herbik"; src: url("./fonts/Herbik-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Herbik"; src: url("./fonts/Herbik-MediumItalic.woff2") format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
 @font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-300.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
 @font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-400Italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
 
-/* ---- Tokens night fromanother. --cyan/--ambre/--alerte restent des
-   couleurs de DONNÉES (shader) ; l'accent UI est le bleu électrique. ---- */
+/* ---- Tokens fromanother (src/styles/_root.scss du site).
+   --cyan/--ambre/--alerte restent des couleurs de DONNÉES (shader). ---- */
 :root {
-  --encre: #05080F;
-  --encre-2: #0A0F1C;
-  --texte: #E8E5E0;
-  --muter: #8A8A92;
-  --hairline: #1E2534;
-  --bleu: #1B4FE8;
-  --serif: "Herbik", "Cormorant Garamond", serif;
+  --encre: #051236;                          /* brand-dark-blue */
+  --encre-2: #071a45;
+  --encre-3: #0b2358;
+  --texte: #FFFDE2;                          /* brand-yellow */
+  --muter: rgba(255, 253, 226, 0.6);         /* text-secondary */
+  --efface: rgba(255, 253, 226, 0.3);        /* text-disabled */
+  --hairline: rgba(255, 253, 226, 0.16);
+  --bleu: #1740A9;                           /* brand-blue */
+  --ease: cubic-bezier(0.165, 0.84, 0.44, 1);        /* easeOutQuart */
+  --ease-inout: cubic-bezier(0.76, 0, 0.24, 1);      /* easeInOutQuart */
   --police: "TWK Lausanne", "Inter", -apple-system, sans-serif;
+  --serif: var(--police);                    /* le display du site est TWK 600, pas Herbik */
+  --herbik: "Herbik", "Cormorant Garamond", serif;
   --mono: var(--police);
 }
+
+/* Rôles typographiques du site : h0/h1/h2 en TWK 600 très serré,
+   b1/b2 en TWK 400, sh1 en Herbik Medium Italic. */
+.fa-display { font-family: var(--police); font-weight: 600; line-height: 0.9; letter-spacing: -0.03em; }
+.fa-sh1 { font-family: var(--herbik); font-weight: 500; font-style: italic; line-height: 0.9; letter-spacing: normal; }
+
+body { background: var(--encre); color: var(--texte); }
 
 /* ---- Chrome ultra-minimal : plus de verre flou, plus de panneaux ---- */
 .panneau { background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
 .micro { font-family: var(--police); font-size: 11px; font-weight: 500; letter-spacing: 0.18em; }
 
 /* Titre : wordmark seul */
-#titre h1 { font-family: var(--serif); font-weight: 400; font-size: 26px; letter-spacing: -0.02em; }
+#titre h1 { font-family: var(--police); font-weight: 600; font-size: 26px; letter-spacing: -0.03em; }
 #titre h1 em { color: var(--bleu); }        /* remplacer <em>//</em> par <em>／</em> */
 #titre .micro { display: none; }
 
 /* Voile d'entrée */
-#voile h1 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; }
+#voile h1 { font-family: var(--police); font-weight: 600; letter-spacing: -0.03em; }
 #voile h1 em { color: var(--bleu); }
 #voile .sous, #voile .jauge { font-family: var(--police); font-size: 11px; font-weight: 500; letter-spacing: 0.18em; }
 #voile .entree { font-family: var(--police); font-size: 12px; font-weight: 500; letter-spacing: 0;
@@ -46,7 +61,7 @@
 #calques { padding: 0; width: auto; }
 #calques .micro { display: none; }
 .calque { padding: 8px 0; gap: 12px; }
-.calque .pastille { width: 9px; height: 9px; background: transparent; border: 1px solid #3A4256; box-sizing: border-box; }
+.calque .pastille { width: 9px; height: 9px; background: transparent; border: 1px solid var(--efface); box-sizing: border-box; }
 .calque.actif .pastille { border-color: transparent; transform: none; }
 .calque .nom { font-weight: 400; font-size: 12.5px; letter-spacing: 0; }
 .calque .code { display: none; }
@@ -63,7 +78,7 @@
 .hotspot .code { display: none; }
 #fiche { display: none; }
 #fiche.visible { display: block; }
-#fiche h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; letter-spacing: -0.02em; }
+#fiche h2 { font-family: var(--police); font-weight: 600; font-size: 24px; letter-spacing: -0.03em; }
 #fiche .metrique { color: var(--muter); }
 #fiche p { max-width: 240px; margin-left: auto; }
 #fiche .metrique { font-family: var(--police); font-size: 10px; letter-spacing: 0.14em; color: var(--muter); }
@@ -78,17 +93,17 @@
   backdrop-filter: none; -webkit-backdrop-filter: none; }
 #resultats li { padding: 12px 18px; border-top: 1px solid var(--hairline); }
 #resultats li:first-child { border-top: none; }
-#resultats li:hover, #resultats li.choisi { background: #121827; transform: none; opacity: 1; }
+#resultats li:hover, #resultats li.choisi { background: var(--encre-3); transform: none; opacity: 1; }
 #resultats li .nom-lieu { font-weight: 400; font-size: 14px; }
 #resultats li .type-lieu { font-family: var(--police); font-size: 10px; letter-spacing: 0.14em; }
 #resultats li.choisi .type-lieu { color: var(--bleu); }
 
 /* Timeline nue : année en Herbik, ligne 1px, pas d'arc-en-ciel */
-#timeline { padding: 0; width: min(480px, 60vw); transition: left 480ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+#timeline { padding: 0; width: min(480px, 60vw); transition: left 480ms var(--ease); }
 /* dossier ouvert : la timeline se recentre sur l'espace restant à gauche (comme la maquette 3a) */
 body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2); width: min(420px, 34vw); }
 #timeline > .micro { display: none; }
-#timeline .an { font-family: var(--serif); font-weight: 400; font-size: 96px; letter-spacing: -0.02em; }
+#timeline .an { font-family: var(--police); font-weight: 600; font-size: 96px; letter-spacing: -0.03em; }
 #curseur { height: 1px; background: var(--hairline); margin-top: 16px; }
 #curseur::-webkit-slider-thumb { background: var(--texte); border: 3px solid var(--encre); }
 #curseur::-moz-range-thumb { background: var(--texte); border: 3px solid var(--encre); }
@@ -112,12 +127,12 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
   scrollbar-width: thin; scrollbar-color: var(--hairline) transparent;
   font-family: var(--police); color: var(--texte);
   opacity: 0; transform: translateX(12px); pointer-events: none;
-  transition: opacity 480ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+  transition: opacity 480ms var(--ease), transform 480ms var(--ease); }
 #dossier.ouvert { opacity: 1; transform: none; pointer-events: auto; }
 #dossier .coords { font-size: 10px; letter-spacing: 0.14em; color: var(--muter); text-transform: uppercase; }
-#dossier .lieu { font-family: var(--serif); font-weight: 400; font-size: 56px; line-height: 1; letter-spacing: -0.02em; }
+#dossier .lieu { font-family: var(--police); font-weight: 600; font-size: 56px; line-height: 1; letter-spacing: -0.03em; }
 #dossier .score { display: flex; align-items: flex-end; gap: 18px; padding-bottom: 22px; border-bottom: 1px solid var(--hairline); }
-#dossier .score .valeur { font-family: var(--serif); font-size: 92px; line-height: 0.9; letter-spacing: -0.02em; }
+#dossier .score .valeur { font-family: var(--police); font-weight: 600; font-size: 92px; line-height: 0.9; letter-spacing: -0.03em; }
 #dossier .score .legende { font-size: 13px; color: var(--muter); white-space: nowrap; }
 #dossier .verdict { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
 #dossier .verdict .point { width: 8px; height: 8px; border-radius: 50%; }
@@ -129,7 +144,7 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 #dossier .risque .ligne { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
 #dossier .risque .pourcent { font-size: 13px; }
 #dossier .risque .barre { height: 2px; background: var(--hairline); }
-#dossier .risque .barre i { display: block; height: 2px; transition: width 600ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+#dossier .risque .barre i { display: block; height: 2px; transition: width 600ms var(--ease); }
 #dossier .risque .detail { font-size: 12px; font-weight: 300; color: var(--muter); }
 #dossier .sources { margin-top: auto; flex: none; font-size: 10px; letter-spacing: 0.1em; color: var(--muter); text-transform: uppercase; }
 #dossier .actions { display: flex; gap: 22px; font-size: 12px; font-weight: 500; margin-top: 12px; }
@@ -138,8 +153,8 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 
 /* Scrim de lisibilité côté dossier (div #scrim-dossier, voir INTEGRATION.md) */
 #scrim-dossier { position: fixed; inset: 0; z-index: 15; pointer-events: none; opacity: 0;
-  background: linear-gradient(270deg, rgba(5, 8, 15, 0.92) 0%, rgba(5, 8, 15, 0.75) 26%, transparent 46%);
-  transition: opacity 480ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+  background: linear-gradient(270deg, rgba(5,18,54,0.94) 0%, rgba(5,18,54,0.8) 26%, transparent 46%);
+  transition: opacity 480ms var(--ease); }
 #scrim-dossier.ouvert { opacity: 1; }
 
 /* =====================================================================
@@ -156,3 +171,78 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 #resultats li:nth-child(6), #dossier .risque:nth-child(6) { animation-delay: 0.20s; }
 #resultats li:nth-child(7), #dossier .risque:nth-child(7) { animation-delay: 0.24s; }
 #resultats li:nth-child(8), #dossier .risque:nth-child(8) { animation-delay: 0.28s; }
+
+/* =====================================================================
+   ALIGNEMENT SUR fromanother-website26
+   Sources : src/styles/_root.scss (tokens), _font.scss (rôles typo),
+   app.scss (.common-link-effect), _animation.scss (.hover_line),
+   animation/components/Counter (compteur à rouleau).
+   ===================================================================== */
+
+/* ---- Surtitres : Herbik Medium Italic (rôle font-sh1 du site) ---- */
+.micro,
+#voile .sous,
+#dossier .coords,
+#dossier .sources,
+#fiche .metrique,
+#resultats li .type-lieu,
+#timeline .bornes,
+.hotspot {
+  font-family: var(--herbik); font-style: italic; font-weight: 500;
+  letter-spacing: normal; text-transform: none; line-height: 0.9;
+}
+.micro, #voile .sous { font-size: 13px; }
+#dossier .coords, #dossier .sources, #fiche .metrique,
+#resultats li .type-lieu, #timeline .bornes { font-size: 13px; }
+.hotspot { font-size: 14px; }
+
+/* ---- Display : TWK Lausanne 600, interlignage 0.9, chasse serrée ---- */
+#voile h1 { font-family: var(--police); font-weight: 600; line-height: 0.9; letter-spacing: -0.03em; }
+#titre h1, #dossier .lieu, #dossier .score .valeur, #timeline .an, #fiche h2 { font-weight: 600; }
+#dossier .lieu, #timeline .an, #dossier .score .valeur { line-height: 0.9; }
+
+/* ---- Corps : TWK 400 / −0.02em (rôle font-b1) ---- */
+#dossier .risque .ligne, #dossier .risque .detail, #resultats li .nom-lieu,
+#fiche p, #dossier .score .legende { letter-spacing: -0.02em; }
+
+/* ---- Le blanc chaud remplace le gris froid partout ---- */
+#dossier .risque .barre { background: var(--hairline); }
+#curseur { background: var(--hairline); }
+#curseur::-webkit-slider-thumb { background: var(--texte); border-color: var(--encre); }
+#curseur::-moz-range-thumb { background: var(--texte); border-color: var(--encre); }
+#champ-recherche::placeholder { color: var(--muter); }
+
+/* ---- Soulignement de lien du site (_animation.scss .hover_line) :
+   dégradé qui pousse depuis la gauche, 0.4s, 2px ---- */
+.fa-lien {
+  --p: 0%;
+  background: linear-gradient(currentColor 0 0) calc(100% - var(--p)) 100% / var(--p) 2px no-repeat;
+  padding-bottom: 3px;
+  transition: background-size 0.4s var(--ease), background-position 0s, opacity 0.4s var(--ease);
+}
+@media (hover: hover) { .fa-lien:hover { --p: 100%; background-size: 100% 2px; } }
+
+/* ---- Compteur à rouleau (Counter/index.tsx) : chiffres empilés,
+   glissement horizontal piloté par GSAP ---- */
+.odo { position: relative; display: inline-block; overflow: clip; vertical-align: top; }
+.odo .js-number { display: block; text-align: center; }
+.odo .js-number:not(:first-child) { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ---- Révélation par caractères (Typo/Chars) : masque + yPercent ---- */
+.fa-chars { display: inline-block; overflow: clip; padding-bottom: 0.115em; margin-bottom: -0.115em; }
+.fa-chars .char { display: inline-block; will-change: transform; }
+
+/* Le soulignement .fa-lien remplace les bordures statiques */
+#dossier .actions span.fa-lien, .hotspot.fa-lien { border-bottom: none; }
+.hotspot.fa-lien { width: auto; }
+/* Le voile s'efface vite : c'est le rideau WebGL qui porte la transition */
+#voile { transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease); }
+
+/* Jauge de chargement : même surtitre Herbik italic que le reste du voile */
+#voile .jauge { font-family: var(--herbik); font-style: italic; font-weight: 500;
+  font-size: 13px; letter-spacing: normal; text-transform: none; }
+#voile .entree { border-color: var(--hairline); color: var(--texte); }
+#voile .entree:hover { opacity: 0.65; }
+
+/* Timeline : remplissage de progression au brand-blue (pas de dégradé) */
+#curseur { background: linear-gradient(90deg, var(--bleu) 0 var(--fill, 0%), var(--hairline) var(--fill, 0%) 100%); }
