@@ -2,10 +2,11 @@
 
 Sorties :
   data/places.json          annuaire de villes GeoNames (nom, ISO2, lat, lon, population)
-  data/risques_2026.png     RGB 2160x1080 = chaleur, secheresse, feux (horizon 2026)
-  data/risques_2050.png     idem, horizon 2050
-  data/risques_mer.png      RGB = submersion 2026, submersion 2050, argiles
-  data/risques_stat.png     RGB = inondations 2026, inondations 2050, masque terre
+  data/grille_a_2026.png    RGB 2160x1080 = jours d'indice de chaleur >32C, jours <0C, deficit hydrique
+  data/grille_a_2050.png    idem, horizon 2050
+  data/grille_b_2026.png    RGB = danger de feu, submersion, inondation fluviale
+  data/grille_b_2050.png    idem, horizon 2050
+  data/grille_c.png         RGB = argiles (indicatif), masque terre, reserve
   data/rivers.json          polylignes des grands fleuves (Natural Earth)
 
 Sources (toutes librement téléchargeables, sans clé) :
@@ -98,6 +99,49 @@ def _erf(x):
     y = 1.0 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741)
                 * t - 0.284496736) * t + 0.254829592) * t * np.exp(-x * x)
     return s * y
+
+
+def canal_chaleur_humide(tmax_an, vapr_hist, tmax_hist):
+    """Jours annuels au-dessus de 32 °C d'indice de chaleur (heat index).
+
+    L'inconfort thermique réel dépend de l'humidité : 35 °C secs à Phoenix et
+    33 °C moites à Singapour ne se vivent pas pareil. On calcule l'indice de
+    chaleur de Rothfusz à partir de la température et de l'humidité relative,
+    cette dernière étant déduite de la pression de vapeur observée (WorldClim
+    vapr, 1970-2000) et de la pression de vapeur saturante.
+
+    Pour les horizons futurs, l'humidité relative est tenue constante — c'est
+    l'hypothèse standard au premier ordre des projections CMIP6 — donc la
+    pression de vapeur suit le réchauffement de tmax.
+    """
+    es = lambda t: 0.6108 * np.exp(17.27 * t / (t + 237.3))     # kPa, Tetens
+    hr_hist = np.clip(vapr_hist / np.maximum(es(tmax_hist), 1e-3), 0.05, 1.0)
+    hr = hr_hist                                                # humidité relative conservée
+    T = tmax_an * 9 / 5 + 32                                    # Rothfusz travaille en °F
+    R = hr * 100
+    HI = (-42.379 + 2.04901523 * T + 10.14333127 * R - 0.22475541 * T * R
+          - 6.83783e-3 * T ** 2 - 5.481717e-2 * R ** 2 + 1.22874e-3 * T ** 2 * R
+          + 8.5282e-4 * T * R ** 2 - 1.99e-6 * T ** 2 * R ** 2)
+    HI = np.where(T < 80, T, HI)
+    HI = (HI - 32) * 5 / 9                                      # retour en °C
+    lat = np.abs(np.linspace(90 - 90 / H, -90 + 90 / H, H))[:, None, None]
+    sigma = 1.7 + 2.6 * np.clip(lat / 55.0, 0, 1)
+    z = (32.0 - HI) / sigma
+    frac = 0.5 * (1.0 - np.vectorize(_erf)(z / np.sqrt(2.0)))
+    return np.nansum(frac * 30.4, axis=-1)
+
+
+def canal_froid(tmin_an):
+    """Jours annuels sous 0 °C, estimés depuis les tmin mensuels.
+
+    Même hypothèse gaussienne que canal_chaleur, sur la borne basse : c'est le
+    coût de chauffage et le gel, l'autre moitié du confort thermique.
+    """
+    lat = np.abs(np.linspace(90 - 90 / H, -90 + 90 / H, H))[:, None, None]
+    sigma = 2.0 + 3.2 * np.clip(lat / 55.0, 0, 1)
+    z = (0.0 - tmin_an) / sigma
+    frac = 0.5 * (1.0 + np.vectorize(_erf)(z / np.sqrt(2.0)))
+    return np.nansum(frac * 30.4, axis=-1)
 
 
 def canal_aridite(tmax_an, prec_an):
@@ -272,27 +316,152 @@ def ecrire_png(chemin, canaux):
     print('  ->', chemin.name, chemin.stat().st_size // 1024, 'Ko')
 
 
+_VILLES_CACHE = None
+
+
 def villes():
+    """Villes GeoNames : les six plus grandes de chaque pays plus toutes celles
+    au-dessus de 200 000 habitants. Chaque entrée porte son nom français et son
+    nom anglais (alternateNamesV2), et les deux servent à la recherche."""
+    global _VILLES_CACHE
+    if _VILLES_CACHE is not None:
+        return _VILLES_CACHE
     z = zipfile.ZipFile(RAW / 'cities15000.zip')
     lignes = z.read('cities15000.txt').decode('utf8').splitlines()
     par_pays = {}
     for ligne in lignes:
         f = ligne.split('\t')
         pop = int(f[14] or 0)
-        par_pays.setdefault(f[8], []).append((pop, f[1], float(f[4]), float(f[5]), f[7]))
-    sortie = []
+        par_pays.setdefault(f[8], []).append(
+            (pop, f[1], float(f[4]), float(f[5]), f[7], int(f[0])))
+    retenues = []
     for iso, liste in par_pays.items():
         liste.sort(reverse=True)
-        # les 6 plus grandes de chaque pays + toutes celles au-dessus de 200 000
-        garde = {id(v): v for v in liste[:6]}
+        garde = {v[5]: v for v in liste[:6]}
         for v in liste:
             if v[0] >= 200_000:
-                garde[id(v)] = v
-        for pop, nom, lat, lon, code in garde.values():
-            sortie.append([nom, iso, round(lat, 3), round(lon, 3), pop,
-                           1 if code == 'PPLC' else 0])
-    sortie.sort(key=lambda v: -v[4])
+                garde[v[5]] = v
+        for pop, nom, lat, lon, code, gid in garde.values():
+            retenues.append([nom, iso, round(lat, 3), round(lon, 3), pop,
+                             1 if code == 'PPLC' else 0, gid])
+    ids = {v[6] for v in retenues}
+    noms = noms_localises(ids)
+    for v in retenues:
+        fr, en = noms.get(v[6], (None, None))
+        v[0] = fr or v[0]
+        v.append(en or v[0])          # nom anglais, pour le basculement de langue
+        v.pop(6)                      # l'identifiant GeoNames ne sert plus
+    retenues.sort(key=lambda v: -v[4])
+    _VILLES_CACHE = retenues
+    return retenues
+
+
+def noms_localises(ids):
+    """(nom_fr, nom_en) par identifiant GeoNames, depuis alternateNamesV2.
+
+    On préfère isPreferredName, puis le premier nom non historique de la langue.
+    """
+    z = zipfile.ZipFile(RAW / 'alternateNamesV2.zip')
+    meilleur = {}
+    with z.open('alternateNamesV2.txt') as fh:
+        for brut in fh:
+            ligne = brut.decode('utf8', 'replace').rstrip('\n')
+            f = ligne.split('\t')
+            if len(f) < 4:
+                continue
+            lang = f[2]
+            if lang not in ('fr', 'en'):
+                continue
+            try:
+                gid = int(f[1])
+            except ValueError:
+                continue
+            if gid not in ids:
+                continue
+            if len(f) > 7 and f[7] == '1':        # isHistoric
+                continue
+            prefere = len(f) > 4 and f[4] == '1'
+            cle = (gid, lang)
+            rang = 0 if prefere else 1
+            if cle not in meilleur or rang < meilleur[cle][0]:
+                meilleur[cle] = (rang, f[3])
+    sortie = {}
+    for (gid, lang), (_, nom) in meilleur.items():
+        fr, en = sortie.get(gid, (None, None))
+        sortie[gid] = (nom, en) if lang == 'fr' else (fr, nom)
     return sortie
+
+
+# Poids des six critères d'habitabilité. Doivent rester identiques à CRITERES
+# dans index.html : le pipeline calibre les percentiles que le client applique.
+POIDS = {'thermique': 0.25, 'eau': 0.20, 'feux': 0.15,
+         'mer': 0.15, 'fleuves': 0.10, 'stabilite': 0.15}
+
+
+def penalites(couches, la, lo, terre):
+    """Pénalités 0-1 des six critères, aux deux horizons, pour un point."""
+    def lit(an, cle):
+        g = couches[an][cle]
+        y = int(round((90 - la) / 180 * H))
+        x = int(round((lo + 180) / 360 * W))
+        for r in range(5):
+            for dy in range(-r, r + 1):
+                for dx in range(-r, r + 1):
+                    if r and max(abs(dx), abs(dy)) != r:
+                        continue
+                    yy, xx = min(H - 1, max(0, y + dy)), (x + dx) % W
+                    if terre[yy, xx] < 0.5:
+                        continue
+                    return float(g[yy, xx])
+        return float(g[min(H - 1, max(0, y)), x % W])
+
+    ecart = (abs(lit(2050, 'chaud') - lit(2026, 'chaud')) * 1.0
+             + abs(lit(2050, 'sec') - lit(2026, 'sec')) * 0.8
+             + abs(lit(2050, 'feux') - lit(2026, 'feux')) * 0.6
+             + abs(lit(2050, 'mer') - lit(2026, 'mer')) * 1.2) / 3.6
+    out = {}
+    for an in (2026, 2050):
+        out[an] = {
+            'thermique': min(1, lit(an, 'chaud') * 1.15 + lit(an, 'froid') * 0.45),
+            'eau': lit(an, 'sec'),
+            'feux': lit(an, 'feux'),
+            'mer': min(1, lit(an, 'mer') * 1.6),
+            'fleuves': lit(an, 'fleuves'),
+            'stabilite': min(1, ecart * 2.2),
+        }
+    return out
+
+
+def calibrer(couches, terre, n_quantiles=21):
+    """Échelle de référence : la distribution des villes AUJOURD'HUI (2026).
+
+    L'indice affiché est un rang parmi les 3579 grandes villes du monde à
+    l'horizon 2026. Deux raisons de figer la référence sur le présent :
+      - sans normalisation, 80 % des villes se tassent au-dessus de 85 ;
+      - en recalibrant à chaque horizon, le réchauffement devient invisible
+        (tout le monde se dégrade, donc les rangs ne bougent pas). Sur une
+        échelle fixée au présent, une ville qui se réchauffe descend vraiment.
+    """
+    vs = villes()
+    par_critere = {c: [] for c in POIDS}
+    for v in vs:
+        la, lo = v[2], v[3]
+        p = penalites(couches, la, lo, terre)[2026]
+        for c in POIDS:
+            par_critere[c].append(p[c])
+    qs = np.linspace(0, 1, n_quantiles)
+    quantiles = {c: [round(float(x), 5) for x in np.quantile(par_critere[c], qs)] for c in POIDS}
+
+    def note_composite(i):
+        s = 0.0
+        for c in POIDS:
+            rang = float(np.interp(par_critere[c][i], quantiles[c], qs))
+            s += (1 - rang) * POIDS[c]
+        return s / sum(POIDS.values())
+
+    composite = sorted(note_composite(i) for i in range(len(vs)))
+    return {'poids': POIDS, 'quantiles': quantiles,
+            'composite': [round(float(x), 5) for x in np.quantile(composite, qs)]}
 
 
 def main():
@@ -301,6 +470,8 @@ def main():
 
     print('· climat WorldClim / CMIP6')
     tmax = {cle: lire_periode('tmax', cle) for _, cle in KNOTS}
+    tmin = {cle: lire_periode('tmin', cle) for _, cle in KNOTS}
+    vapr = lire_periode('vapr', 'hist')                       # humidité observée 1970-2000
     prec = {cle: lire_periode('prec', cle) for _, cle in KNOTS}
 
     print('· élévation ETOPO')
@@ -311,12 +482,12 @@ def main():
     couches = {}
     for an in (2026, 2050):
         t = interp_annee(tmax, an)
+        n = interp_annee(tmin, an)
         p = interp_annee(prec, an)
-        jours35 = canal_chaleur(t)
-        aridite = canal_aridite(t, p)
         couches[an] = dict(
-            chaleur=norm(np.nan_to_num(jours35), 0, 150) * terre,
-            secheresse=norm(-np.nan_to_num(aridite, nan=40.0), -40, -5) * terre,
+            chaud=norm(np.nan_to_num(canal_chaleur_humide(t, vapr, tmax['hist'])), 0, 300) * terre,
+            froid=norm(np.nan_to_num(canal_froid(n)), 0, 200) * terre,
+            sec=norm(-np.nan_to_num(canal_aridite(t, p), nan=40.0), -40, -5) * terre,
             feux=canal_feux(t, p, terre),
             mer=frac_sous[cotes[an]] * terre,
             fleuves=canal_fleuves(p, terre),
@@ -325,23 +496,25 @@ def main():
     argiles = canal_argiles(terre)
 
     print('· écriture')
+    flou = lambda a: gaussian_filter(a, 0.6)
     for an in (2026, 2050):
         c = couches[an]
-        ecrire_png(OUT / f'risques_{an}.png',
-                   [gaussian_filter(c['chaleur'], 0.6), gaussian_filter(c['secheresse'], 0.6),
-                    gaussian_filter(c['feux'], 0.6)])
-    ecrire_png(OUT / 'risques_mer.png',
-               [couches[2026]['mer'], couches[2050]['mer'], argiles])
-    ecrire_png(OUT / 'risques_stat.png',
-               [couches[2026]['fleuves'], couches[2050]['fleuves'], terre])
+        ecrire_png(OUT / f'grille_a_{an}.png', [flou(c['chaud']), flou(c['froid']), flou(c['sec'])])
+        ecrire_png(OUT / f'grille_b_{an}.png', [flou(c['feux']), c['mer'], c['fleuves']])
+    ecrire_png(OUT / 'grille_c.png', [argiles, terre, np.zeros_like(terre)])
 
     fl = exporter_fleuves()
     (OUT / 'rivers.json').write_text(json.dumps(fl, ensure_ascii=False, separators=(',', ':')))
     print(f'  -> rivers.json {len(fl)} tronçons, {(OUT / "rivers.json").stat().st_size // 1024} Ko')
 
+    print('· calibration des percentiles')
+    calib = calibrer(couches, terre)
+    (OUT / 'calibration.json').write_text(json.dumps(calib, separators=(',', ':')))
+    print('  -> calibration.json')
+
     v = villes()
     (OUT / 'places.json').write_text(json.dumps(
-        {'schema': ['nom', 'iso2', 'lat', 'lon', 'pop', 'capitale'], 'villes': v},
+        {'schema': ['nom_fr', 'iso2', 'lat', 'lon', 'pop', 'capitale', 'nom_en'], 'villes': v},
         ensure_ascii=False, separators=(',', ':')))
     print(f'  -> places.json {len(v)} villes, {(OUT / "places.json").stat().st_size // 1024} Ko')
 

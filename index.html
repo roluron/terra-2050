@@ -173,16 +173,16 @@
 
 <!-- voile d'entrée : sert aussi de geste utilisateur pour l'audio -->
 <div id="voile">
-  <div class="sous">Observatoire prospectif</div>
+  <div class="sous" data-t="sous1"></div>
   <h1>terra<em>／</em>2050</h1>
-  <div class="sous">Résilience climatique · simulation interactive</div>
+  <div class="sous" data-t="sous2"></div>
   <div class="jauge" id="jauge">CHARGEMENT 0%</div>
-  <button class="entree" id="bouton-entree">Initialiser</button>
+  <button class="entree" id="bouton-entree" data-t="initialiser"></button>
 </div>
 
 <header id="titre" class="panneau">
   <h1 id="wordmark"><span>terra<em>／</em>2050</span></h1>
-  <div class="micro">Sept calques de risque · projection 2026→2050</div>
+  <div class="micro" data-t="sousHeader"></div>
 </header>
 
 <div id="recherche" class="panneau">
@@ -194,18 +194,18 @@
 </div>
 
 <nav id="calques" class="panneau" aria-label="Calques de risque">
-  <div class="micro">Calques de risque</div>
-  <button class="calque" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom">Chaleur extrême / ICU</span><span class="code">R-01</span></button>
-  <button class="calque" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom">Incendies de forêt</span><span class="code">R-02</span></button>
-  <button class="calque" data-cle="argile" data-couleur="ambre"><span class="pastille"></span><span class="nom">Retrait-gonflement argiles</span><span class="code">R-03</span></button>
-  <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom">Sécheresses hivernales</span><span class="code">R-04</span></button>
-  <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom">Submersion marine</span><span class="code">R-05</span></button>
-  <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom">Inondations fluviales</span><span class="code">R-06</span></button>
-  <button class="calque" data-cle="flux"><span class="pastille"></span><span class="nom">Résilience &amp; flux</span><span class="code">R-07</span></button>
+  <div class="micro" data-t="calques"></div>
+  <button class="calque" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
+  <button class="calque" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
+  <button class="calque" data-cle="argile" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-03</span></button>
+  <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
+  <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
+  <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
+  <button class="calque" data-cle="flux"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
 </nav>
 
 <aside id="hotspots" class="panneau" aria-label="Hotspots mondiaux">
-  <div class="micro">Hotspots mondiaux</div>
+  <div class="micro" data-t="hotspots"></div>
   <button class="hotspot fa-lien" data-spot="paris"><span class="code">48.85°N · 2.35°E</span>Paris — le piège des flux</button>
   <button class="hotspot fa-lien" data-spot="amazonie"><span class="code">3.4°S · 62.2°O</span>Amazonie — mégafeux</button>
   <button class="hotspot fa-lien" data-spot="bangladesh"><span class="code">22.8°N · 90.3°E</span>Bangladesh — submersion</button>
@@ -227,6 +227,7 @@
 <div id="util" class="panneau">
   <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
   <button class="bouton-ico fa-lien" id="bouton-perf">Perf</button>
+  <button class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language / Langue">FR · <em>en</em></button>
 </div>
 
 <div id="hud" class="panneau"></div>
@@ -245,13 +246,21 @@
   <div class="score">
     <span class="valeur" id="dossier-score"></span>
     <div>
-      <div class="legende">／100 · indice d'exposition <span id="dossier-annee">2050</span></div>
+      <div class="legende"><span data-t="legendeIndice"></span> <span id="dossier-annee">2050</span></div>
       <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
     </div>
   </div>
+  <p class="conseil" id="dossier-conseil"></p>
+  <div id="dossier-maintenant"></div>
+  <div class="trajectoire">
+    <div class="titre-bloc"><span data-t="trajectoire"></span><span id="dossier-ecart"></span></div>
+    <svg id="dossier-courbe" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
+  </div>
   <div id="dossier-risques"></div>
-  <div class="sources">Valeurs illustratives · sources à câbler : IPCC AR6 · Copernicus · WRI Aqueduct · BRGM</div>
-  <div class="actions"><span class="fa-lien" id="dossier-fermer">Fermer ×</span><span class="fa-lien">Partager ↗</span></div>
+  <div id="dossier-ailleurs"></div>
+  <div class="sources" id="dossier-sources"></div>
+  <div class="actions"><span class="fa-lien" id="dossier-fermer"></span><span class="fa-lien" id="dossier-partage"></span></div>
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
@@ -348,58 +357,294 @@ const HOTSPOTS = {
                 texte:'Il pleut plus en hiver, mais les sols rocheux ruissellent sans retenir l’eau : la recharge n’alimente plus l’été. Le calque sécheresse le visualise.' },
 };
 
-// Annuaire de recherche : villes, pays, régions — [nom, type, lat, lon]
-// (coordonnées géographiques factuelles ; n'importe quel lieu peut être ajouté ici)
-const LIEUX = [
-  // villes
-  ['Paris','ville',48.85,2.35],['Lyon','ville',45.76,4.83],['Marseille','ville',43.30,5.37],
-  ['Bordeaux','ville',44.84,-0.58],['Lille','ville',50.63,3.07],['Toulouse','ville',43.60,1.44],
-  ['Nantes','ville',47.22,-1.55],['Nice','ville',43.70,7.27],['Strasbourg','ville',48.58,7.75],
-  ['Brest','ville',48.39,-4.49],['Londres','ville',51.50,-0.12],['Berlin','ville',52.52,13.40],
-  ['Madrid','ville',40.42,-3.70],['Barcelone','ville',41.39,2.17],['Rome','ville',41.90,12.50],
-  ['Milan','ville',45.46,9.19],['Amsterdam','ville',52.37,4.90],['Bruxelles','ville',50.85,4.35],
-  ['Genève','ville',46.20,6.14],['Zurich','ville',47.37,8.54],['Vienne','ville',48.21,16.37],
-  ['Prague','ville',50.08,14.44],['Varsovie','ville',52.23,21.01],['Lisbonne','ville',38.72,-9.14],
-  ['Dublin','ville',53.35,-6.26],['Copenhague','ville',55.68,12.57],['Stockholm','ville',59.33,18.07],
-  ['Oslo','ville',59.91,10.75],['Helsinki','ville',60.17,24.94],['Athènes','ville',37.98,23.73],
-  ['Istanbul','ville',41.01,28.98],['Moscou','ville',55.75,37.62],['Kyiv','ville',50.45,30.52],
-  ['New York','ville',40.71,-74.00],['Los Angeles','ville',34.05,-118.24],['Chicago','ville',41.88,-87.63],
-  ['San Francisco','ville',37.77,-122.42],['Miami','ville',25.76,-80.19],['Houston','ville',29.76,-95.37],
-  ['Mexico','ville',19.43,-99.13],['Montréal','ville',45.50,-73.57],['Toronto','ville',43.65,-79.38],
-  ['Vancouver','ville',49.28,-123.12],['São Paulo','ville',-23.55,-46.63],['Rio de Janeiro','ville',-22.91,-43.17],
-  ['Buenos Aires','ville',-34.60,-58.38],['Santiago','ville',-33.45,-70.67],['Lima','ville',-12.05,-77.04],
-  ['Bogotá','ville',4.71,-74.07],['Le Caire','ville',30.04,31.24],['Lagos','ville',6.52,3.37],
-  ['Nairobi','ville',-1.29,36.82],['Johannesburg','ville',-26.20,28.05],['Le Cap','ville',-33.92,18.42],
-  ['Casablanca','ville',33.57,-7.59],['Dakar','ville',14.72,-17.47],['Addis-Abeba','ville',9.03,38.74],
-  ['Dubaï','ville',25.20,55.27],['Riyad','ville',24.71,46.68],['Téhéran','ville',35.69,51.39],
-  ['Mumbai','ville',19.08,72.88],['Delhi','ville',28.61,77.21],['Bangalore','ville',12.97,77.59],
-  ['Calcutta','ville',22.57,88.36],['Dacca','ville',23.81,90.41],['Bangkok','ville',13.76,100.50],
-  ['Singapour','ville',1.35,103.82],['Jakarta','ville',-6.21,106.85],['Manille','ville',14.60,120.98],
-  ['Hong Kong','ville',22.32,114.17],['Shanghai','ville',31.23,121.47],['Pékin','ville',39.90,116.40],
-  ['Shenzhen','ville',22.54,114.06],['Séoul','ville',37.57,126.98],['Tokyo','ville',35.68,139.69],
-  ['Osaka','ville',34.69,135.50],['Sydney','ville',-33.87,151.21],['Melbourne','ville',-37.81,144.96],
-  ['Auckland','ville',-36.85,174.76],['Hawaï','ville',21.31,-157.86],
-  // pays (centroïdes)
-  ['France','pays',46.60,2.40],['Allemagne','pays',51.10,10.40],['Espagne','pays',40.30,-3.70],
-  ['Italie','pays',42.80,12.80],['Royaume-Uni','pays',54.00,-2.50],['Portugal','pays',39.60,-8.00],
-  ['Pays-Bas','pays',52.20,5.30],['Belgique','pays',50.60,4.60],['Suisse','pays',46.80,8.20],
-  ['Norvège','pays',64.50,11.50],['Suède','pays',62.00,15.00],['Pologne','pays',52.00,19.40],
-  ['Ukraine','pays',49.00,32.00],['Grèce','pays',39.00,22.00],['États-Unis','pays',39.50,-98.35],
-  ['Canada','pays',56.00,-106.00],['Mexique','pays',23.60,-102.50],['Brésil','pays',-10.80,-52.90],
-  ['Argentine','pays',-34.00,-64.00],['Chili','pays',-31.80,-71.00],['Pérou','pays',-9.20,-75.00],
-  ['Égypte','pays',26.80,30.80],['Maroc','pays',31.80,-7.00],['Algérie','pays',28.00,1.70],
-  ['Nigeria','pays',9.10,8.70],['Éthiopie','pays',9.10,40.50],['Kenya','pays',0.20,37.90],
-  ['Afrique du Sud','pays',-29.00,24.00],['Inde','pays',21.00,78.00],['Chine','pays',35.00,105.00],
-  ['Japon','pays',36.20,138.25],['Indonésie','pays',-2.50,118.00],['Thaïlande','pays',15.90,101.00],
-  ['Vietnam','pays',14.10,108.30],['Bangladesh','pays',23.70,90.40],['Pakistan','pays',30.40,69.30],
-  ['Arabie Saoudite','pays',24.00,45.00],['Turquie','pays',39.00,35.20],['Australie','pays',-25.00,133.00],
-  ['Nouvelle-Zélande','pays',-41.80,172.80],['Russie','pays',61.50,105.30],
-  // régions clés du récit
-  ['Amazonie','région',-3.4,-62.2],['Bretagne','région',48.2,-2.9],['Bassin parisien','région',48.9,2.6],
-  ['Delta du Nil','région',31.2,30.5],['Floride','région',27.8,-81.7],['Sahara','région',23.0,5.0],
-  ['Sahel','région',15.0,5.0],['Sibérie','région',62.0,110.0],['Bassin méditerranéen','région',38.0,15.0],
-  ['Delta du Mékong','région',9.8,105.8],['Californie','région',36.8,-119.4],['Pampas','région',-34.0,-61.0],
+/* =====================================================================
+   1 bis. LANGUES — tout le texte d'interface passe par T(). Les éléments
+   porteurs de data-t sont réécrits par traduire().
+   ===================================================================== */
+const TEXTES = {
+  fr: {
+    lang: 'fr',
+    sous1: 'Observatoire prospectif',
+    sous2: 'Résilience climatique · simulation interactive',
+    chargement: p => `Chargement ${p}%`,
+    initialiser: 'Initialiser',
+    chercher: 'Chercher une ville — ⌘K',
+    aucunLieu: 'Aucune ville trouvée',
+    sousHeader: 'Habitabilité climatique · projection 2026→2050',
+    calques: 'Calques de risque',
+    hotspots: 'Hotspots mondiaux',
+    son: e => e ? 'Son · on' : 'Son · off',
+    calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
+      argile: 'Retrait-gonflement argiles', secheresse: 'Sécheresse',
+      mer: 'Submersion marine', fleuves: 'Inondations fluviales', flux: 'Résilience & flux' },
+    critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
+      mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
+    legendeIndice: '／100 · indice d’habitabilité',
+    verdict: { bon: 'Habitabilité solide', moyen: 'Habitabilité sous tension', dur: 'Habitabilité dégradée' },
+    conseil: (n, faible, an, delta) => ({
+      bon: `En ${an}, rester tient : aucun facteur n’est critique. Le point faible reste ${faible.toLowerCase()}.`,
+      moyen: `En ${an}, rester demande de s’adapter sur ${faible.toLowerCase()}.`,
+      dur: `En ${an}, ${faible.toLowerCase()} pèse assez pour poser la question du départ.`,
+    })[n] + (delta <= -8 ? ` L’indice perd ${-delta} points d’ici 2050.` : delta >= 8 ? ` L’indice gagne ${delta} points d’ici 2050.` : ''),
+    aujourdhui: 'En ce moment',
+    ras: 'Aucun événement naturel majeur en cours dans un rayon de 800 km.',
+    rasChargement: 'Interrogation du flux NASA EONET…',
+    rasHorsLigne: 'Flux d’événements indisponible.',
+    aKm: (n, d) => `${n} · à ${d} km`,
+    trajectoire: 'Trajectoire de l’indice',
+    ailleurs: 'Plus habitable, à proximité',
+    rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
+    fermer: 'Fermer ×', partage: 'Partager ↗',
+    detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
+    detFroid: j => `${j} jours de gel par an`,
+    detEau: v => `déficit hydrique ${v}/100 (indice de De Martonne)`,
+    detFeux: v => `danger météo de feu ${v}/100`,
+    detMer: v => `${v} % des terres alentour sous la cote de submersion`,
+    detFleuves: v => `exposition fluviale ${v}/100`,
+    detStab: v => `${v} points d’écart entre le climat de 2026 et celui de 2050`,
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · Natural Earth · GeoNames · NASA EONET',
+    argilesIndicatif: 'Le calque argiles est indicatif : pas de source globale ouverte.',
+  },
+  en: {
+    lang: 'en',
+    sous1: 'Prospective observatory',
+    sous2: 'Climate resilience · interactive simulation',
+    chargement: p => `Loading ${p}%`,
+    initialiser: 'Initialise',
+    chercher: 'Search a city — ⌘K',
+    aucunLieu: 'No city found',
+    sousHeader: 'Climate habitability · 2026→2050 projection',
+    calques: 'Risk layers',
+    hotspots: 'Global hotspots',
+    son: e => e ? 'Sound · on' : 'Sound · off',
+    calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
+      argile: 'Clay shrink-swell', secheresse: 'Drought',
+      mer: 'Coastal flooding', fleuves: 'River flooding', flux: 'Resilience & flows' },
+    critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
+      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
+    legendeIndice: '／100 · habitability index',
+    verdict: { bon: 'Solid habitability', moyen: 'Habitability under strain', dur: 'Degraded habitability' },
+    conseil: (n, faible, an, delta) => ({
+      bon: `In ${an}, staying holds: no factor is critical. The weak point is ${faible.toLowerCase()}.`,
+      moyen: `In ${an}, staying means adapting on ${faible.toLowerCase()}.`,
+      dur: `In ${an}, ${faible.toLowerCase()} weighs enough to raise the question of leaving.`,
+    })[n] + (delta <= -8 ? ` The index loses ${-delta} points by 2050.` : delta >= 8 ? ` The index gains ${delta} points by 2050.` : ''),
+    aujourdhui: 'Right now',
+    ras: 'No major natural event under way within 800 km.',
+    rasChargement: 'Querying the NASA EONET feed…',
+    rasHorsLigne: 'Event feed unavailable.',
+    aKm: (n, d) => `${n} · ${d} km away`,
+    trajectoire: 'Index trajectory',
+    ailleurs: 'More habitable, nearby',
+    rienDeMieux: 'No city in the region is meaningfully more habitable.',
+    fermer: 'Close ×', partage: 'Share ↗',
+    detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
+    detFroid: j => `${j} freezing days a year`,
+    detEau: v => `water deficit ${v}/100 (De Martonne index)`,
+    detFeux: v => `fire weather danger ${v}/100`,
+    detMer: v => `${v} % of surrounding land below the flood line`,
+    detFleuves: v => `river exposure ${v}/100`,
+    detStab: v => `${v} points between the 2026 and 2050 climate`,
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · Natural Earth · GeoNames · NASA EONET',
+    argilesIndicatif: 'The clay layer is indicative: no open global source.',
+  },
+};
+let langue = (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+const T = () => TEXTES[langue];
+
+/* =====================================================================
+   1 ter. ANNUAIRE & LECTURE DES GRILLES
+   Villes : GeoNames (data/places.json). Valeurs de risque : les MÊMES PNG
+   que le shader, donc le dossier ne peut pas diverger du globe.
+   ===================================================================== */
+let LIEUX = [];
+// [nom_fr, iso2, lat, lon, pop, capitale, nom_en] — le nom affiché suit la langue
+const nomVille = l => (langue === 'en' ? l[6] : l[0]) || l[0];
+const nomPays = (() => {
+  const cache = {};
+  return iso => {
+    const cle = langue + iso;
+    if (cache[cle] === undefined){
+      try { cache[cle] = new Intl.DisplayNames([langue], { type: 'region' }).of(iso) || iso; }
+      catch (e) { cache[cle] = iso; }
+    }
+    return cache[cle];
+  };
+})();
+
+const GRILLES = {};
+function chargerGrilleDonnees(fichier, cle){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = img.width; c.height = img.height;
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      GRILLES[cle] = { w: c.width, h: c.height, px: ctx.getImageData(0, 0, c.width, c.height).data };
+      resolve(true);
+    };
+    img.onerror = () => resolve(false);
+    img.src = fichier;
+  });
+}
+
+/* Lecture d'un canal à une position. Une ville côtière tombe souvent sur un
+   texel d'océan à 10' : on cherche alors le texel terrestre le plus proche,
+   sinon un port renverrait zéro sur tous les critères. */
+function lire(cle, canal, lat, lon){
+  const g = GRILLES[cle];
+  if (!g) return 0;
+  const terre = GRILLES.c;
+  const x0 = Math.round((lon + 180) / 360 * g.w);
+  const y0 = Math.round((90 - lat) / 180 * g.h);
+  for (let r = 0; r <= 4; r++){
+    for (let dy = -r; dy <= r; dy++){
+      for (let dx = -r; dx <= r; dx++){
+        if (r > 0 && Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+        const x = ((x0 + dx) % g.w + g.w) % g.w;
+        const y = Math.min(g.h - 1, Math.max(0, y0 + dy));
+        // canal vert de grille_c = masque terre
+        if (terre && terre.px[(y * terre.w + x) * 4 + 1] < 128) continue;
+        return g.px[(y * g.w + x) * 4 + canal] / 255;
+      }
+    }
+  }
+  const y = Math.min(g.h - 1, Math.max(0, y0));
+  return g.px[(y * g.w + ((x0 % g.w + g.w) % g.w)) * 4 + canal] / 255;
+}
+// interpolation entre l'horizon 2026 et l'horizon 2050
+const lireT = (grille, canal, lat, lon, t) =>
+  lire(grille + '2026', canal, lat, lon) * (1 - t) + lire(grille + '2050', canal, lat, lon) * t;
+
+/* =====================================================================
+   1 quater. INDICE D'HABITABILITÉ /100 — plus haut = plus vivable.
+   Six critères, tous issus de mesures ou de projections publiées ; aucune
+   valeur inventée. Chaque critère renvoie une PÉNALITÉ 0-1 ; l'indice est
+   100 moins la moyenne pondérée des pénalités.
+   ===================================================================== */
+const CRITERES = [
+  { cle: 'thermique', poids: 0.25, couleur: '#E06A3C',
+    // inconfort = chaleur extrême (dominante) et gel prolongé
+    penalite: (la, lo, t) => Math.min(1, lireT('a', 0, la, lo, t) * 1.15
+                                       + lireT('a', 1, la, lo, t) * 0.45),
+    detail: (la, lo, t) => T().detChaud(Math.round(lireT('a', 0, la, lo, t) * 300),
+                                        Math.round((lireT('a', 0, la, lo, 1) - lireT('a', 0, la, lo, 0)) * 300))
+            + ' · ' + T().detFroid(Math.round(lireT('a', 1, la, lo, t) * 200)) },
+  { cle: 'eau', poids: 0.20, couleur: '#A07830',
+    penalite: (la, lo, t) => lireT('a', 2, la, lo, t),
+    detail: (la, lo, t) => T().detEau(Math.round(lireT('a', 2, la, lo, t) * 100)) },
+  { cle: 'feux', poids: 0.15, couleur: '#C94F2E',
+    penalite: (la, lo, t) => lireT('b', 0, la, lo, t),
+    detail: (la, lo, t) => T().detFeux(Math.round(lireT('b', 0, la, lo, t) * 100)) },
+  { cle: 'mer', poids: 0.15, couleur: '#4D7CF2',
+    penalite: (la, lo, t) => Math.min(1, lireT('b', 1, la, lo, t) * 1.6),
+    detail: (la, lo, t) => T().detMer(Math.round(lireT('b', 1, la, lo, t) * 1000) / 10) },
+  { cle: 'fleuves', poids: 0.10, couleur: '#6FA3FF',
+    penalite: (la, lo, t) => lireT('b', 2, la, lo, t),
+    detail: (la, lo, t) => T().detFleuves(Math.round(lireT('b', 2, la, lo, t) * 100)) },
+  { cle: 'stabilite', poids: 0.15, couleur: '#2E8F6A',
+    // un lieu durable est un lieu qui bouge peu : écart 2026 -> 2050
+    penalite: (la, lo) => Math.min(1, ecartClimatique(la, lo) * 2.2),
+    detail: (la, lo) => T().detStab(Math.round(ecartClimatique(la, lo) * 100)) },
 ];
+const POIDS_TOTAL = CRITERES.reduce((s, c) => s + c.poids, 0);
+
+/* Calibration : distribution des pénalités sur les 3579 villes (produite par
+   tools/pipeline.py). L'indice est un RANG parmi les grandes villes du monde,
+   pas une note absolue — sans cela 80 % des villes se tassent au-dessus de 85
+   et la timeline ne fait presque rien bouger. */
+let CALIBRATION = null;
+function percentile(cle, valeur){
+  const q = CALIBRATION && CALIBRATION.quantiles[cle];
+  if (!q) return valeur;
+  if (valeur <= q[0]) return 0;
+  if (valeur >= q[q.length - 1]) return 1;
+  for (let i = 1; i < q.length; i++){
+    if (valeur <= q[i]){
+      const large = q[i] - q[i - 1];
+      const f = large > 1e-9 ? (valeur - q[i - 1]) / large : 0;
+      return (i - 1 + f) / (q.length - 1);
+    }
+  }
+  return 1;
+}
+
+function ecartClimatique(la, lo){
+  let d = 0;
+  d += Math.abs(lire('a2050', 0, la, lo) - lire('a2026', 0, la, lo)) * 1.0;   // jours > 35 °C
+  d += Math.abs(lire('a2050', 2, la, lo) - lire('a2026', 2, la, lo)) * 0.8;   // déficit hydrique
+  d += Math.abs(lire('b2050', 0, la, lo) - lire('b2026', 0, la, lo)) * 0.6;   // danger de feu
+  d += Math.abs(lire('b2050', 1, la, lo) - lire('b2026', 1, la, lo)) * 1.2;   // submersion
+  return d / 3.6;
+}
+
+function noteCritere(c, lat, lon, t){
+  return 1 - percentile(c.cle, Math.min(1, c.penalite(lat, lon, t)));
+}
+function indiceHabitabilite(lat, lon, annee){
+  const t = Math.min(1, Math.max(0, (annee - 2026) / 24));
+  let somme = 0;
+  for (const c of CRITERES) somme += noteCritere(c, lat, lon, t) * c.poids;
+  const brut = somme / POIDS_TOTAL;
+  // rang sur l'échelle de référence des villes en 2026 : le réchauffement
+  // fait donc réellement descendre une ville quand on avance la timeline
+  const q = CALIBRATION && CALIBRATION.composite;
+  if (!q) return Math.round(brut * 100);
+  if (brut <= q[0]) return 0;
+  if (brut >= q[q.length - 1]) return 100;
+  for (let i = 1; i < q.length; i++){
+    if (brut <= q[i]){
+      const large = q[i] - q[i - 1];
+      const f = large > 1e-9 ? (brut - q[i - 1]) / large : 0;
+      return Math.round((i - 1 + f) / (q.length - 1) * 100);
+    }
+  }
+  return 100;
+}
+const niveauDe = i => i >= 66 ? 'bon' : i >= 40 ? 'moyen' : 'dur';
+
+/* =====================================================================
+   1 quinquies. ÉVÉNEMENTS EN COURS — NASA EONET v3 (open, sans clé) et
+   séismes significatifs USGS. Ce sont des observations, pas des
+   projections : elles ne servent qu'à l'état « en ce moment ».
+   ===================================================================== */
+const EVENEMENTS = { etat: 'attente', liste: [] };
+function chargerEvenements(){
+  const eonet = fetch('https://eonet.gsfc.nasa.gov/api/v3/events?status=open&days=30&limit=200')
+    .then(r => r.json())
+    .then(j => (j.events || []).flatMap(e => {
+      const g = (e.geometry || [])[e.geometry.length - 1];
+      if (!g || !g.coordinates) return [];
+      const c = Array.isArray(g.coordinates[0]) ? g.coordinates.flat(9) : g.coordinates;
+      return [{ titre: e.title, categorie: (e.categories || [])[0]?.title || '',
+                lon: +c[0], lat: +c[1], date: g.date }];
+    }));
+  const usgs = fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson')
+    .then(r => r.json())
+    .then(j => (j.features || []).map(f => ({
+      titre: f.properties.title, categorie: 'Earthquakes',
+      lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1],
+      date: new Date(f.properties.time).toISOString() })));
+  return Promise.allSettled([eonet, usgs]).then(rs => {
+    EVENEMENTS.liste = rs.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+    EVENEMENTS.etat = EVENEMENTS.liste.length ? 'ok' : 'vide';
+  });
+}
+// distance grand-cercle en km
+function distanceKm(la1, lo1, la2, lo2){
+  const R = 6371, r = Math.PI / 180;
+  const dLa = (la2 - la1) * r, dLo = (lo2 - lo1) * r;
+  const a = Math.sin(dLa / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin(dLo / 2) ** 2;
+  return Math.round(2 * R * Math.asin(Math.sqrt(a)));
+}
+function evenementsPres(lat, lon, rayon = 800){
+  return EVENEMENTS.liste
+    .map(e => ({ ...e, d: distanceKm(lat, lon, e.lat, e.lon) }))
+    .filter(e => e.d <= rayon)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, 4);
+}
 
 /* =====================================================================
    2. SOUNDMANAGER — singleton Howler (architecture de référence,
@@ -1071,13 +1316,22 @@ function afficherResultats(){
   const q = normaliser(champ.value.trim());
   liste.innerHTML = ''; indiceChoisi = -1;
   if (q.length < 2){ liste.classList.remove('ouvert'); return; }
-  resultatsActuels = LIEUX.filter(l => normaliser(l[0]).includes(q)).slice(0, 7);
+  // priorité au préfixe puis à la population : « par » doit donner Paris d'abord
+  // les deux graphies sont cherchées : « Seville » comme « Séville »
+  const debut = [], dedans = [];
+  for (const l of LIEUX){
+    const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
+    if (a.startsWith(q) || b.startsWith(q)) debut.push(l);
+    else if (a.includes(q) || b.includes(q)) dedans.push(l);
+    if (debut.length > 40) break;
+  }
+  resultatsActuels = debut.concat(dedans).slice(0, 7);
   if (!resultatsActuels.length){
-    liste.innerHTML = '<li class="vide">Aucun lieu répertorié</li>';
+    liste.innerHTML = `<li class="vide">${T().aucunLieu}</li>`;
   } else {
     for (const l of resultatsActuels){
       const li = document.createElement('li');
-      li.innerHTML = `<span class="nom-lieu">${l[0]}</span><span class="type-lieu">${l[1]}</span>`;
+      li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${nomPays(l[1])}</span>`;
       li.addEventListener('click', () => choisirLieu(l));
       li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
       liste.appendChild(li);
@@ -1087,11 +1341,11 @@ function afficherResultats(){
 }
 function choisirLieu(l){
   liste.classList.remove('ouvert');
-  champ.value = l[0]; champ.blur();
+  champ.value = nomVille(l); champ.blur();
   ouvrirDossier(l);
   SoundManager.play('camera_fly');
   controles.autoRotate = false;
-  const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(l[1] === 'pays' ? 3.0 : 2.6);
+  const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(2.45);
   if (volEnCours) volEnCours.kill();
   volEnCours = gsap.to(camera.position, {
     x: cible.x, y: cible.y, z: cible.z, duration: 1.8, ease: EASE,
@@ -1101,7 +1355,7 @@ function choisirLieu(l){
   gsap.to(fiche, { opacity: 0, y: 6, duration: 0.3, ease: EASE, onComplete: () => {
     document.getElementById('fiche-metrique').textContent =
       `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'}`;
-    document.getElementById('fiche-titre').textContent = l[0];
+    document.getElementById('fiche-titre').textContent = nomVille(l);
     document.getElementById('fiche-texte').textContent =
       'Position localisée. Activez les calques de risque pour projeter les expositions de ce territoire à l’horizon 2050.';
     gsap.to(fiche, { opacity: 1, y: 0, duration: 0.5, ease: EASE });
@@ -1234,48 +1488,152 @@ champ.addEventListener('blur',  () => gsap.to(etatVerre, { force: 0.55, duration
 /* ---- dossier lieu : diagnostic par ville (valeurs illustratives, déterministes) ---- */
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
-const odoScore = new Odometre(document.getElementById('dossier-score'), 3);
+const odoIndice = new Odometre(document.getElementById('dossier-score'), 3);
 let lieuDossier = null;
-// graine déterministe par nom : mêmes chiffres à chaque visite, en attendant places.json
-function graine(nom){ let x = 0; for (const c of nom) x = (x * 31 + c.charCodeAt(0)) % 997; return n => { x = (x * 73 + 41 + n * 13) % 997; return x / 997; }; }
-const RISQUES_DIAG = [
-  ['Chaleur extrême',  '#E06A3C', p => `＋${Math.round(p * 0.45)} jours au-dessus de 35°C par an`],
-  ['Sécheresse',       '#A07830', p => `−${Math.round(p * 0.26)}% de recharge des nappes`],
-  ['Incendies de forêt','#C94F2E', p => `saison à risque allongée de ${Math.round(p * 0.33)} jours`],
-  ['Inondations',      '#6FA3FF', p => p > 50 ? 'épisodes intenses plus fréquents' : 'risque modéré'],
-  ['Submersion marine','#4D7CF2', p => `${Math.max(1, Math.round(p * 0.14))}% du territoire sous ＋0.4 m`],
-];
+/* Diagnostic d'un lieu à une année : six critères + indice /100. */
 function diagnostiquer(l, an){
-  const g = graine(l[0]);
-  const prog = 0.3 + 0.7 * (an - 2026) / 24;
-  const risques = RISQUES_DIAG.map(([nom, couleur, detail], i) => {
-    const base = 25 + g(i) * 65;                       // 25..90 à l'horizon 2050
-    const pct = Math.round(base * prog);
-    return { nom, couleur, pct, detail: detail(pct) };
+  const t = Math.min(1, Math.max(0, (an - 2026) / 24));
+  const criteres = CRITERES.map(c => {
+    const note = noteCritere(c, l[2], l[3], t);
+    return { cle: c.cle, couleur: c.couleur, poids: c.poids, penalite: 1 - note,
+             note: Math.round(note * 100), detail: c.detail(l[2], l[3], t) };
   });
-  const score = Math.round(risques.reduce((s, r) => s + r.pct, 0) / risques.length);
-  return { risques, score };
+  return { criteres, indice: indiceHabitabilite(l[2], l[3], an) };
 }
-function majDossier(){
-  const l = lieuDossier, an = etat.annee;
-  const { risques, score } = diagnostiquer(l, an);
-  document.getElementById('dossier-coords').textContent =
-    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${l[1].toUpperCase()}`;
-  const elLieu = document.getElementById('dossier-lieu');
-  if (elLieu.dataset.lieu !== l[0]){ elLieu.dataset.lieu = l[0]; revelerChars(elLieu, l[0]); }
-  document.getElementById('dossier-annee').textContent = an;
-  odoScore.set(score, !dossierEl.classList.contains('ouvert'));
-  const v = document.getElementById('dossier-verdict');
-  v.className = 'verdict ' + (score < 33 ? 'faible' : score < 66 ? 'moderee' : 'forte');
-  document.getElementById('dossier-verdict-txt').textContent =
-    score < 33 ? 'Exposition faible' : score < 66 ? 'Exposition modérée' : 'Exposition forte';
-  document.getElementById('dossier-risques').innerHTML = risques.map(r => `
-    <div class="risque">
-      <div class="ligne"><span>${r.nom}</span><span class="pourcent" style="color:${r.couleur}">${r.pct}%</span></div>
-      <div class="barre"><i style="width:${r.pct}%;background:${r.couleur}"></i></div>
-      <div class="detail">${r.detail}</div>
+
+/* « Rester ou partir » : les villes du même pays les plus habitables à
+   l'horizon affiché, à population comparable. */
+function alternatives(l, an, combien = 3){
+  const memePays = LIEUX.filter(v => v[1] === l[1] && v[0] !== l[0] && v[4] >= Math.min(l[4] * 0.15, 150000));
+  const bassin = memePays.length >= 4 ? memePays
+    : LIEUX.filter(v => v[0] !== l[0] && v[4] >= 400000
+        && Math.abs(v[2] - l[2]) < 22 && Math.abs(v[3] - l[3]) < 32);
+  const ici = indiceHabitabilite(l[2], l[3], an);
+  return bassin
+    .map(v => ({ lieu: v, indice: indiceHabitabilite(v[2], v[3], an) }))
+    .filter(o => o.indice > ici + 4)
+    .sort((a, b) => b.indice - a.indice)
+    .slice(0, combien);
+}
+
+/* Trajectoire 2026 → 2050 de l'indice, tracée en SVG. */
+function tracerTrajectoire(l, an){
+  const svg = document.getElementById('dossier-courbe');
+  const W = 100, H = 34, pas = [];
+  for (let a = 2026; a <= 2050; a += 2) pas.push([a, indiceHabitabilite(l[2], l[3], a)]);
+  // échelle verticale resserrée autour de la trajectoire : sur 0-100 une perte
+  // de 4 points serait un trait plat, alors que c'est l'information du graphe
+  const vals = pas.map(p => p[1]);
+  const lo = Math.max(0, Math.min(...vals) - 6), hi = Math.min(100, Math.max(...vals) + 6);
+  const ech = v => H - (v - lo) / Math.max(hi - lo, 1) * H;
+  const pts = pas.map(([a, v]) => [(a - 2026) / 24 * W, ech(v)]);
+  const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const x = (an - 2026) / 24 * W;
+  const y = ech(indiceHabitabilite(l[2], l[3], an));
+  svg.innerHTML =
+    `<path class="aire" d="${d} L${W} ${H} L0 ${H} Z"/>` +
+    `<path class="trait" d="${d}"/>` +
+    `<line class="curseur-an" x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}"/>` +
+    `<circle class="point-an" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2"/>`;
+  const trait = svg.querySelector('.trait');
+  const L = trait.getTotalLength();
+  // tracé progressif, comme le MotionDrawLine du site fromanother
+  gsap.fromTo(trait, { strokeDasharray: L, strokeDashoffset: L },
+    { strokeDashoffset: 0, duration: 1.2, ease: EASE_INOUT });
+}
+
+/* État « en ce moment » : événements naturels réellement en cours autour du
+   lieu (NASA EONET + USGS). Aucune projection ici, que de l'observé. */
+function majEvenements(l){
+  const bloc = document.getElementById('dossier-maintenant');
+  const titre = `<div class="titre-bloc">${T().aujourdhui}</div>`;
+  if (EVENEMENTS.etat === 'attente'){
+    bloc.innerHTML = titre + `<div class="rien">${T().rasChargement}</div>`;
+    return;
+  }
+  if (EVENEMENTS.etat === 'vide'){
+    bloc.innerHTML = titre + `<div class="rien">${T().rasHorsLigne}</div>`;
+    return;
+  }
+  const evs = evenementsPres(l[2], l[3]);
+  if (!evs.length){
+    bloc.innerHTML = titre + `<div class="rien ras">${T().ras}</div>`;
+    return;
+  }
+  bloc.innerHTML = titre + evs.map(e => `
+    <div class="evenement">
+      <span class="pastille-ev" data-cat="${e.categorie}"></span>
+      <span class="ev-titre">${T().aKm(e.titre, e.d)}</span>
     </div>`).join('');
+  gsap.fromTo('#dossier-maintenant .evenement', { opacity: 0, y: -6 },
+    { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: EASE });
 }
+
+function majDossier(){
+  const l = lieuDossier, an = etat.annee, t = T();
+  const { criteres, indice } = diagnostiquer(l, an);
+  const indice2050 = indiceHabitabilite(l[2], l[3], 2050);
+  const niveau = niveauDe(indice);
+
+  document.getElementById('dossier-coords').textContent =
+    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${nomPays(l[1]).toUpperCase()}`;
+  const elLieu = document.getElementById('dossier-lieu');
+  if (elLieu.dataset.lieu !== nomVille(l)){ elLieu.dataset.lieu = nomVille(l); revelerChars(elLieu, nomVille(l)); }
+  document.getElementById('dossier-annee').textContent = an;
+  odoIndice.set(indice, !dossierEl.classList.contains('ouvert'));
+
+  const v = document.getElementById('dossier-verdict');
+  v.className = 'verdict ' + niveau;
+  document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
+
+  // le critère qui coûte le plus de points, pondération comprise
+  const pire = criteres.slice().sort((a, b) => b.penalite * b.poids - a.penalite * a.poids)[0];
+  document.getElementById('dossier-conseil').textContent =
+    t.conseil(niveau, t.critere[pire.cle], an, indice2050 - indice);
+
+  majEvenements(l);
+
+  // note à l'année affichée + écart avec 2050, pour rendre la projection lisible
+  const t50 = 1, criteres50 = CRITERES.map(c => Math.round(noteCritere(c, l[2], l[3], t50) * 100));
+  document.getElementById('dossier-risques').innerHTML = criteres.map((c, i) => {
+    const d = criteres50[i] - c.note;
+    const chip = an < 2050 && d !== 0
+      ? `<span class="vers2050" data-sens="${d < 0 ? 'bas' : 'haut'}">${d > 0 ? '＋' : '−'}${Math.abs(d)} en 2050</span>` : '';
+    return `
+    <div class="risque">
+      <div class="ligne"><span>${t.critere[c.cle]}</span><span class="pourcent" style="color:${c.couleur}">${c.note}${chip}</span></div>
+      <div class="barre"><i style="width:${c.note}%;background:${c.couleur}"></i></div>
+      <div class="detail">${c.detail}</div>
+    </div>`;
+  }).join('');
+  gsap.fromTo('#dossier-risques .barre i', { scaleX: 0 },
+    { scaleX: 1, transformOrigin: 'left center', duration: 1.2, stagger: 0.06, ease: EASE_INOUT });
+
+  tracerTrajectoire(l, an);
+  const ecart = indice2050 - indiceHabitabilite(l[2], l[3], 2026);
+  document.getElementById('dossier-ecart').textContent =
+    ecart === 0 ? '' : `  ${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} pts 2026→2050`;
+
+  const alt = alternatives(l, an);
+  const bloc = document.getElementById('dossier-ailleurs');
+  if (!alt.length){
+    bloc.innerHTML = `<div class="titre-bloc">${t.ailleurs}</div><div class="rien">${t.rienDeMieux}</div>`;
+  } else {
+    bloc.innerHTML = `<div class="titre-bloc">${t.ailleurs}</div>` + alt.map(o => `
+      <button class="alt" data-nom="${o.lieu[0]}">
+        <span class="nom">${nomVille(o.lieu)}</span>
+        <span class="delta">＋${o.indice - indice}</span>
+        <span class="sc">${o.indice}</span>
+      </button>`).join('');
+    bloc.querySelectorAll('.alt').forEach(b => b.addEventListener('click', () => {
+      const cible = LIEUX.find(x => x[0] === b.dataset.nom);
+      if (cible) choisirLieu(cible);
+    }));
+    gsap.fromTo('#dossier-ailleurs .alt', { opacity: 0, y: -6 },
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: EASE });
+  }
+}
+
 function ouvrirDossier(l){
   lieuDossier = l; majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
@@ -1300,6 +1658,58 @@ boutonSon.addEventListener('click', () => {
   boutonSon.classList.toggle('actif', !SoundManager.mute);
   if (!SoundManager.mute) SoundManager.play('ui_click');
 });
+
+/* =====================================================================
+   LANGUE — traduire() réécrit tout ce qui porte data-t, plus les libellés
+   construits en JS. Le choix est mémorisé et pilote aussi Intl.DisplayNames.
+   ===================================================================== */
+function traduire(){
+  const t = T();
+  document.documentElement.lang = t.lang;
+  for (const el of document.querySelectorAll('[data-t]')){
+    const v = t[el.dataset.t];
+    if (typeof v === 'string') el.textContent = v;
+  }
+  for (const btn of document.querySelectorAll('.calque')){
+    btn.querySelector('[data-t-calque]').textContent = t.calque[btn.dataset.cle];
+  }
+  champ.placeholder = t.chercher;
+  document.getElementById('dossier-fermer').textContent = t.fermer;
+  document.getElementById('dossier-partage').textContent = t.partage;
+  document.getElementById('dossier-sources').textContent = t.sources;
+  boutonSon.textContent = t.son(!SoundManager.mute);
+  document.getElementById('bouton-perf').textContent = t.perf || 'Perf';
+  document.getElementById('bouton-langue').innerHTML = langue === 'fr'
+    ? 'FR · <em>en</em>' : '<em>fr</em> · EN';
+  if (lieuDossier) majDossier();
+}
+document.getElementById('bouton-langue').addEventListener('click', () => {
+  langue = langue === 'fr' ? 'en' : 'fr';
+  try { localStorage.setItem('terra-langue', langue); } catch (e) {}
+  SoundManager.play('ui_click');
+  traduire();
+});
+try { const m = localStorage.getItem('terra-langue'); if (m) langue = m; } catch (e) {}
+traduire();
+
+/* =====================================================================
+   DONNÉES — grilles de risque, annuaire de villes, événements en cours.
+   Le chrome reste utilisable pendant le chargement : rien ne bloque.
+   ===================================================================== */
+Promise.all([
+  chargerGrilleDonnees('./data/grille_a_2026.png', 'a2026'),
+  chargerGrilleDonnees('./data/grille_a_2050.png', 'a2050'),
+  chargerGrilleDonnees('./data/grille_b_2026.png', 'b2026'),
+  chargerGrilleDonnees('./data/grille_b_2050.png', 'b2050'),
+  chargerGrilleDonnees('./data/grille_c.png', 'c'),
+  fetch('./data/places.json').then(r => r.json()).then(j => { LIEUX = j.villes; }),
+  fetch('./data/calibration.json').then(r => r.json()).then(j => { CALIBRATION = j; }),
+]).then(() => {
+  document.body.classList.add('donnees-pretes');
+  if (lieuDossier) majDossier();
+});
+chargerEvenements().then(() => { if (lieuDossier) majEvenements(lieuDossier); });
+
 const hud = document.getElementById('hud');
 document.getElementById('bouton-perf').addEventListener('click', () => {
   hud.classList.toggle('visible'); SoundManager.play('ui_click');
@@ -1327,7 +1737,23 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   // le rideau se dissout par le bruit, en même temps que le recul caméra
   gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
+  revelerChrome();
 });
+
+/* ---- apparition du chrome : vocabulaire de mouvement du site fromanother.
+   Caractères masqués pour le wordmark, lignes décalées pour les rails. ---- */
+function revelerChrome(){
+  const tl = gsap.timeline({ delay: 0.55 });
+  tl.from('#wordmark .lettre', { yPercent: 115, duration: 1.2, stagger: 0.015, ease: EASE }, 0);
+  tl.from('#titre .micro', { opacity: 0, y: 8, duration: DUREE.fast, ease: EASE }, 0.25);
+  tl.from('#recherche', { opacity: 0, y: -10, duration: DUREE.fast, ease: EASE }, 0.15);
+  tl.from('.calque', { opacity: 0, x: -14, duration: DUREE.fast, stagger: 0.04, ease: EASE }, 0.35);
+  tl.from('.hotspot', { opacity: 0, x: 14, duration: DUREE.fast, stagger: 0.04, ease: EASE }, 0.45);
+  tl.from('.bouton-ico', { opacity: 0, y: -8, duration: DUREE.fast, stagger: 0.04, ease: EASE }, 0.4);
+  tl.from('#timeline .an', { opacity: 0, y: 18, duration: DUREE.normal, ease: EASE }, 0.3);
+  tl.from('#curseur, #timeline .bornes', { opacity: 0, duration: DUREE.fast, ease: EASE }, 0.6);
+  return tl;
+}
 
 /* ---- boucle unique ---- */
 const horloge = new THREE.Clock();
