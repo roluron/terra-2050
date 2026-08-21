@@ -80,15 +80,6 @@
   .calque .nom{font-size:13px;font-weight:600;letter-spacing:.02em;flex:1}
   .calque .code{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--muter)}
 
-  /* panneau droit : hotspots + fiche */
-  #hotspots{right:40px;top:50%;transform:translate(8px,-50%);width:264px;padding:22px}
-  body.pret #hotspots{transform:translate(0,-50%)}
-  #hotspots .micro{padding-bottom:12px}
-  .hotspot{display:block;width:100%;background:none;border:none;color:var(--texte);
-    text-align:left;padding:8px 0;cursor:pointer;font-size:13px;font-weight:600;
-    border-bottom:1px solid rgba(92,107,122,.18);transition:opacity .3s var(--ease),transform .5s var(--ease)}
-  .hotspot:hover{opacity:.75;transform:translateX(4px)}
-  .hotspot .code{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.24em;color:var(--muter);margin-bottom:3px}
   #fiche{margin-top:16px;min-height:118px}
   #fiche h2{font-size:26px;font-weight:800;letter-spacing:-.01em;line-height:1.05;margin:6px 0 8px}
   #fiche .metrique{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--ambre);text-transform:uppercase}
@@ -154,8 +145,6 @@
     #titre{left:20px;top:20px}
     #util{right:20px;top:22px}
     #calques{left:20px;width:210px;padding:16px 0}
-    #hotspots{right:20px;width:210px;padding:16px;top:auto;bottom:110px;transform:translate(8px,0)}
-    body.pret #hotspots{transform:translate(0,0)}
     #fiche{min-height:0}#fiche p{display:none}
     #timeline{bottom:20px;padding:12px 18px 14px}
     #timeline .an{font-size:32px}
@@ -164,8 +153,6 @@
 </style>
 <link rel="stylesheet" href="./terra-menus.css">
 <style>
-  #hotspots{transition:opacity .48s var(--ease)}
-  body.dossier-ouvert #hotspots{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -215,13 +202,6 @@
   <button class="calque" data-cle="flux"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
 </nav>
 
-<aside id="hotspots" class="panneau" aria-label="Hotspots mondiaux">
-  <div class="micro" data-t="hotspots"></div>
-  <button class="hotspot fa-lien" data-spot="paris"><span class="code">48.85°N · 2.35°E</span><span data-t-hotspot>paris</span></button>
-  <button class="hotspot fa-lien" data-spot="amazonie"><span class="code">3.4°S · 62.2°O</span><span data-t-hotspot>amazonie</span></button>
-  <button class="hotspot fa-lien" data-spot="bangladesh"><span class="code">22.8°N · 90.3°E</span><span data-t-hotspot>bangladesh</span></button>
-  <button class="hotspot fa-lien" data-spot="bretagne"><span class="code">48.2°N · 2.9°O</span><span data-t-hotspot>bretagne</span></button>
-</aside>
 
 <div id="timeline" class="panneau">
   <div class="micro">Projection temporelle</div>
@@ -351,29 +331,6 @@ const FLUX = [
   [[31.0, 74.0], [28.61,  77.21]],  // Pendjab → Delhi
 ];
 
-// Hotspots (panneau droit) : cible caméra + fiche, en deux langues
-const HOTSPOTS = {
-  paris: { lat: 48.85, lon: 2.35, zoom: 2.6,
-    fr: { titre: 'Paris — le piège des flux', metrique: 'ICU +4.2°C · autonomie 3 jours',
-          texte: 'Dense et approvisionnée « juste-à-temps », la métropole tient trois jours sans flux externes. Îlot de chaleur urbain jusqu’à +6°C en 2050, sols argileux du bassin en retrait.' },
-    en: { titre: 'Paris — the supply-chain trap', metrique: 'UHI +4.2°C · 3 days of autonomy',
-          texte: 'Dense and supplied just-in-time, the city holds three days without external flows. Urban heat island up to +6°C by 2050, with the basin’s clay soils shrinking underneath.' } },
-  amazonie: { lat: -3.4, lon: -62.2, zoom: 2.7,
-    fr: { titre: 'Amazonie — mégafeux', metrique: 'sécheresse boréale & tropicale',
-          texte: 'L’humidité du sous-bois s’effondre. Les particules que vous voyez sont des foyers de combustion qui se multiplient avec la projection.' },
-    en: { titre: 'Amazonia — megafires', metrique: 'boreal & tropical drought',
-          texte: 'Understorey humidity collapses. The particles you see are combustion fronts, multiplying as the projection advances.' } },
-  bangladesh: { lat: 22.8, lon: 90.3, zoom: 2.7,
-    fr: { titre: 'Bangladesh — submersion', metrique: 'delta du Gange · cote submersible',
-          texte: 'Les terres basses du delta passent sous la cote de submersion à mesure que le niveau marin monte : la grille ETOPO en donne le contour réel.' },
-    en: { titre: 'Bangladesh — coastal flooding', metrique: 'Ganges delta · flood line',
-          texte: 'The delta’s low-lying land drops below the flood line as the sea rises: the ETOPO grid gives its real contour.' } },
-  bretagne: { lat: 48.2, lon: -2.9, zoom: 2.6,
-    fr: { titre: 'Bretagne — paradoxe hivernal', metrique: 'pluie hivernale · sols rocheux',
-          texte: 'Il pleut plus en hiver, mais les sols rocheux ruissellent sans retenir l’eau : la recharge n’alimente plus l’été. Le calque sécheresse le visualise.' },
-    en: { titre: 'Brittany — the winter paradox', metrique: 'winter rain · rocky soils',
-          texte: 'More rain falls in winter, but rocky ground sheds it without holding any: recharge no longer carries the summer. The drought layer shows it.' } },
-};
 
 
 /* =====================================================================
@@ -391,7 +348,6 @@ const TEXTES = {
     aucunLieu: 'Aucune ville trouvée',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     calques: 'Calques de risque',
-    hotspots: 'Hotspots mondiaux',
     son: e => e ? 'Son · on' : 'Son · off',
     calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
       argile: 'Retrait-gonflement argiles', secheresse: 'Sécheresse',
@@ -434,7 +390,6 @@ const TEXTES = {
     aucunLieu: 'No city found',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     calques: 'Risk layers',
-    hotspots: 'Global hotspots',
     son: e => e ? 'Sound · on' : 'Sound · off',
     calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
       argile: 'Clay shrink-swell', secheresse: 'Drought',
@@ -1291,24 +1246,6 @@ for (const btn of document.querySelectorAll('.calque')){
   btn.addEventListener('mouseenter', () => SoundManager.play('ui_hover')); // anti-rebond intégré
 }
 
-/* ---- vols caméra (hotspots) ---- */
-let volEnCours = null, minuterieRepos = null;
-function volerVers(spot){
-  const h = HOTSPOTS[spot];
-  const cible = latLonVersVec3(h.lat, h.lon).multiplyScalar(h.zoom);
-  controles.autoRotate = false;
-  if (volEnCours) volEnCours.kill();
-  SoundManager.play('camera_fly');
-  volEnCours = gsap.to(camera.position, {
-    x: cible.x, y: cible.y, z: cible.z,
-    duration: 1.8, ease: EASE,                            // vols : bande 1.5-2 s
-    onUpdate: () => camera.lookAt(0, 0, 0),
-  });
-}
-for (const btn of document.querySelectorAll('.hotspot')){
-  btn.addEventListener('click', () => { SoundManager.play('ui_click'); volerVers(btn.dataset.spot); });
-  btn.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
-}
 // rotation auto reprise après 4 s sans interaction
 toile.addEventListener('pointerdown', () => {
   controles.autoRotate = false;
@@ -1729,10 +1666,6 @@ function traduire(){
   for (const btn of document.querySelectorAll('.calque')){
     btn.querySelector('[data-t-calque]').textContent = t.calque[btn.dataset.cle];
   }
-  for (const btn of document.querySelectorAll('.hotspot')){
-    const h = HOTSPOTS[btn.dataset.spot];
-    btn.querySelector('[data-t-hotspot]').textContent = (h[langue] || h.fr).titre;
-  }
   champ.placeholder = t.chercher;
   document.getElementById('dossier-fermer').textContent = t.fermer;
   document.getElementById('dossier-partage').textContent = t.partage;
@@ -1899,7 +1832,6 @@ function revelerChrome(){
     { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
   entree('#recherche', { opacity: 0, y: -10 }, 0.15);
   entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.04 });
-  entree('.hotspot', { opacity: 0, x: 14 }, 0.45, { stagger: 0.04 });
   entree('.bouton-ico', { opacity: 0, y: -8 }, 0.4, { stagger: 0.04 });
   entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
   entree('#curseur, #timeline .bornes', { opacity: 0 }, 0.6);

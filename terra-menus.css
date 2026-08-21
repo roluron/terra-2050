@@ -69,21 +69,6 @@ body { background: var(--encre); color: var(--texte); }
 .calque:not(.actif) { opacity: 0.38; }
 .calque:hover { opacity: 1; }
 
-/* Hotspots : au repos, seul le sélectionné est mis en avant */
-#hotspots { padding: 0; width: 280px; text-align: right; }
-#hotspots .micro { display: none; }
-.hotspot { border-bottom: none; font-family: var(--police); font-size: 10px; letter-spacing: 0.14em;
-  display: inline-block; width: auto; padding: 0 0 4px; margin-left: 14px; opacity: 0.45; }
-.hotspot:hover { opacity: 1; transform: none; }
-.hotspot .code { display: none; }
-#fiche { display: none; }
-#fiche.visible { display: block; }
-#fiche h2 { font-family: var(--police); font-weight: 600; font-size: 24px; letter-spacing: -0.03em; }
-#fiche .metrique { color: var(--muter); }
-#fiche p { max-width: 240px; margin-left: auto; }
-#fiche .metrique { font-family: var(--police); font-size: 10px; letter-spacing: 0.14em; color: var(--muter); }
-#fiche p { font-weight: 300; font-size: 13px; }
-
 /* Recherche : repliée en « Chercher un lieu ⌘K », hairline ; champ au focus */
 #champ-recherche { font-family: var(--police); font-size: 14px; letter-spacing: 0; text-transform: none;
   background: none; border: none; border-bottom: 1px solid var(--hairline); border-radius: 0;
@@ -186,15 +171,13 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 #dossier .sources,
 #fiche .metrique,
 #resultats li .type-lieu,
-#timeline .bornes,
-.hotspot {
+#timeline .bornes {
   font-family: var(--herbik); font-style: italic; font-weight: 500;
   letter-spacing: normal; text-transform: none; line-height: 0.9;
 }
 .micro, #voile .sous { font-size: 13px; }
 #dossier .coords, #dossier .sources, #fiche .metrique,
 #resultats li .type-lieu, #timeline .bornes { font-size: 13px; }
-.hotspot { font-size: 14px; }
 
 /* ---- Display : TWK Lausanne 600, interlignage 0.9, chasse serrée ---- */
 #voile h1 { font-family: var(--police); font-weight: 600; line-height: 0.9; letter-spacing: -0.03em; }
@@ -233,8 +216,7 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 .fa-chars .char { display: inline-block; will-change: transform; }
 
 /* Le soulignement .fa-lien remplace les bordures statiques */
-#dossier .actions span.fa-lien, .hotspot.fa-lien { border-bottom: none; }
-.hotspot.fa-lien { width: auto; }
+#dossier .actions span.fa-lien { border-bottom: none; }
 /* Le voile s'efface vite : c'est le rideau WebGL qui porte la transition */
 #voile { transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease); }
 
@@ -497,25 +479,27 @@ body.cale-annee #timeline .an { opacity: 0.92; }
 #curseur {
   height: 22px;                       /* zone de saisie confortable */
   background: none;                   /* la piste est un élément dédié */
-  margin-top: 8px; position: relative; z-index: 2;
+  margin-top: 26px;                   /* respiration entre l'année et la ligne */
+  position: relative; z-index: 2;
 }
-#timeline .piste { position: absolute; left: 0; right: 0; bottom: 40px; height: 1px;
+/* la piste épouse le centre vertical du pouce natif : 14 px du bas du panneau */
+#timeline .piste { position: absolute; left: 0; right: 0; bottom: 13px; height: 2px;
   background: rgba(255, 253, 226, 0.14); pointer-events: none; }
 #timeline .piste i { position: absolute; inset: 0 auto 0 0; width: var(--fill, 0%);
-  background: rgba(255, 253, 226, 0.75); transition: width 0.3s var(--ease); }
+  background: rgba(255, 253, 226, 0.85); transition: width 0.3s var(--ease); }
 
-#timeline .graduations { position: absolute; left: 0; right: 0; bottom: 37px;
+#timeline .graduations { position: absolute; left: 0; right: 0; bottom: 10px;
   display: flex; justify-content: space-between; pointer-events: none; }
-#timeline .graduations span { width: 1px; height: 7px;
+#timeline .graduations span { width: 1.5px; height: 8px;
   background: rgba(255, 253, 226, 0.18); transition: background 0.3s var(--ease); }
-#timeline .graduations span.passe { background: rgba(255, 253, 226, 0.55); height: 7px; }
+#timeline .graduations span.passe { background: rgba(255, 253, 226, 0.6); }
 
-#curseur::-webkit-slider-thumb { -webkit-appearance: none; width: 5px; height: 5px;
+#curseur::-webkit-slider-thumb { -webkit-appearance: none; width: 7px; height: 7px;
   border: none; border-radius: 50%; background: var(--texte);
   transition: transform 0.25s var(--ease); }
 #curseur:hover::-webkit-slider-thumb, body.cale-annee #curseur::-webkit-slider-thumb {
-  transform: scale(1.6); }
-#curseur::-moz-range-thumb { width: 5px; height: 5px; border: none; border-radius: 50%;
+  transform: scale(1.5); }
+#curseur::-moz-range-thumb { width: 7px; height: 7px; border: none; border-radius: 50%;
   background: var(--texte); }
 
 /* =====================================================================
