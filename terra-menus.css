@@ -626,17 +626,19 @@ body.cale-annee #timeline .an { opacity: 0.92; }
 
 /* engrenage : trait fin, rotation d'un cran à l'ouverture */
 #bouton-reglages { padding: 6px 0 6px 4px; }
-#bouton-reglages .rouage { width: 15px; height: 15px; fill: none; stroke: currentColor;
-  stroke-width: 1.2; stroke-linecap: round; display: block;
+#bouton-reglages .rouage { width: 15px; height: 15px; fill: currentColor; display: block;
   transition: transform 0.6s var(--ease); }
 #bouton-reglages.ouvert .rouage { transform: rotate(90deg); }
 
 /* panneaux : masqués par défaut, glissent depuis le déclencheur */
+/* l'en-tête entier passe AU-DESSUS du dossier (z 20), sinon le texte du
+   dossier peint par-dessus les menus déroulants */
+#util { z-index: 32; }
 #calques, #menu-reglages {
   position: absolute; top: calc(100% + 14px); right: 0; z-index: 30;
   display: flex; flex-direction: column; align-items: flex-start; gap: 0;
   min-width: 218px; padding: 8px 20px;
-  background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(16px);
+  background: rgba(2, 4, 10, 0.94); backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--filet); border-radius: 2px;
   opacity: 0; transform: translateY(-8px); pointer-events: none; visibility: hidden;
