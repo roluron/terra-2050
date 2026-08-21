@@ -638,9 +638,12 @@ body.cale-annee #timeline .an { opacity: 0.92; }
   position: absolute; top: calc(100% + 14px); right: 0; z-index: 30;
   display: flex; flex-direction: column; align-items: flex-start; gap: 0;
   min-width: 218px; padding: 8px 20px;
-  background: rgba(2, 4, 10, 0.94); backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--filet); border-radius: 2px;
+  /* verre complet : le pass WebGL réfracte le globe, le backdrop-filter
+     givre le DOM qui passe derrière (dossier), le voile assoit le texte */
+  background: rgba(2, 4, 10, 0.45);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid rgba(255, 253, 226, 0.22); border-radius: 10px;
   opacity: 0; transform: translateY(-8px); pointer-events: none; visibility: hidden;
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease),
     visibility 0s 0.4s;
@@ -667,3 +670,14 @@ body.pret #util #calques { transform: none; }
   border-top: 1px solid var(--filet);
   font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 9px;
   letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 253, 226, 0.35); }
+
+/* Croix de fermeture du dossier : fixe en haut à droite, hors du flux qui
+   défile, visible seulement dossier ouvert */
+#dossier-croix { position: fixed; top: 84px; right: 60px; z-index: 26;
+  width: 32px; height: 32px; padding: 8px; background: none; border: none;
+  cursor: pointer; opacity: 0; pointer-events: none; transform: translateX(8px);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease); }
+body.dossier-ouvert #dossier-croix { opacity: 0.65; pointer-events: auto; transform: none; }
+body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg); }
+#dossier-croix svg { width: 100%; height: 100%; stroke: var(--texte);
+  stroke-width: 1; fill: none; display: block; }

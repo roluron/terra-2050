@@ -240,6 +240,9 @@
 </div>
 
 <div id="scrim-dossier"><div class="v-grain" aria-hidden="true"></div></div>
+<button id="dossier-croix" aria-label="Fermer / Close">
+  <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1 L11 11 M11 1 L1 11"/></svg>
+</button>
 <aside id="dossier" aria-label="Diagnostic du lieu">
   <div>
     <div class="coords" id="dossier-coords"></div>
@@ -1080,12 +1083,15 @@ const cameraPost = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 const matPost = new THREE.ShaderMaterial({
   uniforms: { tScene: { value: cibles[0].texture }, tLut: { value: genererLUT() }, uQuantite: { value: 0.5 },
     uVerre: { value: new THREE.Vector4(0, 0, 0, 0) },   // centre.xy + demi-taille.xy, en UV
-    uVerreRayon: { value: 0.0 }, uVerreForce: { value: 0.0 }, uRatio: { value: 1.0 } },
+    uVerreRayon: { value: 0.0 }, uVerreForce: { value: 0.0 }, uRatio: { value: 1.0 },
+    uVerre2: { value: new THREE.Vector4(0, 0, 0, 0) },  // lentille des menus déroulants
+    uVerreRayon2: { value: 0.0 }, uVerreForce2: { value: 0.0 } },
   vertexShader: /* glsl */`
     varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
   fragmentShader: /* glsl */`
     uniform sampler2D tScene; uniform sampler2D tLut; uniform float uQuantite;
     uniform vec4 uVerre; uniform float uVerreRayon, uVerreForce, uRatio;
+    uniform vec4 uVerre2; uniform float uVerreRayon2, uVerreForce2;
     varying vec2 vUv;
     /* SDF de rectangle arrondi, en espace corrigé du ratio d'écran */
     float sdfBoite(vec2 p, vec2 demi, float r){
@@ -1125,6 +1131,24 @@ const matPost = new THREE.ShaderMaterial({
         }
       }
 
+      /* ---- 2e lentille : les menus déroulants, même verre que la barre ---- */
+      float dedans2 = 0.0, bord2 = 0.0;
+      if (uVerreForce2 > 0.001){
+        vec2 e2 = vec2(uRatio, 1.0);
+        vec2 p2 = (vUv - uVerre2.xy) * e2;
+        vec2 demi2 = uVerre2.zw * e2;
+        float sd2 = sdfBoite(p2, demi2, uVerreRayon2);
+        dedans2 = smoothstep(0.002, -0.002, sd2);
+        if (dedans2 > 0.0){
+          vec2 g2 = vec2(
+            sdfBoite(p2 + vec2(0.0015, 0.0), demi2, uVerreRayon2) - sdfBoite(p2 - vec2(0.0015, 0.0), demi2, uVerreRayon2),
+            sdfBoite(p2 + vec2(0.0, 0.0015), demi2, uVerreRayon2) - sdfBoite(p2 - vec2(0.0, 0.0015), demi2, uVerreRayon2));
+          float ep2 = pow(smoothstep(-uVerreRayon2 * 1.4, 0.0, sd2), 2.0);
+          uv -= normalize(g2 + 1e-6) * ep2 * 0.016 * uVerreForce2 / e2;
+          bord2 = smoothstep(0.0026, 0.0, abs(sd2)) * dedans2;
+        }
+      }
+
       vec4 s = texture2D(tScene, uv);
       vec3 col = mix(s.rgb, grade(clamp(s.rgb, 0.0, 1.0)), uQuantite);
       float d = distance(vUv, vec2(0.5));
@@ -1137,6 +1161,21 @@ const matPost = new THREE.ShaderMaterial({
         col.b = mix(col.b, texture2D(tScene, uv - ab).b, dedans * uVerreForce);
         col = mix(col, col * 1.18 + vec3(0.014, 0.030, 0.070), dedans * 0.40 * uVerreForce);
         col += vec3(1.0, 0.99, 0.89) * bord * 0.30 * uVerreForce;
+      }
+
+      if (dedans2 > 0.0){
+        // givrage : quatre prises autour du point réfracté, puis voile sombre
+        // pour que le texte du menu reste lisible sur n'importe quel fond
+        vec3 flou = col;
+        flou += texture2D(tScene, uv + vec2( 0.0035, 0.0021)).rgb;
+        flou += texture2D(tScene, uv + vec2(-0.0035, 0.0021)).rgb;
+        flou += texture2D(tScene, uv + vec2( 0.0021,-0.0035)).rgb;
+        flou += texture2D(tScene, uv + vec2(-0.0021,-0.0035)).rgb;
+        flou /= 5.0;
+        float f2 = dedans2 * uVerreForce2;
+        col = mix(col, flou, f2);
+        col = mix(col, col * 0.52 + vec3(0.006, 0.012, 0.034), f2 * 0.6);
+        col += vec3(1.0, 0.99, 0.89) * bord2 * 0.24 * uVerreForce2;
       }
       gl_FragColor = vec4(col, 1.0);
     }`,
@@ -1612,7 +1651,8 @@ function fermerDossier(){
   dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
   document.body.classList.remove('dossier-ouvert');
 }
-document.getElementById('dossier-fermer').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
+for (const id of ['dossier-fermer', 'dossier-croix'])
+  document.getElementById(id).addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
 addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); champ.focus(); champ.select(); }
   else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ) fermerDossier();
@@ -1630,17 +1670,37 @@ addEventListener('keydown', e => {
     { bouton: document.getElementById('bouton-reglages'),
       panneau: document.getElementById('menu-reglages'), rangees: '.bouton-ico' },
   ];
+  /* la lentille de verre du pass post épouse le panneau ouvert */
+  const verreMenu = { force: 0, panneau: null };
+  function majVerreMenu(){
+    const u = matPost.uniforms;
+    if (!verreMenu.panneau){ u.uVerreForce2.value = 0; return; }
+    const r = verreMenu.panneau.getBoundingClientRect();
+    u.uVerre2.value.set(
+      (r.left + r.width / 2) / innerWidth,
+      1 - (r.top + r.height / 2) / innerHeight,
+      (r.width / 2) / innerWidth,
+      (r.height / 2) / innerHeight);
+    u.uVerreRayon2.value = 10 / innerHeight;           // congé doux, ~10 px
+    u.uVerreForce2.value = verreMenu.force;
+  }
+  addEventListener('resize', majVerreMenu);
   const fermer = m => {
     if (!m.panneau.classList.contains('ouvert')) return;
     m.panneau.classList.remove('ouvert');
     m.bouton.classList.remove('ouvert');
     m.bouton.setAttribute('aria-expanded', 'false');
+    if (verreMenu.panneau === m.panneau)
+      gsap.to(verreMenu, { force: 0, duration: 0.35, ease: EASE, onUpdate: majVerreMenu,
+        onComplete: () => { if (verreMenu.force === 0) verreMenu.panneau = null; } });
   };
   const ouvrir = m => {
     menus.forEach(x => { if (x !== m) fermer(x); });
     m.panneau.classList.add('ouvert');
     m.bouton.classList.add('ouvert');
     m.bouton.setAttribute('aria-expanded', 'true');
+    verreMenu.panneau = m.panneau;
+    gsap.to(verreMenu, { force: 1, duration: DUREE.fast, ease: EASE, onUpdate: majVerreMenu });
     gsap.fromTo(m.panneau.querySelectorAll(m.rangees),
       { opacity: 0, y: -8 },
       { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: EASE,
