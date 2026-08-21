@@ -1,0 +1,11 @@
+[x] Chaleur : Sahel/Inde/Golfe/Amazonie/Asie SE allumés ; Oslo/Iakoutsk/Quito/Reykjavik ~0 (spot-check + capture Le Caire 2050 : hauts plateaux éthiopiens épargnés)
+[x] Feux : Séville .80, Thessalie .67, Californie .70, Canberra .21, Cerrado .49 ; Sahara/Groenland/Congo 0 (capture : ceinture sahélienne + pourtour méditerranéen, déserts vides, rien en mer)
+[x] Sécheresse : Sahara/Riyad/Atacama 1.0, Alice .89 ; Singapour/Bergen 0 (capture : Éthiopie épargnée)
+[x] Submersion : delta du Bengale (Khulna .27, Sundarbans .18, Calcutta .32), Amsterdam 1.0, N-Orléans .97 ; Denver/Madrid 0. Dhaka ville .008 = correct (~8 m ETOPO)
+[x] Inondations : Nil .20 sur tout son cours (max de bassin PAR FLEUVE NOMMÉ), Rhin .66, Mississippi .71, Gange 1.0 ; Tibet/Alice/Madrid ~0 (capture : Nil visible dans le désert)
+[x] Argiles : bassins désignés, note « calque indicatif » affichée en pied du menu Conditions de vie
+[x] Flux remplacé par « Instabilité du climat / Climate shift » : |2050−2026| pondéré comme le critère stabilité du dossier, seuils calés sur les percentiles réels (p50 .001 / p99 .056), violet qui respire, s'intensifie avec la timeline (capture : Sahel/Méditerranée/Balkans allumés, Sahara déjà maximal éteint)
+[x] Aucun artefact en mer (captures des 5 calques)
+[x] Zéro erreur console sur le build courant (listener window.error : seul l'artefact setPointerCapture du pointeur synthétique de test)
+[x] Face nuit lisible : plancher 1.05 + continents 0.13-0.30 (capture Auckland/NZ)
+[x] Conseil aligné sur l'échelle affichée (Auckland : mer note 20 → nommée ; sinon conseilSain)

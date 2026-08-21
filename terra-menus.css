@@ -657,3 +657,11 @@ body.pret #util #calques { transform: none; }
 #menu-reglages .bouton-ico { width: 100%; text-align: left; padding: 11px 0;
   border-top: 1px solid var(--filet); }
 #menu-reglages .bouton-ico:first-child { border-top: none; }
+
+/* Pastille violette du calque instabilité + note de bas de menu */
+.calque[data-couleur="violet"].actif .pastille { background: #906BFF; }
+.calque[data-couleur="violet"] .pastille::after { background: #906BFF; }
+.note-calques { width: 100%; margin-top: 4px; padding: 10px 0 6px;
+  border-top: 1px solid var(--filet);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 253, 226, 0.35); }

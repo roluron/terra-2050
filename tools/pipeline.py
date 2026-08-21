@@ -151,16 +151,28 @@ def canal_aridite(tmax_an, prec_an):
     return p / np.maximum(t + 10.0, 1.0)
 
 
-def canal_feux(tmax_an, prec_an, terre):
+def canal_feux(tmax_an, prec_an, terre, deficit):
     """Danger météo de feu : mois chauds et secs, pondérés par la végétation
-    disponible (un désert sans combustible ne brûle pas)."""
+    disponible (un désert sans combustible ne brûle pas).
+
+    Calibré sur les régimes connus : les moyennes mensuelles lissent les
+    vagues de chaleur, donc les seuils sont bas (75 mm, 16 °C) et le danger
+    moyenne les DEUX pires mois — sinon la Méditerranée et le sud-est
+    australien, régimes épisodiques, sortent quasi éteints.
+    """
     pm = np.nan_to_num(prec_an)
     tm = np.nan_to_num(tmax_an)
-    secheresse_mois = np.clip(1.0 - pm / 60.0, 0, 1) * np.clip((tm - 18.0) / 17.0, 0, 1)
-    danger = secheresse_mois.max(axis=-1)
+    secheresse_mois = np.clip(1.0 - pm / 75.0, 0, 1) * np.clip((tm - 16.0) / 15.0, 0, 1)
+    tri = np.sort(secheresse_mois, axis=-1)
+    danger = tri[..., -2:].mean(axis=-1)
     p_annuel = pm.sum(axis=-1)
-    combustible = np.clip((p_annuel - 120.0) / 500.0, 0, 1)     # ni désert nu, ni tourbière
-    return danger * combustible * terre
+    combustible = np.clip((p_annuel - 100.0) / 420.0, 0, 1)     # ni désert nu, ni tourbière
+    # l'aridité annuelle sépare les régimes que les moyennes mensuelles
+    # confondent : un été anglais et un été de Canberra ont des mois moyens
+    # voisins, mais pas le même déficit hydrique de fond
+    aride = np.nan_to_num(deficit)
+    brut = danger * combustible * (0.35 + 0.65 * aride)
+    return np.clip(brut, 0, 1) ** 0.7 * terre
 
 
 def charger_elevation(cotes):
@@ -193,12 +205,41 @@ def charger_elevation(cotes):
 
 
 def canal_fleuves(prec_an, terre):
-    """Proximité d'un grand fleuve x intensité du mois le plus humide."""
-    masque = rasteriser_fleuves()
-    dist = distance_transform_edt(~masque)                   # en pixels de 10'
+    """Proximité d'un grand fleuve x intensité de crue de SON bassin.
+
+    La crue est portée par la pluie du bassin, pas par la pluie locale : le
+    Nil inonde Le Caire avec l'eau des hauts plateaux éthiopiens alors qu'il
+    ne pleut pas au Caire. Chaque fleuve reçoit donc le maximum de pluie
+    mensuelle rencontré LE LONG DE SON TRACÉ, et chaque texel proche d'un
+    fleuve hérite de la valeur du tronçon le plus proche.
+    """
+    intensite_locale = np.clip(np.nan_to_num(prec_an).max(axis=-1) / 260.0, 0, 1)
+    fleuves = exporter_fleuves()
+    en_cellules = []
+    for f in fleuves:
+        cellules = []
+        for la, lo in f['pts']:
+            x = min(W - 1, max(0, int(round((lo + 180) / 360 * W))))
+            y = min(H - 1, max(0, int(round((90 - la) / 180 * H))))
+            cellules.append((y, x))
+        en_cellules.append(cellules)
+    # le bassin se calcule par fleuve NOMMÉ, tous tronçons confondus : le
+    # tronçon égyptien du Nil est désertique, sa crue vient des tronçons amont
+    bassin_par_nom = {}
+    for f, cellules in zip(fleuves, en_cellules):
+        nom = f['name'] or f['nom'] or id(f)
+        m = max(intensite_locale[y, x] for y, x in cellules)
+        bassin_par_nom[nom] = max(bassin_par_nom.get(nom, 0.0), m)
+    valeur_fleuve = np.zeros((H, W), np.float32)
+    masque = np.zeros((H, W), bool)
+    for f, cellules in zip(fleuves, en_cellules):
+        bassin = bassin_par_nom[f['name'] or f['nom'] or id(f)]
+        for y, x in cellules:
+            masque[y, x] = True
+            valeur_fleuve[y, x] = max(valeur_fleuve[y, x], bassin)
+    dist, (iy, ix) = distance_transform_edt(~masque, return_indices=True)
     proximite = np.exp(-(dist / 6.0) ** 2)
-    intensite = np.clip(np.nan_to_num(prec_an).max(axis=-1) / 260.0, 0, 1)
-    return proximite * intensite * terre
+    return proximite * valeur_fleuve[iy, ix] * terre
 
 
 def rasteriser_fleuves():
@@ -484,11 +525,12 @@ def main():
         t = interp_annee(tmax, an)
         n = interp_annee(tmin, an)
         p = interp_annee(prec, an)
+        deficit = norm(-np.nan_to_num(canal_aridite(t, p), nan=40.0), -40, -5) * terre
         couches[an] = dict(
             chaud=norm(np.nan_to_num(canal_chaleur_humide(t, vapr, tmax['hist'])), 0, 300) * terre,
             froid=norm(np.nan_to_num(canal_froid(n)), 0, 200) * terre,
-            sec=norm(-np.nan_to_num(canal_aridite(t, p), nan=40.0), -40, -5) * terre,
-            feux=canal_feux(t, p, terre),
+            sec=deficit,
+            feux=canal_feux(t, p, terre, deficit),
             mer=frac_sous[cotes[an]] * terre,
             fleuves=canal_fleuves(p, terre),
         )

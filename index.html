@@ -212,7 +212,8 @@
       <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
       <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
       <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
-      <button class="calque" data-cle="flux"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
+      <button class="calque" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
+      <div class="note-calques" data-t="argilesIndicatif"></div>
     </nav>
   </div>
   <div class="menu-groupe">
@@ -338,15 +339,6 @@ function revelerChars(el, texte){
   gsap.fromTo(chars, { yPercent: 115 }, { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE });
 }
 
-// Flux de résilience : zones agricoles → métropoles [de, vers]
-const FLUX = [
-  [[48.1,  1.7], [48.85,   2.35]],  // Beauce → Paris
-  [[41.9,-93.1], [41.88, -87.63]],  // Midwest → Chicago
-  [[-12.0,-47.0],[-23.55,-46.63]],  // Cerrado → São Paulo
-  [[49.0, 32.0], [52.52,  13.40]],  // Steppe ukrainienne → Berlin
-  [[-34.0,-61.0],[-34.60,-58.38]],  // Pampas → Buenos Aires
-  [[31.0, 74.0], [28.61,  77.21]],  // Pendjab → Delhi
-];
 
 
 
@@ -369,7 +361,7 @@ const TEXTES = {
     son: e => e ? 'Son · on' : 'Son · off',
     calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
       argile: 'Retrait-gonflement argiles', secheresse: 'Sécheresse',
-      mer: 'Submersion marine', fleuves: 'Inondations fluviales', flux: 'Résilience & flux' },
+      mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Instabilité du climat' },
     critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
     legendeIndice: '／100 · indice d’habitabilité',
@@ -379,6 +371,7 @@ const TEXTES = {
       moyen: `En ${an}, rester demande de s’adapter sur ${faible.toLowerCase()}.`,
       dur: `En ${an}, ${faible.toLowerCase()} pèse assez pour poser la question du départ.`,
     })[n] + (delta <= -8 ? ` L’indice perd ${-delta} points d’ici 2050.` : delta >= 8 ? ` L’indice gagne ${delta} points d’ici 2050.` : ''),
+    conseilSain: an => `En ${an}, aucun des six facteurs ne pèse vraiment ici.`,
     aujourdhui: 'En ce moment',
     ras: 'Aucun événement naturel majeur en cours dans un rayon de 800 km.',
     rasChargement: 'Interrogation du flux NASA EONET…',
@@ -412,7 +405,7 @@ const TEXTES = {
     son: e => e ? 'Sound · on' : 'Sound · off',
     calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
       argile: 'Clay shrink-swell', secheresse: 'Drought',
-      mer: 'Coastal flooding', fleuves: 'River flooding', flux: 'Resilience & flows' },
+      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
     critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
     legendeIndice: '／100 · habitability index',
@@ -422,6 +415,7 @@ const TEXTES = {
       moyen: `In ${an}, staying means adapting on ${faible.toLowerCase()}.`,
       dur: `In ${an}, ${faible.toLowerCase()} weighs enough to raise the question of leaving.`,
     })[n] + (delta <= -8 ? ` The index loses ${-delta} points by 2050.` : delta >= 8 ? ` The index gains ${delta} points by 2050.` : ''),
+    conseilSain: an => `In ${an}, none of the six factors carries real weight here.`,
     aujourdhui: 'Right now',
     ras: 'No major natural event under way within 800 km.',
     rasChargement: 'Querying the NASA EONET feed…',
@@ -753,7 +747,7 @@ const uniformsGlobe = {
   uProgression:{ value: 0 },                          // timeline 2026→2050 → 0..1
   uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },
   uChaleur:    { value: 0 }, uArgile: { value: 0 },
-  uSecheresse: { value: 0 }, uMer:    { value: 0 },
+  uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
   uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
   uC:     { value: texC },
@@ -772,7 +766,7 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChaleur, uArgile, uSecheresse, uMer;
+    uniform float uTemps, uProgression, uChaleur, uArgile, uSecheresse, uMer, uStabilite;
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
@@ -805,7 +799,7 @@ const matGlobe = new THREE.ShaderMaterial({
       // doivent rester lisibles y compris sur la face nuit
       float gris = dot(tex, vec3(0.299, 0.587, 0.114));
       vec3 ocean   = vec3(0.026, 0.058, 0.132);
-      vec3 continent = mix(vec3(0.095, 0.130, 0.168), vec3(0.245, 0.272, 0.278), gris);
+      vec3 continent = mix(vec3(0.130, 0.168, 0.205), vec3(0.300, 0.325, 0.330), gris);
       vec3 base = mix(ocean, continent, terre);
 
       // éclairage très doux : le jour/nuit module, il ne masque jamais (pas de
@@ -813,15 +807,18 @@ const matGlobe = new THREE.ShaderMaterial({
       float lambert = max(dot(vN, uSoleil), 0.0);
       vec3 vue = normalize(cameraPosition - vPm);
       float fresnel = pow(1.0 - max(dot(vN, vue), 0.0), 3.0);
-      vec3 col = base * (0.94 + 0.30 * lambert) + vec3(0.09, 0.25, 0.66) * fresnel * 0.55;
+      // plancher haut : la face nuit reste lisible sous n'importe quelle rotation
+      vec3 col = base * (1.05 + 0.24 * lambert) + vec3(0.09, 0.25, 0.66) * fresnel * 0.50;
 
       float P = uProgression;
 
       /* Grilles de risques réelles (WorldClim/CMIP6 SSP3-7.0, ETOPO 2022,
          Natural Earth). r = chaleur, g = sécheresse, b = feux, a = submersion ;
          st = fleuves 2026 / fleuves 2050 / argiles / masque terre ETOPO. */
-      vec3 ga = mix(texture2D(uA2026, vUv).rgb, texture2D(uA2050, vUv).rgb, P);  // chaud / gel / sec
-      vec3 gb = mix(texture2D(uB2026, vUv).rgb, texture2D(uB2050, vUv).rgb, P);  // feu / mer / fleuves
+      vec3 a26 = texture2D(uA2026, vUv).rgb, a50 = texture2D(uA2050, vUv).rgb;
+      vec3 b26 = texture2D(uB2026, vUv).rgb, b50 = texture2D(uB2050, vUv).rgb;
+      vec3 ga = mix(a26, a50, P);                    // chaud / gel / sec
+      vec3 gb = mix(b26, b50, P);                    // feu / mer / fleuves
       vec3 gc = texture2D(uC, vUv).rgb;                                          // argiles / terre
       float submersion = gb.g;
       terre = max(terre, step(0.5, gc.g));
@@ -866,6 +863,20 @@ const matGlobe = new THREE.ShaderMaterial({
         vec3 neon = vec3(0.16, 0.48, 1.0);
         col = mix(col, neon * houle, eau * uMer * 0.70);
         col += neon * bord * terre * uMer * 0.85;             // liseré du trait de côte submersible
+      }
+
+      // R-07 INSTABILITÉ : où le climat de 2050 diffère le plus de celui de
+      // 2026, toutes grilles confondues — mêmes pondérations que le critère
+      // « stabilité » du dossier. Lueur violette qui respire lentement.
+      if (uStabilite > 0.001){
+        float inst = (abs(a50.r - a26.r) * 1.0 + abs(a50.b - a26.b) * 0.8
+                    + abs(b50.r - b26.r) * 0.6 + abs(b50.g - b26.g) * 1.2) / 3.6;
+        // dynamique réelle de l'écart : médiane ~0.001, p90 ~0.024, p99 ~0.056.
+        // Le seuil suit ces percentiles, pas une échelle 0-1 imaginaire.
+        float m = smoothstep(0.006, 0.055, inst) * terre;
+        float souffle = 0.72 + 0.28 * sin(uTemps * 1.1 + inst * 8.0);
+        vec3 violet = vec3(0.565, 0.365, 1.0);
+        col = mix(col, violet * souffle, m * uStabilite * (0.45 + 0.40 * P));
       }
 
       gl_FragColor = vec4(col, 1.0);
@@ -1038,68 +1049,6 @@ fetch('./data/rivers.json').then(r => r.json()).then(fleuves => {
 groupeFleuves.visible = false;
 scene.add(groupeFleuves);
 
-/* =====================================================================
-   7. R-07 FLUX — arcs de Bézier 3D + particules voyageant GPU-side.
-      Dépendance logistique des métropoles aux zones agricoles.
-   ===================================================================== */
-const courbes = FLUX.map(([a, b]) => {
-  const va = latLonVersVec3(a[0], a[1]), vb = latLonVersVec3(b[0], b[1]);
-  const milieu = va.clone().add(vb).multiplyScalar(0.5).normalize()
-    .multiplyScalar(1 + va.distanceTo(vb) * 0.35);          // hauteur d'arc
-  return new THREE.QuadraticBezierCurve3(va, milieu, vb);
-});
-const groupeFlux = new THREE.Group();
-const fluxUniforms = { uTemps: { value: 0 }, uIntensite: { value: 0 }, uPixelRatio: { value: moteur.getPixelRatio() } };
-{
-  // arcs : tubes très fins, teinte cyan discrète
-  for (const c of courbes){
-    const geo = new THREE.TubeGeometry(c, 48, 0.0016, 4, false);
-    groupeFlux.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-      color: 0x39e6d4, transparent: true, opacity: 0.14, blending: THREE.AdditiveBlending, depthWrite: false })));
-  }
-  // particules : 48 par arc, position calculée dans le vertex shader (3 points de contrôle)
-  const PAR_ARC = 48, total = courbes.length * PAR_ARC;
-  const p0 = new Float32Array(total * 3), p1 = new Float32Array(total * 3), p2 = new Float32Array(total * 3);
-  const decalage = new Float32Array(total);
-  let k = 0;
-  for (const c of courbes){
-    for (let i = 0; i < PAR_ARC; i++, k++){
-      p0.set([c.v0.x, c.v0.y, c.v0.z], k * 3);
-      p1.set([c.v1.x, c.v1.y, c.v1.z], k * 3);
-      p2.set([c.v2.x, c.v2.y, c.v2.z], k * 3);
-      decalage[k] = i / PAR_ARC;
-    }
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(p0, 3)); // requis, remplacé au rendu
-  geo.setAttribute('aP1', new THREE.BufferAttribute(p1, 3));
-  geo.setAttribute('aP2', new THREE.BufferAttribute(p2, 3));
-  geo.setAttribute('aDecalage', new THREE.BufferAttribute(decalage, 1));
-  groupeFlux.add(new THREE.Points(geo, new THREE.ShaderMaterial({
-    uniforms: fluxUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    vertexShader: /* glsl */`
-      attribute vec3 aP1; attribute vec3 aP2; attribute float aDecalage;
-      uniform float uTemps, uIntensite, uPixelRatio;
-      varying float vVie;
-      void main(){
-        float t = fract(uTemps * 0.14 + aDecalage);
-        vec3 ab = mix(position, aP1, t), bc = mix(aP1, aP2, t);
-        vec3 pos = mix(ab, bc, t);                            // Bézier quadratique évalué GPU
-        vVie = sin(t * 3.14159);                              // naît et meurt aux extrémités
-        vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = (1.6 + 2.4 * vVie) * uIntensite * uPixelRatio * (2.6 / -mv.z);
-        gl_Position = projectionMatrix * mv;
-      }`,
-    fragmentShader: /* glsl */`
-      uniform float uIntensite; varying float vVie;
-      void main(){
-        float d = length(gl_PointCoord - 0.5);
-        gl_FragColor = vec4(vec3(0.35, 0.95, 0.9), smoothstep(0.5, 0.05, d) * vVie * uIntensite);
-      }`,
-  })));
-}
-groupeFlux.visible = false;
-scene.add(groupeFlux);
 
 /* =====================================================================
    8. POST-TRAITEMENT — UN SEUL PASSAGE : LUT colorimétrique 512 px
@@ -1250,7 +1199,7 @@ const CALQUES = {
   secheresse: { uniforme: uniformsGlobe.uSecheresse, son: 'layer_on' },
   mer:        { uniforme: uniformsGlobe.uMer,        son: 'layer_on' },
   fleuves:    { uniforme: fleuvesUniforms.uCrue,     son: 'layer_on', objet: groupeFleuves },
-  flux:       { uniforme: fluxUniforms.uIntensite,   son: 'layer_on', objet: groupeFlux },
+  stabilite:  { uniforme: uniformsGlobe.uStabilite,  son: 'layer_on' },
 };
 const etat = { progression: 0, annee: 2026, feuxCible: 0, crise: false };
 
@@ -1577,10 +1526,13 @@ function majDossier(){
   v.className = 'verdict ' + niveau;
   document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
 
-  // le critère qui coûte le plus de points, pondération comprise
-  const pire = criteres.slice().sort((a, b) => b.penalite * b.poids - a.penalite * a.poids)[0];
+  // le point faible est jugé sur la MÊME échelle que les rangées affichées
+  // (le rang parmi les villes), sinon la phrase contredit les notes
+  const pire = criteres.slice().sort((a, b) =>
+    a.note - b.note || b.poids - a.poids)[0];
   document.getElementById('dossier-conseil').textContent =
-    t.conseil(niveau, t.critere[pire.cle], an, indice2050 - indice);
+    pire.note >= 85 ? t.conseilSain(an)
+      : t.conseil(niveau, t.critere[pire.cle], an, indice2050 - indice);
 
   majEvenements(l);
 
@@ -1919,7 +1871,6 @@ function boucle(){
   uniformsGlobe.uTemps.value = t;
   feuxUniforms.uTemps.value = t;
   fleuvesUniforms.uTemps.value = t;
-  fluxUniforms.uTemps.value = t;
 
   // densité des feux pilotée par la projection (multiplication réelle via drawRange)
   const cibleFeux = Math.floor(FEUX_MAX * Math.pow(0.05 + 0.95 * etat.progression, 1.6) * feuxUniforms.uIntensite.value);
