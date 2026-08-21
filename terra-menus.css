@@ -609,3 +609,51 @@ body.cale-annee #timeline .an { opacity: 0.92; }
 /* ---- écart projeté ---- */
 .vers2050 { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-style: normal;
   font-size: 10px; letter-spacing: 0.14em; }
+
+/* =====================================================================
+   MENUS DE L'EN-TÊTE — « Conditions de vie » + engrenage.
+   Deux panneaux déroulants ancrés à droite, hairline, fond encre voilé.
+   ===================================================================== */
+#util .menu-groupe { position: relative; display: flex; align-items: center; }
+
+/* déclencheur : texte + chevron qui bascule */
+#bouton-conditions { display: flex; align-items: center; gap: 8px; }
+#bouton-conditions .chevron { width: 7px; height: 7px; border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor; transform: rotate(45deg) translateY(-1px);
+  transition: transform 0.4s var(--ease); }
+#bouton-conditions.ouvert .chevron { transform: rotate(225deg); }
+#bouton-conditions.ouvert, #bouton-reglages.ouvert { color: var(--texte); }
+
+/* engrenage : trait fin, rotation d'un cran à l'ouverture */
+#bouton-reglages { padding: 6px 0 6px 4px; }
+#bouton-reglages .rouage { width: 15px; height: 15px; fill: none; stroke: currentColor;
+  stroke-width: 1.2; stroke-linecap: round; display: block;
+  transition: transform 0.6s var(--ease); }
+#bouton-reglages.ouvert .rouage { transform: rotate(90deg); }
+
+/* panneaux : masqués par défaut, glissent depuis le déclencheur */
+#calques, #menu-reglages {
+  position: absolute; top: calc(100% + 14px); right: 0; z-index: 30;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0;
+  min-width: 218px; padding: 8px 20px;
+  background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--filet); border-radius: 2px;
+  opacity: 0; transform: translateY(-8px); pointer-events: none; visibility: hidden;
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease),
+    visibility 0s 0.4s;
+}
+#calques.ouvert, #menu-reglages.ouvert {
+  opacity: 1; transform: none; pointer-events: auto; visibility: visible;
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), visibility 0s;
+}
+/* neutralise l'ancien positionnement fixe du rail gauche */
+#util #calques { left: auto; width: auto; }
+body.pret #util #calques { transform: none; }
+#util #calques:not(.ouvert) { transform: translateY(-8px); }
+
+#calques .calque { width: 100%; padding: 10px 0; border-top: 1px solid var(--filet); }
+#calques .calque:first-child { border-top: none; }
+#menu-reglages .bouton-ico { width: 100%; text-align: left; padding: 11px 0;
+  border-top: 1px solid var(--filet); }
+#menu-reglages .bouton-ico:first-child { border-top: none; }

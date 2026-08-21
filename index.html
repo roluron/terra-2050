@@ -191,18 +191,6 @@
   <ul id="resultats"></ul>
 </div>
 
-<nav id="calques" class="panneau" aria-label="Calques de risque">
-  <div class="micro" data-t="calques"></div>
-  <button class="calque" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
-  <button class="calque" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
-  <button class="calque" data-cle="argile" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-03</span></button>
-  <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
-  <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
-  <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
-  <button class="calque" data-cle="flux"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
-</nav>
-
-
 <div id="timeline" class="panneau">
   <div class="micro">Projection temporelle</div>
   <div class="an" id="an">2026</div>
@@ -213,9 +201,38 @@
 </div>
 
 <div id="util" class="panneau">
-  <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
-  <button class="bouton-ico fa-lien" id="bouton-perf">Perf</button>
-  <button class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language / Langue">FR · <em>en</em></button>
+  <div class="menu-groupe">
+    <button class="bouton-ico" id="bouton-conditions" aria-expanded="false">
+      <span data-t="conditions"></span><i class="chevron" aria-hidden="true"></i>
+    </button>
+    <nav id="calques" aria-label="Calques de risque">
+      <button class="calque" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
+      <button class="calque" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
+      <button class="calque" data-cle="argile" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-03</span></button>
+      <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
+      <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
+      <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
+      <button class="calque" data-cle="flux"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
+    </nav>
+  </div>
+  <div class="menu-groupe">
+    <button class="bouton-ico" id="bouton-reglages" aria-label="Réglages / Settings" aria-expanded="false">
+      <svg class="rouage" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <g class="dents">
+          <line x1="12" y1="1.5" x2="12" y2="5.5"/><line x1="12" y1="18.5" x2="12" y2="22.5"/>
+          <line x1="1.5" y1="12" x2="5.5" y2="12"/><line x1="18.5" y1="12" x2="22.5" y2="12"/>
+          <line x1="4.6" y1="4.6" x2="7.4" y2="7.4"/><line x1="16.6" y1="16.6" x2="19.4" y2="19.4"/>
+          <line x1="4.6" y1="19.4" x2="7.4" y2="16.6"/><line x1="16.6" y1="7.4" x2="19.4" y2="4.6"/>
+        </g>
+      </svg>
+    </button>
+    <div id="menu-reglages">
+      <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
+      <button class="bouton-ico fa-lien" id="bouton-perf">Perf</button>
+      <button class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language / Langue">FR · <em>en</em></button>
+    </div>
+  </div>
 </div>
 
 <div id="hud" class="panneau"></div>
@@ -348,6 +365,7 @@ const TEXTES = {
     aucunLieu: 'Aucune ville trouvée',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     calques: 'Calques de risque',
+    conditions: 'Conditions de vie',
     son: e => e ? 'Son · on' : 'Son · off',
     calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
       argile: 'Retrait-gonflement argiles', secheresse: 'Sécheresse',
@@ -390,6 +408,7 @@ const TEXTES = {
     aucunLieu: 'No city found',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     calques: 'Risk layers',
+    conditions: 'Life conditions',
     son: e => e ? 'Sound · on' : 'Sound · off',
     calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
       argile: 'Clay shrink-swell', secheresse: 'Drought',
@@ -858,16 +877,20 @@ scene.add(globe);
 /* ---- atmosphère externe : halo fresnel, profondeur spatiale ---- */
 const matAtmo = new THREE.ShaderMaterial({
   side: THREE.BackSide, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  uniforms: { uIntensite: { value: 1 } },
+  uniforms: { uIntensite: { value: 1 }, uProgression: { value: 0 } },
   vertexShader: /* glsl */`
     varying vec3 vN;
     void main(){ vN = normalize(normalMatrix * normal);
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
   fragmentShader: /* glsl */`
-    uniform float uIntensite; varying vec3 vN;
+    uniform float uIntensite, uProgression; varying vec3 vN;
     void main(){
       float halo = pow(0.62 - dot(vN, vec3(0.0, 0.0, 1.0)), 2.2);
-      gl_FragColor = vec4(vec3(0.090, 0.251, 0.663) * halo, 1.0) * uIntensite;
+      // l'atmosphère vire du bleu 2026 à la braise 2050 avec la projection
+      vec3 froid = vec3(0.090, 0.251, 0.663);
+      vec3 chaud = vec3(0.760, 0.130, 0.045);
+      vec3 teinte = mix(froid, chaud, smoothstep(0.12, 0.95, uProgression));
+      gl_FragColor = vec4(teinte * halo, 1.0) * uIntensite;
     }`,
 });
 scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
@@ -1246,6 +1269,7 @@ for (const btn of document.querySelectorAll('.calque')){
   btn.addEventListener('mouseenter', () => SoundManager.play('ui_hover')); // anti-rebond intégré
 }
 
+let volEnCours = null, minuterieRepos = null;
 // rotation auto reprise après 4 s sans interaction
 toile.addEventListener('pointerdown', () => {
   controles.autoRotate = false;
@@ -1346,7 +1370,10 @@ curseur.addEventListener('input', () => {
   if (lieuDossier) majDossier();
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE,
-    onUpdate: () => { uniformsGlobe.uProgression.value = etat.progression; },
+    onUpdate: () => {
+      uniformsGlobe.uProgression.value = etat.progression;
+      matAtmo.uniforms.uProgression.value = etat.progression;
+    },
   });
   // boucle « crise » : s'installe à partir de 2040 (fondu 2 s croisé)
   const crise = an >= 2040;
@@ -1643,6 +1670,49 @@ addEventListener('keydown', e => {
   else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ) fermerDossier();
 });
 
+/* =====================================================================
+   MENUS DE L'EN-TÊTE — « Conditions de vie » (calques) et l'engrenage
+   (son / perf / langue). Un seul ouvert à la fois ; fermeture au clic
+   extérieur ou à Échap. L'ouverture anime les rangées en cascade.
+   ===================================================================== */
+{
+  const menus = [
+    { bouton: document.getElementById('bouton-conditions'),
+      panneau: document.getElementById('calques'), rangees: '.calque' },
+    { bouton: document.getElementById('bouton-reglages'),
+      panneau: document.getElementById('menu-reglages'), rangees: '.bouton-ico' },
+  ];
+  const fermer = m => {
+    if (!m.panneau.classList.contains('ouvert')) return;
+    m.panneau.classList.remove('ouvert');
+    m.bouton.classList.remove('ouvert');
+    m.bouton.setAttribute('aria-expanded', 'false');
+  };
+  const ouvrir = m => {
+    menus.forEach(x => { if (x !== m) fermer(x); });
+    m.panneau.classList.add('ouvert');
+    m.bouton.classList.add('ouvert');
+    m.bouton.setAttribute('aria-expanded', 'true');
+    gsap.fromTo(m.panneau.querySelectorAll(m.rangees),
+      { opacity: 0, y: -8 },
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: EASE,
+        clearProps: 'opacity,transform' });
+    SoundManager.play('ui_click');
+  };
+  menus.forEach(m => {
+    m.bouton.addEventListener('click', e => {
+      e.stopPropagation();
+      m.panneau.classList.contains('ouvert') ? fermer(m) : ouvrir(m);
+    });
+  });
+  document.addEventListener('click', e => {
+    menus.forEach(m => {
+      if (!m.panneau.contains(e.target) && !m.bouton.contains(e.target)) fermer(m);
+    });
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape') menus.forEach(fermer); });
+}
+
 /* ---- son global + HUD perf ---- */
 const boutonSon = document.getElementById('bouton-son');
 boutonSon.addEventListener('click', () => {
@@ -1832,7 +1902,7 @@ function revelerChrome(){
     { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
   entree('#recherche', { opacity: 0, y: -10 }, 0.15);
   entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.04 });
-  entree('.bouton-ico', { opacity: 0, y: -8 }, 0.4, { stagger: 0.04 });
+  entree('#bouton-conditions, #bouton-reglages', { opacity: 0, y: -8 }, 0.4, { stagger: 0.06 });
   entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
   entree('#curseur, #timeline .bornes', { opacity: 0 }, 0.6);
   return tl;
