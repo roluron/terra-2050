@@ -173,11 +173,22 @@
 
 <!-- voile d'entrée : sert aussi de geste utilisateur pour l'audio -->
 <div id="voile">
-  <div class="sous" data-t="sous1"></div>
-  <h1>terra<em>／</em>2050</h1>
-  <div class="sous" data-t="sous2"></div>
-  <div class="jauge" id="jauge">CHARGEMENT 0%</div>
-  <button class="entree" id="bouton-entree" data-t="initialiser"></button>
+  <div class="v-champ" aria-hidden="true"><svg id="v-flux" viewBox="0 0 1000 420" preserveAspectRatio="none"></svg></div>
+  <div class="v-grain" aria-hidden="true"></div>
+
+  <div class="v-centre">
+    <div class="v-eyebrow"><span data-t="sous1"></span></div>
+    <h1 id="v-wordmark">terra<em>／</em>2050</h1>
+    <div class="v-eyebrow v-eyebrow-bas"><span data-t="sous2"></span></div>
+
+    <div class="v-charge">
+      <span class="v-mono" id="jauge">0%</span>
+      <span class="v-barre"><i id="v-barre-fill"></i></span>
+      <svg class="v-etoile" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg>
+    </div>
+
+    <button class="entree" id="bouton-entree"><span data-t="initialiser"></span></button>
+  </div>
 </div>
 
 <header id="titre" class="panneau">
@@ -210,16 +221,13 @@
   <button class="hotspot fa-lien" data-spot="amazonie"><span class="code">3.4°S · 62.2°O</span><span data-t-hotspot>amazonie</span></button>
   <button class="hotspot fa-lien" data-spot="bangladesh"><span class="code">22.8°N · 90.3°E</span><span data-t-hotspot>bangladesh</span></button>
   <button class="hotspot fa-lien" data-spot="bretagne"><span class="code">48.2°N · 2.9°O</span><span data-t-hotspot>bretagne</span></button>
-  <div id="fiche">
-    <div class="metrique" id="fiche-metrique">Sélectionnez un hotspot</div>
-    <h2 id="fiche-titre">Vue globale</h2>
-    <p id="fiche-texte">Sept systèmes de risque projetés sur le globe. Activez les calques, puis faites glisser la projection vers 2050.</p>
-  </div>
 </aside>
 
 <div id="timeline" class="panneau">
   <div class="micro">Projection temporelle</div>
   <div class="an" id="an">2026</div>
+  <div class="piste" aria-hidden="true"><i></i></div>
+  <div class="graduations" aria-hidden="true"></div>
   <input type="range" id="curseur" min="2026" max="2050" step="1" value="2026" aria-label="Année de projection">
   <div class="bornes micro"><span>2026</span><span>2050</span></div>
 </div>
@@ -237,7 +245,7 @@
   <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
 </div>
 
-<div id="scrim-dossier"></div>
+<div id="scrim-dossier"><div class="v-grain" aria-hidden="true"></div></div>
 <aside id="dossier" aria-label="Diagnostic du lieu">
   <div>
     <div class="coords" id="dossier-coords"></div>
@@ -307,9 +315,11 @@ class Odometre {
       const c = txt[i];
       col.style.width = c === ' ' ? '0' : '';
       if (c === ' ') return;
+      // roulement VERTICAL : en horizontal, passer de 0 à 9 fait défiler les
+      // dix chiffres dans la largeur de la colonne, ce qui se lit comme du bruit
       col.querySelectorAll('.js-number').forEach((d, n) => {
         gsap.killTweensOf(d);
-        const vars = { xPercent: -100 * (n - +c) };
+        const vars = { yPercent: -100 * (n - +c) };
         immediat ? gsap.set(d, vars) : gsap.to(d, { ...vars, duration: DUREE.sfast, ease: EASE_INOUT });
       });
     });
@@ -821,7 +831,7 @@ const matGlobe = new THREE.ShaderMaterial({
       // doivent rester lisibles y compris sur la face nuit
       float gris = dot(tex, vec3(0.299, 0.587, 0.114));
       vec3 ocean   = vec3(0.026, 0.058, 0.132);
-      vec3 continent = mix(vec3(0.110, 0.150, 0.190), vec3(0.320, 0.350, 0.352), gris);
+      vec3 continent = mix(vec3(0.095, 0.130, 0.168), vec3(0.245, 0.272, 0.278), gris);
       vec3 base = mix(ocean, continent, terre);
 
       // éclairage très doux : le jour/nuit module, il ne masque jamais (pas de
@@ -1294,16 +1304,6 @@ function volerVers(spot){
     duration: 1.8, ease: EASE,                            // vols : bande 1.5-2 s
     onUpdate: () => camera.lookAt(0, 0, 0),
   });
-  // fiche d'information : transform/opacity uniquement
-  const fiche = document.getElementById('fiche');
-  fiche.classList.add('visible');
-  gsap.to(fiche, { opacity: 0, y: 6, duration: 0.3, ease: EASE, onComplete: () => {
-    const tx = h[langue] || h.fr;
-    document.getElementById('fiche-metrique').textContent = tx.metrique;
-    document.getElementById('fiche-titre').textContent = tx.titre;
-    document.getElementById('fiche-texte').textContent = tx.texte;
-    gsap.to(fiche, { opacity: 1, y: 0, duration: 0.5, ease: EASE });
-  }});
 }
 for (const btn of document.querySelectorAll('.hotspot')){
   btn.addEventListener('click', () => { SoundManager.play('ui_click'); volerVers(btn.dataset.spot); });
@@ -1363,15 +1363,6 @@ function choisirLieu(l){
     x: cible.x, y: cible.y, z: cible.z, duration: 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
   });
-  const fiche = document.getElementById('fiche');
-  gsap.to(fiche, { opacity: 0, y: 6, duration: 0.3, ease: EASE, onComplete: () => {
-    document.getElementById('fiche-metrique').textContent =
-      `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'}`;
-    document.getElementById('fiche-titre').textContent = nomVille(l);
-    document.getElementById('fiche-texte').textContent =
-      'Position localisée. Activez les calques de risque pour projeter les expositions de ce territoire à l’horizon 2050.';
-    gsap.to(fiche, { opacity: 1, y: 0, duration: 0.5, ease: EASE });
-  }});
 }
 champ.addEventListener('input', afficherResultats);
 champ.addEventListener('focus', afficherResultats);
@@ -1397,11 +1388,24 @@ document.addEventListener('click', e => {
 const curseur = document.getElementById('curseur'), affichageAn = document.getElementById('an');
 const odoAn = new Odometre(affichageAn, 4); odoAn.set(2026, true);
 curseur.style.setProperty('--fill', '0%');
+const piste = document.querySelector('#timeline .piste');
+const graduations = document.querySelector('#timeline .graduations');
+const ANNEES_GRAD = [2026, 2032, 2038, 2044, 2050];
+graduations.innerHTML = ANNEES_GRAD.map(() => '<span></span>').join('');
+function majPiste(an){
+  const p = (an - 2026) / 24 * 100;
+  piste.style.setProperty('--fill', p + '%');
+  graduations.querySelectorAll('span').forEach((el, i) =>
+    el.classList.toggle('passe', ANNEES_GRAD[i] <= an));
+}
+majPiste(2026);
+curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-annee'));
+addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 curseur.addEventListener('input', () => {
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
   odoAn.set(an);
-  curseur.style.setProperty('--fill', ((an - 2026) / 24 * 100) + '%');
+  majPiste(an);
   if (lieuDossier) majDossier();
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE,
@@ -1544,17 +1548,24 @@ function tracerTrajectoire(l, an){
   const y = ech(indiceHabitabilite(l[2], l[3], an));
   svg.innerHTML =
     `<defs><linearGradient id="grad-traj" x1="0" y1="0" x2="0" y2="1">` +
-      `<stop offset="0" stop-color="#1740A9" stop-opacity="0.55"/>` +
+      `<stop offset="0" stop-color="#1740A9" stop-opacity="0.38"/>` +
       `<stop offset="1" stop-color="#1740A9" stop-opacity="0"/></linearGradient></defs>` +
     `<path class="aire" d="${d} L${W} ${H} L0 ${H} Z"/>` +
     `<path class="trait" d="${d}"/>` +
     `<line class="curseur-an" x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}"/>` +
     `<circle class="point-an" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2"/>`;
-  const trait = svg.querySelector('.trait');
-  const L = trait.getTotalLength();
-  // tracé progressif, comme le MotionDrawLine du site fromanother
-  gsap.fromTo(trait, { strokeDasharray: L, strokeDashoffset: L },
-    { strokeDashoffset: 0, duration: 1.2, ease: EASE_INOUT });
+  // Le tracé progressif ne joue qu'à l'ouverture du dossier : le relancer à
+  // chaque année laissait la courbe en pointillés dès qu'on bougeait le slider.
+  if (tracerTrajectoire.animer){
+    tracerTrajectoire.animer = false;
+    const trait = svg.querySelector('.trait');
+    const L = trait.getTotalLength();
+    gsap.fromTo(trait, { strokeDasharray: L, strokeDashoffset: L },
+      { strokeDashoffset: 0, duration: 1.3, ease: EASE_INOUT, overwrite: true,
+        clearProps: 'strokeDasharray,strokeDashoffset' });
+    gsap.fromTo(svg.querySelector('.aire'), { opacity: 0 },
+      { opacity: 1, duration: 1.1, delay: 0.2, ease: EASE, clearProps: 'opacity' });
+  }
 }
 
 /* État « en ce moment » : événements naturels réellement en cours autour du
@@ -1586,6 +1597,7 @@ function majEvenements(l){
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
+  const dossierNeuf = tracerTrajectoire.animer;
   const { criteres, indice } = diagnostiquer(l, an);
   const indice2050 = indiceHabitabilite(l[2], l[3], 2050);
   const niveau = niveauDe(indice);
@@ -1621,8 +1633,13 @@ function majDossier(){
       <div class="detail">${c.detail}</div>
     </div>`;
   }).join('');
-  gsap.fromTo('#dossier-risques .barre i', { scaleX: 0 },
-    { scaleX: 1, transformOrigin: 'left center', duration: 1.2, stagger: 0.06, ease: EASE_INOUT });
+  if (dossierNeuf){
+    gsap.fromTo('#dossier-risques .risque', { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: DUREE.fast, stagger: 0.05, ease: EASE, clearProps: 'all' });
+    gsap.fromTo('#dossier-risques .barre i', { scaleX: 0 },
+      { scaleX: 1, transformOrigin: 'left center', duration: 1.2, stagger: 0.06,
+        ease: EASE_INOUT, clearProps: 'transform' });
+  }
 
   tracerTrajectoire(l, an);
   const ecart = indice2050 - indiceHabitabilite(l[2], l[3], 2026);
@@ -1650,7 +1667,9 @@ function majDossier(){
 }
 
 function ouvrirDossier(l){
-  lieuDossier = l; majDossier();
+  lieuDossier = l;
+  tracerTrajectoire.animer = true;
+  majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
 }
@@ -1740,9 +1759,16 @@ try { new PerformanceObserver(l => (longuesTaches += l.getEntries().length)).obs
 /* =====================================================================
    10. ENTRÉE — voile, geste audio, boucle de rendu unique
    ===================================================================== */
-chargeur.onProgress = (u, charge, total) =>
-  (document.getElementById('jauge').textContent = `CHARGEMENT ${Math.round(charge / total * 100)}%`);
-chargeur.onLoad = () => document.getElementById('voile').classList.add('pret');
+chargeur.onProgress = (u, charge, total) => {
+  const pct = Math.round(charge / total * 100);
+  document.getElementById('jauge').textContent = pct + '%';
+  document.getElementById('v-barre-fill').style.width = pct + '%';
+};
+chargeur.onLoad = () => {
+  document.getElementById('jauge').textContent = '100%';
+  document.getElementById('v-barre-fill').style.width = '100%';
+  document.getElementById('voile').classList.add('pret');
+};
 
 document.getElementById('bouton-entree').addEventListener('click', () => {
   document.getElementById('voile').classList.add('cache');
@@ -1758,6 +1784,81 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
   revelerChrome();
 });
+
+/* =====================================================================
+   VOILE — champ de lignes génératif, tickers binaires, wordmark en
+   caractères masqués. Tout est construit une fois au chargement.
+   ===================================================================== */
+{
+  /* Champ de lignes : 66 courbes déformées par trois sinusoïdes superposées,
+     réparties en trois groupes qui dérivent à des vitesses différentes (le
+     tissage vient du décalage entre les groupes, pas d'une simulation). */
+  const flux = document.getElementById('v-flux');
+  if (flux){
+    const LIGNES = 66, W = 1000, H = 420, PAS = 20;
+    const groupes = ['g1', 'g2', 'g3'].map(c => {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', c);
+      flux.appendChild(g);
+      return g;
+    });
+    for (let i = 0; i < LIGNES; i++){
+      const base = (i + 0.5) / LIGNES * H;
+      const phase = i * 0.28;
+      const ampli = 16 + 26 * Math.sin(i / LIGNES * Math.PI);   // ventre au centre
+      let d = '';
+      for (let x = 0; x <= W; x += PAS){
+        const u = x / W;
+        const y = base
+          + Math.sin(u * 4.1 + phase) * ampli
+          + Math.sin(u * 9.3 - phase * 0.7) * ampli * 0.32
+          + Math.sin(u * 17.0 + phase * 1.9) * ampli * 0.11;
+        d += (x ? 'L' : 'M') + x + ' ' + y.toFixed(1) + ' ';
+      }
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', d.trim());
+      p.style.opacity = (0.28 + 0.72 * Math.sin(i / LIGNES * Math.PI)).toFixed(2);
+      groupes[i % 3].appendChild(p);
+    }
+    // tracé progressif à l'ouverture, décalé ligne à ligne
+    const chemins = [...flux.querySelectorAll('path')];
+    gsap.set(chemins, { strokeDasharray: 2600, strokeDashoffset: 2600 });
+    gsap.to(chemins, { strokeDashoffset: 0, duration: 2.2, stagger: 0.012,
+      ease: EASE, clearProps: 'strokeDasharray,strokeDashoffset' });
+  }
+
+  /* Tickers : deux bandes binaires, la seconde en sens inverse. Le contenu
+     est dupliqué pour que la translation de -50 % boucle sans couture. */
+  const motif = () => {
+    let out = '';
+    for (let b = 0; b < 12; b++){
+      let bits = '';
+      for (let i = 0; i < 16; i++) bits += Math.random() < 0.5 ? '0' : '1';
+      out += `<span>${bits}</span><span class="sep">//////</span>`;
+    }
+    return out;
+  };
+  for (const id of ['v-piste-1', 'v-piste-2']){
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = motif().repeat(2);
+  }
+
+  /* Wordmark : chaque lettre dans son masque, révélation en cascade. */
+  const wm = document.getElementById('v-wordmark');
+  if (wm){
+    const html = [...wm.textContent].map(c =>
+      c === '／' ? '<span class="v-masque"><span class="lettre"><em>／</em></span></span>'
+                 : `<span class="v-masque"><span class="lettre">${c}</span></span>`).join('');
+    wm.innerHTML = html;
+    gsap.fromTo(wm.querySelectorAll('.lettre'), { yPercent: 115 },
+      { yPercent: 0, duration: 1.3, stagger: 0.035, ease: EASE, delay: 0.15,
+        clearProps: 'transform' });
+    // les surtitres montent derrière leur masque, décalés
+    gsap.fromTo('#voile .v-eyebrow span', { yPercent: 130, opacity: 0 },
+      { yPercent: 0, opacity: 1, duration: 1.1, stagger: 0.12, ease: EASE, delay: 0.35,
+        clearProps: 'transform,opacity' });
+  }
+}
 
 /* ---- apparition du chrome : vocabulaire de mouvement du site fromanother.
    fromTo + clearProps, jamais gsap.from : au moment où cette fonction tourne,

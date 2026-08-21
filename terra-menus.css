@@ -225,7 +225,7 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 /* ---- Compteur à rouleau (Counter/index.tsx) : chiffres empilés,
    glissement horizontal piloté par GSAP ---- */
 .odo { position: relative; display: inline-block; overflow: clip; vertical-align: top; }
-.odo .js-number { display: block; text-align: center; }
+.odo .js-number { display: block; text-align: center; will-change: transform; }
 .odo .js-number:not(:first-child) { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 /* ---- Révélation par caractères (Typo/Chars) : masque + yPercent ---- */
@@ -245,7 +245,7 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 #voile .entree:hover { opacity: 0.65; }
 
 /* Timeline : remplissage de progression au brand-blue (pas de dégradé) */
-#curseur { background: linear-gradient(90deg, var(--bleu) 0 var(--fill, 0%), var(--hairline) var(--fill, 0%) 100%); }
+
 
 /* =====================================================================
    Recherche en verre liquide : le champ est transparent, la lentille est
@@ -368,3 +368,252 @@ body.recherche-active #caret-dos { animation: caret-dos 1.06s steps(1) infinite;
 /* La liste de résultats reprend la typo du système, pas la mono d'origine */
 #resultats .vide { font-family: var(--herbik); font-style: italic; font-weight: 500;
   font-size: 13px; letter-spacing: normal; text-transform: none; color: var(--muter); }
+
+/* =====================================================================
+   VOILE D'ENTRÉE — fond noir, composition centrée, effets discrets :
+   champ de lignes en ambiance, grain animé, révélation par caractères.
+   ===================================================================== */
+:root { --noir: #000000; --filet: rgba(255, 253, 226, 0.16); }
+
+#voile {
+  background: var(--noir);
+  display: flex; align-items: center; justify-content: center; gap: 0;
+  transition: opacity 0.7s var(--ease), visibility 0s 0.7s;
+}
+
+/* ---- champ de lignes : ambiance, jamais le sujet ---- */
+.v-champ { position: absolute; inset: 0; overflow: hidden; opacity: 0.30;
+  mask-image: radial-gradient(ellipse 78% 62% at 50% 50%, #000 12%, transparent 74%);
+  -webkit-mask-image: radial-gradient(ellipse 78% 62% at 50% 50%, #000 12%, transparent 74%); }
+#v-flux { position: absolute; inset: -10% -6%; width: 112%; height: 120%; }
+#v-flux path { fill: none; stroke: rgba(255, 253, 226, 0.5); stroke-width: 0.6;
+  vector-effect: non-scaling-stroke; }
+#v-flux .g1 { animation: v-derive-a 19s ease-in-out infinite alternate; }
+#v-flux .g2 { animation: v-derive-b 25s ease-in-out infinite alternate; }
+#v-flux .g3 { animation: v-derive-c 31s ease-in-out infinite alternate; }
+@keyframes v-derive-a { to { transform: translate3d(-2.2%, 1.4%, 0) scaleY(1.06); } }
+@keyframes v-derive-b { to { transform: translate3d(2.8%, -1.8%, 0) scaleY(0.94); } }
+@keyframes v-derive-c { to { transform: translate3d(-1.4%, -2.4%, 0) scaleY(1.09); } }
+
+/* ---- grain animé : déplacé par pas, jamais interpolé (sinon il glisse) ---- */
+.v-grain { position: absolute; inset: -120%; pointer-events: none; opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'>\
+<filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter>\
+<rect width='160' height='160' filter='url(%23n)'/></svg>");
+  animation: v-grain 0.9s steps(6) infinite; }
+@keyframes v-grain {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3%, 2%); }
+  40%  { transform: translate(2%, -3%); }
+  60%  { transform: translate(-2%, -2%); }
+  80%  { transform: translate(3%, 1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---- composition centrée ---- */
+.v-centre { position: relative; z-index: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 22px; padding: 0 24px; }
+.v-eyebrow span { display: inline-block; }
+.v-eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px; letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(255, 253, 226, 0.42); overflow: clip; padding-bottom: 0.2em; }
+.v-eyebrow-bas { margin-top: -8px; }
+
+#v-wordmark { font-family: var(--police); font-weight: 600;
+  font-size: clamp(46px, 9vw, 132px); line-height: 0.9; letter-spacing: -0.04em;
+  color: var(--texte); margin: 0; white-space: nowrap; }
+#v-wordmark em { font-style: normal; color: var(--bleu); }
+#v-wordmark .lettre { display: inline-block; will-change: transform; }
+.v-masque { display: inline-block; overflow: clip;
+  padding-bottom: 0.12em; margin-bottom: -0.12em; }
+
+/* ---- chargement : filet fin, pourcentage, étoile ---- */
+.v-charge { display: flex; align-items: center; gap: 16px; margin-top: 12px; }
+.v-mono { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px; letter-spacing: 0.24em; color: rgba(255, 253, 226, 0.55);
+  font-variant-numeric: tabular-nums; }
+.v-barre { width: min(220px, 34vw); height: 1px; background: var(--filet); }
+.v-barre i { display: block; height: 1px; width: 0; background: var(--texte);
+  transition: width 0.5s var(--ease); }
+.v-etoile { width: 11px; height: 11px; fill: var(--texte); opacity: 0.75;
+  animation: v-tourne 14s linear infinite; }
+@keyframes v-tourne { to { transform: rotate(360deg); } }
+
+/* ---- entrée : soulignement qui se déploie, pas de pilule ---- */
+#voile .entree {
+  appearance: none; -webkit-appearance: none;
+  position: relative; margin-top: 14px; padding: 6px 2px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  background: none; border: none; border-radius: 0; color: var(--texte);
+  cursor: pointer; opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+#voile.pret .entree { opacity: 1; transform: none; pointer-events: auto; }
+#voile .entree::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1px; background: var(--texte); transform: scaleX(0);
+  transform-origin: right center; transition: transform 0.4s var(--ease); }
+#voile.pret .entree:hover::after { transform: scaleX(1); transform-origin: left center; }
+
+@media (prefers-reduced-motion: reduce) {
+  #v-flux .g1, #v-flux .g2, #v-flux .g3, .v-grain, .v-etoile { animation: none; }
+}
+
+/* Le bouton d'entrée : neutraliser le rendu natif, sinon WebKit repeint
+   un fond par-dessus `background: none`. */
+#voile .entree { appearance: none; -webkit-appearance: none; }
+
+/* =====================================================================
+   EN-TÊTE — wordmark, recherche et utilitaires sur une seule rangée.
+   Les trois blocs partagent la même hauteur et centrent leur contenu :
+   leurs hauteurs intrinsèques diffèrent, seul un centrage commun les
+   aligne réellement. La recherche est centrée par la mise en page et non
+   par un transform, sinon les tweens GSAP la décaleraient.
+   ===================================================================== */
+#titre, #recherche, #util {
+  top: 0; height: 68px; transform: none; display: flex; align-items: center;
+}
+body.pret #titre, body.pret #recherche, body.pret #util { transform: none; }
+#titre { left: 40px; }
+#util { right: 40px; top: 0; gap: 22px; }
+#recherche {
+  left: 0; right: 0; width: auto;
+  flex-direction: column; justify-content: center;
+}
+#champ-recherche { width: min(252px, 37vw); }
+#resultats { position: absolute; top: 54px; width: min(330px, 48vw); margin-top: 0; }
+@media (max-width: 720px) {
+  #titre { left: 20px; } #util { right: 20px; gap: 14px; }
+}
+
+/* =====================================================================
+   TIMELINE — curseur plus vivant : zone de saisie large, pouce qui
+   grandit à la prise, remplissage bleu avec pointe lumineuse, graduations
+   tous les six ans, et l'année qui respire pendant la manipulation.
+   ===================================================================== */
+/* pas de position ici : .panneau est déjà `fixed`, ce qui suffit comme bloc
+   conteneur pour la piste et les graduations. */
+#timeline .an { transition: transform 0.35s var(--ease), letter-spacing 0.35s var(--ease); }
+body.cale-annee #timeline .an { transform: scale(1.045); letter-spacing: -0.035em; }
+
+#curseur {
+  height: 22px;                       /* zone de saisie confortable */
+  background: none;                   /* la piste est peinte par ::before */
+  margin-top: 10px; position: relative; z-index: 2;
+}
+#timeline .piste { position: absolute; left: 0; right: 0; bottom: 40px; height: 1px;
+  background: var(--hairline); pointer-events: none; }
+#timeline .piste i { position: absolute; inset: 0 auto 0 0; width: var(--fill, 0%);
+  background: linear-gradient(90deg, rgba(23,64,169,0.35), var(--bleu));
+  transition: width 0.35s var(--ease); }
+#timeline .piste i::after { content: ''; position: absolute; right: 0; top: -2px; bottom: -2px;
+  width: 26px; background: linear-gradient(90deg, transparent, rgba(255,253,226,0.55));
+  opacity: 0; transition: opacity 0.3s var(--ease); }
+body.cale-annee #timeline .piste i::after { opacity: 1; }
+
+#timeline .graduations { position: absolute; left: 0; right: 0; bottom: 34px;
+  display: flex; justify-content: space-between; pointer-events: none; }
+#timeline .graduations span { width: 1px; height: 5px; background: var(--hairline);
+  transition: background 0.3s var(--ease), height 0.3s var(--ease); }
+#timeline .graduations span.passe { background: var(--bleu); height: 8px; }
+
+#curseur::-webkit-slider-thumb { width: 11px; height: 11px; border-width: 0;
+  background: var(--texte); box-shadow: 0 0 0 4px var(--encre), 0 0 18px 2px rgba(23,64,169,0.9);
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+#curseur:hover::-webkit-slider-thumb { transform: scale(1.25); }
+body.cale-annee #curseur::-webkit-slider-thumb {
+  transform: scale(1.45); box-shadow: 0 0 0 4px var(--encre), 0 0 26px 4px rgba(23,64,169,1); }
+#curseur::-moz-range-thumb { width: 11px; height: 11px; border: none; background: var(--texte);
+  box-shadow: 0 0 0 4px var(--encre), 0 0 18px 2px rgba(23,64,169,0.9); }
+
+/* =====================================================================
+   DOSSIER — refonte : grille de filets, libellés en mono à chasse large,
+   valeurs en chiffres tabulaires alignées à droite, grain sur le scrim.
+   Langage repris de wodniack.dev, palette et courbes fromanother.
+   ===================================================================== */
+#scrim-dossier .v-grain { opacity: 0.045; }
+
+#dossier { gap: 26px; }
+
+/* ---- micro-libellés : mono, capitales, chasse large ---- */
+#dossier .coords,
+#dossier .sources,
+#dossier .titre-bloc,
+#dossier .bornes-courbe,
+#dossier .legende {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-style: normal; font-weight: 400; font-size: 10px;
+  letter-spacing: 0.24em; text-transform: uppercase; line-height: 1.4;
+}
+#dossier .coords { color: rgba(255, 253, 226, 0.45); }
+#dossier .titre-bloc { color: rgba(255, 253, 226, 0.45); margin-bottom: 14px;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+#dossier .legende { color: rgba(255, 253, 226, 0.5); }
+#dossier .bornes-courbe { color: rgba(255, 253, 226, 0.35); }
+#dossier-ecart { font-family: var(--police); font-size: 12px; letter-spacing: -0.01em;
+  text-transform: none; color: var(--texte); }
+
+/* ---- identité du lieu ---- */
+#dossier .lieu { font-size: clamp(38px, 3.4vw, 58px); line-height: 0.88; letter-spacing: -0.04em; }
+#dossier .score { align-items: baseline; gap: 20px; padding-bottom: 24px;
+  border-bottom: 1px solid var(--filet); }
+/* le bloc de chiffres ne doit jamais se replier : les colonnes de l'odomètre
+   sont des inline-block, elles passeraient à la ligne dès que la légende serre */
+#dossier .score .valeur { display: flex; flex: none; font-size: clamp(64px, 6vw, 96px);
+  letter-spacing: -0.05em; }
+#dossier .score > div { min-width: 0; }
+#dossier .score .legende { white-space: normal; letter-spacing: 0.18em; }
+#dossier .verdict { margin-top: 7px; font-size: 13px; letter-spacing: -0.01em; }
+
+#dossier .conseil { font-size: 14px; line-height: 1.55; max-width: 36ch; }
+
+/* ---- critères : une rangée = un filet, valeur à droite ---- */
+#dossier .risque { display: block; margin: 0; padding: 13px 0 12px;
+  border-top: 1px solid var(--filet); position: relative; }
+#dossier #dossier-risques { display: block; }
+#dossier .risque .ligne { align-items: baseline; gap: 12px; }
+#dossier .risque .ligne > span:first-child { font-size: 14px; letter-spacing: -0.02em; }
+#dossier .risque .pourcent { font-size: 18px; font-weight: 600; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums; }
+#dossier .risque .barre { height: 1px; margin: 10px 0 8px; background: var(--filet); }
+#dossier .risque .barre i { height: 1px; }
+#dossier .risque .detail { font-size: 12px; line-height: 1.5; color: rgba(255, 253, 226, 0.45); }
+/* le filet se surligne au survol : rappel du hover des tables wodniack */
+#dossier .risque::before { content: ''; position: absolute; top: -1px; left: 0; right: 0;
+  height: 1px; background: var(--texte); transform: scaleX(0); transform-origin: left center;
+  transition: transform 0.5s var(--ease); }
+#dossier .risque:hover::before { transform: scaleX(1); }
+
+/* ---- trajectoire : trait fin, aire discrète, repère pointillé ---- */
+#dossier-courbe { height: 58px; }
+#dossier-courbe .trait { stroke: var(--texte); stroke-width: 1.1; }
+#dossier-courbe .curseur-an { stroke: rgba(255, 253, 226, 0.4); stroke-dasharray: 1.5 3; }
+#dossier-courbe .point-an { fill: var(--texte); }
+#dossier .bornes-courbe { margin-top: 8px; }
+
+/* ---- alternatives ---- */
+#dossier-ailleurs .alt { padding: 12px 0; border-top: 1px solid var(--filet); position: relative; }
+#dossier-ailleurs .alt::before { content: ''; position: absolute; top: -1px; left: 0; right: 0;
+  height: 1px; background: var(--texte); transform: scaleX(0); transform-origin: left center;
+  transition: transform 0.5s var(--ease); }
+#dossier-ailleurs .alt:hover::before { transform: scaleX(1); }
+#dossier-ailleurs .alt:hover { opacity: 1; }
+#dossier-ailleurs .alt .sc { font-size: 18px; letter-spacing: -0.03em; }
+#dossier-ailleurs .alt .delta { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px; letter-spacing: 0.16em; color: #2E8F6A; }
+
+/* ---- événements en cours ---- */
+#dossier .evenement { padding: 8px 0; border-top: 1px solid var(--filet); }
+#dossier .evenement:first-of-type { border-top: none; }
+#dossier .rien { font-size: 12.5px; line-height: 1.5; }
+
+/* ---- pied ---- */
+#dossier .sources { color: rgba(255, 253, 226, 0.3); line-height: 1.7; }
+#dossier .actions { gap: 26px; margin-top: 14px; }
+#dossier .actions span { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; }
+
+/* ---- écart projeté ---- */
+.vers2050 { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-style: normal;
+  font-size: 10px; letter-spacing: 0.14em; }
