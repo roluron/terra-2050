@@ -488,44 +488,35 @@ body.pret #titre, body.pret #recherche, body.pret #util { transform: none; }
 }
 
 /* =====================================================================
-   TIMELINE — curseur plus vivant : zone de saisie large, pouce qui
-   grandit à la prise, remplissage bleu avec pointe lumineuse, graduations
-   tous les six ans, et l'année qui respire pendant la manipulation.
+   TIMELINE — minimale : un filet, un remplissage crème, un point de 5 px.
+   Aucun halo, aucun dégradé. Trois graduations seulement.
    ===================================================================== */
-/* pas de position ici : .panneau est déjà `fixed`, ce qui suffit comme bloc
-   conteneur pour la piste et les graduations. */
-#timeline .an { transition: transform 0.35s var(--ease), letter-spacing 0.35s var(--ease); }
-body.cale-annee #timeline .an { transform: scale(1.045); letter-spacing: -0.035em; }
+#timeline .an { transition: opacity 0.35s var(--ease); }
+body.cale-annee #timeline .an { opacity: 0.92; }
 
 #curseur {
   height: 22px;                       /* zone de saisie confortable */
-  background: none;                   /* la piste est peinte par ::before */
-  margin-top: 10px; position: relative; z-index: 2;
+  background: none;                   /* la piste est un élément dédié */
+  margin-top: 8px; position: relative; z-index: 2;
 }
 #timeline .piste { position: absolute; left: 0; right: 0; bottom: 40px; height: 1px;
-  background: var(--hairline); pointer-events: none; }
+  background: rgba(255, 253, 226, 0.14); pointer-events: none; }
 #timeline .piste i { position: absolute; inset: 0 auto 0 0; width: var(--fill, 0%);
-  background: linear-gradient(90deg, rgba(23,64,169,0.35), var(--bleu));
-  transition: width 0.35s var(--ease); }
-#timeline .piste i::after { content: ''; position: absolute; right: 0; top: -2px; bottom: -2px;
-  width: 26px; background: linear-gradient(90deg, transparent, rgba(255,253,226,0.55));
-  opacity: 0; transition: opacity 0.3s var(--ease); }
-body.cale-annee #timeline .piste i::after { opacity: 1; }
+  background: rgba(255, 253, 226, 0.75); transition: width 0.3s var(--ease); }
 
-#timeline .graduations { position: absolute; left: 0; right: 0; bottom: 34px;
+#timeline .graduations { position: absolute; left: 0; right: 0; bottom: 37px;
   display: flex; justify-content: space-between; pointer-events: none; }
-#timeline .graduations span { width: 1px; height: 5px; background: var(--hairline);
-  transition: background 0.3s var(--ease), height 0.3s var(--ease); }
-#timeline .graduations span.passe { background: var(--bleu); height: 8px; }
+#timeline .graduations span { width: 1px; height: 7px;
+  background: rgba(255, 253, 226, 0.18); transition: background 0.3s var(--ease); }
+#timeline .graduations span.passe { background: rgba(255, 253, 226, 0.55); height: 7px; }
 
-#curseur::-webkit-slider-thumb { width: 11px; height: 11px; border-width: 0;
-  background: var(--texte); box-shadow: 0 0 0 4px var(--encre), 0 0 18px 2px rgba(23,64,169,0.9);
-  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
-#curseur:hover::-webkit-slider-thumb { transform: scale(1.25); }
-body.cale-annee #curseur::-webkit-slider-thumb {
-  transform: scale(1.45); box-shadow: 0 0 0 4px var(--encre), 0 0 26px 4px rgba(23,64,169,1); }
-#curseur::-moz-range-thumb { width: 11px; height: 11px; border: none; background: var(--texte);
-  box-shadow: 0 0 0 4px var(--encre), 0 0 18px 2px rgba(23,64,169,0.9); }
+#curseur::-webkit-slider-thumb { -webkit-appearance: none; width: 5px; height: 5px;
+  border: none; border-radius: 50%; background: var(--texte);
+  transition: transform 0.25s var(--ease); }
+#curseur:hover::-webkit-slider-thumb, body.cale-annee #curseur::-webkit-slider-thumb {
+  transform: scale(1.6); }
+#curseur::-moz-range-thumb { width: 5px; height: 5px; border: none; border-radius: 50%;
+  background: var(--texte); }
 
 /* =====================================================================
    DOSSIER — refonte : grille de filets, libellés en mono à chasse large,
@@ -563,22 +554,38 @@ body.cale-annee #curseur::-webkit-slider-thumb {
 #dossier .score .valeur { display: flex; flex: none; font-size: clamp(64px, 6vw, 96px);
   letter-spacing: -0.05em; }
 #dossier .score > div { min-width: 0; }
-#dossier .score .legende { white-space: normal; letter-spacing: 0.18em; }
+#dossier .score .legende { white-space: normal; letter-spacing: 0.14em; font-size: 9.5px; }
 #dossier .verdict { margin-top: 7px; font-size: 13px; letter-spacing: -0.01em; }
 
 #dossier .conseil { font-size: 14px; line-height: 1.55; max-width: 36ch; }
 
-/* ---- critères : une rangée = un filet, valeur à droite ---- */
+/* ---- critères : le rail raconte le trajet 2026 → 2050 ----
+   point plein = note à l'année affichée · tiret creux = note en 2050 ·
+   segment coloré = le chemin entre les deux. Tout bouge par transition. */
 #dossier .risque { display: block; margin: 0; padding: 13px 0 12px;
   border-top: 1px solid var(--filet); position: relative; }
 #dossier #dossier-risques { display: block; }
-#dossier .risque .ligne { align-items: baseline; gap: 12px; }
-#dossier .risque .ligne > span:first-child { font-size: 14px; letter-spacing: -0.02em; }
-#dossier .risque .pourcent { font-size: 18px; font-weight: 600; letter-spacing: -0.03em;
+#dossier .risque .ligne { display: flex; justify-content: space-between;
+  align-items: baseline; gap: 12px; }
+#dossier .risque .nom-crit { font-size: 13.5px; letter-spacing: -0.02em; }
+#dossier .risque .val { display: flex; align-items: baseline; gap: 8px; }
+#dossier .risque .v-now { font-size: 17px; font-weight: 600; letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums; }
-#dossier .risque .barre { height: 1px; margin: 10px 0 8px; background: var(--filet); }
-#dossier .risque .barre i { height: 1px; }
-#dossier .risque .detail { font-size: 12px; line-height: 1.5; color: rgba(255, 253, 226, 0.45); }
+#dossier .risque .v-vers { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px; letter-spacing: 0.1em; color: rgba(255, 253, 226, 0.4);
+  font-variant-numeric: tabular-nums; }
+#dossier .risque .rail { position: relative; height: 5px; margin: 11px 0 9px; }
+#dossier .risque .rail::before { content: ''; position: absolute; left: 0; right: 0;
+  top: 2px; height: 1px; background: var(--filet); }
+#dossier .risque .chemin { position: absolute; top: 2px; height: 1px; opacity: 0.85;
+  transition: left 0.45s var(--ease), width 0.45s var(--ease); }
+#dossier .risque .pt-now { position: absolute; top: 0; width: 5px; height: 5px;
+  margin-left: -2.5px; border-radius: 50%;
+  transition: left 0.45s var(--ease); }
+#dossier .risque .pt-fin { position: absolute; top: 1px; width: 3px; height: 3px;
+  margin-left: -2.5px; border-radius: 50%; border: 1px solid; background: var(--encre);
+  transition: left 0.45s var(--ease); }
+#dossier .risque .detail { font-size: 11.5px; line-height: 1.5; color: rgba(255, 253, 226, 0.42); }
 /* le filet se surligne au survol : rappel du hover des tables wodniack */
 #dossier .risque::before { content: ''; position: absolute; top: -1px; left: 0; right: 0;
   height: 1px; background: var(--texte); transform: scaleX(0); transform-origin: left center;
@@ -586,8 +593,9 @@ body.cale-annee #curseur::-webkit-slider-thumb {
 #dossier .risque:hover::before { transform: scaleX(1); }
 
 /* ---- trajectoire : trait fin, aire discrète, repère pointillé ---- */
-#dossier-courbe { height: 58px; }
-#dossier-courbe .trait { stroke: var(--texte); stroke-width: 1.1; }
+#dossier-courbe { height: 44px; }
+#dossier-courbe .aire { opacity: 0.35; }
+#dossier-courbe .trait { stroke: var(--texte); stroke-width: 1; }
 #dossier-courbe .curseur-an { stroke: rgba(255, 253, 226, 0.4); stroke-dasharray: 1.5 3; }
 #dossier-courbe .point-an { fill: var(--texte); }
 #dossier .bornes-courbe { margin-top: 8px; }

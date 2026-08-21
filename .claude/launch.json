@@ -4,8 +4,9 @@
     {
       "name": "terra",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "serve", "--no-clipboard", "--listen", "8080", "."],
-      "port": 8080
+      "runtimeArgs": ["--yes", "serve", "--no-clipboard", "."],
+      "port": 8080,
+      "autoPort": true
     }
   ]
 }

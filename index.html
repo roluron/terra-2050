@@ -1390,7 +1390,7 @@ const odoAn = new Odometre(affichageAn, 4); odoAn.set(2026, true);
 curseur.style.setProperty('--fill', '0%');
 const piste = document.querySelector('#timeline .piste');
 const graduations = document.querySelector('#timeline .graduations');
-const ANNEES_GRAD = [2026, 2032, 2038, 2044, 2050];
+const ANNEES_GRAD = [2026, 2038, 2050];
 graduations.innerHTML = ANNEES_GRAD.map(() => '<span></span>').join('');
 function majPiste(an){
   const p = (an - 2026) / 24 * 100;
@@ -1620,25 +1620,47 @@ function majDossier(){
 
   majEvenements(l);
 
-  // note à l'année affichée + écart avec 2050, pour rendre la projection lisible
-  const t50 = 1, criteres50 = CRITERES.map(c => Math.round(noteCritere(c, l[2], l[3], t50) * 100));
-  document.getElementById('dossier-risques').innerHTML = criteres.map((c, i) => {
-    const d = criteres50[i] - c.note;
-    const chip = an < 2050 && d !== 0
-      ? `<span class="vers2050" data-sens="${d < 0 ? 'bas' : 'haut'}">${d > 0 ? '＋' : '−'}${Math.abs(d)} en 2050</span>` : '';
-    return `
+  /* Chaque rail raconte le trajet : un point plein à la note de l'année
+     affichée, un tiret creux à la note 2050, et le segment coloré entre les
+     deux. Les rangées sont construites une fois par ouverture, puis seules
+     les positions bougent — les transitions CSS portent l'animation, le
+     re-render à chaque cran du slider tuait toute continuité. */
+  const criteres50 = CRITERES.map(c => Math.round(noteCritere(c, l[2], l[3], 1) * 100));
+  const conteneur = document.getElementById('dossier-risques');
+  if (dossierNeuf || conteneur.dataset.langue !== langue){
+    conteneur.dataset.langue = langue;
+    conteneur.innerHTML = criteres.map(c => `
     <div class="risque">
-      <div class="ligne"><span>${t.critere[c.cle]}</span><span class="pourcent" style="color:${c.couleur}">${c.note}${chip}</span></div>
-      <div class="barre"><i style="width:${c.note}%;background:${c.couleur}"></i></div>
-      <div class="detail">${c.detail}</div>
-    </div>`;
-  }).join('');
+      <div class="ligne"><span class="nom-crit">${t.critere[c.cle]}</span>
+        <span class="val"><b class="v-now" style="color:${c.couleur}"></b><span class="v-vers"></span></span></div>
+      <div class="rail">
+        <i class="chemin" style="background:${c.couleur}"></i>
+        <i class="pt-fin" style="border-color:${c.couleur}"></i>
+        <i class="pt-now" style="background:${c.couleur}"></i>
+      </div>
+      <div class="detail"></div>
+    </div>`).join('');
+  }
+  conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
+    const c = criteres[i], fin = criteres50[i];
+    const vNow = rangee.querySelector('.v-now');
+    if (vNow.textContent !== String(c.note)){
+      vNow.textContent = c.note;
+      gsap.fromTo(vNow, { opacity: 0.35 }, { opacity: 1, duration: 0.4, ease: EASE });
+    }
+    rangee.querySelector('.v-vers').textContent =
+      an < 2050 && fin !== c.note ? `→ ${fin}` : '';
+    const bas = Math.min(c.note, fin), haut = Math.max(c.note, fin);
+    const chemin = rangee.querySelector('.chemin');
+    chemin.style.left = bas + '%';
+    chemin.style.width = Math.max(haut - bas, 0) + '%';
+    rangee.querySelector('.pt-now').style.left = c.note + '%';
+    rangee.querySelector('.pt-fin').style.left = fin + '%';
+    rangee.querySelector('.detail').textContent = c.detail;
+  });
   if (dossierNeuf){
     gsap.fromTo('#dossier-risques .risque', { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: DUREE.fast, stagger: 0.05, ease: EASE, clearProps: 'all' });
-    gsap.fromTo('#dossier-risques .barre i', { scaleX: 0 },
-      { scaleX: 1, transformOrigin: 'left center', duration: 1.2, stagger: 0.06,
-        ease: EASE_INOUT, clearProps: 'transform' });
+      { opacity: 1, y: 0, duration: DUREE.fast, stagger: 0.06, ease: EASE, clearProps: 'opacity,transform' });
   }
 
   tracerTrajectoire(l, an);
