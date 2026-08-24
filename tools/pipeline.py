@@ -505,30 +505,19 @@ _VILLES_CACHE = None_VILLES_CACHE = None
 
 
 def villes():
-    """Villes GeoNames : les six plus grandes de chaque pays plus toutes celles
-    au-dessus de 200 000 habitants. Chaque entrée porte son nom français et son
-    nom anglais (alternateNamesV2), et les deux servent à la recherche."""
+    """TOUTES les villes GeoNames de 15 000 habitants et plus (~34 000) — la
+    couverture est mondiale, Montauban comme Mandalay. Chaque entrée porte son
+    nom français et son nom anglais (alternateNamesV2)."""
     global _VILLES_CACHE
     if _VILLES_CACHE is not None:
         return _VILLES_CACHE
     z = zipfile.ZipFile(RAW / 'cities15000.zip')
     lignes = z.read('cities15000.txt').decode('utf8').splitlines()
-    par_pays = {}
+    retenues = []
     for ligne in lignes:
         f = ligne.split('\t')
-        pop = int(f[14] or 0)
-        par_pays.setdefault(f[8], []).append(
-            (pop, f[1], float(f[4]), float(f[5]), f[7], int(f[0])))
-    retenues = []
-    for iso, liste in par_pays.items():
-        liste.sort(reverse=True)
-        garde = {v[5]: v for v in liste[:6]}
-        for v in liste:
-            if v[0] >= 200_000:
-                garde[v[5]] = v
-        for pop, nom, lat, lon, code, gid in garde.values():
-            retenues.append([nom, iso, round(lat, 3), round(lon, 3), pop,
-                             1 if code == 'PPLC' else 0, gid])
+        retenues.append([f[1], f[8], round(float(f[4]), 3), round(float(f[5]), 3),
+                         int(f[14] or 0), 1 if f[7] == 'PPLC' else 0, int(f[0])])
     ids = {v[6] for v in retenues}
     noms = noms_localises(ids)
     for v in retenues:
@@ -722,11 +711,31 @@ def main():
     print('  -> calibration.json')
 
     v = villes()
-    v = [ligne + [risques[i]] for i, ligne in enumerate(v)]
+    # Noms dans un JSON mince, tout le numérique dans un binaire à pas fixe de
+    # 24 octets par ville : ~34 000 villes tiennent dans ~800 Ko au lieu de
+    # plusieurs Mo de JSON. Pénalités quantifiées sur 1/250 (le dossier affiche
+    # /100) et lat/lon sur 0.01° (~1 km, la précision du vol caméra).
+    ORDRE_PEN = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite']
+    q250 = lambda x: max(0, min(250, round(x * 250)))
+    buf = bytearray()
+    for ligne, r in zip(v, risques):
+        p26, p50 = r['pen'][2026], r['pen'][2050]
+        m, c = r['mer'], r['crue']
+        buf += struct.pack('<hh', round(ligne[2] * 100), round(ligne[3] * 100))
+        buf += bytes(q250(p26[k]) for k in ORDRE_PEN)
+        buf += bytes(q250(p50[k]) for k in ORDRE_PEN)
+        buf += bytes([q250(m['f50']), q250(m['f5'])])
+        buf += struct.pack('<H', max(0, min(65535, round(m['med'] * 10))))
+        buf += bytes([max(0, min(255, round((m.get('sub') or 0) * 100)))])
+        buf += bytes([q250(c['f']), max(0, min(255, round(c['d90'] * 10))), 0])
+    assert len(buf) == 24 * len(v)
+    (OUT / 'places.bin').write_bytes(buf)
+    noms = [[l[0], l[1], l[4], l[5], l[6]] for l in v]
     (OUT / 'places.json').write_text(json.dumps(
-        {'schema': ['nom_fr', 'iso2', 'lat', 'lon', 'pop', 'capitale', 'nom_en', 'risque'], 'villes': v},
+        {'schema': ['nom_fr', 'iso2', 'pop', 'capitale', 'nom_en'], 'villes': noms},
         ensure_ascii=False, separators=(',', ':')))
-    print(f'  -> places.json {len(v)} villes, {(OUT / "places.json").stat().st_size // 1024} Ko')
+    print(f'  -> places.json {len(v)} villes, {(OUT / "places.json").stat().st_size // 1024} Ko'
+          f' + places.bin {(OUT / "places.bin").stat().st_size // 1024} Ko')
 
 
 if __name__ == '__main__':

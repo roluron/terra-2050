@@ -1652,7 +1652,9 @@ function majDossier(){
   const texteEcart = ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'}`;
   const rg = rangScore(indice);
   const texteRang = rg === null ? '' :
-    (langue === 'en' ? ` · above ${rg}% of 3,579 cities` : ` · devant ${rg} % des 3 579 villes`);
+    (langue === 'en'
+      ? ` · above ${rg}% of ${LIEUX.length.toLocaleString('en')} cities`
+      : ` · devant ${rg} % des ${LIEUX.length.toLocaleString('fr-FR')} villes`);
   const elDelta = document.getElementById('dossier-delta');
   elDelta.textContent = texteEcart + texteRang;
   elDelta.dataset.sens = ecart < 0 ? 'bas' : 'haut';
@@ -1964,7 +1966,33 @@ Promise.all([
   chargerGrilleDonnees('./data/grille_b_2026.png', 'b2026'),
   chargerGrilleDonnees('./data/grille_b_2050.png', 'b2050'),
   chargerGrilleDonnees('./data/grille_c.png', 'c'),
-  fetch('./data/places.json').then(r => r.json()).then(j => { LIEUX = j.villes; }),
+  /* Annuaire : les noms viennent du JSON mince, tout le numérique d'un
+     binaire à pas fixe de 24 octets par ville (voir tools/pipeline.py).
+     On reconstruit ici les rangées au format historique
+     [nom_fr, iso2, lat, lon, pop, capitale, nom_en, risque] : rien d'autre
+     dans l'application n'a besoin de savoir que le stockage a changé. */
+  Promise.all([
+    fetch('./data/places.json').then(r => r.json()),
+    fetch('./data/places.bin').then(r => r.arrayBuffer()),
+  ]).then(([j, bin]) => {
+    const dv = new DataView(bin), REC = 24;
+    const ORDRE = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
+    LIEUX = j.villes.map((n, i) => {
+      const o = i * REC;
+      const pen26 = {}, pen50 = {};
+      ORDRE.forEach((k, k2) => {
+        pen26[k] = dv.getUint8(o + 4 + k2) / 250;
+        pen50[k] = dv.getUint8(o + 10 + k2) / 250;
+      });
+      return [n[0], n[1],
+        dv.getInt16(o, true) / 100, dv.getInt16(o + 2, true) / 100,
+        n[2], n[3], n[4],
+        { pen: { 2026: pen26, 2050: pen50 },
+          mer: { f50: dv.getUint8(o + 16) / 250, f5: dv.getUint8(o + 17) / 250,
+                 med: dv.getUint16(o + 18, true) / 10, sub: dv.getUint8(o + 20) / 100 },
+          crue: { f: dv.getUint8(o + 21) / 250, d90: dv.getUint8(o + 22) / 10 } }];
+    });
+  }),
   fetch('./data/calibration.json').then(r => r.json()).then(j => { CALIBRATION = j; }),
 ]).then(() => {
   document.body.classList.add('donnees-pretes');
