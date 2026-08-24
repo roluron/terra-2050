@@ -206,12 +206,7 @@
   <div class="bornes micro"><span>2026</span><span>2050</span></div>
 </div>
 
-<div id="util" class="panneau">
-  <div class="menu-groupe">
-    <button class="bouton-ico" id="bouton-conditions" aria-expanded="false">
-      <span data-t="conditions"></span><i class="chevron" aria-hidden="true"></i>
-    </button>
-    <nav id="calques" aria-label="Calques de risque">
+<nav id="calques" aria-label="Calques de risque">
       <button class="calque" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
       <button class="calque" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
       <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
@@ -219,7 +214,9 @@
       <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
       <button class="calque" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
     </nav>
-  </div>
+<div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
+
+<div id="util" class="panneau">
   <div class="menu-groupe">
     <button class="bouton-ico" id="bouton-reglages" aria-label="Réglages / Settings" aria-expanded="false">
       <!-- roue dentée pleine : anneau à huit dents + moyeu évidé (un cercle
@@ -240,6 +237,15 @@
 <div id="secours">
   <h2>WebGL indisponible</h2>
   <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
+</div>
+
+<div id="pedago" aria-modal="true" role="dialog" hidden>
+  <div class="pedago-carte">
+    <div class="pedago-titre"><span class="pastille-pedago"></span><span id="pedago-nom"></span></div>
+    <p id="pedago-texte"></p>
+    <div class="pedago-source" id="pedago-source"></div>
+    <button class="entree-pedago" id="pedago-fermer"></button>
+  </div>
 </div>
 
 <div id="scrim-dossier"><div class="v-grain" aria-hidden="true"></div></div>
@@ -365,6 +371,31 @@ const TEXTES = {
     calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
       secheresse: 'Sécheresse',
       mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Instabilité du climat' },
+    info: {
+      chaleur: 'Jours où chaleur et humidité combinées dépassent 32 °C ressentis.',
+      feux: 'Où la météo arme les départs de feu : mois chauds et secs sur végétation combustible.',
+      secheresse: 'Déficit d’eau chronique : la pluie ne recharge plus nappes et sols.',
+      mer: 'Terres sous la ligne de submersion : surcote de 2 m + montée de la mer + sol qui s’enfonce.',
+      fleuves: 'Étendue d’une crue centennale — 1 % de risque chaque année.',
+      stabilite: 'Vitesse à laquelle le climat local bascule entre 2026 et 2050.',
+    },
+    infoplus: {
+      chaleur: 'Ce calque colore les zones où l’indice de chaleur — température et humidité combinées — dépasse 32 °C ressentis plusieurs jours par an. Au-delà de ce seuil, le corps peine à se refroidir : travailler dehors devient dangereux, dormir sans climatisation difficile.',
+      feux: 'Ici, la météo arme les incendies : des mois à la fois chauds et secs sur une végétation qui peut brûler. Le calque montre le danger météo, pas les feux d’aujourd’hui — c’est la probabilité que la moindre étincelle prenne.',
+      secheresse: 'Quand la pluie annuelle ne compense plus la chaleur, nappes, sols et cultures ne se rechargent plus : c’est le déficit hydrique chronique, mesuré par l’indice de De Martonne. Le calque suit son aggravation jusqu’en 2050.',
+      mer: 'Les terres situées sous la ligne de submersion : une surcote de tempête de 2 m, plus la montée de la mer, plus — là où c’est mesuré — le sol qui s’enfonce. Les digues ne sont pas comptées : c’est l’exposition physique du terrain.',
+      fleuves: 'L’emprise d’une crue centennale : 1 % de chances chaque année, soit environ 22 % d’ici 2050. Carte hydrologique modélisée par le centre de recherche de la Commission européenne, à environ 1 km de résolution.',
+      stabilite: 'Un lieu vivable est aussi un lieu prévisible. Ce calque mesure la vitesse à laquelle le climat local dérive entre 2026 et 2050 : chaleur, eau, feu et mer combinés. Violet vif = un climat qui ne ressemblera plus à celui d’aujourd’hui.',
+    },
+    infoSource: {
+      chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de chaleur de Rothfusz',
+      feux: 'WorldClim 2.1 · CMIP6 SSP3-7.0',
+      secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de De Martonne',
+      mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (subsidence VLM)',
+      fleuves: 'JRC Global River Flood Hazard · crue centennale',
+      stabilite: 'Écart CMIP6 2026→2050, quatre canaux combinés',
+    },
+    pedagoOk: 'Compris',
     critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
     legendeIndice: '／100 · habitabilité physique · défenses non comptées',
@@ -403,6 +434,31 @@ const TEXTES = {
     calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
       secheresse: 'Drought',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
+    info: {
+      chaleur: 'Days when heat and humidity combined feel above 32 °C.',
+      feux: 'Where weather arms wildfires: hot, dry months over burnable vegetation.',
+      secheresse: 'Chronic water deficit: rain no longer recharges groundwater and soil.',
+      mer: 'Land below the flood line: 2 m storm surge + rising sea + sinking ground.',
+      fleuves: 'Extent of a 100-year flood — a 1% chance every year.',
+      stabilite: 'How fast the local climate shifts between 2026 and 2050.',
+    },
+    infoplus: {
+      chaleur: 'This layer colors areas where the heat index — temperature and humidity combined — feels above 32 °C for days on end. Past that threshold the body struggles to cool itself: outdoor work turns dangerous, sleeping without cooling gets hard.',
+      feux: 'Here the weather arms wildfires: months both hot and dry over vegetation that can burn. The layer shows fire weather, not today’s fires — the odds that a single spark takes.',
+      secheresse: 'When yearly rain no longer offsets the heat, groundwater, soils and crops stop recharging: chronic water deficit, measured by the De Martonne index. The layer tracks its worsening to 2050.',
+      mer: 'Land below the flood line: a 2 m storm surge, plus sea-level rise, plus — where measured — ground that is sinking. Sea defenses are not counted: this is the terrain’s physical exposure.',
+      fleuves: 'The footprint of a 100-year flood: a 1% chance each year, about 22% by 2050. Hydrological model map by the European Commission’s research centre, at roughly 1 km resolution.',
+      stabilite: 'A livable place is also a predictable one. This layer measures how fast the local climate drifts between 2026 and 2050 — heat, water, fire and sea combined. Bright violet = a climate that will no longer resemble today’s.',
+    },
+    infoSource: {
+      chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · Rothfusz heat index',
+      feux: 'WorldClim 2.1 · CMIP6 SSP3-7.0',
+      secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · De Martonne index',
+      mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (VLM subsidence)',
+      fleuves: 'JRC Global River Flood Hazard · 100-year flood',
+      stabilite: 'CMIP6 2026→2050 drift, four channels combined',
+    },
+    pedagoOk: 'Got it',
     critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
     legendeIndice: '／100 · physical habitability · defenses not counted',
@@ -540,6 +596,8 @@ const CRITERES = [
     detail: (l) => T().detStab(Math.round(penVille(l, 'stabilite', 1) / 2.2 * 100)) },
 ];
 for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
+const CRITERES_COULEURS = { chaleur: '#E06A3C', feux: '#C94F2E', secheresse: '#A07830',
+  mer: '#4D7CF2', fleuves: '#6FA3FF', stabilite: '#B08CE8' };
 const POIDS_TOTAL = CRITERES.reduce((s, c) => s + c.poids, 0);
 
 /* Calibration : distribution des pénalités sur les 3579 villes (produite par
@@ -1196,6 +1254,7 @@ for (const btn of document.querySelectorAll('.calque')){
   btn.addEventListener('click', () => {
     const c = CALQUES[btn.dataset.cle], actif = !btn.classList.contains('actif');
     btn.classList.toggle('actif', actif);
+    if (actif) montrerPedago(btn.dataset.cle);
     if (c.objet && actif) c.objet.visible = true;
     SoundManager.play(actif ? 'layer_on' : 'layer_off');
     SoundManager.play('ui_click');
@@ -1220,7 +1279,7 @@ toile.addEventListener('pointerdown', () => {
 /* ---- recherche de lieu : filtrage instantané + vol caméra ---- */
 const champ = document.getElementById('champ-recherche');
 const liste = document.getElementById('resultats');
-let indiceChoisi = -1, resultatsActuels = [];
+let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
 const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 function afficherResultats(){
@@ -1229,7 +1288,7 @@ function afficherResultats(){
   if (q.length < 2){
     // champ vide : trois grandes villes contrastées comme premières marches —
     // une question personnelle a besoin d'un premier nom sur quoi cliquer
-    if (!q && document.activeElement === champ && LIEUX.length){
+    if (!q && !focusProgramme && document.activeElement === champ && LIEUX.length){
       const noms = ['Paris', 'Miami', 'Jakarta'];
       resultatsActuels = noms.map(n => LIEUX.find(l => l[0] === n)).filter(Boolean);
       for (const l of resultatsActuels){
@@ -1735,10 +1794,34 @@ addEventListener('keydown', e => {
    (son / perf / langue). Un seul ouvert à la fois ; fermeture au clic
    extérieur ou à Échap. L'ouverture anime les rangées en cascade.
    ===================================================================== */
+/* ---- mini-description au survol long d'un calque : une seule bulle,
+   positionnée à droite de la rangée (le rail est à gauche, l'espace est là),
+   jamais sur le texte. Pointeurs fins seulement. ---- */
+{
+  const bulle = document.getElementById('calque-bulle');
+  let minuterie = null;
+  const cacher = () => { clearTimeout(minuterie); bulle.classList.remove('visible'); };
+  if (matchMedia('(pointer: fine)').matches){
+    for (const btn of document.querySelectorAll('.calque')){
+      btn.addEventListener('mouseenter', () => {
+        clearTimeout(minuterie);
+        minuterie = setTimeout(() => {
+          bulle.textContent = T().info[btn.dataset.cle] || '';
+          const r = btn.getBoundingClientRect();
+          bulle.style.left = (r.right + 18) + 'px';
+          bulle.style.top = (r.top + r.height / 2) + 'px';
+          bulle.classList.add('visible');
+        }, 550);
+      });
+      btn.addEventListener('mouseleave', cacher);
+      btn.addEventListener('click', cacher);
+    }
+  }
+}
+
+let montrerPedago = () => {};      // implémenté dans le bloc menus (lentille partagée)
 {
   const menus = [
-    { bouton: document.getElementById('bouton-conditions'),
-      panneau: document.getElementById('calques'), rangees: '.calque' },
     { bouton: document.getElementById('bouton-reglages'),
       panneau: document.getElementById('menu-reglages'), rangees: '.bouton-ico' },
   ];
@@ -1791,6 +1874,44 @@ addEventListener('keydown', e => {
     });
   });
   addEventListener('keydown', e => { if (e.key === 'Escape') menus.forEach(fermer); });
+
+  /* ---- popup pédagogique : première activation d'un calque ----
+     Même lentille de verre que les menus. Mémorisé par calque : il ne
+     réapparaît jamais, même si on désactive puis réactive le filtre. */
+  const pedago = document.getElementById('pedago');
+  const carte = pedago.querySelector('.pedago-carte');
+  let pedagoOuvert = false;
+  function fermerPedago(){
+    if (!pedagoOuvert) return;
+    pedagoOuvert = false;
+    gsap.to(carte, { opacity: 0, y: 8, scale: 0.985, duration: 0.3, ease: EASE,
+      onComplete: () => { pedago.hidden = true; } });
+    gsap.to(pedago, { opacity: 0, duration: 0.3, ease: EASE });
+    gsap.to(verreMenu, { force: 0, duration: 0.3, ease: EASE, onUpdate: majVerreMenu,
+      onComplete: () => { if (verreMenu.force === 0) verreMenu.panneau = null; } });
+  }
+  montrerPedago = (cle) => {
+    let vu = null;
+    try { vu = localStorage.getItem('terra-pedago-' + cle); } catch (e) {}
+    if (vu) return;
+    try { localStorage.setItem('terra-pedago-' + cle, '1'); } catch (e) {}
+    const t = T(), c = CRITERES_COULEURS[cle] || 'var(--bleu)';
+    pedago.querySelector('.pastille-pedago').style.background = c;
+    document.getElementById('pedago-nom').textContent = t.calque[cle];
+    document.getElementById('pedago-texte').textContent = t.infoplus[cle];
+    document.getElementById('pedago-source').textContent = t.infoSource[cle];
+    document.getElementById('pedago-fermer').textContent = t.pedagoOk;
+    pedago.hidden = false;
+    pedagoOuvert = true;
+    verreMenu.panneau = carte;
+    gsap.fromTo(pedago, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: EASE });
+    gsap.fromTo(carte, { opacity: 0, y: 14, scale: 0.97 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: EASE, clearProps: 'scale' });
+    gsap.to(verreMenu, { force: 1, duration: DUREE.fast, ease: EASE, onUpdate: majVerreMenu });
+  };
+  document.getElementById('pedago-fermer').addEventListener('click', () => { fermerPedago(); SoundManager.play('ui_click'); });
+  pedago.addEventListener('click', e => { if (e.target === pedago) fermerPedago(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') fermerPedago(); });
 }
 
 /* ---- son global + HUD perf ---- */
@@ -1885,8 +2006,15 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
   revelerChrome();
-  // le premier geste attendu est le nom d'une ville, pas la manipulation du globe
-  setTimeout(() => { if (!lieuDossier) champ.focus(); }, 1600);
+  // le premier geste attendu est le nom d'une ville — mais un focus posé par
+  // le code n'ouvre pas la liste : le panneau de suggestions qui surgit seul
+  // à l'arrivée lisait comme un bug
+  setTimeout(() => {
+    if (lieuDossier) return;
+    focusProgramme = true;
+    champ.focus();
+    setTimeout(() => { focusProgramme = false; }, 150);
+  }, 1600);
 });
 
 /* =====================================================================
@@ -1966,7 +2094,8 @@ function revelerChrome(){
     { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
   entree('#recherche', { opacity: 0, y: -10 }, 0.15);
   entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.04 });
-  entree('#bouton-conditions, #bouton-reglages', { opacity: 0, y: -8 }, 0.4, { stagger: 0.06 });
+  entree('#bouton-reglages', { opacity: 0, y: -8 }, 0.4);
+  entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.05 });
   entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
   entree('#curseur, #timeline .bornes', { opacity: 0 }, 0.6);
   return tl;
