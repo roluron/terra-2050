@@ -300,18 +300,6 @@ body.recherche-active #caret-dos { animation: caret-dos 1.06s steps(1) infinite;
 #dossier .rien { font-size: 12.5px; font-weight: 300; color: var(--muter); letter-spacing: -0.02em; }
 #dossier .rien.ras { color: #2E8F6A; }
 
-/* En ce moment : événements naturels réellement en cours (NASA EONET / USGS) */
-#dossier .evenement { display: flex; align-items: baseline; gap: 10px; padding: 5px 0;
-  border-top: 1px solid var(--hairline); }
-#dossier .evenement:first-of-type { border-top: none; }
-#dossier .ev-titre { font-size: 12.5px; font-weight: 300; letter-spacing: -0.02em; }
-.pastille-ev { width: 6px; height: 6px; border-radius: 50%; flex: none; background: var(--muter); }
-.pastille-ev[data-cat="Wildfires"] { background: #C94F2E; }
-.pastille-ev[data-cat="Severe Storms"] { background: #6FA3FF; }
-.pastille-ev[data-cat="Floods"] { background: #4D7CF2; }
-.pastille-ev[data-cat="Drought"] { background: #A07830; }
-.pastille-ev[data-cat="Earthquakes"] { background: #E06A3C; }
-.pastille-ev[data-cat="Volcanoes"] { background: #E06A3C; }
 
 /* Trajectoire de l'indice 2026 → 2050 */
 #dossier .trajectoire { display: flex; flex-direction: column; }
@@ -596,8 +584,6 @@ body.cale-annee #timeline .an { opacity: 0.92; }
   font-size: 10px; letter-spacing: 0.16em; color: #2E8F6A; }
 
 /* ---- événements en cours ---- */
-#dossier .evenement { padding: 8px 0; border-top: 1px solid var(--filet); }
-#dossier .evenement:first-of-type { border-top: none; }
 #dossier .rien { font-size: 12.5px; line-height: 1.5; }
 
 /* ---- pied ---- */

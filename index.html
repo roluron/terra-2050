@@ -260,7 +260,6 @@
     </div>
   </div>
   <p class="conseil" id="dossier-conseil"></p>
-  <div id="dossier-maintenant"></div>
   <div class="trajectoire">
     <div class="titre-bloc"><span data-t="trajectoire"></span><span id="dossier-ecart"></span></div>
     <svg id="dossier-courbe" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -375,11 +374,6 @@ const TEXTES = {
       dur: `En ${an}, ${faible.toLowerCase()} pèse assez pour poser la question du départ.`,
     })[n] + (delta <= -8 ? ` L’indice perd ${-delta} points d’ici 2050.` : delta >= 8 ? ` L’indice gagne ${delta} points d’ici 2050.` : ''),
     conseilSain: an => `En ${an}, aucun des six facteurs ne pèse vraiment ici.`,
-    aujourdhui: 'En ce moment',
-    ras: 'Aucun événement naturel majeur en cours dans un rayon de 800 km.',
-    rasChargement: 'Interrogation du flux NASA EONET…',
-    rasHorsLigne: 'Flux d’événements indisponible.',
-    aKm: (n, d) => `${n} · à ${d} km`,
     trajectoire: 'Trajectoire de l’indice',
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
@@ -418,11 +412,6 @@ const TEXTES = {
       dur: `In ${an}, ${faible.toLowerCase()} weighs enough to raise the question of leaving.`,
     })[n] + (delta <= -8 ? ` The index loses ${-delta} points by 2050.` : delta >= 8 ? ` The index gains ${delta} points by 2050.` : ''),
     conseilSain: an => `In ${an}, none of the six factors carries real weight here.`,
-    aujourdhui: 'Right now',
-    ras: 'No major natural event under way within 800 km.',
-    rasChargement: 'Querying the NASA EONET feed…',
-    rasHorsLigne: 'Event feed unavailable.',
-    aKm: (n, d) => `${n} · ${d} km away`,
     trajectoire: 'Index trajectory',
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
@@ -600,47 +589,14 @@ function indiceHabitabilite(lat, lon, annee){
 }
 const niveauDe = i => i >= 66 ? 'bon' : i >= 40 ? 'moyen' : 'dur';
 
-/* =====================================================================
-   1 quinquies. ÉVÉNEMENTS EN COURS — NASA EONET v3 (open, sans clé) et
-   séismes significatifs USGS. Ce sont des observations, pas des
-   projections : elles ne servent qu'à l'état « en ce moment ».
-   ===================================================================== */
-const EVENEMENTS = { etat: 'attente', liste: [] };
-function chargerEvenements(){
-  const eonet = fetch('https://eonet.gsfc.nasa.gov/api/v3/events?status=open&days=30&limit=200')
-    .then(r => r.json())
-    .then(j => (j.events || []).flatMap(e => {
-      const g = (e.geometry || [])[e.geometry.length - 1];
-      if (!g || !g.coordinates) return [];
-      const c = Array.isArray(g.coordinates[0]) ? g.coordinates.flat(9) : g.coordinates;
-      return [{ titre: e.title, categorie: (e.categories || [])[0]?.title || '',
-                lon: +c[0], lat: +c[1], date: g.date }];
-    }));
-  const usgs = fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson')
-    .then(r => r.json())
-    .then(j => (j.features || []).map(f => ({
-      titre: f.properties.title, categorie: 'Earthquakes',
-      lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1],
-      date: new Date(f.properties.time).toISOString() })));
-  return Promise.allSettled([eonet, usgs]).then(rs => {
-    EVENEMENTS.liste = rs.flatMap(r => r.status === 'fulfilled' ? r.value : []);
-    EVENEMENTS.etat = EVENEMENTS.liste.length ? 'ok' : 'vide';
-  });
-}
-// distance grand-cercle en km
+/* Distance grand-cercle en km — sert à la géolocalisation « ma position ». */
 function distanceKm(la1, lo1, la2, lo2){
   const R = 6371, r = Math.PI / 180;
   const dLa = (la2 - la1) * r, dLo = (lo2 - lo1) * r;
   const a = Math.sin(dLa / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin(dLo / 2) ** 2;
   return Math.round(2 * R * Math.asin(Math.sqrt(a)));
 }
-function evenementsPres(lat, lon, rayon = 800){
-  return EVENEMENTS.liste
-    .map(e => ({ ...e, d: distanceKm(lat, lon, e.lat, e.lon) }))
-    .filter(e => e.d <= rayon)
-    .sort((a, b) => a.d - b.d)
-    .slice(0, 4);
-}
+
 
 /* =====================================================================
    2. SOUNDMANAGER — singleton Howler (architecture de référence,
@@ -1523,30 +1479,6 @@ function tracerTrajectoire(l, an){
 
 /* État « en ce moment » : événements naturels réellement en cours autour du
    lieu (NASA EONET + USGS). Aucune projection ici, que de l'observé. */
-function majEvenements(l){
-  const bloc = document.getElementById('dossier-maintenant');
-  const titre = `<div class="titre-bloc">${T().aujourdhui}</div>`;
-  if (EVENEMENTS.etat === 'attente'){
-    bloc.innerHTML = titre + `<div class="rien">${T().rasChargement}</div>`;
-    return;
-  }
-  if (EVENEMENTS.etat === 'vide'){
-    bloc.innerHTML = titre + `<div class="rien">${T().rasHorsLigne}</div>`;
-    return;
-  }
-  const evs = evenementsPres(l[2], l[3]);
-  if (!evs.length){
-    bloc.innerHTML = titre + `<div class="rien ras">${T().ras}</div>`;
-    return;
-  }
-  bloc.innerHTML = titre + evs.map(e => `
-    <div class="evenement">
-      <span class="pastille-ev" data-cat="${e.categorie}"></span>
-      <span class="ev-titre">${T().aKm(e.titre, e.d)}</span>
-    </div>`).join('');
-  gsap.fromTo('#dossier-maintenant .evenement', { opacity: 0, y: -6 },
-    { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: EASE });
-}
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
@@ -1574,7 +1506,6 @@ function majDossier(){
     pire.note >= 85 ? t.conseilSain(an)
       : t.conseil(niveau, t.critere[pire.cle], an, indice2050 - indice);
 
-  majEvenements(l);
 
   /* Chaque rail raconte le trajet : un point plein à la note de l'année
      affichée, un tiret creux à la note 2050, et le segment coloré entre les
@@ -1877,7 +1808,6 @@ Promise.all([
   if (lieuDossier) majDossier();
   ouvrirDepuisLien();
 });
-chargerEvenements().then(() => { if (lieuDossier) majEvenements(lieuDossier); });
 
 const hud = document.getElementById('hud');
 // HUD perf : réservé au débogage, activé par ?perf dans l'URL
