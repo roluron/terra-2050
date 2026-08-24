@@ -939,17 +939,15 @@ body.loupe #mesure-recherche { display: none; }
 #champ-recherche { position: relative; z-index: 2; }
 #caret-dos { z-index: 3; }
 #resultats { position: absolute; left: auto; margin: 0; border: none;
-  border-radius: 23px; background: rgba(5, 18, 54, 0.55); overflow: hidden;
+  border-radius: 23px; background: none; backdrop-filter: none;
+  -webkit-backdrop-filter: none; overflow: hidden;
   transform: none; transition: opacity 0.25s var(--ease); }
 #resultats.ouvert { transform: none; }
 #resultats li:first-child { border-top: 1px solid var(--hairline); }
 
 
-/* le champ du carré de verre reste transparent : la teinte ne commence
-   qu'au bord des résultats */
-#resultats { background: linear-gradient(180deg,
-  rgba(5, 18, 54, 0) 0, rgba(5, 18, 54, 0) var(--h-champ, 47px),
-  rgba(5, 18, 54, 0.55) var(--h-champ, 47px)); }
+/* survol : une buée de crème, pas une plaque sombre */
+#resultats li:hover, #resultats li.choisi { background: rgba(255, 253, 226, 0.07); }
 
 /* la piste sous l'année épouse exactement la largeur du millésime */
 #timeline .an { display: inline-block; }

@@ -1381,7 +1381,6 @@ function ouvrirListe(){
   liste.style.width = champ.offsetWidth + 'px';
   liste.style.top = champ.offsetTop + 'px';
   liste.style.paddingTop = champ.offsetHeight + 'px';
-  liste.style.setProperty('--h-champ', champ.offsetHeight + 'px');
   const deja = liste.classList.contains('ouvert');
   liste.classList.add('ouvert');
   const hAvant = deja ? liste.getBoundingClientRect().height : champ.offsetHeight;
@@ -1389,7 +1388,8 @@ function ouvrirListe(){
   const hCible = liste.offsetHeight;
   if (etatListe.anim) etatListe.anim.kill();
   etatListe.anim = gsap.fromTo(liste, { height: hAvant },
-    { height: hCible, duration: deja ? 0.35 : 0.5, ease: EASE, onUpdate: majVerre,
+    { height: hCible, duration: deja ? 0.4 : 0.6, ease: deja ? EASE : 'back.out(1.25)',
+      onUpdate: majVerre,
       onComplete: () => { liste.style.height = 'auto'; majVerre(); } });
 }
 function fermerListe(){
@@ -1553,7 +1553,7 @@ function appliquerLargeurRecherche(){
 function deployerRecherche(){
   if (!document.body.classList.contains('loupe')) return;
   document.body.classList.remove('loupe');
-  gsap.to(etatRecherche, { w: largeurBarre(), duration: 0.65, ease: EASE,
+  gsap.to(etatRecherche, { w: largeurBarre(), duration: 0.7, ease: 'back.out(1.6)',
     onUpdate: appliquerLargeurRecherche });
   gsap.to(loupe, { opacity: 0, scale: 0.6, duration: 0.3, ease: EASE });
 }
