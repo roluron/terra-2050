@@ -258,10 +258,7 @@
   <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1 L11 11 M11 1 L1 11"/></svg>
 </button>
 <aside id="dossier" aria-label="Diagnostic du lieu">
-  <div>
-    <div class="coords" id="dossier-coords"></div>
-    <h2 class="lieu" id="dossier-lieu"></h2>
-  </div>
+  <div class="coords" id="dossier-coords"></div>
   <div class="score">
     <span class="valeur" id="dossier-score"></span>
     <div>
@@ -409,6 +406,9 @@ const TEXTES = {
     sansDonnees: 'Données insuffisantes',
     sansDonneesLong: 'Cette ville est hors des grilles climatiques mondiales (petite île ou atoll) : plutôt que d’inventer un score, on n’en affiche pas.',
     popPays: p => `population du pays : ${p > 0 ? '+' : '−'}${Math.abs(p)} % d’ici 2050 (ONU)`,
+    popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1).replace('.', ',')} M habitants → ${(p50 / 1e6).toFixed(1).replace('.', ',')} M en 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)} %, ONU)`,
+    conseilPays: (verdict, an) => `En ${an}, le pays dans son ensemble : ${verdict} — la moyenne cache les écarts entre villes, ouvrez-les.`,
+    meilleuresVilles: 'Les plus habitables du pays',
     critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
     legendeIndice: '／100 · habitabilité physique · défenses non comptées',
@@ -479,6 +479,9 @@ const TEXTES = {
     sansDonnees: 'Not enough data',
     sansDonneesLong: 'This city sits outside the global climate grids (small island or atoll): rather than invent a score, we show none.',
     popPays: p => `country population: ${p > 0 ? '+' : '−'}${Math.abs(p)}% by 2050 (UN)`,
+    popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1)}M people → ${(p50 / 1e6).toFixed(1)}M by 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)}%, UN)`,
+    conseilPays: (verdict, an) => `In ${an}, the country as a whole: ${verdict} — the average hides gaps between cities, open them.`,
+    meilleuresVilles: 'Most habitable in the country',
     critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
     legendeIndice: '／100 · physical habitability · defenses not counted',
@@ -512,6 +515,10 @@ const T = () => TEXTES[langue];
    que le shader, donc le dossier ne peut pas diverger du globe.
    ===================================================================== */
 let LIEUX = [];
+let PAYS_POP = {};                 // iso2 -> [habitants 2025, habitants 2050] (ONU)
+let PAYS_LIGNES = [];              // pseudo-rangées pays pour la recherche
+let VILLES_PAR_PAYS = {};          // iso2 -> rangées de villes
+const estPays = l => l && l[5] === 2;
 // [nom_fr, iso2, lat, lon, pop, capitale, nom_en] — le nom affiché suit la langue
 const nomVille = l => (langue === 'en' ? l[6] : l[0]) || l[0];
 const nomPays = (() => {
@@ -618,6 +625,12 @@ const CRITERES = [
     detail: (l) => T().detStab(Math.round(penVille(l, 'stabilite', 1) / 2.2 * 100)) },
 ];
 for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
+/* La couleur dit la note, pas le critère : vert super, bleu bien, jaune
+   moyen, orange pas top, rouge mauvais. */
+function couleurNote(n){
+  return n >= 85 ? '#2E8F6A' : n >= 70 ? '#4D7CF2' : n >= 50 ? '#D9B23A'
+       : n >= 30 ? '#E06A3C' : '#E0452E';
+}
 const CRITERES_COULEURS = { chaleur: '#E06A3C', feux: '#C94F2E', secheresse: '#A07830',
   mer: '#4D7CF2', fleuves: '#6FA3FF', stabilite: '#B08CE8', declin: '#9A8FB8' };
 const POIDS_TOTAL = CRITERES.reduce((s, c) => s + c.poids, 0);
@@ -665,6 +678,10 @@ function noteCritere(c, l, t){
 }
 const LAMBDA_PIRE = 0.5;   // 50 % du score est le pire axe (même valeur que le pipeline)
 function indiceHabitabilite(l, annee){
+  if (estPays(l)) return indicePays(l[1], annee);
+  return indiceHabitabiliteVille(l, annee);
+}
+function indiceHabitabiliteVille(l, annee){
   const t = Math.min(1, Math.max(0, (annee - 2026) / 24));
   let somme = 0, pire = 0;
   for (const c of CRITERES){
@@ -678,6 +695,31 @@ function indiceHabitabilite(l, annee){
   return Math.round(100 * (1 - ((1 - LAMBDA_PIRE) * moy + LAMBDA_PIRE * pire)));
 }
 const niveauDe = i => i >= 66 ? 'bon' : i >= 40 ? 'moyen' : 'dur';
+
+/* Score d'un pays = moyenne pondérée par population des indices de ses
+   villes ; idem par critère. Mémoïsé par (iso2, année). */
+const _memoPays = new Map();
+function indicePays(iso, annee){
+  const cle = iso + ':' + annee;
+  if (_memoPays.has(cle)) return _memoPays.get(cle);
+  let somme = 0, poids = 0;
+  for (const v of (VILLES_PAR_PAYS[iso] || [])){
+    if (!v[7]) continue;
+    somme += indiceHabitabiliteVille(v, annee) * v[4];
+    poids += v[4];
+  }
+  const r = poids ? Math.round(somme / poids) : null;
+  _memoPays.set(cle, r);
+  return r;
+}
+function notesPays(iso, t){
+  const vs = (VILLES_PAR_PAYS[iso] || []).filter(v => v[7]);
+  return CRITERES.map(c => {
+    let somme = 0, poids = 0;
+    for (const v of vs){ somme += noteCritere(c, v, t) * v[4]; poids += v[4]; }
+    return Math.round((poids ? somme / poids : 0) * 100);
+  });
+}
 
 /* Distance grand-cercle en km — sert à la géolocalisation « ma position ». */
 function distanceKm(la1, lo1, la2, lo2){
@@ -924,10 +966,12 @@ const matGlobe = new THREE.ShaderMaterial({
       // désature vers un gris mauve, saturé à -30 %.
       if (uDeclin > 0.001){
         float d = gc.b * terre;
-        float m = smoothstep(0.04, 0.85, d);
+        float m = smoothstep(0.02, 0.55, d);
         float gris = dot(col, vec3(0.299, 0.587, 0.114));
-        vec3 vide = mix(vec3(gris), vec3(0.475, 0.43, 0.60), 0.55) * (0.55 + 0.45 * (1.0 - d));
-        col = mix(col, vide, m * uDeclin * 0.9);
+        // mauve froid net + liseré : un pays qui se vide doit se VOIR
+        vec3 vide = mix(vec3(gris * 0.5), vec3(0.55, 0.47, 0.78), 0.75);
+        col = mix(col, vide, m * uDeclin);
+        col += vec3(0.42, 0.34, 0.66) * m * uDeclin * 0.35;
       }
 
       gl_FragColor = vec4(col, 1.0);
@@ -1333,7 +1377,7 @@ function afficherResultats(){
       resultatsActuels = noms.map(n => LIEUX.find(l => l[0] === n)).filter(Boolean);
       for (const l of resultatsActuels){
         const li = document.createElement('li');
-        li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${nomPays(l[1])}</span>`;
+        li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
         li.addEventListener('click', () => choisirLieu(l));
         li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
         liste.appendChild(li);
@@ -1346,6 +1390,10 @@ function afficherResultats(){
   // priorité au préfixe puis à la population : « par » doit donner Paris d'abord
   // les deux graphies sont cherchées : « Seville » comme « Séville »
   const debut = [], dedans = [];
+  for (const l of PAYS_LIGNES){
+    const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
+    if (a.startsWith(q) || b.startsWith(q)) debut.push(l);
+  }
   for (const l of LIEUX){
     const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
     if (a.startsWith(q) || b.startsWith(q)) debut.push(l);
@@ -1358,7 +1406,7 @@ function afficherResultats(){
   } else {
     for (const l of resultatsActuels){
       const li = document.createElement('li');
-      li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${nomPays(l[1])}</span>`;
+      li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
       li.addEventListener('click', () => choisirLieu(l));
       li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
       liste.appendChild(li);
@@ -1372,7 +1420,7 @@ function choisirLieu(l){
   ouvrirDossier(l);
   SoundManager.play('camera_fly');
   controles.autoRotate = false;
-  const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(2.45);
+  const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(estPays(l) ? 3.1 : 2.45);
   if (volEnCours) volEnCours.kill();
   volEnCours = gsap.to(camera.position, {
     x: cible.x, y: cible.y, z: cible.z, duration: 1.8, ease: EASE,
@@ -1593,13 +1641,12 @@ function diagnostiquer(l, an){
 /* « Rester ou partir » : les villes du même pays les plus habitables à
    l'horizon affiché, à population comparable. */
 function alternatives(l, an, combien = 3){
-  const memePays = LIEUX.filter(v => v[1] === l[1] && v !== l && v[4] >= Math.min(l[4] * 0.15, 150000));
-  const bassin = memePays.length >= 4 ? memePays
-    : LIEUX.filter(v => {
-        const dlon = Math.abs(v[3] - l[3]);
-        return v !== l && v[4] >= 400000
-          && Math.abs(v[2] - l[2]) < 22 && Math.min(dlon, 360 - dlon) < 32;
-      });
+  // même pays d'abord ; sinon vraiment À PROXIMITÉ (700 km) — Sofia se
+  // comparait à Manchester parce qu'une boîte en degrés ignorait la distance
+  const memePays = LIEUX.filter(v => v[1] === l[1] && v !== l && v[4] >= Math.min(l[4] * 0.15, 100000));
+  const bassin = memePays.length >= 2 ? memePays
+    : LIEUX.filter(v => v !== l && v[4] >= 200000
+        && distanceKm(l[2], l[3], v[2], v[3]) <= 700);
   const ici = indiceHabitabilite(l, an);
   return bassin
     .filter(v => v[7])
@@ -1656,15 +1703,102 @@ function majDetail(rangee){
   slot.innerHTML = `<b style="color:${cible.dataset.couleur}">${cible.dataset.nom}</b> · ${cible.dataset.detail}`;
 }
 
+/* Fiche PAYS : score pondéré, habitants 2026 -> 2050 (ONU), déclin, mêmes
+   rangées de critères (moyennes pondérées), et les villes les plus
+   habitables du pays en puces. */
+function majDossierPays(l, an, t, dossierNeuf){
+  const iso = l[1];
+  const indice = indicePays(iso, an);
+  const indice2050 = indicePays(iso, 2050);
+  const niveau = niveauDe(indice);
+  const nVilles = (VILLES_PAR_PAYS[iso] || []).filter(v => v[7]).length;
+
+  if (!odoIndice.colonnes){
+    const neuf = new Odometre(document.getElementById('dossier-score'), 3);
+    odoIndice.colonnes = neuf.colonnes; odoIndice.el = neuf.el; odoIndice.valeur = null;
+  }
+  odoIndice.set(indice, !dossierEl.classList.contains('ouvert'));
+  const v = document.getElementById('dossier-verdict');
+  v.className = 'verdict ' + niveau;
+  document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
+
+  const ecart = indice2050 - indicePays(iso, 2026);
+  document.getElementById('dossier-delta').textContent =
+    (ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'} · `) +
+    (langue === 'en' ? `${nVilles} cities weighted by population` : `${nVilles} villes pondérées par population`);
+
+  const pop = PAYS_POP[iso];
+  document.getElementById('dossier-pop').textContent = pop
+    ? t.popAbsolue(pop[0], pop[1], Math.round((pop[1] / pop[0] - 1) * 100)) : '';
+
+  document.getElementById('dossier-conseil').textContent =
+    t.conseilPays(t.verdict[niveau].toLowerCase(), an);
+
+  // rangées : moyennes pondérées du pays, couleurs par note
+  const tAn = Math.min(1, Math.max(0, (an - 2026) / 24));
+  const notes = notesPays(iso, tAn), notes50 = notesPays(iso, 1);
+  const conteneur = document.getElementById('dossier-risques');
+  if (dossierNeuf || conteneur.dataset.langue !== langue + ':pays'){
+    conteneur.dataset.langue = langue + ':pays';
+    conteneur.innerHTML = CRITERES.map(c => `
+    <div class="risque">
+      <div class="ligne"><span class="nom-crit">${t.critere[c.cle]}</span>
+        <span class="val"><b class="v-now"></b><span class="v-vers"></span></span></div>
+      <div class="rail"><i class="chemin"></i><i class="pt-fin"></i><i class="pt-now"></i></div>
+    </div>`).join('');
+  }
+  conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
+    const n = notes[i], fin = notes50[i], teinte = couleurNote(n);
+    const vNow = rangee.querySelector('.v-now');
+    vNow.style.color = teinte; vNow.textContent = n;
+    rangee.querySelector('.chemin').style.background = teinte;
+    rangee.querySelector('.pt-now').style.background = teinte;
+    rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
+    rangee.querySelector('.v-vers').textContent = an < 2050 && fin !== n ? `→ ${fin}` : '';
+    const bas = Math.min(n, fin), haut = Math.max(n, fin);
+    const chemin = rangee.querySelector('.chemin');
+    chemin.style.left = bas + '%'; chemin.style.width = Math.max(haut - bas, 0) + '%';
+    rangee.querySelector('.pt-now').style.left = n + '%';
+    rangee.querySelector('.pt-fin').style.left = fin + '%';
+    rangee.dataset.nom = t.critere[CRITERES[i].cle];
+    rangee.dataset.detail = langue === 'en'
+      ? `population-weighted mean of ${nVilles} cities` : `moyenne pondérée des ${nVilles} villes`;
+    rangee.dataset.couleur = teinte;
+  });
+  majDetail(null);
+  tracerTrajectoire(l, an);
+
+  // puces : les villes les plus habitables du pays
+  const top = (VILLES_PAR_PAYS[iso] || []).filter(x => x[7])
+    .map(x => ({ lieu: x, indice: indiceHabitabiliteVille(x, an) }))
+    .sort((a, b) => b.indice - a.indice).slice(0, 3);
+  const bloc = document.getElementById('dossier-ailleurs');
+  const signature = 'pays:' + top.map(o => LIEUX.indexOf(o.lieu) + ':' + o.indice).join('|') + langue;
+  if (bloc.dataset.signature !== signature){
+    bloc.dataset.signature = signature;
+    bloc.innerHTML = `<div class="titre-bloc">${t.meilleuresVilles}</div><div class="alt-rangee">` +
+      top.map(o => `
+      <button class="alt" data-idx="${LIEUX.indexOf(o.lieu)}">
+        <span class="nom">${nomVille(o.lieu)}</span><span class="sc">${o.indice}</span>
+      </button>`).join('') + '</div>';
+    bloc.querySelectorAll('.alt').forEach(b => b.addEventListener('click', () => {
+      const cible = LIEUX[+b.dataset.idx];
+      if (cible) choisirLieu(cible);
+    }));
+  }
+}
+
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${nomPays(l[1]).toUpperCase()}`;
+  if (estPays(l)){
+    majDossierPays(l, an, t, dossierNeuf);
+    return;
+  }
   if (!l[7]){
     // sentinelle : île ou atoll hors des grilles — pas de score inventé
-    const elLieu0 = document.getElementById('dossier-lieu');
-    if (elLieu0.dataset.lieu !== nomVille(l)){ elLieu0.dataset.lieu = nomVille(l); revelerChars(elLieu0, nomVille(l)); }
     document.getElementById('dossier-score').textContent = '——';
     document.getElementById('dossier-verdict-txt').textContent = t.sansDonnees;
     document.getElementById('dossier-verdict').className = 'verdict';
@@ -1681,8 +1815,6 @@ function majDossier(){
   const indice2050 = indiceHabitabilite(l, 2050);
   const niveau = niveauDe(indice);
 
-  const elLieu = document.getElementById('dossier-lieu');
-  if (elLieu.dataset.lieu !== nomVille(l)){ elLieu.dataset.lieu = nomVille(l); revelerChars(elLieu, nomVille(l)); }
   document.getElementById('dossier-annee').textContent = an;
   {
     const elScore = document.getElementById('dossier-score');
@@ -1720,11 +1852,11 @@ function majDossier(){
     conteneur.innerHTML = criteres.map(c => `
     <div class="risque">
       <div class="ligne"><span class="nom-crit">${t.critere[c.cle]}</span>
-        <span class="val"><b class="v-now" style="color:${c.couleur}"></b><span class="v-vers"></span></span></div>
+        <span class="val"><b class="v-now"></b><span class="v-vers"></span></span></div>
       <div class="rail">
-        <i class="chemin" style="background:${c.couleur}"></i>
-        <i class="pt-fin" style="border-color:${c.couleur}"></i>
-        <i class="pt-now" style="background:${c.couleur}"></i>
+        <i class="chemin"></i>
+        <i class="pt-fin"></i>
+        <i class="pt-now"></i>
       </div>
     </div>`).join('');
     /* un seul emplacement de détail pour les six critères : celui de la rangée
@@ -1741,7 +1873,12 @@ function majDossier(){
   }
   conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
     const c = criteres[i], fin = criteres50[i];
+    const teinte = couleurNote(c.note);
     const vNow = rangee.querySelector('.v-now');
+    vNow.style.color = teinte;
+    rangee.querySelector('.chemin').style.background = teinte;
+    rangee.querySelector('.pt-now').style.background = teinte;
+    rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
     if (vNow.textContent !== String(c.note)){
       vNow.textContent = c.note;
       gsap.fromTo(vNow, { opacity: 0.35 }, { opacity: 1, duration: 0.4, ease: EASE });
@@ -1837,11 +1974,19 @@ function majLien(){
 document.getElementById('dossier-partage').addEventListener('click', async () => {
   if (!lieuDossier) return;
   majLien();
-  const titre = `${nomVille(lieuDossier)} — TERRA/2050`;
+  const l = lieuDossier, an = etat.annee;
+  const indice = l[7] ? indiceHabitabilite(l, an) : null;
+  const t = T();
+  const texte = indice === null
+    ? `${nomVille(l)} — TERRA/2050`
+    : (langue === 'en'
+      ? `${nomVille(l)}: ${indice}/100 habitability in ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. What about your city?`
+      : `${nomVille(l)} : ${indice}/100 d’habitabilité en ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. Et ta ville ?`);
+  const titre = `${nomVille(l)} — TERRA/2050`;
   try {
-    if (navigator.share) await navigator.share({ title: titre, url: location.href });
+    if (navigator.share) await navigator.share({ title: titre, text: texte, url: location.href });
     else {
-      await navigator.clipboard.writeText(location.href);
+      await navigator.clipboard.writeText(texte + '\n' + location.href);
       const el = document.getElementById('dossier-partage');
       const avant = el.textContent;
       el.textContent = langue === 'en' ? 'Link copied' : 'Lien copié';
@@ -2152,7 +2297,24 @@ Promise.all([
     });
   }),
   fetch('./data/calibration.json').then(r => r.json()).then(j => { CALIBRATION = j; }),
+  fetch('./data/pays.json').then(r => r.json()).then(j => { PAYS_POP = j; }),
 ]).then(() => {
+  /* Fiches PAYS : une pseudo-rangée par pays (marqueur capitale=2), centrée
+     sur le barycentre pondéré par population de ses villes. Le score pays
+     sera la moyenne pondérée des indices de ses villes. */
+  VILLES_PAR_PAYS = {};
+  for (const v of LIEUX) (VILLES_PAR_PAYS[v[1]] = VILLES_PAR_PAYS[v[1]] || []).push(v);
+  PAYS_LIGNES = Object.keys(VILLES_PAR_PAYS)
+    .filter(iso => PAYS_POP[iso] && VILLES_PAR_PAYS[iso].some(v => v[7]))
+    .map(iso => {
+      const vs = VILLES_PAR_PAYS[iso];
+      let sla = 0, slo = 0, sp = 0;
+      for (const v of vs){ sla += v[2] * v[4]; slo += v[3] * v[4]; sp += v[4]; }
+      const nomFr = new Intl.DisplayNames(['fr'], { type: 'region' }).of(iso) || iso;
+      const nomEn = new Intl.DisplayNames(['en'], { type: 'region' }).of(iso) || iso;
+      return [nomFr, iso, sla / Math.max(sp, 1), slo / Math.max(sp, 1),
+              PAYS_POP[iso][0], 2, nomEn, null];
+    });
   document.body.classList.add('donnees-pretes');
   if (lieuDossier) majDossier();
   ouvrirDepuisLien();

@@ -180,6 +180,7 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 
 /* ---- Corps : TWK 400 / −0.02em (rôle font-b1) ---- */
 #dossier .risque .ligne, #dossier .risque .detail, #resultats li .nom-lieu,
+#dossier .score .legende { letter-spacing: -0.02em; }
 
 /* ---- Le blanc chaud remplace le gris froid partout ---- */
 #dossier .risque .barre { background: var(--hairline); }
@@ -841,8 +842,9 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
 #champ-recherche { transition: none; }   /* la largeur appartient à GSAP */
 body.loupe #champ-recherche { cursor: pointer; color: transparent; }
 body.loupe #champ-recherche::placeholder { color: transparent; }
-#loupe { position: absolute; left: 50%; top: 50%; width: 19px; height: 19px;
-  transform: translate(-50%, -50%); pointer-events: none; opacity: 0.8;
+#loupe { position: absolute; left: auto; right: calc(78px + 23px); top: 50%;
+  width: 19px; height: 19px;
+  transform: translate(50%, -50%); pointer-events: none; opacity: 0.8;
   stroke: var(--texte); stroke-width: 1.4; fill: none; stroke-linecap: round; }
 body:not(.loupe) #loupe { opacity: 0; }
 
@@ -889,4 +891,31 @@ body.loupe #loupe { animation: loupe-souffle 3.8s var(--ease) infinite; }
 @media (max-width: 720px) {
   #recherche { padding-right: 60px; }
   #resultats { right: 60px; width: min(220px, 60vw); }
+  #loupe { right: calc(60px + 23px); }
+}
+
+/* =====================================================================
+   RELECTURE ROBIN — score aligné sur la première ligne (le nom de ville a
+   quitté le dossier), année alignée au rail dossier ouvert, tout tient.
+   ===================================================================== */
+@media (min-width: 721px) {
+  #dossier { gap: 11px; }
+  #dossier .coords { margin-bottom: 2px; }
+  #dossier .score { padding-bottom: 11px; align-items: flex-start; }
+  #dossier .score .valeur { font-size: clamp(46px, 4vw, 60px); line-height: 0.85; }
+  #dossier .score > div { padding-top: 4px; }
+  #dossier .conseil { font-size: 13px; line-height: 1.4; }
+  #dossier-courbe { height: 26px; }
+  #dossier .risque { padding: 5px 0 6px; }
+  #dossier-detail { min-height: 30px; font-size: 11px; }
+  #dossier-ailleurs .titre-bloc { margin-bottom: 6px; }
+  #dossier .sources { display: none; }   /* la ligne sources vit dans la pédagogie */
+  #dossier .actions { margin-top: 2px; }
+
+  /* l'année rejoint le rail des calques quand le dossier est ouvert : même
+     gauche (40px), 20 % plus petite, alignée à gauche */
+  body.dossier-ouvert #timeline {
+    left: 40px; transform: none; width: min(380px, 30vw); text-align: left;
+  }
+  body.dossier-ouvert #timeline .an { font-size: 77px; text-align: left; }
 }

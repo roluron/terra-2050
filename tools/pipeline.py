@@ -330,6 +330,9 @@ def exporter_fleuves(seuil_rang=4):
     return sorties
 
 
+_PAYS_POP = {}
+
+
 def declin_population():
     """Variation de population 2025 -> 2050 par pays (ONU WPP 2024, variante
     médiane, miroir Our World in Data) : {ISO_A2: pct}, et la grille W x H du
@@ -350,9 +353,11 @@ def declin_population():
             val = r[3] or r[4]
             if val and an in (2025, 2050):
                 courant.setdefault(code, {})[an] = float(val)
+        abs3 = {}
         for c, v in courant.items():
             if 2025 in v and 2050 in v and v[2025] > 0:
                 delta3[c] = (v[2050] / v[2025] - 1.0) * 100.0
+                abs3[c] = (v[2025], v[2050])
 
     # polygones Natural Earth admin-0 + attributs ISO
     z = zipfile.ZipFile(RAW / 'ne_admin0.zip')
@@ -392,6 +397,8 @@ def declin_population():
         iso2 = a.get('ISO_A2_EH') or a.get('ISO_A2')
         if iso2 and iso2 != '-99' and pct is not None:
             iso2_delta[iso2] = pct
+            if iso3 in abs3:
+                _PAYS_POP[iso2] = [round(abs3[iso3][0]), round(abs3[iso3][1])]
         if pct is None or pct >= 0:
             continue                                    # seule la décroissance colore
         val = min(1.0, -pct / 30.0)                     # -30 % et au-delà : saturé
@@ -804,6 +811,8 @@ def main():
         ecrire_png(OUT / f'grille_a_{an}.png', [flou(c['chaud']), flou(c['froid']), flou(c['sec'])])
         ecrire_png(OUT / f'grille_b_{an}.png', [flou(c['feux']), c['mer'], c['fleuves']])
     iso2_delta, grille_declin = declin_population()
+    (OUT / 'pays.json').write_text(json.dumps(_PAYS_POP, separators=(',', ':')))
+    print(f'  -> pays.json {len(_PAYS_POP)} pays')
     ecrire_png(OUT / 'grille_c.png', [terre_climat(), terre, grille_declin])
 
     fl = exporter_fleuves()
