@@ -169,24 +169,17 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 #voile .sous,
 #dossier .coords,
 #dossier .sources,
-#fiche .metrique,
-#resultats li .type-lieu,
-#timeline .bornes {
-  font-family: var(--herbik); font-style: italic; font-weight: 500;
-  letter-spacing: normal; text-transform: none; line-height: 0.9;
-}
 .micro, #voile .sous { font-size: 13px; }
-#dossier .coords, #dossier .sources, #fiche .metrique,
+#dossier .coords, #dossier .sources,
 #resultats li .type-lieu, #timeline .bornes { font-size: 13px; }
 
 /* ---- Display : TWK Lausanne 600, interlignage 0.9, chasse serrée ---- */
 #voile h1 { font-family: var(--police); font-weight: 600; line-height: 0.9; letter-spacing: -0.03em; }
-#titre h1, #dossier .lieu, #dossier .score .valeur, #timeline .an, #fiche h2 { font-weight: 600; }
+#titre h1, #dossier .lieu, #dossier .score .valeur, #timeline .an { font-weight: 600; }
 #dossier .lieu, #timeline .an, #dossier .score .valeur { line-height: 0.9; }
 
 /* ---- Corps : TWK 400 / −0.02em (rôle font-b1) ---- */
 #dossier .risque .ligne, #dossier .risque .detail, #resultats li .nom-lieu,
-#fiche p, #dossier .score .legende { letter-spacing: -0.02em; }
 
 /* ---- Le blanc chaud remplace le gris froid partout ---- */
 #dossier .risque .barre { background: var(--hairline); }
@@ -274,7 +267,7 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 body.recherche-active #champ-recherche::placeholder { color: transparent; }
 #mesure-recherche {
   position: absolute; visibility: hidden; white-space: pre; pointer-events: none;
-  font: inherit; font-family: var(--police); font-size: 14px; letter-spacing: -0.02em;
+  font: inherit; font-family: var(--police); font-size: 14px; letter-spacing: 0;
 }
 #caret-dos {
   position: absolute; top: 50%; width: 1.5px; height: 19px; margin-top: -9.5px;
@@ -328,12 +321,6 @@ body.recherche-active #caret-dos { animation: caret-dos 1.06s steps(1) infinite;
 #dossier-ailleurs .alt .sc { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* Écart projeté d'ici 2050, à côté de la note du critère */
-.vers2050 { margin-left: 9px; font-family: var(--herbik); font-style: italic; font-weight: 500;
-  font-size: 11px; color: var(--muter); }
-.vers2050[data-sens="bas"] { color: #E06A3C; }
-.vers2050[data-sens="haut"] { color: #2E8F6A; }
-#dossier-ecart { color: var(--texte); font-style: normal; font-family: var(--police);
-  font-size: 12px; letter-spacing: -0.02em; }
 
 /* La liste de résultats reprend la typo du système, pas la mono d'origine */
 #resultats .vide { font-family: var(--herbik); font-style: italic; font-weight: 500;
@@ -514,8 +501,6 @@ body.cale-annee #timeline .an { opacity: 0.92; }
   display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 #dossier .legende { color: rgba(255, 253, 226, 0.5); }
 #dossier .bornes-courbe { color: rgba(255, 253, 226, 0.35); }
-#dossier-ecart { font-family: var(--police); font-size: 12px; letter-spacing: -0.01em;
-  text-transform: none; color: var(--texte); }
 
 /* ---- identité du lieu ---- */
 #dossier .lieu { font-size: clamp(38px, 3.4vw, 58px); line-height: 0.88; letter-spacing: -0.04em; }
@@ -593,8 +578,6 @@ body.cale-annee #timeline .an { opacity: 0.92; }
   font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; }
 
 /* ---- écart projeté ---- */
-.vers2050 { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-style: normal;
-  font-size: 10px; letter-spacing: 0.14em; }
 
 /* =====================================================================
    MENUS DE L'EN-TÊTE — « Conditions de vie » + engrenage.
@@ -602,13 +585,7 @@ body.cale-annee #timeline .an { opacity: 0.92; }
    ===================================================================== */
 #util .menu-groupe { position: relative; display: flex; align-items: center; }
 
-/* déclencheur : texte + chevron qui bascule */
-#bouton-conditions { display: flex; align-items: center; gap: 8px; }
-#bouton-conditions .chevron { width: 7px; height: 7px; border-right: 1px solid currentColor;
-  border-bottom: 1px solid currentColor; transform: rotate(45deg) translateY(-1px);
-  transition: transform 0.4s var(--ease); }
-#bouton-conditions.ouvert .chevron { transform: rotate(225deg); }
-#bouton-conditions.ouvert, #bouton-reglages.ouvert { color: var(--texte); }
+#bouton-reglages.ouvert { color: var(--texte); }
 
 /* engrenage : trait fin, rotation d'un cran à l'ouverture */
 #bouton-reglages { padding: 6px 0 6px 4px; }
@@ -620,7 +597,7 @@ body.cale-annee #timeline .an { opacity: 0.92; }
 /* l'en-tête entier passe AU-DESSUS du dossier (z 20), sinon le texte du
    dossier peint par-dessus les menus déroulants */
 #util { z-index: 32; }
-#calques, #menu-reglages {
+#menu-reglages {
   position: absolute; top: calc(100% + 14px); right: 0; z-index: 30;
   display: flex; flex-direction: column; align-items: flex-start; gap: 0;
   min-width: 218px; padding: 8px 20px;
@@ -634,17 +611,11 @@ body.cale-annee #timeline .an { opacity: 0.92; }
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease),
     visibility 0s 0.4s;
 }
-#calques.ouvert, #menu-reglages.ouvert {
+#menu-reglages.ouvert {
   opacity: 1; transform: none; pointer-events: auto; visibility: visible;
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), visibility 0s;
 }
-/* neutralise l'ancien positionnement fixe du rail gauche */
-#util #calques { left: auto; width: auto; }
-body.pret #util #calques { transform: none; }
-#util #calques:not(.ouvert) { transform: translateY(-8px); }
 
-#calques .calque { width: 100%; padding: 10px 0; border-top: 1px solid var(--filet); }
-#calques .calque:first-child { border-top: none; }
 #menu-reglages .bouton-ico { width: 100%; text-align: left; padding: 11px 0;
   border-top: 1px solid var(--filet); }
 #menu-reglages .bouton-ico:first-child { border-top: none; }
@@ -714,7 +685,6 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
 @media (max-width: 720px) {
   /* en-tête : wordmark réduit, « Conditions » en chevron seul, pilule étroite */
   #titre h1 { font-size: 22px; }
-  #bouton-conditions > span { display: none; }
   #champ-recherche { width: min(190px, 50vw); padding: 11px 16px; }
   #bouton-position { display: none; }
   /* la timeline reste centrée : le recentrage dossier-ouvert (34vw) repliait
@@ -857,7 +827,33 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
 /* mobile : rail en pastilles seules, popup inchangé */
 @media (max-width: 720px) {
   #calques { left: 14px; }
+  body.dossier-ouvert #calques { opacity: 0; pointer-events: none; }
+  body.dossier-ouvert #dossier-croix { z-index: 40; }
   #calques .calque .nom { display: none; }
   #calques .calque .pastille { width: 12px; height: 12px; }
   #calque-bulle { display: none; }
 }
+
+/* =====================================================================
+   LOUPE DE VERRE — la recherche au repos est un cercle de la même lentille
+   WebGL ; le déploiement est animé par GSAP (largeur du champ).
+   ===================================================================== */
+#champ-recherche { transition: none; }   /* la largeur appartient à GSAP */
+body.loupe #champ-recherche { cursor: pointer; color: transparent; }
+body.loupe #champ-recherche::placeholder { color: transparent; }
+#loupe { position: absolute; left: 50%; top: 50%; width: 19px; height: 19px;
+  transform: translate(-50%, -50%); pointer-events: none; opacity: 0.8;
+  stroke: var(--texte); stroke-width: 1.4; fill: none; stroke-linecap: round; }
+body:not(.loupe) #loupe { opacity: 0; }
+
+/* balayage lumineux : une lame de lumière passe sur le placeholder */
+#balayage { position: absolute; top: 50%; left: 50%; width: 70px; height: 34px;
+  margin: -17px 0 0 -126px; pointer-events: none; opacity: 0;
+  background: linear-gradient(100deg, transparent 15%,
+    rgba(255, 253, 226, 0.28) 45%, rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 253, 226, 0.28) 55%, transparent 85%);
+  filter: blur(1px); mix-blend-mode: screen; }
+
+/* la roue ne garde plus de rotation CSS : tout passe par GSAP */
+#bouton-reglages .rouage { transition: none; }
+#bouton-reglages.ouvert .rouage { transform: none; }

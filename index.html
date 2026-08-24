@@ -192,6 +192,10 @@
       <path d="M8 0.5 V3.5 M8 12.5 V15.5 M0.5 8 H3.5 M12.5 8 H15.5" />
     </svg>
   </button>
+  <svg id="loupe" viewBox="0 0 20 20" aria-hidden="true">
+    <circle cx="8.6" cy="8.6" r="5.4"/><path d="M12.8 12.8 L17.2 17.2"/>
+  </svg>
+  <span id="balayage" aria-hidden="true"></span>
   <span id="mesure-recherche" aria-hidden="true"></span>
   <span id="caret-dos" aria-hidden="true"></span>
   <ul id="resultats"></ul>
@@ -267,7 +271,7 @@
   </div>
   <p class="conseil" id="dossier-conseil"></p>
   <div class="trajectoire">
-    <div class="titre-bloc"><span data-t="trajectoire"></span><span id="dossier-ecart"></span></div>
+    <div class="titre-bloc"><span data-t="trajectoire"></span></div>
     <svg id="dossier-courbe" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"></svg>
     <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
   </div>
@@ -532,7 +536,8 @@ function lire(cle, canal, lat, lon){
   const terre = GRILLES.c;
   const x0 = Math.round((lon + 180) / 360 * g.w);
   const y0 = Math.round((90 - lat) / 180 * g.h);
-  for (let r = 0; r <= 4; r++){
+  // même rayon que la spirale du pipeline : un score sans son détail lisait faux
+  for (let r = 0; r <= 7; r++){
     for (let dy = -r; dy <= r; dy++){
       for (let dx = -r; dx <= r; dx++){
         if (r > 0 && Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
@@ -1389,7 +1394,7 @@ curseur.addEventListener('input', () => {
   majPiste(an);
   if (lieuDossier){ majDossier(); majLien(); }
   gsap.to(etat, {
-    progression: (an - 2026) / 24, duration: 0.5, ease: EASE,
+    progression: (an - 2026) / 24, duration: 0.5, ease: EASE, overwrite: 'auto',
     onUpdate: () => {
       uniformsGlobe.uProgression.value = etat.progression;
       matAtmo.uniforms.uProgression.value = etat.progression;
@@ -1400,6 +1405,53 @@ curseur.addEventListener('input', () => {
   if (crise !== etat.crise){
     etat.crise = crise;
     crise ? SoundManager.play('crisis_loop', true) : SoundManager.stop('crisis_loop');
+  }
+});
+
+/* =====================================================================
+   LOUPE -> BARRE : au repos la recherche est une loupe de verre (la même
+   lentille WebGL, en cercle). Le clic la déploie en pilule, un balayage de
+   lumière passe sur le placeholder. Elle se replie vide, hors dossier.
+   ===================================================================== */
+const LARGEUR_LOUPE = 46;
+const etatRecherche = { w: LARGEUR_LOUPE };
+const loupe = document.getElementById('loupe');
+const balayage = document.getElementById('balayage');
+function largeurBarre(){ return Math.min(252, innerWidth * 0.37); }
+function appliquerLargeurRecherche(){
+  champ.style.width = etatRecherche.w + 'px';
+  majVerre();
+}
+function deployerRecherche(){
+  if (!document.body.classList.contains('loupe')) return;
+  document.body.classList.remove('loupe');
+  gsap.to(etatRecherche, { w: largeurBarre(), duration: 0.65, ease: EASE,
+    onUpdate: appliquerLargeurRecherche,
+    onComplete: () => {
+      // balayage lumineux sur « Chercher une ville — ⌘K »
+      gsap.fromTo(balayage, { x: -90, opacity: 0 },
+        { x: largeurBarre() + 40, opacity: 1, duration: 0.9, ease: 'power2.inOut',
+          onComplete: () => gsap.set(balayage, { opacity: 0 }) });
+    } });
+  gsap.to(loupe, { opacity: 0, scale: 0.6, duration: 0.3, ease: EASE });
+}
+function replierRecherche(){
+  if (document.body.classList.contains('loupe')) return;
+  if (champ.value || lieuDossier || document.activeElement === champ) return;
+  document.body.classList.add('loupe');
+  liste.classList.remove('ouvert');
+  gsap.to(etatRecherche, { w: LARGEUR_LOUPE, duration: 0.55, ease: EASE,
+    onUpdate: appliquerLargeurRecherche });
+  gsap.to(loupe, { opacity: 0.8, scale: 1, duration: 0.4, delay: 0.15, ease: EASE });
+}
+document.body.classList.add('loupe');
+// au boot, seulement la largeur : la lentille (etatVerre) n'existe pas encore
+champ.style.width = etatRecherche.w + 'px';
+champ.addEventListener('focus', deployerRecherche);
+champ.addEventListener('blur', () => setTimeout(replierRecherche, 140));
+addEventListener('resize', () => {
+  if (!document.body.classList.contains('loupe')){
+    etatRecherche.w = largeurBarre(); appliquerLargeurRecherche();
   }
 });
 
@@ -1504,9 +1556,9 @@ function diagnostiquer(l, an){
 /* « Rester ou partir » : les villes du même pays les plus habitables à
    l'horizon affiché, à population comparable. */
 function alternatives(l, an, combien = 3){
-  const memePays = LIEUX.filter(v => v[1] === l[1] && v[0] !== l[0] && v[4] >= Math.min(l[4] * 0.15, 150000));
+  const memePays = LIEUX.filter(v => v[1] === l[1] && v !== l && v[4] >= Math.min(l[4] * 0.15, 150000));
   const bassin = memePays.length >= 4 ? memePays
-    : LIEUX.filter(v => v[0] !== l[0] && v[4] >= 400000
+    : LIEUX.filter(v => v !== l && v[4] >= 400000
         && Math.abs(v[2] - l[2]) < 22 && Math.abs(v[3] - l[3]) < 32);
   const ici = indiceHabitabilite(l, an);
   return bassin
@@ -1658,22 +1710,28 @@ function majDossier(){
   const elDelta = document.getElementById('dossier-delta');
   elDelta.textContent = texteEcart + texteRang;
   elDelta.dataset.sens = ecart < 0 ? 'bas' : 'haut';
-  document.getElementById('dossier-ecart').textContent = '';
 
   const alt = alternatives(l, an);
   const bloc = document.getElementById('dossier-ailleurs');
   if (!alt.length){
+    bloc.dataset.signature = '';
     bloc.innerHTML = `<div class="titre-bloc">${t.ailleurs}</div><div class="rien">${t.rienDeMieux}</div>`;
   } else {
     // une seule rangée de puces : trois rangées empilées faisaient défiler le
     // panneau sur un écran de portable
+    // par INDEX, pas par nom : deux Suzhou chinoises ouvriraient la mauvaise.
+    // Et seulement si la liste change : reconstruire à chaque cran du slider
+    // laissait des tweens GSAP accrochés à des nœuds détachés.
+    const signature = alt.map(o => LIEUX.indexOf(o.lieu) + ':' + o.indice).join('|') + langue;
+    if (bloc.dataset.signature === signature) return;
+    bloc.dataset.signature = signature;
     bloc.innerHTML = `<div class="titre-bloc">${t.ailleurs}</div><div class="alt-rangee">` +
       alt.map(o => `
-      <button class="alt" data-nom="${o.lieu[0]}">
+      <button class="alt" data-idx="${LIEUX.indexOf(o.lieu)}">
         <span class="nom">${nomVille(o.lieu)}</span><span class="sc">${o.indice}</span>
       </button>`).join('') + '</div>';
     bloc.querySelectorAll('.alt').forEach(b => b.addEventListener('click', () => {
-      const cible = LIEUX.find(x => x[0] === b.dataset.nom);
+      const cible = LIEUX[+b.dataset.idx];
       if (cible) choisirLieu(cible);
     }));
     gsap.fromTo('#dossier-ailleurs .alt', { opacity: 0, y: -6 },
@@ -1692,6 +1750,7 @@ function ouvrirDossier(l){
 }
 function fermerDossier(){
   lieuDossier = null;
+  setTimeout(replierRecherche, 180);
   retirerMarqueur();
   history.replaceState(null, '', location.pathname);
   dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
@@ -1726,7 +1785,8 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
 function ouvrirDepuisLien(){
   const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?/);
   if (!m) return;
-  const nom = decodeURIComponent(m[1]);
+  let nom;
+  try { nom = decodeURIComponent(m[1]); } catch (e) { return; }   // hash tronqué
   const l = LIEUX.find(x => x[0] === nom || x[6] === nom);
   if (!l) return;
   if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); }
@@ -1762,13 +1822,14 @@ const marqueur = new THREE.Mesh(
 marqueur.visible = false;
 scene.add(marqueur);
 function poserMarqueur(l){
+  gsap.killTweensOf(marqueurUniforms.uForce);
   marqueur.position.copy(latLonVersVec3(l[2], l[3], 1.015));
   marqueur.visible = true;
   gsap.to(marqueurUniforms.uForce, { value: 1, duration: DUREE.fast, ease: EASE });
 }
 function retirerMarqueur(){
   gsap.to(marqueurUniforms.uForce, { value: 0, duration: 0.4, ease: EASE,
-    onComplete: () => (marqueur.visible = false) });
+    onComplete: () => { if (marqueurUniforms.uForce.value === 0) marqueur.visible = false; } });
 }
 
 /* ---- « ma position » : la grande ville la plus proche, sur accord explicite ---- */
@@ -1788,7 +1849,8 @@ document.getElementById('bouton-position').addEventListener('click', () => {
 document.getElementById('dossier-croix').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
 addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); champ.focus(); champ.select(); }
-  else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ) fermerDossier();
+  else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ
+           && !surfaceAuDessus()) fermerDossier();
 });
 
 /* =====================================================================
@@ -1822,6 +1884,7 @@ addEventListener('keydown', e => {
 }
 
 let montrerPedago = () => {};      // implémenté dans le bloc menus (lentille partagée)
+let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile d'Échap
 {
   const menus = [
     { bouton: document.getElementById('bouton-reglages'),
@@ -1852,6 +1915,7 @@ let montrerPedago = () => {};      // implémenté dans le bloc menus (lentille 
         onComplete: () => { if (verreMenu.force === 0) verreMenu.panneau = null; } });
   };
   const ouvrir = m => {
+    fermerPedago();
     menus.forEach(x => { if (x !== m) fermer(x); });
     m.panneau.classList.add('ouvert');
     m.bouton.classList.add('ouvert');
@@ -1870,13 +1934,21 @@ let montrerPedago = () => {};      // implémenté dans le bloc menus (lentille 
       m.panneau.classList.contains('ouvert') ? fermer(m) : ouvrir(m);
     });
   });
+  /* micro-interaction : la roue tourne d'un cran vif au survol, d'un demi
+     tour au clic — nerveux, jamais en boucle */
+  {
+    const rouage = document.querySelector('#bouton-reglages .rouage');
+    const bouton = document.getElementById('bouton-reglages');
+    bouton.addEventListener('pointerenter', () =>
+      gsap.to(rouage, { rotation: '+=60', duration: 0.3, ease: 'power3.out', overwrite: 'auto' }));
+    bouton.addEventListener('click', () =>
+      gsap.to(rouage, { rotation: '+=180', duration: 0.5, ease: 'power3.out', overwrite: 'auto' }));
+  }
   document.addEventListener('click', e => {
     menus.forEach(m => {
       if (!m.panneau.contains(e.target) && !m.bouton.contains(e.target)) fermer(m);
     });
   });
-  addEventListener('keydown', e => { if (e.key === 'Escape') menus.forEach(fermer); });
-
   /* ---- popup pédagogique : première activation d'un calque ----
      Même lentille de verre que les menus. Mémorisé par calque : il ne
      réapparaît jamais, même si on désactive puis réactive le filtre. */
@@ -1893,6 +1965,7 @@ let montrerPedago = () => {};      // implémenté dans le bloc menus (lentille 
       onComplete: () => { if (verreMenu.force === 0) verreMenu.panneau = null; } });
   }
   montrerPedago = (cle) => {
+    menus.forEach(fermer);
     let vu = null;
     try { vu = localStorage.getItem('terra-pedago-' + cle); } catch (e) {}
     if (vu) return;
@@ -1913,14 +1986,23 @@ let montrerPedago = () => {};      // implémenté dans le bloc menus (lentille 
   };
   document.getElementById('pedago-fermer').addEventListener('click', () => { fermerPedago(); SoundManager.play('ui_click'); });
   pedago.addEventListener('click', e => { if (e.target === pedago) fermerPedago(); });
-  addEventListener('keydown', e => { if (e.key === 'Escape') fermerPedago(); });
+
+  /* Échap ferme la surface du DESSUS seulement : pédago, puis menu ouvert.
+     Le dossier (dessous) a son propre gestionnaire, qui interroge cet état. */
+  surfaceAuDessus = () =>
+    pedagoOuvert ? 'pedago' : (menus.some(m => m.panneau.classList.contains('ouvert')) ? 'menu' : null);
+  addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (pedagoOuvert) fermerPedago();
+    else menus.forEach(fermer);
+  });
 }
 
 /* ---- son global + HUD perf ---- */
 const boutonSon = document.getElementById('bouton-son');
 boutonSon.addEventListener('click', () => {
   SoundManager.mute = !SoundManager.mute;
-  boutonSon.textContent = SoundManager.mute ? 'Son · off' : 'Son · on';
+  boutonSon.textContent = T().son(!SoundManager.mute);
   boutonSon.classList.toggle('actif', !SoundManager.mute);
   if (!SoundManager.mute) SoundManager.play('ui_click');
 });
@@ -1940,6 +2022,7 @@ function traduire(){
     btn.querySelector('[data-t-calque]').textContent = t.calque[btn.dataset.cle];
   }
   champ.placeholder = t.chercher;
+  if (lieuDossier) champ.value = nomVille(lieuDossier);
   document.getElementById('dossier-partage').textContent = t.partage;
   document.getElementById('dossier-sources').textContent = t.sources;
   boutonSon.textContent = t.son(!SoundManager.mute);
@@ -1998,6 +2081,10 @@ Promise.all([
   document.body.classList.add('donnees-pretes');
   if (lieuDossier) majDossier();
   ouvrirDepuisLien();
+}).catch(err => {
+  // le chrome et le globe restent utilisables ; la recherche affichera
+  // simplement « aucune ville » tant que l'annuaire manque
+  console.error('données indisponibles :', err);
 });
 
 const hud = document.getElementById('hud');
@@ -2027,22 +2114,17 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   SoundManager.setVolume(1);
   SoundManager.play('ambient_loop', true);   // boucle à 0.5, fondu 2 s — après le geste utilisateur
   SoundManager.play('camera_fly');
-  boutonSon.textContent = 'Son · on'; boutonSon.classList.add('actif');
-  // plan d'ouverture : recul caméra progressif
-  gsap.from(camera.position, { x: 0.35, y: 0.55, z: 6.2, duration: 2, ease: EASE });
+  boutonSon.textContent = T().son(true); boutonSon.classList.add('actif');
+  // plan d'ouverture : recul caméra progressif — sauf si un lien profond a
+  // déjà lancé un vol vers une ville (les deux tweens se battaient)
+  if (!lieuDossier){
+    gsap.killTweensOf(camera.position);
+    gsap.from(camera.position, { x: 0.35, y: 0.55, z: 6.2, duration: 2, ease: EASE });
+  }
   // le rideau se dissout par le bruit, en même temps que le recul caméra
   gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
   revelerChrome();
-  // le premier geste attendu est le nom d'une ville — mais un focus posé par
-  // le code n'ouvre pas la liste : le panneau de suggestions qui surgit seul
-  // à l'arrivée lisait comme un bug
-  setTimeout(() => {
-    if (lieuDossier) return;
-    focusProgramme = true;
-    champ.focus();
-    setTimeout(() => { focusProgramme = false; }, 150);
-  }, 1600);
 });
 
 /* =====================================================================
