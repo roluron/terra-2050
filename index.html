@@ -1281,6 +1281,12 @@ function choisirLieu(l){
   });
 }
 champ.addEventListener('input', afficherResultats);
+// reprendre une recherche = tourner la page : le dossier ouvert se ferme et
+// le nom en place est sélectionné pour être remplacé au premier caractère
+champ.addEventListener('focus', () => {
+  if (lieuDossier) fermerDossier();
+  if (champ.value) champ.select();
+});
 champ.addEventListener('focus', afficherResultats);
 champ.addEventListener('keydown', e => {
   const items = liste.querySelectorAll('li:not(.vide)');
