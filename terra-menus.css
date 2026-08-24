@@ -919,3 +919,19 @@ body.loupe #loupe { animation: loupe-souffle 3.8s var(--ease) infinite; }
   }
   body.dossier-ouvert #timeline .an { font-size: 77px; text-align: left; }
 }
+
+/* rangée population : alignée sur les autres indices, sans rail */
+#dossier .risque-pop { border-top: 1px solid var(--filet); padding: 7px 0; }
+#dossier .risque-pop:empty { display: none; }
+#dossier .risque-pop .v-now { font-size: 14px; }
+
+/* le chiffre du score à la hauteur de sa légende (deux lignes mono) */
+@media (min-width: 721px) {
+  #dossier .score { gap: 14px; padding-bottom: 10px; }
+  #dossier .score .valeur { font-size: 38px; line-height: 1; }
+  #dossier .score > div { padding-top: 0; }
+}
+
+/* le caret DOS n'existe qu'en barre déployée — replié en loupe, rien */
+body.loupe #caret-dos { display: none; }
+body.loupe #mesure-recherche { display: none; }

@@ -265,7 +265,6 @@
       <div class="legende"><span data-t="legendeIndice"></span> <span id="dossier-annee">2050</span></div>
       <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
       <div class="delta-score" id="dossier-delta"></div>
-      <div class="pop-pays" id="dossier-pop"></div>
     </div>
   </div>
   <p class="conseil" id="dossier-conseil"></p>
@@ -275,6 +274,7 @@
     <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
   </div>
   <div id="dossier-risques"></div>
+  <div id="dossier-pop" class="risque risque-pop"></div>
   <div id="dossier-detail"></div>
   <div id="dossier-ailleurs"></div>
   <div class="sources" id="dossier-sources"></div>
@@ -405,6 +405,7 @@ const TEXTES = {
     pedagoOk: 'Compris',
     sansDonnees: 'Données insuffisantes',
     sansDonneesLong: 'Cette ville est hors des grilles climatiques mondiales (petite île ou atoll) : plutôt que d’inventer un score, on n’en affiche pas.',
+    popLabel: 'Population du pays',
     popPays: p => `population du pays : ${p > 0 ? '+' : '−'}${Math.abs(p)} % d’ici 2050 (ONU)`,
     popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1).replace('.', ',')} M habitants → ${(p50 / 1e6).toFixed(1).replace('.', ',')} M en 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)} %, ONU)`,
     conseilPays: (verdict, an) => `En ${an}, le pays dans son ensemble : ${verdict} — la moyenne cache les écarts entre villes, ouvrez-les.`,
@@ -478,6 +479,7 @@ const TEXTES = {
     pedagoOk: 'Got it',
     sansDonnees: 'Not enough data',
     sansDonneesLong: 'This city sits outside the global climate grids (small island or atoll): rather than invent a score, we show none.',
+    popLabel: 'Country population',
     popPays: p => `country population: ${p > 0 ? '+' : '−'}${Math.abs(p)}% by 2050 (UN)`,
     popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1)}M people → ${(p50 / 1e6).toFixed(1)}M by 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)}%, UN)`,
     conseilPays: (verdict, an) => `In ${an}, the country as a whole: ${verdict} — the average hides gaps between cities, open them.`,
@@ -1641,18 +1643,15 @@ function diagnostiquer(l, an){
 /* « Rester ou partir » : les villes du même pays les plus habitables à
    l'horizon affiché, à population comparable. */
 function alternatives(l, an, combien = 3){
-  // même pays d'abord ; sinon vraiment À PROXIMITÉ (700 km) — Sofia se
-  // comparait à Manchester parce qu'une boîte en degrés ignorait la distance
-  const memePays = LIEUX.filter(v => v[1] === l[1] && v !== l && v[4] >= Math.min(l[4] * 0.15, 100000));
-  const bassin = memePays.length >= 2 ? memePays
-    : LIEUX.filter(v => v !== l && v[4] >= 200000
-        && distanceKm(l[2], l[3], v[2], v[3]) <= 700);
+  // les villes nettement plus habitables LES PLUS PROCHES, peu importe le
+  // pays : pour Sofia, Bucarest ou Vienne avant Bristol
   const ici = indiceHabitabilite(l, an);
-  return bassin
-    .filter(v => v[7])
-    .map(v => ({ lieu: v, indice: indiceHabitabilite(v, an) }))
-    .filter(o => o.indice > ici + 4)
-    .sort((a, b) => b.indice - a.indice)
+  return LIEUX
+    .filter(v => v !== l && v[7] && v[4] >= 200000)
+    .map(v => ({ lieu: v, indice: indiceHabitabilite(v, an),
+                 d: distanceKm(l[2], l[3], v[2], v[3]) }))
+    .filter(o => o.indice > ici + 4 && o.d <= 2500)
+    .sort((a, b) => a.d - b.d)
     .slice(0, combien);
 }
 
@@ -1728,8 +1727,8 @@ function majDossierPays(l, an, t, dossierNeuf){
     (langue === 'en' ? `${nVilles} cities weighted by population` : `${nVilles} villes pondérées par population`);
 
   const pop = PAYS_POP[iso];
-  document.getElementById('dossier-pop').textContent = pop
-    ? t.popAbsolue(pop[0], pop[1], Math.round((pop[1] / pop[0] - 1) * 100)) : '';
+  majRangeePop(pop ? Math.round((pop[1] / pop[0] - 1) * 100) : null, t,
+    pop ? t.popAbsolue(pop[0], pop[1], Math.round((pop[1] / pop[0] - 1) * 100)) : '');
 
   document.getElementById('dossier-conseil').textContent =
     t.conseilPays(t.verdict[niveau].toLowerCase(), an);
@@ -1788,6 +1787,21 @@ function majDossierPays(l, an, t, dossierNeuf){
   }
 }
 
+/* Rangée « population » alignée sur les autres indices : nom + pourcentage
+   coloré par gravité (fort déclin rouge, léger orange, stable bleu,
+   croissance verte). Le détail ONU vit dans l'emplacement de survol. */
+function majRangeePop(pct, t, detail){
+  const el = document.getElementById('dossier-pop');
+  if (pct === null || pct === undefined){ el.innerHTML = ''; el.dataset.detail = ''; return; }
+  const teinte = pct <= -15 ? '#E0452E' : pct <= -4 ? '#E06A3C'
+               : pct < 5 ? '#4D7CF2' : '#2E8F6A';
+  el.innerHTML = `<div class="ligne"><span class="nom-crit">${t.popLabel}</span>
+    <span class="val"><b class="v-now" style="color:${teinte}">${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b></span></div>`;
+  el.dataset.nom = t.popLabel;
+  el.dataset.detail = detail || t.popPays(pct);
+  el.dataset.couleur = teinte;
+}
+
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
@@ -1804,7 +1818,7 @@ function majDossier(){
     document.getElementById('dossier-verdict').className = 'verdict';
     document.getElementById('dossier-delta').textContent = '';
     document.getElementById('dossier-conseil').textContent = t.sansDonneesLong;
-    document.getElementById('dossier-pop').textContent = '';
+    document.getElementById('dossier-pop').innerHTML = '';
     document.getElementById('dossier-risques').innerHTML = '';
     document.getElementById('dossier-detail').textContent = '';
     document.getElementById('dossier-ailleurs').innerHTML = '';
@@ -1869,6 +1883,9 @@ function majDossier(){
         if (r) majDetail(r);
       });
       conteneur.addEventListener('mouseleave', () => majDetail(null));
+      const rp = document.getElementById('dossier-pop');
+      rp.addEventListener('mouseenter', () => rp.dataset.detail && majDetail(rp));
+      rp.addEventListener('mouseleave', () => majDetail(null));
     }
   }
   conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
@@ -1912,9 +1929,7 @@ function majDossier(){
       : ` · devant ${rg} % des ${LIEUX.length.toLocaleString('fr-FR')} villes`);
   const elDelta = document.getElementById('dossier-delta');
   elDelta.textContent = texteEcart + texteRang;
-  const pop50 = l[7].pop50;
-  document.getElementById('dossier-pop').textContent =
-    (pop50 !== null && pop50 !== undefined && Math.abs(pop50) >= 2) ? t.popPays(pop50) : '';
+  majRangeePop(l[7].pop50, t);
   elDelta.dataset.sens = ecart < 0 ? 'bas' : 'haut';
 
   const alt = alternatives(l, an);
@@ -1954,8 +1969,20 @@ function ouvrirDossier(l){
   poserMarqueur(l);
   majLien();
 }
+const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(){
   lieuDossier = null;
+  champ.value = '';                 // la barre se vide et la loupe revient
+  // la terre reprend son cadrage d'arrivée
+  if (volEnCours) volEnCours.kill();
+  gsap.killTweensOf(camera.position);
+  volEnCours = gsap.to(camera.position, {
+    ...CAMERA_ACCUEIL, duration: 1.8, ease: EASE,
+    onUpdate: () => camera.lookAt(0, 0, 0),
+    onComplete: () => { controles.autoRotate = true; },
+  });
+  if (document.activeElement === champ) champ.blur();
+  liste.classList.remove('ouvert');
   setTimeout(replierRecherche, 180);
   retirerMarqueur();
   history.replaceState(null, '', location.pathname);
