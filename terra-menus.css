@@ -734,3 +734,53 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
   #dossier-croix { top: auto; bottom: calc(62vh - 46px); right: 16px; }
   #champ-recherche { width: min(220px, 56vw); }
 }
+
+/* =====================================================================
+   DOSSIER COMPACT — tout tient sans défiler sur un écran de portable
+   (~900 px de viewport). Le scroll ne reste qu'en secours sur très petit
+   écran. Desktop seulement : le mobile garde sa feuille basse.
+   ===================================================================== */
+@media (min-width: 721px) {
+  #dossier { top: 88px; bottom: 78px; gap: 13px; width: min(460px, 35vw); }
+  #dossier .lieu { font-size: clamp(30px, 2.6vw, 40px); }
+  #dossier .coords { font-size: 9px; }
+
+  #dossier .score { gap: 16px; padding-bottom: 13px; }
+  #dossier .score .valeur { font-size: clamp(50px, 4.4vw, 66px); }
+  #dossier .score .legende { font-size: 8.5px; letter-spacing: 0.12em; }
+  #dossier .verdict { margin-top: 4px; font-size: 12.5px; }
+  #dossier .delta-score { margin-top: 3px; font-size: 12px; }
+
+  #dossier .conseil { font-size: 13.5px; line-height: 1.45; max-width: 42ch; }
+
+  #dossier .trajectoire .titre-bloc { margin-bottom: 7px; }
+  #dossier-courbe { height: 30px; }
+  #dossier .bornes-courbe { margin-top: 4px; font-size: 8.5px; }
+
+  /* rangées d'une seule respiration : nom + valeur, rail dessous */
+  #dossier .risque { padding: 6px 0 7px; }
+  #dossier .risque .nom-crit { font-size: 12.5px; }
+  #dossier .risque .v-now { font-size: 14px; }
+  #dossier .risque .v-vers { font-size: 9px; }
+  #dossier .risque .rail { margin: 6px 0 0; height: 5px; }
+
+  /* l'emplacement de détail unique : hauteur réservée, pas de saut */
+  #dossier-detail { min-height: 32px; font-size: 11.5px; line-height: 1.4;
+    color: rgba(255, 253, 226, 0.55); letter-spacing: -0.01em; }
+  #dossier-detail b { font-weight: 600; letter-spacing: 0; }
+
+  /* alternatives : puces sur une seule rangée */
+  #dossier-ailleurs .titre-bloc { margin-bottom: 8px; }
+  #dossier-ailleurs .alt-rangee { display: flex; gap: 8px; flex-wrap: wrap; }
+  #dossier-ailleurs .alt { display: inline-flex; align-items: baseline; gap: 8px;
+    width: auto; padding: 6px 12px; border: 1px solid var(--filet); border-top: 1px solid var(--filet);
+    border-radius: 999px; }
+  #dossier-ailleurs .alt::before { display: none; }
+  #dossier-ailleurs .alt .nom { font-size: 12px; }
+  #dossier-ailleurs .alt .sc { font-size: 12.5px; font-weight: 600; }
+  #dossier .rien { font-size: 11.5px; }
+
+  #dossier .sources { font-size: 8px; letter-spacing: 0.1em; line-height: 1.6; }
+  #dossier .actions { margin-top: 4px; }
+  #dossier .actions span { font-size: 9px; }
+}

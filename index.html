@@ -266,6 +266,7 @@
     <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
   </div>
   <div id="dossier-risques"></div>
+  <div id="dossier-detail"></div>
   <div id="dossier-ailleurs"></div>
   <div class="sources" id="dossier-sources"></div>
   <div class="actions"><span class="fa-lien" id="dossier-partage"></span></div>
@@ -1489,6 +1490,14 @@ function tracerTrajectoire(l, an){
 /* État « en ce moment » : événements naturels réellement en cours autour du
    lieu (NASA EONET + USGS). Aucune projection ici, que de l'observé. */
 
+function majDetail(rangee){
+  const slot = document.getElementById('dossier-detail');
+  const cible = rangee || document.querySelector('#dossier-risques .risque.pire')
+    || document.querySelector('#dossier-risques .risque');
+  if (!cible){ slot.textContent = ''; return; }
+  slot.innerHTML = `<b style="color:${cible.dataset.couleur}">${cible.dataset.nom}</b> · ${cible.dataset.detail}`;
+}
+
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
@@ -1534,8 +1543,18 @@ function majDossier(){
         <i class="pt-fin" style="border-color:${c.couleur}"></i>
         <i class="pt-now" style="background:${c.couleur}"></i>
       </div>
-      <div class="detail"></div>
     </div>`).join('');
+    /* un seul emplacement de détail pour les six critères : celui de la rangée
+       survolée, sinon celui du pire axe — six détails sur deux lignes chacun
+       forçaient le panneau à défiler sur un MacBook */
+    if (!conteneur.dataset.survol){
+      conteneur.dataset.survol = '1';
+      conteneur.addEventListener('mouseover', e => {
+        const r = e.target.closest('.risque');
+        if (r) majDetail(r);
+      });
+      conteneur.addEventListener('mouseleave', () => majDetail(null));
+    }
   }
   conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
     const c = criteres[i], fin = criteres50[i];
@@ -1552,8 +1571,12 @@ function majDossier(){
     chemin.style.width = Math.max(haut - bas, 0) + '%';
     rangee.querySelector('.pt-now').style.left = c.note + '%';
     rangee.querySelector('.pt-fin').style.left = fin + '%';
-    rangee.querySelector('.detail').textContent = c.detail;
+    rangee.dataset.nom = t.critere[c.cle];
+    rangee.dataset.detail = c.detail;
+    rangee.dataset.couleur = c.couleur;
+    rangee.classList.toggle('pire', c.cle === pire.cle);
   });
+  majDetail(null);
   if (dossierNeuf){
     gsap.fromTo('#dossier-risques .risque', { opacity: 0, y: 10 },
       { opacity: 1, y: 0, duration: DUREE.fast, stagger: 0.06, ease: EASE, clearProps: 'opacity,transform' });
@@ -1575,18 +1598,19 @@ function majDossier(){
   if (!alt.length){
     bloc.innerHTML = `<div class="titre-bloc">${t.ailleurs}</div><div class="rien">${t.rienDeMieux}</div>`;
   } else {
-    bloc.innerHTML = `<div class="titre-bloc">${t.ailleurs}</div>` + alt.map(o => `
+    // une seule rangée de puces : trois rangées empilées faisaient défiler le
+    // panneau sur un écran de portable
+    bloc.innerHTML = `<div class="titre-bloc">${t.ailleurs}</div><div class="alt-rangee">` +
+      alt.map(o => `
       <button class="alt" data-nom="${o.lieu[0]}">
-        <span class="nom">${nomVille(o.lieu)}</span>
-        <span class="delta">＋${o.indice - indice}</span>
-        <span class="sc">${o.indice}</span>
-      </button>`).join('');
+        <span class="nom">${nomVille(o.lieu)}</span><span class="sc">${o.indice}</span>
+      </button>`).join('') + '</div>';
     bloc.querySelectorAll('.alt').forEach(b => b.addEventListener('click', () => {
       const cible = LIEUX.find(x => x[0] === b.dataset.nom);
       if (cible) choisirLieu(cible);
     }));
     gsap.fromTo('#dossier-ailleurs .alt', { opacity: 0, y: -6 },
-      { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: EASE });
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: EASE, clearProps: 'opacity,transform' });
   }
 }
 
