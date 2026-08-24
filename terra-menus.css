@@ -463,11 +463,7 @@ body.cale-annee #timeline .an { opacity: 0.92; }
   margin-top: 26px;                   /* respiration entre l'année et la ligne */
   position: relative; z-index: 2;
 }
-/* la piste épouse le centre vertical du pouce natif : 14 px du bas du panneau */
-#timeline .piste { position: absolute; left: 0; right: 0; bottom: 13px; height: 2px;
-  background: rgba(255, 253, 226, 0.14); pointer-events: none; }
-#timeline .piste i { position: absolute; inset: 0 auto 0 0; width: var(--fill, 0%);
-  background: rgba(255, 253, 226, 0.85); transition: width 0.3s var(--ease); }
+
 
 #timeline .graduations { position: absolute; left: 0; right: 0; bottom: 10px;
   display: flex; justify-content: space-between; pointer-events: none; }
@@ -952,16 +948,37 @@ body.loupe #mesure-recherche { display: none; }
 /* la piste sous l'année épouse exactement la largeur du millésime */
 #timeline .an { display: inline-block; }
 #curseur { display: block; width: var(--l-an, 100%); margin-left: auto; margin-right: auto; }
-#timeline .piste { left: 50%; right: auto; transform: translateX(-50%); width: var(--l-an, 100%); }
-#timeline .graduations { left: 50%; right: auto; transform: translateX(-50%); width: var(--l-an, 100%); }
 #timeline .bornes { width: var(--l-an, 100%); margin: 0 auto; }
 @media (min-width: 721px) {
   body.dossier-ouvert #curseur, body.dossier-ouvert #timeline .bornes { margin-left: 0; }
-  body.dossier-ouvert #timeline .piste,
-  body.dossier-ouvert #timeline .graduations { left: 0; transform: none; }
+  body.dossier-ouvert #timeline .regle { margin-left: 0; }
 }
 
 /* les paliers en toutes lettres tiennent sur la rangée */
 #dossier .risque .v-now { font-size: 13px; }
 #dossier .risque-pop .v-now { font-size: 14px; }
 #dossier .risque .v-vers { font-size: 11px; }
+
+
+/* =====================================================================
+   RÈGLE DES ANNÉES — 25 traits, un par an. La vague se soulève autour de
+   l'année active, anticipe le survol, l'année courante est une aiguille.
+   Le range natif reste l'instrument (invisible, par-dessus).
+   ===================================================================== */
+#timeline .regle { display: flex; justify-content: space-between; align-items: flex-end;
+  height: 38px; width: var(--l-an, 100%); margin: 0 auto; pointer-events: none; }
+#timeline .regle i { width: 1.5px; height: 10px; border-radius: 1px;
+  background: var(--texte); transform-origin: bottom;
+  opacity: 0.25; will-change: transform, opacity; }
+#curseur { display: block; width: var(--l-an, 100%); height: 44px;
+  margin: -41px auto 0; position: relative; z-index: 2; cursor: ew-resize;
+  background: none; }
+#curseur::-webkit-slider-thumb { opacity: 0; }
+#curseur::-moz-range-thumb { opacity: 0; }
+#timeline .bornes { margin-top: 2px; }
+
+
+/* la ligne delta · rang vit sous les rangées, dans l'espace libre */
+#dossier .delta-score { margin-top: 2px; padding-top: 7px;
+  border-top: 1px solid var(--filet); }
+#dossier .delta-score:empty { display: none; }
