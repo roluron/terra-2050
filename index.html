@@ -186,6 +186,12 @@
 <div id="recherche" class="panneau">
   <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
     autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu">
+  <button id="bouton-position" aria-label="Ma position / My location">
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <circle cx="8" cy="8" r="2.6"/>
+      <path d="M8 0.5 V3.5 M8 12.5 V15.5 M0.5 8 H3.5 M12.5 8 H15.5" />
+    </svg>
+  </button>
   <span id="mesure-recherche" aria-hidden="true"></span>
   <span id="caret-dos" aria-hidden="true"></span>
   <ul id="resultats"></ul>
@@ -208,12 +214,10 @@
     <nav id="calques" aria-label="Calques de risque">
       <button class="calque" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
       <button class="calque" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
-      <button class="calque" data-cle="argile" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-03</span></button>
       <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
       <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
       <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
       <button class="calque" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
-      <div class="note-calques" data-t="argilesIndicatif"></div>
     </nav>
   </div>
   <div class="menu-groupe">
@@ -226,7 +230,6 @@
     </button>
     <div id="menu-reglages">
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
-      <button class="bouton-ico fa-lien" id="bouton-perf">Perf</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language / Langue">FR · <em>en</em></button>
     </div>
   </div>
@@ -253,6 +256,7 @@
     <div>
       <div class="legende"><span data-t="legendeIndice"></span> <span id="dossier-annee">2050</span></div>
       <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
+      <div class="delta-score" id="dossier-delta"></div>
     </div>
   </div>
   <p class="conseil" id="dossier-conseil"></p>
@@ -265,7 +269,7 @@
   <div id="dossier-risques"></div>
   <div id="dossier-ailleurs"></div>
   <div class="sources" id="dossier-sources"></div>
-  <div class="actions"><span class="fa-lien" id="dossier-fermer"></span><span class="fa-lien" id="dossier-partage"></span></div>
+  <div class="actions"><span class="fa-lien" id="dossier-partage"></span></div>
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
@@ -349,9 +353,9 @@ const TEXTES = {
   fr: {
     lang: 'fr',
     sous1: 'Observatoire prospectif',
-    sous2: 'Résilience climatique · simulation interactive',
+    sous2: 'Votre ville sera-t-elle encore vivable en 2050 ?',
     chargement: p => `Chargement ${p}%`,
-    initialiser: 'Initialiser',
+    initialiser: 'Explorer',
     chercher: 'Chercher une ville — ⌘K',
     aucunLieu: 'Aucune ville trouvée',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
@@ -359,11 +363,11 @@ const TEXTES = {
     conditions: 'Conditions de vie',
     son: e => e ? 'Son · on' : 'Son · off',
     calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
-      argile: 'Retrait-gonflement argiles', secheresse: 'Sécheresse',
+      secheresse: 'Sécheresse',
       mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Instabilité du climat' },
     critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
-    legendeIndice: '／100 · indice d’habitabilité',
+    legendeIndice: '／100 · rang d’habitabilité parmi 3 579 villes',
     verdict: { bon: 'Habitabilité solide', moyen: 'Habitabilité sous tension', dur: 'Habitabilité dégradée' },
     conseil: (n, faible, an, delta) => ({
       bon: `En ${an}, rester tient : aucun facteur n’est critique. Le point faible reste ${faible.toLowerCase()}.`,
@@ -382,20 +386,19 @@ const TEXTES = {
     fermer: 'Fermer ×', partage: 'Partager ↗',
     detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
     detFroid: j => `${j} jours de gel par an`,
-    detEau: v => `déficit hydrique ${v}/100 (indice de De Martonne)`,
-    detFeux: v => `danger météo de feu ${v}/100`,
+    detEau: (v, pct, d) => `réserve en eau : déficit ${v}/100${v ? ` · plus sec que ${pct} % des villes` : ''}${d > 2 ? ` · s’aggrave de ${d} d’ici 2050` : ''}`,
+    detFeux: (v, pct, d) => `météo propice aux feux ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
     detMer: v => `${v} % des terres alentour sous la cote de submersion`,
-    detFleuves: v => `exposition fluviale ${v}/100`,
-    detStab: v => `${v} points d’écart entre le climat de 2026 et celui de 2050`,
+    detFleuves: (v, pct, d) => `crues possibles : exposition ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
+    detStab: v => `d’ici 2050, le climat local dérive de ${v} points (0 = stable)`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · Natural Earth · GeoNames · NASA EONET',
-    argilesIndicatif: 'Le calque argiles est indicatif : pas de source globale ouverte.',
   },
   en: {
     lang: 'en',
     sous1: 'Prospective observatory',
-    sous2: 'Climate resilience · interactive simulation',
+    sous2: 'Will your city still be livable in 2050?',
     chargement: p => `Loading ${p}%`,
-    initialiser: 'Initialise',
+    initialiser: 'Explore',
     chercher: 'Search a city — ⌘K',
     aucunLieu: 'No city found',
     sousHeader: 'Climate habitability · 2026→2050 projection',
@@ -403,11 +406,11 @@ const TEXTES = {
     conditions: 'Life conditions',
     son: e => e ? 'Sound · on' : 'Sound · off',
     calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
-      argile: 'Clay shrink-swell', secheresse: 'Drought',
+      secheresse: 'Drought',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
     critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
-    legendeIndice: '／100 · habitability index',
+    legendeIndice: '／100 · habitability rank among 3,579 cities',
     verdict: { bon: 'Solid habitability', moyen: 'Habitability under strain', dur: 'Degraded habitability' },
     conseil: (n, faible, an, delta) => ({
       bon: `In ${an}, staying holds: no factor is critical. The weak point is ${faible.toLowerCase()}.`,
@@ -426,13 +429,12 @@ const TEXTES = {
     fermer: 'Close ×', partage: 'Share ↗',
     detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
     detFroid: j => `${j} freezing days a year`,
-    detEau: v => `water deficit ${v}/100 (De Martonne index)`,
-    detFeux: v => `fire weather danger ${v}/100`,
+    detEau: (v, pct, d) => `water reserve: deficit ${v}/100${v ? ` · drier than ${pct}% of cities` : ''}${d > 2 ? ` · worsens by ${d} by 2050` : ''}`,
+    detFeux: (v, pct, d) => `fire-prone weather ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
     detMer: v => `${v} % of surrounding land below the flood line`,
-    detFleuves: v => `river exposure ${v}/100`,
-    detStab: v => `${v} points between the 2026 and 2050 climate`,
+    detFleuves: (v, pct, d) => `possible flooding: exposure ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
+    detStab: v => `by 2050 the local climate drifts by ${v} points (0 = stable)`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · Natural Earth · GeoNames · NASA EONET',
-    argilesIndicatif: 'The clay layer is indicative: no open global source.',
   },
 };
 let langue = (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
@@ -519,19 +521,27 @@ const CRITERES = [
             + ' · ' + T().detFroid(Math.round(lireT('a', 1, la, lo, t) * 200)) },
   { cle: 'eau', poids: 0.20, couleur: '#A07830',
     penalite: (la, lo, t) => lireT('a', 2, la, lo, t),
-    detail: (la, lo, t) => T().detEau(Math.round(lireT('a', 2, la, lo, t) * 100)) },
+    detail: (la, lo, t) => T().detEau(Math.round(lireT('a', 2, la, lo, t) * 100),
+      Math.round(percentile('eau', lireT('a', 2, la, lo, t)) * 100),
+      Math.round((lireT('a', 2, la, lo, 1) - lireT('a', 2, la, lo, 0)) * 100)) },
   { cle: 'feux', poids: 0.15, couleur: '#C94F2E',
     penalite: (la, lo, t) => lireT('b', 0, la, lo, t),
-    detail: (la, lo, t) => T().detFeux(Math.round(lireT('b', 0, la, lo, t) * 100)) },
+    detail: (la, lo, t) => T().detFeux(Math.round(lireT('b', 0, la, lo, t) * 100),
+      Math.round(percentile('feux', lireT('b', 0, la, lo, t)) * 100),
+      Math.round((lireT('b', 0, la, lo, 1) - lireT('b', 0, la, lo, 0)) * 100)) },
   { cle: 'mer', poids: 0.15, couleur: '#4D7CF2',
     penalite: (la, lo, t) => Math.min(1, lireT('b', 1, la, lo, t) * 1.6),
     detail: (la, lo, t) => T().detMer(Math.round(lireT('b', 1, la, lo, t) * 1000) / 10) },
   { cle: 'fleuves', poids: 0.10, couleur: '#6FA3FF',
     penalite: (la, lo, t) => lireT('b', 2, la, lo, t),
-    detail: (la, lo, t) => T().detFleuves(Math.round(lireT('b', 2, la, lo, t) * 100)) },
+    detail: (la, lo, t) => T().detFleuves(Math.round(lireT('b', 2, la, lo, t) * 100),
+      Math.round(percentile('fleuves', lireT('b', 2, la, lo, t)) * 100),
+      Math.round((lireT('b', 2, la, lo, 1) - lireT('b', 2, la, lo, 0)) * 100)) },
   { cle: 'stabilite', poids: 0.15, couleur: '#2E8F6A',
-    // un lieu durable est un lieu qui bouge peu : écart 2026 -> 2050
-    penalite: (la, lo) => Math.min(1, ecartClimatique(la, lo) * 2.2),
+    // un lieu durable est un lieu qui bouge peu. La dérive s'accumule avec la
+    // timeline : en 2026 elle n'a presque pas eu lieu, en 2050 elle est entière
+    // (le facteur 0.25+0.75t est aussi celui de la calibration du pipeline).
+    penalite: (la, lo, t) => Math.min(1, ecartClimatique(la, lo) * 2.2 * (0.25 + 0.75 * (t ?? 1))),
     detail: (la, lo) => T().detStab(Math.round(ecartClimatique(la, lo) * 100)) },
 ];
 const POIDS_TOTAL = CRITERES.reduce((s, c) => s + c.poids, 0);
@@ -745,7 +755,7 @@ const uniformsGlobe = {
   uTemps:      { value: 0 },
   uProgression:{ value: 0 },                          // timeline 2026→2050 → 0..1
   uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },
-  uChaleur:    { value: 0 }, uArgile: { value: 0 },
+  uChaleur:    { value: 0 },
   uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
   uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
@@ -765,7 +775,7 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChaleur, uArgile, uSecheresse, uMer, uStabilite;
+    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite;
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
@@ -778,18 +788,6 @@ const matGlobe = new THREE.ShaderMaterial({
                      mix(hachage(i+vec3(0,1,0)), hachage(i+vec3(1,1,0)), f.x), f.y),
                  mix(mix(hachage(i+vec3(0,0,1)), hachage(i+vec3(1,0,1)), f.x),
                      mix(hachage(i+vec3(0,1,1)), hachage(i+vec3(1,1,1)), f.x), f.y), f.z);
-    }
-    // voronoï cellulaire — F2-F1 donne les fissures (retrait des argiles)
-    float fissure(vec3 p){
-      vec3 g = floor(p), f = fract(p);
-      float f1 = 8.0, f2 = 8.0;
-      for(int x=-1;x<=1;x++) for(int y=-1;y<=1;y++) for(int z=-1;z<=1;z++){
-        vec3 d = vec3(float(x),float(y),float(z));
-        vec3 o = vec3(hachage(g+d), hachage(g+d+19.19), hachage(g+d+37.37));
-        float dist = length(d + o - f);
-        if(dist < f1){ f2 = f1; f1 = dist; } else if(dist < f2){ f2 = dist; }
-      }
-      return f2 - f1;
     }
     void main(){
       vec3 tex = texture2D(uMap, vUv).rgb;
@@ -832,15 +830,6 @@ const matGlobe = new THREE.ShaderMaterial({
         col += thermique * smoothstep(0.72, 1.0, chaud) * uChaleur * 0.30;   // les extrêmes ressortent
       }
 
-      // R-03 ARGILES : craquelure procédurale voronoï, teinte ocre-brun
-      if (uArgile > 0.001){
-        float m = gc.r;                                     // grille argiles (indicatif)
-        float c = fissure(normalize(vP) * 26.0);
-        float craq = 1.0 - smoothstep(0.02, 0.10 + 0.10 * (1.0 - P), c);
-        vec3 argile = mix(vec3(0.24, 0.15, 0.08), vec3(0.42, 0.28, 0.13), bruit(vP * 40.0));
-        col = mix(col, argile * (1.0 - 0.6 * craq), m * uArgile * (0.35 + 0.65 * P) * terre);
-        col += vec3(0.9, 0.6, 0.3) * craq * m * uArgile * P * 0.35;
-      }
 
       // R-04 SÉCHERESSE HIVERNALE : le bleu s'éteint vers gris/jaune (ruissellement)
       if (uSecheresse > 0.001){
@@ -1189,7 +1178,7 @@ const matRideau = new THREE.ShaderMaterial({
   transparent: true, depthTest: false, depthWrite: false,
   uniforms: {
     uProgression: { value: 0 },        // 0 = opaque, 1 = dissous
-    uCouleur: { value: new THREE.Color(0x051236) },
+    uCouleur: { value: new THREE.Color(0x000000) },   // même noir que le voile DOM
   },
   vertexShader: /* glsl */`
     varying vec2 vUv;
@@ -1230,7 +1219,6 @@ scenePost.add(rideau);
 const CALQUES = {
   chaleur:    { uniforme: uniformsGlobe.uChaleur,    son: 'layer_on' },
   feux:       { uniforme: feuxUniforms.uIntensite,   son: 'layer_on', objet: feux },
-  argile:     { uniforme: uniformsGlobe.uArgile,     son: 'layer_on' },
   secheresse: { uniforme: uniformsGlobe.uSecheresse, son: 'layer_on' },
   mer:        { uniforme: uniformsGlobe.uMer,        son: 'layer_on' },
   fleuves:    { uniforme: fleuvesUniforms.uCrue,     son: 'layer_on', objet: groupeFleuves },
@@ -1272,7 +1260,24 @@ const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 function afficherResultats(){
   const q = normaliser(champ.value.trim());
   liste.innerHTML = ''; indiceChoisi = -1;
-  if (q.length < 2){ liste.classList.remove('ouvert'); return; }
+  if (q.length < 2){
+    // champ vide : trois grandes villes contrastées comme premières marches —
+    // une question personnelle a besoin d'un premier nom sur quoi cliquer
+    if (!q && document.activeElement === champ && LIEUX.length){
+      const noms = ['Paris', 'Miami', 'Jakarta'];
+      resultatsActuels = noms.map(n => LIEUX.find(l => l[0] === n)).filter(Boolean);
+      for (const l of resultatsActuels){
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${nomPays(l[1])}</span>`;
+        li.addEventListener('click', () => choisirLieu(l));
+        li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
+        liste.appendChild(li);
+      }
+      liste.classList.add('ouvert');
+      return;
+    }
+    liste.classList.remove('ouvert'); return;
+  }
   // priorité au préfixe puis à la population : « par » doit donner Paris d'abord
   // les deux graphies sont cherchées : « Seville » comme « Séville »
   const debut = [], dedans = [];
@@ -1351,7 +1356,7 @@ curseur.addEventListener('input', () => {
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
   odoAn.set(an);
   majPiste(an);
-  if (lieuDossier) majDossier();
+  if (lieuDossier){ majDossier(); majLien(); }
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE,
     onUpdate: () => {
@@ -1616,8 +1621,11 @@ function majDossier(){
 
   tracerTrajectoire(l, an);
   const ecart = indice2050 - indiceHabitabilite(l[2], l[3], 2026);
-  document.getElementById('dossier-ecart').textContent =
-    ecart === 0 ? '' : `  ${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} pts 2026→2050`;
+  const texteEcart = ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'}`;
+  const elDelta = document.getElementById('dossier-delta');
+  elDelta.textContent = texteEcart;
+  elDelta.dataset.sens = ecart < 0 ? 'bas' : 'haut';
+  document.getElementById('dossier-ecart').textContent = '';
 
   const alt = alternatives(l, an);
   const bloc = document.getElementById('dossier-ailleurs');
@@ -1645,14 +1653,105 @@ function ouvrirDossier(l){
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
+  poserMarqueur(l);
+  majLien();
 }
 function fermerDossier(){
   lieuDossier = null;
+  retirerMarqueur();
+  history.replaceState(null, '', location.pathname);
   dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
   document.body.classList.remove('dossier-ouvert');
 }
-for (const id of ['dossier-fermer', 'dossier-croix'])
-  document.getElementById(id).addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
+/* =====================================================================
+   PARTAGE & LIEN PROFOND — l'URL porte la ville et l'année : un dossier
+   peut s'envoyer, et s'ouvre tel quel chez le destinataire.
+   ===================================================================== */
+function majLien(){
+  if (!lieuDossier) return;
+  const h = `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}`;
+  history.replaceState(null, '', h);
+}
+document.getElementById('dossier-partage').addEventListener('click', async () => {
+  if (!lieuDossier) return;
+  majLien();
+  const titre = `${nomVille(lieuDossier)} — TERRA/2050`;
+  try {
+    if (navigator.share) await navigator.share({ title: titre, url: location.href });
+    else {
+      await navigator.clipboard.writeText(location.href);
+      const el = document.getElementById('dossier-partage');
+      const avant = el.textContent;
+      el.textContent = langue === 'en' ? 'Link copied' : 'Lien copié';
+      setTimeout(() => (el.textContent = avant), 1600);
+    }
+    SoundManager.play('ui_click');
+  } catch (e) {}
+});
+// à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
+function ouvrirDepuisLien(){
+  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?/);
+  if (!m) return;
+  const nom = decodeURIComponent(m[1]);
+  const l = LIEUX.find(x => x[0] === nom || x[6] === nom);
+  if (!l) return;
+  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); }
+  choisirLieu(l);
+}
+
+/* ---- marqueur de la ville : anneau + point qui respire, un seul sprite ---- */
+const marqueurUniforms = { uTemps: { value: 0 }, uForce: { value: 0 } };
+const marqueur = new THREE.Mesh(
+  new THREE.PlaneGeometry(0.09, 0.09),
+  new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: marqueurUniforms,
+    vertexShader: /* glsl */`
+      varying vec2 vUv;
+      void main(){ vUv = uv;
+        // billboard : toujours face caméra
+        vec4 c = modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+        c.xy += (uv - 0.5) * 0.09;
+        gl_Position = projectionMatrix * c; }`,
+    fragmentShader: /* glsl */`
+      uniform float uTemps, uForce; varying vec2 vUv;
+      void main(){
+        float d = length(vUv - 0.5) * 2.0;
+        float pulse = fract(uTemps * 0.55);
+        // anneau qui s'étend puis s'éteint + cœur fixe
+        float anneau = smoothstep(0.06, 0.0, abs(d - pulse * 0.9)) * (1.0 - pulse);
+        float coeur = smoothstep(0.16, 0.0, d);
+        vec3 creme = vec3(1.0, 0.99, 0.89);
+        gl_FragColor = vec4(creme, (anneau * 0.8 + coeur) * uForce);
+      }`,
+  }));
+marqueur.visible = false;
+scene.add(marqueur);
+function poserMarqueur(l){
+  marqueur.position.copy(latLonVersVec3(l[2], l[3], 1.015));
+  marqueur.visible = true;
+  gsap.to(marqueurUniforms.uForce, { value: 1, duration: DUREE.fast, ease: EASE });
+}
+function retirerMarqueur(){
+  gsap.to(marqueurUniforms.uForce, { value: 0, duration: 0.4, ease: EASE,
+    onComplete: () => (marqueur.visible = false) });
+}
+
+/* ---- « ma position » : la grande ville la plus proche, sur accord explicite ---- */
+document.getElementById('bouton-position').addEventListener('click', () => {
+  if (!navigator.geolocation || !LIEUX.length) return;
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    let proche = null, dMin = Infinity;
+    for (const l of LIEUX){
+      const d = distanceKm(latitude, longitude, l[2], l[3]);
+      if (d < dMin){ dMin = d; proche = l; }
+    }
+    if (proche) choisirLieu(proche);
+  }, () => {}, { maximumAge: 600000, timeout: 8000 });
+});
+
+document.getElementById('dossier-croix').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
 addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); champ.focus(); champ.select(); }
   else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ) fermerDossier();
@@ -1745,11 +1844,9 @@ function traduire(){
     btn.querySelector('[data-t-calque]').textContent = t.calque[btn.dataset.cle];
   }
   champ.placeholder = t.chercher;
-  document.getElementById('dossier-fermer').textContent = t.fermer;
   document.getElementById('dossier-partage').textContent = t.partage;
   document.getElementById('dossier-sources').textContent = t.sources;
   boutonSon.textContent = t.son(!SoundManager.mute);
-  document.getElementById('bouton-perf').textContent = t.perf || 'Perf';
   document.getElementById('bouton-langue').innerHTML = langue === 'fr'
     ? 'FR · <em>en</em>' : '<em>fr</em> · EN';
   if (lieuDossier) majDossier();
@@ -1778,13 +1875,13 @@ Promise.all([
 ]).then(() => {
   document.body.classList.add('donnees-pretes');
   if (lieuDossier) majDossier();
+  ouvrirDepuisLien();
 });
 chargerEvenements().then(() => { if (lieuDossier) majEvenements(lieuDossier); });
 
 const hud = document.getElementById('hud');
-document.getElementById('bouton-perf').addEventListener('click', () => {
-  hud.classList.toggle('visible'); SoundManager.play('ui_click');
-});
+// HUD perf : réservé au débogage, activé par ?perf dans l'URL
+if (new URLSearchParams(location.search).has('perf')) hud.classList.add('visible');
 // compteur de longues tâches (contrôle façon Lighthouse)
 let longuesTaches = 0;
 try { new PerformanceObserver(l => (longuesTaches += l.getEntries().length)).observe({ entryTypes: ['longtask'] }); } catch (e) {}
@@ -1816,6 +1913,8 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
   revelerChrome();
+  // le premier geste attendu est le nom d'une ville, pas la manipulation du globe
+  setTimeout(() => { if (!lieuDossier) champ.focus(); }, 1600);
 });
 
 /* =====================================================================
@@ -1860,21 +1959,6 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
       ease: EASE, clearProps: 'strokeDasharray,strokeDashoffset' });
   }
 
-  /* Tickers : deux bandes binaires, la seconde en sens inverse. Le contenu
-     est dupliqué pour que la translation de -50 % boucle sans couture. */
-  const motif = () => {
-    let out = '';
-    for (let b = 0; b < 12; b++){
-      let bits = '';
-      for (let i = 0; i < 16; i++) bits += Math.random() < 0.5 ? '0' : '1';
-      out += `<span>${bits}</span><span class="sep">//////</span>`;
-    }
-    return out;
-  };
-  for (const id of ['v-piste-1', 'v-piste-2']){
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = motif().repeat(2);
-  }
 
   /* Wordmark : chaque lettre dans son masque, révélation en cascade. */
   const wm = document.getElementById('v-wordmark');
@@ -1926,6 +2010,7 @@ function boucle(){
 
   uniformsGlobe.uTemps.value = t;
   feuxUniforms.uTemps.value = t;
+  marqueurUniforms.uTemps.value = t;
   fleuvesUniforms.uTemps.value = t;
 
   // densité des feux pilotée par la projection (multiplication réelle via drawRange)

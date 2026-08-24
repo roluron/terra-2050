@@ -462,13 +462,16 @@ def penalites(couches, la, lo, terre):
              + abs(lit(2050, 'mer') - lit(2026, 'mer')) * 1.2) / 3.6
     out = {}
     for an in (2026, 2050):
+        # même accumulation que le client : la dérive n'a presque pas eu lieu
+        # en 2026, elle est entière en 2050
+        t = 0.0 if an == 2026 else 1.0
         out[an] = {
             'thermique': min(1, lit(an, 'chaud') * 1.15 + lit(an, 'froid') * 0.45),
             'eau': lit(an, 'sec'),
             'feux': lit(an, 'feux'),
             'mer': min(1, lit(an, 'mer') * 1.6),
             'fleuves': lit(an, 'fleuves'),
-            'stabilite': min(1, ecart * 2.2),
+            'stabilite': min(1, ecart * 2.2 * (0.25 + 0.75 * t)),
         }
     return out
 

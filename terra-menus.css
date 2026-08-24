@@ -681,3 +681,70 @@ body.dossier-ouvert #dossier-croix { opacity: 0.65; pointer-events: auto; transf
 body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg); }
 #dossier-croix svg { width: 100%; height: 100%; stroke: var(--texte);
   stroke-width: 1; fill: none; display: block; }
+
+/* =====================================================================
+   REVUE CROISÉE (Grok 4.6 + Kimi K3) — hiérarchie du dossier, ancrages,
+   mobile. Le delta 2026→2050 vit dans le bloc score ; le conseil est la
+   phrase la plus lisible du panneau après le nom et le chiffre.
+   ===================================================================== */
+#dossier .delta-score { margin-top: 6px; font-size: 13px; font-weight: 600;
+  letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+#dossier .delta-score[data-sens="bas"] { color: #E06A3C; }
+#dossier .delta-score[data-sens="haut"] { color: #2E8F6A; }
+#dossier .delta-score:empty { display: none; }
+#dossier .conseil { font-size: 16px; font-weight: 400; line-height: 1.5;
+  color: var(--texte); max-width: 32ch; }
+
+/* résultats verrouillés sous la pilule, pas au bord du conteneur */
+#resultats { left: 50%; transform: translateX(-50%) translateY(-6px); }
+#resultats.ouvert { transform: translateX(-50%); }
+#resultats .vide { pointer-events: none; }
+#resultats li.vide:hover { background: none; }
+
+/* bouton « ma position » : réticule hairline à droite de la pilule */
+#bouton-position { position: absolute; left: calc(50% + min(126px, 18.5vw) + 14px);
+  top: 50%; transform: translateY(-50%); width: 30px; height: 30px; padding: 7px;
+  background: none; border: none; cursor: pointer; opacity: 0.45;
+  transition: opacity 0.3s var(--ease); }
+#bouton-position:hover { opacity: 1; }
+#bouton-position svg { width: 100%; height: 100%; fill: none; stroke: var(--texte);
+  stroke-width: 1.1; }
+#bouton-position svg circle { fill: var(--texte); stroke: none; r: 1.6px; }
+
+/* pistes natives du range neutralisées partout (Firefox gardait la sienne) */
+#curseur::-moz-range-track { background: none; border: none; }
+#curseur::-webkit-slider-runnable-track { background: none; border: none; }
+
+/* le sous-titre du voile ne se coupe plus sur petit écran */
+#voile .v-eyebrow { max-width: 88vw; text-align: center; overflow: visible;
+  white-space: normal; line-height: 1.8; }
+
+/* iOS zoome tout champ < 16px : la recherche passe à 16px sur tactile */
+@media (pointer: coarse) {
+  #champ-recherche { font-size: 16px; }
+}
+
+/* ---- mobile : le dossier devient une feuille basse pleine largeur ---- */
+@media (max-width: 720px) {
+  /* en-tête : wordmark réduit, « Conditions » en chevron seul, pilule étroite */
+  #titre h1 { font-size: 22px; }
+  #bouton-conditions > span { display: none; }
+  #champ-recherche { width: min(190px, 50vw); padding: 11px 16px; }
+  #bouton-position { display: none; }
+  /* la timeline reste centrée : le recentrage dossier-ouvert (34vw) repliait
+     l'odomètre de l'année sur deux lignes */
+  #timeline, body.dossier-ouvert #timeline {
+    left: 50%; transform: translate(-50%, 0); width: min(480px, 86vw); }
+  #timeline .an { font-size: 56px; white-space: nowrap; }
+  #dossier {
+    right: 0; left: 0; top: auto; bottom: 0; width: 100%;
+    max-height: 62vh; padding: 22px 20px calc(18px + env(safe-area-inset-bottom));
+    background: rgba(0, 0, 0, 0.82);
+    border-top: 1px solid var(--filet);
+  }
+  #scrim-dossier { background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 40%, transparent 70%); }
+  #dossier .lieu { font-size: 34px; }
+  #dossier .score .valeur { font-size: 52px; }
+  #dossier-croix { top: auto; bottom: calc(62vh - 46px); right: 16px; }
+  #champ-recherche { width: min(220px, 56vw); }
+}
