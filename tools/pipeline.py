@@ -10,7 +10,9 @@ Sorties :
   data/rivers.json          polylignes des grands fleuves (Natural Earth)
 
 Sources (toutes librement téléchargeables, sans clé) :
-  WorldClim 2.1 10' historique 1970-2000 (tmax, prec)
+  WorldClim 2.1 10' historique 1970-2000 (tmax, tmin, prec, vapr)
+  JRC Global River Flood Hazard rp100 (crue centennale, profondeur)
+  Oelsmann et al. 2025 (Zenodo 19830370) — subsidence cotiere VLM
   WorldClim/CMIP6 MPI-ESM1-2-HR SSP3-7.0 10' (tmax, prec) 2021-2040, 2041-2060, 2061-2080
   NOAA ETOPO 2022 v1 60" surface elevation
   Natural Earth 10m rivers & lake centerlines
@@ -357,7 +359,149 @@ def ecrire_png(chemin, canaux):
     print('  ->', chemin.name, chemin.stat().st_size // 1024, 'Ko')
 
 
-_VILLES_CACHE = None
+# ---------------------------------------------------------------------------
+# Métriques par ville, à résolution NATIVE. Le dossier lit ces valeurs — la
+# texture 10' du globe reste un affichage. Un texel de 18 km noyait la bande
+# côtière sous le niveau de la mer de Jakarta dans les collines voisines.
+RAYON_VILLE_KM = 12.0        # disque autour du point ville
+RAYON_MEGAPOLE_KM = 20.0     # au-delà de 5 M hab. : une mégapole s'étend sur 30+ km
+SEUIL_MEGAPOLE = 5_000_000
+SEUIL_CRUE_M = 0.5           # en dessous : gênant ; au-dessus : dégâts structurels
+PROF_REF_M = 3.0             # ~ un étage : les courbes de dégâts s'aplatissent après
+
+
+def _disque(arr, sh, sw, lat, lon, cell_deg, rayon_km=RAYON_VILLE_KM):
+    """Cellules du disque de RAYON_VILLE_KM autour du point, dans une grille
+    equirectangulaire de pas `cell_deg` (origine 90N/180W pleine grille)."""
+    y = int((90.0 - lat) / cell_deg)
+    x = int((lon + 180.0) / cell_deg)
+    km_par_cell = 111.0 * cell_deg
+    dy = max(1, int(rayon_km / km_par_cell))
+    dx = max(1, int(rayon_km / (km_par_cell * max(0.2, np.cos(np.radians(lat))))))
+    b = np.asarray(arr[max(0, y - dy):y + dy + 1, max(0, x - dx):x + dx + 1],
+                   dtype=np.float32)
+    if b.size == 0:
+        return b
+    yy, xx = np.mgrid[0:b.shape[0], 0:b.shape[1]]
+    cy, cx = min(dy, y), min(dx, x)
+    d2 = ((yy - cy) / max(dy, 1)) ** 2 + ((xx - cx) / max(dx, 1)) ** 2
+    return b[d2 <= 1.0]
+
+
+def stats_elevation(elev, eh, ew, lat, lon, rayon_km=RAYON_VILLE_KM, sub50=0.0):
+    """ETOPO 60'' -> fractions de terre sous les cotes, sous 5 m, médiane.
+    `sub50` = enfoncement du sol d'ici 2050 (m, >= 0, mesures VLM) : il RELÈVE
+    la cote de submersion 2050 — c'est le mécanisme réel de Jakarta."""
+    b = _disque(elev, eh, ew, lat, lon, 1.0 / 60.0, rayon_km)
+    sol = b[b > -0.5] if b.size else b
+    if sol.size == 0:
+        return dict(f26=0.0, f50=0.0, f5=0.0, med=0.0)
+    return dict(
+        f26=float((sol <= SLR[2026] + SURCOTE).mean()),
+        f50=float((sol <= SLR[2050] + SURCOTE + sub50).mean()),
+        f5=float((sol <= 5.0).mean()),
+        med=float(np.median(sol)))
+
+
+def stats_crue(jrc, jh, jw, jpx, jx0, jy0, lat, lon, rayon_km=RAYON_VILLE_KM):
+    """Carte JRC rp100 (profondeur m) -> fraction inondée > 0.5 m, d90."""
+    y = int((jy0 - lat) / jpx)
+    x = int((lon - jx0) / jpx)
+    km_par_cell = 111.0 * jpx
+    d = max(1, int(rayon_km / km_par_cell))
+    b = jrc[max(0, y - d):y + d + 1, max(0, x - d):x + d + 1]
+    b = np.where(np.isfinite(b) & (b > 0), b, 0.0).astype(np.float32)
+    if b.size == 0:
+        return dict(f=0.0, d90=0.0)
+    inonde = b > SEUIL_CRUE_M
+    prof = float(np.percentile(b[inonde], 90)) if inonde.any() else 0.0
+    return dict(f=float(inonde.mean()), d90=prof)
+
+
+A_LIGNE, A_DELTA = 0.25, 0.40     # 25 % sous la ligne / 40 % sous 5 m = saturé
+W_LIGNE, W_DELTA = 0.40, 0.60
+
+
+def penalite_mer(st, t):
+    """Ancres concaves : 25 % de la ville sous la ligne de submersion ou 40 %
+    sous 5 m, c'est déjà une ville inondable — une fraction linéaire dirait
+    « moins de la moitié ». La ligne 2050 intègre la subsidence mesurée."""
+    ligne = st['f26'] * (1 - t) + st['f50'] * t
+    return min(1.0, W_LIGNE * min(ligne / A_LIGNE, 1.0)
+                  + W_DELTA * min(st['f5'] / A_DELTA, 1.0))
+
+
+def penalite_crue(st):
+    """0.65 x étendue + 0.35 x profondeur normalisée à un étage, la profondeur
+    n'entrant en jeu que si l'étendue est significative (>= 10 % des terres) —
+    sinon quelques cellules de gorge profonde fabriquent une crue en plein
+    désert. Constante à 2050 : aucune projection fluviale ouverte vérifiée
+    n'existe — dit en clair dans l'interface."""
+    porte = min(st['f'] / 0.10, 1.0)
+    return min(1.0, 0.65 * st['f'] + 0.35 * min(st['d90'] / PROF_REF_M, 1.0) * porte)
+
+
+def charger_vlm():
+    """Vitesses verticales du sol (mm/an) aux côtes peuplées — Oelsmann et
+    al. 2025 (Zenodo 19830370), GPS+InSAR+GIA. Négatif = le sol s'enfonce."""
+    import h5py
+    f = h5py.File(RAW / 'vlm_oelsmann2025.nc', 'r')
+    return f['lat'][:], f['lon'][:], f['OE24_GPS_InSAR_GIA'][:]
+
+
+def subsidence_2050(vlat, vlon, vvlm, lat, lon):
+    """Enfoncement cumulé d'ici 2050 (m, >= 0) : pire décile des points VLM
+    dans une boîte de 0.6°. Aucun point mesuré -> 0 (et rien d'inventé)."""
+    m = (np.abs(vlat - lat) < 0.6) & (np.abs(vlon - lon) < 0.6) & np.isfinite(vvlm)
+    if not m.any():
+        return 0.0
+    p10 = float(np.percentile(vvlm[m], 10))          # mm/an, négatif = enfoncement
+    return max(0.0, -p10) * 24.0 / 1000.0            # 2026 -> 2050
+
+
+def precompute_villes(couches, terre):
+    """Pour chaque ville : pénalités des six critères aux deux horizons, à
+    résolution native pour mer/crue, depuis les grilles float pour le climat
+    (mêmes valeurs que la calibration — le client ne relit plus les PNG)."""
+    src = tifffile.TiffFile(RAW / 'etopo_60s.tif')
+    elev = src.pages[0].asarray(out='memmap')
+    eh, ew = src.pages[0].shape
+    import io
+    z = zipfile.ZipFile(RAW / 'jrc_flood_rp100y.zip')
+    jrc = tifffile.imread(io.BytesIO(z.read('floodMapGL_rp100y.tif')))
+    tfw = z.read('floodMapGL_rp100y.tfw').decode().split()
+    jpx, jx0, jy0 = float(tfw[0]), float(tfw[4]), float(tfw[5])
+
+    vlat, vlon, vvlm = charger_vlm()
+    vs = villes()
+    sortie = []
+    for v in vs:
+        la, lo = v[2], v[3]
+        rayon = RAYON_MEGAPOLE_KM if v[4] >= SEUIL_MEGAPOLE else RAYON_VILLE_KM
+        sub = subsidence_2050(vlat, vlon, vvlm, la, lo)
+        el = stats_elevation(elev, eh, ew, la, lo, rayon, sub)
+        cr = stats_crue(jrc, jrc.shape[0], jrc.shape[1], jpx, jx0, jy0, la, lo, rayon)
+        clim = penalites(couches, la, lo, terre)
+        pen = {}
+        for an, t in ((2026, 0.0), (2050, 1.0)):
+            pen[an] = {
+                'thermique': round(clim[an]['thermique'], 4),
+                'eau': round(clim[an]['eau'], 4),
+                'feux': round(clim[an]['feux'], 4),
+                'mer': round(penalite_mer(el, t), 4),
+                'fleuves': round(penalite_crue(cr), 4),
+                'stabilite': round(clim[an]['stabilite'], 4),
+            }
+        sortie.append(dict(
+            mer=dict(f50=round(el['f50'], 3), f5=round(el['f5'], 3), med=round(el['med'], 1),
+                     sub=round(sub, 2)),
+            crue=dict(f=round(cr['f'], 3), d90=round(cr['d90'], 2)),
+            pen=pen))
+    src.close()
+    return sortie
+
+
+_VILLES_CACHE = None_VILLES_CACHE = None
 
 
 def villes():
@@ -435,17 +579,26 @@ def noms_localises(ids):
 
 # Poids des six critères d'habitabilité. Doivent rester identiques à CRITERES
 # dans index.html : le pipeline calibre les percentiles que le client applique.
-POIDS = {'thermique': 0.25, 'eau': 0.20, 'feux': 0.15,
-         'mer': 0.15, 'fleuves': 0.10, 'stabilite': 0.15}
+POIDS = {'thermique': 0.22, 'eau': 0.18, 'feux': 0.12,
+         'mer': 0.20, 'fleuves': 0.16, 'stabilite': 0.12}
+LAMBDA_PIRE = 0.50          # 50 % du score est le pire axe : une catastrophe
+                            # sur un seul critère ne peut plus se moyenner
 
 
 def penalites(couches, la, lo, terre):
-    """Pénalités 0-1 des six critères, aux deux horizons, pour un point."""
+    """Pénalités 0-1 des six critères, aux deux horizons, pour un point.
+
+    La spirale exige un texel où le CLIMAT est défini (masque WorldClim), pas
+    seulement la terre ETOPO : Singapour et Mumbai tombaient sur des texels
+    « terre » pour ETOPO mais océan pour WorldClim (NaN -> 0) et sortaient
+    avec un confort thermique parfait en pleine chaleur équatoriale."""
     def lit(an, cle):
         g = couches[an][cle]
         y = int(round((90 - la) / 180 * H))
         x = int(round((lo + 180) / 360 * W))
-        for r in range(5):
+        # r <= 7 (~130 km) : vallées andines et petites îles dont le texel CMIP6
+        # est absent ; au-delà, mieux vaut zéro connu qu'un climat d'ailleurs
+        for r in range(8):
             for dy in range(-r, r + 1):
                 for dx in range(-r, r + 1):
                     if r and max(abs(dx), abs(dy)) != r:
@@ -476,6 +629,21 @@ def penalites(couches, la, lo, terre):
     return out
 
 
+_TERRE_CLIMAT = None
+
+
+def terre_climat():
+    """Masque des texels où le climat est défini PARTOUT : l'historique
+    WorldClim ET les projections CMIP6, dont le masque côtier est plus étroit
+    (Mumbai, Singapour : historique présent, futur NaN -> canaux à zéro)."""
+    global _TERRE_CLIMAT
+    if _TERRE_CLIMAT is None:
+        hist = ~np.isnan(lire_periode('tmax', 'hist')[:, :, 0])
+        futur = ~np.isnan(lire_periode('tmax', '2041_2060')[:, :, 0])
+        _TERRE_CLIMAT = (hist & futur).astype(np.float32)
+    return _TERRE_CLIMAT
+
+
 def calibrer(couches, terre, n_quantiles=21):
     """Échelle de référence : la distribution des villes AUJOURD'HUI (2026).
 
@@ -487,25 +655,21 @@ def calibrer(couches, terre, n_quantiles=21):
         échelle fixée au présent, une ville qui se réchauffe descend vraiment.
     """
     vs = villes()
-    par_critere = {c: [] for c in POIDS}
-    for v in vs:
-        la, lo = v[2], v[3]
-        p = penalites(couches, la, lo, terre)[2026]
-        for c in POIDS:
-            par_critere[c].append(p[c])
+    risques = precompute_villes(couches, terre_climat())
+    par_critere = {c: [p['pen'][2026][c] for p in risques] for c in POIDS}
     qs = np.linspace(0, 1, n_quantiles)
     quantiles = {c: [round(float(x), 5) for x in np.quantile(par_critere[c], qs)] for c in POIDS}
 
-    def note_composite(i):
-        s = 0.0
-        for c in POIDS:
-            rang = float(np.interp(par_critere[c][i], quantiles[c], qs))
-            s += (1 - rang) * POIDS[c]
-        return s / sum(POIDS.values())
+    # score ABSOLU (formule hybride moyenne + pire axe, la même que le client)
+    def score(i):
+        pens = {c: par_critere[c][i] for c in POIDS}
+        p_moy = sum(pens[c] * POIDS[c] for c in POIDS) / sum(POIDS.values())
+        p_max = max(pens.values())
+        return 100.0 * (1.0 - ((1 - LAMBDA_PIRE) * p_moy + LAMBDA_PIRE * p_max))
 
-    composite = sorted(note_composite(i) for i in range(len(vs)))
-    return {'poids': POIDS, 'quantiles': quantiles,
-            'composite': [round(float(x), 5) for x in np.quantile(composite, qs)]}
+    scores = sorted(score(i) for i in range(len(vs)))
+    return {'poids': POIDS, 'lambda': LAMBDA_PIRE, 'quantiles': quantiles,
+            'scores': [round(float(x), 2) for x in np.quantile(scores, qs)]}, risques
 
 
 def main():
@@ -553,13 +717,14 @@ def main():
     print(f'  -> rivers.json {len(fl)} tronçons, {(OUT / "rivers.json").stat().st_size // 1024} Ko')
 
     print('· calibration des percentiles')
-    calib = calibrer(couches, terre)
+    calib, risques = calibrer(couches, terre)
     (OUT / 'calibration.json').write_text(json.dumps(calib, separators=(',', ':')))
     print('  -> calibration.json')
 
     v = villes()
+    v = [ligne + [risques[i]] for i, ligne in enumerate(v)]
     (OUT / 'places.json').write_text(json.dumps(
-        {'schema': ['nom_fr', 'iso2', 'lat', 'lon', 'pop', 'capitale', 'nom_en'], 'villes': v},
+        {'schema': ['nom_fr', 'iso2', 'lat', 'lon', 'pop', 'capitale', 'nom_en', 'risque'], 'villes': v},
         ensure_ascii=False, separators=(',', ':')))
     print(f'  -> places.json {len(v)} villes, {(OUT / "places.json").stat().st_size // 1024} Ko')
 

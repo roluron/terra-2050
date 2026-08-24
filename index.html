@@ -366,7 +366,7 @@ const TEXTES = {
       mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Instabilité du climat' },
     critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
-    legendeIndice: '／100 · rang d’habitabilité parmi 3 579 villes',
+    legendeIndice: '／100 · habitabilité physique · défenses non comptées',
     verdict: { bon: 'Habitabilité solide', moyen: 'Habitabilité sous tension', dur: 'Habitabilité dégradée' },
     conseil: (n, faible, an, delta) => ({
       bon: `En ${an}, rester tient : aucun facteur n’est critique. Le point faible reste ${faible.toLowerCase()}.`,
@@ -382,10 +382,10 @@ const TEXTES = {
     detFroid: j => `${j} jours de gel par an`,
     detEau: (v, pct, d) => `réserve en eau : déficit ${v}/100${v ? ` · plus sec que ${pct} % des villes` : ''}${d > 2 ? ` · s’aggrave de ${d} d’ici 2050` : ''}`,
     detFeux: (v, pct, d) => `météo propice aux feux ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
-    detMer: v => `${v} % des terres alentour sous la cote de submersion`,
-    detFleuves: (v, pct, d) => `crues possibles : exposition ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
-    detStab: v => `d’ici 2050, le climat local dérive de ${v} points (0 = stable)`,
-    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · Natural Earth · GeoNames · NASA EONET',
+    detMer: (f, f5, med, sub) => `${f} % des terres à moins de 12 km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous 5 m · altitude médiane ${med} m · digues non comptées`,
+    detFleuves: (f, d90) => `crue centennale (1 %/an · ≈22 % d’ici 2050) : ${f} % des terres à moins de 12 km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
+    detStab: v => `d’ici 2050, le climat local dérive de ${v} points (0 = stable) · mesure la vitesse du basculement, pas son niveau`,
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
   },
   en: {
     lang: 'en',
@@ -404,7 +404,7 @@ const TEXTES = {
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
     critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
-    legendeIndice: '／100 · habitability rank among 3,579 cities',
+    legendeIndice: '／100 · physical habitability · defenses not counted',
     verdict: { bon: 'Solid habitability', moyen: 'Habitability under strain', dur: 'Degraded habitability' },
     conseil: (n, faible, an, delta) => ({
       bon: `In ${an}, staying holds: no factor is critical. The weak point is ${faible.toLowerCase()}.`,
@@ -420,10 +420,10 @@ const TEXTES = {
     detFroid: j => `${j} freezing days a year`,
     detEau: (v, pct, d) => `water reserve: deficit ${v}/100${v ? ` · drier than ${pct}% of cities` : ''}${d > 2 ? ` · worsens by ${d} by 2050` : ''}`,
     detFeux: (v, pct, d) => `fire-prone weather ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
-    detMer: v => `${v} % of surrounding land below the flood line`,
-    detFleuves: (v, pct, d) => `possible flooding: exposure ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
-    detStab: v => `by 2050 the local climate drifts by ${v} points (0 = stable)`,
-    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · Natural Earth · GeoNames · NASA EONET',
+    detMer: (f, f5, med, sub) => `${f}% of land within 12 km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below 5 m · median elevation ${med} m · defenses not counted`,
+    detFleuves: (f, d90) => `100-year flood (1%/yr · ≈22% by 2050): ${f}% of land within 12 km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
+    detStab: v => `by 2050 the local climate drifts by ${v} points (0 = stable) · measures how fast it shifts, not its level`,
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
   },
 };
 let langue = (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
@@ -500,46 +500,66 @@ const lireT = (grille, canal, lat, lon, t) =>
    valeur inventée. Chaque critère renvoie une PÉNALITÉ 0-1 ; l'indice est
    100 moins la moyenne pondérée des pénalités.
    ===================================================================== */
+/* Chaque ville porte ses pénalités précalculées hors-ligne à résolution
+   native (bloc `risque`, colonne 7 de places.json) : ETOPO 60″ pour la
+   submersion, carte de crue centennale JRC pour les fleuves, grilles float
+   du pipeline pour le climat. Le dossier ne relit plus les PNG 8 bits — la
+   texture 10′ ne sert qu'au globe. Un texel de 18 km noyait la bande côtière
+   de Jakarta dans les collines voisines : plus possible par construction. */
+function penVille(l, cle, t){
+  const r = l[7] && l[7].pen;
+  if (!r) return 0;
+  return r[2026][cle] * (1 - t) + r[2050][cle] * t;
+}
+
 const CRITERES = [
-  { cle: 'thermique', poids: 0.25, couleur: '#E06A3C',
-    // inconfort = chaleur extrême (dominante) et gel prolongé
-    penalite: (la, lo, t) => Math.min(1, lireT('a', 0, la, lo, t) * 1.15
-                                       + lireT('a', 1, la, lo, t) * 0.45),
-    detail: (la, lo, t) => T().detChaud(Math.round(lireT('a', 0, la, lo, t) * 300),
-                                        Math.round((lireT('a', 0, la, lo, 1) - lireT('a', 0, la, lo, 0)) * 300))
-            + ' · ' + T().detFroid(Math.round(lireT('a', 1, la, lo, t) * 200)) },
-  { cle: 'eau', poids: 0.20, couleur: '#A07830',
-    penalite: (la, lo, t) => lireT('a', 2, la, lo, t),
-    detail: (la, lo, t) => T().detEau(Math.round(lireT('a', 2, la, lo, t) * 100),
-      Math.round(percentile('eau', lireT('a', 2, la, lo, t)) * 100),
-      Math.round((lireT('a', 2, la, lo, 1) - lireT('a', 2, la, lo, 0)) * 100)) },
-  { cle: 'feux', poids: 0.15, couleur: '#C94F2E',
-    penalite: (la, lo, t) => lireT('b', 0, la, lo, t),
-    detail: (la, lo, t) => T().detFeux(Math.round(lireT('b', 0, la, lo, t) * 100),
-      Math.round(percentile('feux', lireT('b', 0, la, lo, t)) * 100),
-      Math.round((lireT('b', 0, la, lo, 1) - lireT('b', 0, la, lo, 0)) * 100)) },
-  { cle: 'mer', poids: 0.15, couleur: '#4D7CF2',
-    penalite: (la, lo, t) => Math.min(1, lireT('b', 1, la, lo, t) * 1.6),
-    detail: (la, lo, t) => T().detMer(Math.round(lireT('b', 1, la, lo, t) * 1000) / 10) },
-  { cle: 'fleuves', poids: 0.10, couleur: '#6FA3FF',
-    penalite: (la, lo, t) => lireT('b', 2, la, lo, t),
-    detail: (la, lo, t) => T().detFleuves(Math.round(lireT('b', 2, la, lo, t) * 100),
-      Math.round(percentile('fleuves', lireT('b', 2, la, lo, t)) * 100),
-      Math.round((lireT('b', 2, la, lo, 1) - lireT('b', 2, la, lo, 0)) * 100)) },
-  { cle: 'stabilite', poids: 0.15, couleur: '#2E8F6A',
-    // un lieu durable est un lieu qui bouge peu. La dérive s'accumule avec la
-    // timeline : en 2026 elle n'a presque pas eu lieu, en 2050 elle est entière
-    // (le facteur 0.25+0.75t est aussi celui de la calibration du pipeline).
-    penalite: (la, lo, t) => Math.min(1, ecartClimatique(la, lo) * 2.2 * (0.25 + 0.75 * (t ?? 1))),
-    detail: (la, lo) => T().detStab(Math.round(ecartClimatique(la, lo) * 100)) },
+  { cle: 'thermique', poids: 0.22, couleur: '#E06A3C',
+    detail: (l, t) => T().detChaud(Math.round(lireT('a', 0, l[2], l[3], t) * 300),
+                                   Math.round((lireT('a', 0, l[2], l[3], 1) - lireT('a', 0, l[2], l[3], 0)) * 300))
+            + ' · ' + T().detFroid(Math.round(lireT('a', 1, l[2], l[3], t) * 200)) },
+  { cle: 'eau', poids: 0.18, couleur: '#A07830',
+    detail: (l, t) => T().detEau(Math.round(penVille(l, 'eau', t) * 100),
+      Math.round(percentile('eau', penVille(l, 'eau', t)) * 100),
+      Math.round((penVille(l, 'eau', 1) - penVille(l, 'eau', 0)) * 100)) },
+  { cle: 'feux', poids: 0.12, couleur: '#C94F2E',
+    detail: (l, t) => T().detFeux(Math.round(penVille(l, 'feux', t) * 100),
+      Math.round(percentile('feux', penVille(l, 'feux', t)) * 100),
+      Math.round((penVille(l, 'feux', 1) - penVille(l, 'feux', 0)) * 100)) },
+  { cle: 'mer', poids: 0.20, couleur: '#4D7CF2',
+    detail: (l) => {
+      const m = l[7] && l[7].mer;
+      return m ? T().detMer(Math.round(m.f50 * 100), Math.round(m.f5 * 100), m.med, m.sub || 0) : '';
+    } },
+  { cle: 'fleuves', poids: 0.16, couleur: '#6FA3FF',
+    detail: (l) => {
+      const c = l[7] && l[7].crue;
+      return c ? T().detFleuves(Math.round(c.f * 100), c.d90) : '';
+    } },
+  { cle: 'stabilite', poids: 0.12, couleur: '#2E8F6A',
+    detail: (l) => T().detStab(Math.round(penVille(l, 'stabilite', 1) / 2.2 * 100)) },
 ];
+for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
 const POIDS_TOTAL = CRITERES.reduce((s, c) => s + c.poids, 0);
 
 /* Calibration : distribution des pénalités sur les 3579 villes (produite par
-   tools/pipeline.py). L'indice est un RANG parmi les grandes villes du monde,
-   pas une note absolue — sans cela 80 % des villes se tassent au-dessus de 85
-   et la timeline ne fait presque rien bouger. */
+   tools/pipeline.py sur les MÊMES valeurs précalculées). L'indice est un RANG
+   parmi les grandes villes du monde, pas une note absolue. */
 let CALIBRATION = null;
+// position du score absolu dans la distribution 2026 des 3 579 villes
+function rangScore(sc){
+  const q = CALIBRATION && CALIBRATION.scores;
+  if (!q) return null;
+  if (sc <= q[0]) return 0;
+  if (sc >= q[q.length - 1]) return 100;
+  for (let i = 1; i < q.length; i++){
+    if (sc <= q[i]){
+      const large = q[i] - q[i - 1];
+      const f = large > 1e-9 ? (sc - q[i - 1]) / large : 0;
+      return Math.round((i - 1 + f) / (q.length - 1) * 100);
+    }
+  }
+  return 100;
+}
 function percentile(cle, valeur){
   const q = CALIBRATION && CALIBRATION.quantiles[cle];
   if (!q) return valeur;
@@ -555,37 +575,26 @@ function percentile(cle, valeur){
   return 1;
 }
 
-function ecartClimatique(la, lo){
-  let d = 0;
-  d += Math.abs(lire('a2050', 0, la, lo) - lire('a2026', 0, la, lo)) * 1.0;   // jours > 35 °C
-  d += Math.abs(lire('a2050', 2, la, lo) - lire('a2026', 2, la, lo)) * 0.8;   // déficit hydrique
-  d += Math.abs(lire('b2050', 0, la, lo) - lire('b2026', 0, la, lo)) * 0.6;   // danger de feu
-  d += Math.abs(lire('b2050', 1, la, lo) - lire('b2026', 1, la, lo)) * 1.2;   // submersion
-  return d / 3.6;
+/* Les notes sont ABSOLUES (100 − pénalité physique). Le rang percentile ne
+   sert plus qu'aux phrases (« plus sec que 86 % des villes ») : rangée sur
+   3 579 villes, une pénalité catastrophique mais partagée (chaleur tropicale)
+   se compressait, et Jakarta sortait à 91. */
+function noteCritere(c, l, t){
+  return 1 - Math.min(1, c.penalite(l, t));
 }
-
-function noteCritere(c, lat, lon, t){
-  return 1 - percentile(c.cle, Math.min(1, c.penalite(lat, lon, t)));
-}
-function indiceHabitabilite(lat, lon, annee){
+const LAMBDA_PIRE = 0.5;   // 50 % du score est le pire axe (même valeur que le pipeline)
+function indiceHabitabilite(l, annee){
   const t = Math.min(1, Math.max(0, (annee - 2026) / 24));
-  let somme = 0;
-  for (const c of CRITERES) somme += noteCritere(c, lat, lon, t) * c.poids;
-  const brut = somme / POIDS_TOTAL;
-  // rang sur l'échelle de référence des villes en 2026 : le réchauffement
-  // fait donc réellement descendre une ville quand on avance la timeline
-  const q = CALIBRATION && CALIBRATION.composite;
-  if (!q) return Math.round(brut * 100);
-  if (brut <= q[0]) return 0;
-  if (brut >= q[q.length - 1]) return 100;
-  for (let i = 1; i < q.length; i++){
-    if (brut <= q[i]){
-      const large = q[i] - q[i - 1];
-      const f = large > 1e-9 ? (brut - q[i - 1]) / large : 0;
-      return Math.round((i - 1 + f) / (q.length - 1) * 100);
-    }
+  let somme = 0, pire = 0;
+  for (const c of CRITERES){
+    const p = Math.min(1, c.penalite(l, t));
+    somme += p * c.poids;
+    if (p > pire) pire = p;
   }
-  return 100;
+  const moy = somme / POIDS_TOTAL;
+  // hybride : la moyenne pondérée ET le pire axe — une ville catastrophique
+  // sur un seul critère ne peut plus se moyenner vers le milieu du tableau
+  return Math.round(100 * (1 - ((1 - LAMBDA_PIRE) * moy + LAMBDA_PIRE * pire)));
 }
 const niveauDe = i => i >= 66 ? 'bon' : i >= 40 ? 'moyen' : 'dur';
 
@@ -1419,11 +1428,11 @@ let lieuDossier = null;
 function diagnostiquer(l, an){
   const t = Math.min(1, Math.max(0, (an - 2026) / 24));
   const criteres = CRITERES.map(c => {
-    const note = noteCritere(c, l[2], l[3], t);
+    const note = noteCritere(c, l, t);
     return { cle: c.cle, couleur: c.couleur, poids: c.poids, penalite: 1 - note,
-             note: Math.round(note * 100), detail: c.detail(l[2], l[3], t) };
+             note: Math.round(note * 100), detail: c.detail(l, t) };
   });
-  return { criteres, indice: indiceHabitabilite(l[2], l[3], an) };
+  return { criteres, indice: indiceHabitabilite(l, an) };
 }
 
 /* « Rester ou partir » : les villes du même pays les plus habitables à
@@ -1433,9 +1442,9 @@ function alternatives(l, an, combien = 3){
   const bassin = memePays.length >= 4 ? memePays
     : LIEUX.filter(v => v[0] !== l[0] && v[4] >= 400000
         && Math.abs(v[2] - l[2]) < 22 && Math.abs(v[3] - l[3]) < 32);
-  const ici = indiceHabitabilite(l[2], l[3], an);
+  const ici = indiceHabitabilite(l, an);
   return bassin
-    .map(v => ({ lieu: v, indice: indiceHabitabilite(v[2], v[3], an) }))
+    .map(v => ({ lieu: v, indice: indiceHabitabilite(v, an) }))
     .filter(o => o.indice > ici + 4)
     .sort((a, b) => b.indice - a.indice)
     .slice(0, combien);
@@ -1445,7 +1454,7 @@ function alternatives(l, an, combien = 3){
 function tracerTrajectoire(l, an){
   const svg = document.getElementById('dossier-courbe');
   const W = 100, H = 34, pas = [];
-  for (let a = 2026; a <= 2050; a += 2) pas.push([a, indiceHabitabilite(l[2], l[3], a)]);
+  for (let a = 2026; a <= 2050; a += 2) pas.push([a, indiceHabitabilite(l, a)]);
   // échelle verticale resserrée autour de la trajectoire : sur 0-100 une perte
   // de 4 points serait un trait plat, alors que c'est l'information du graphe
   const vals = pas.map(p => p[1]);
@@ -1454,7 +1463,7 @@ function tracerTrajectoire(l, an){
   const pts = pas.map(([a, v]) => [(a - 2026) / 24 * W, ech(v)]);
   const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
   const x = (an - 2026) / 24 * W;
-  const y = ech(indiceHabitabilite(l[2], l[3], an));
+  const y = ech(indiceHabitabilite(l, an));
   svg.innerHTML =
     `<defs><linearGradient id="grad-traj" x1="0" y1="0" x2="0" y2="1">` +
       `<stop offset="0" stop-color="#1740A9" stop-opacity="0.38"/>` +
@@ -1484,7 +1493,7 @@ function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
   const { criteres, indice } = diagnostiquer(l, an);
-  const indice2050 = indiceHabitabilite(l[2], l[3], 2050);
+  const indice2050 = indiceHabitabilite(l, 2050);
   const niveau = niveauDe(indice);
 
   document.getElementById('dossier-coords').textContent =
@@ -1512,7 +1521,7 @@ function majDossier(){
      deux. Les rangées sont construites une fois par ouverture, puis seules
      les positions bougent — les transitions CSS portent l'animation, le
      re-render à chaque cran du slider tuait toute continuité. */
-  const criteres50 = CRITERES.map(c => Math.round(noteCritere(c, l[2], l[3], 1) * 100));
+  const criteres50 = CRITERES.map(c => Math.round(noteCritere(c, l, 1) * 100));
   const conteneur = document.getElementById('dossier-risques');
   if (dossierNeuf || conteneur.dataset.langue !== langue){
     conteneur.dataset.langue = langue;
@@ -1551,10 +1560,13 @@ function majDossier(){
   }
 
   tracerTrajectoire(l, an);
-  const ecart = indice2050 - indiceHabitabilite(l[2], l[3], 2026);
+  const ecart = indice2050 - indiceHabitabilite(l, 2026);
   const texteEcart = ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'}`;
+  const rg = rangScore(indice);
+  const texteRang = rg === null ? '' :
+    (langue === 'en' ? ` · above ${rg}% of 3,579 cities` : ` · devant ${rg} % des 3 579 villes`);
   const elDelta = document.getElementById('dossier-delta');
-  elDelta.textContent = texteEcart;
+  elDelta.textContent = texteEcart + texteRang;
   elDelta.dataset.sens = ecart < 0 ? 'bas' : 'haut';
   document.getElementById('dossier-ecart').textContent = '';
 
