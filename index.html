@@ -511,7 +511,7 @@ const TEXTES = {
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
   },
 };
-let langue = (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+let langue = 'en';   // anglais d'abord — le toggle FR·EN mémorise le choix
 const T = () => TEXTES[langue];
 
 /* =====================================================================
