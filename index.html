@@ -217,6 +217,7 @@
       <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
       <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
       <button class="calque" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
+      <button class="calque" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
     </nav>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 
@@ -267,6 +268,7 @@
       <div class="legende"><span data-t="legendeIndice"></span> <span id="dossier-annee">2050</span></div>
       <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
       <div class="delta-score" id="dossier-delta"></div>
+      <div class="pop-pays" id="dossier-pop"></div>
     </div>
   </div>
   <p class="conseil" id="dossier-conseil"></p>
@@ -374,7 +376,8 @@ const TEXTES = {
     son: e => e ? 'Son · on' : 'Son · off',
     calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
       secheresse: 'Sécheresse',
-      mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Instabilité du climat' },
+      mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Instabilité du climat',
+      declin: 'Déclin de population' },
     info: {
       chaleur: 'Des jours où il fait trop chaud pour vivre normalement dehors.',
       feux: 'Là où le temps chaud et sec peut faire partir des incendies.',
@@ -382,6 +385,7 @@ const TEXTES = {
       mer: 'Là où la mer peut recouvrir la terre.',
       fleuves: 'Là où les rivières peuvent déborder et tout inonder.',
       stabilite: 'Là où le climat change le plus vite d’ici 2050.',
+      declin: 'Les pays qui perdent des habitants d’ici 2050.',
     },
     infoplus: {
       chaleur: 'Les zones colorées montrent où il fait très chaud et humide, de plus en plus souvent. Ces jours-là, le corps n’arrive plus à se rafraîchir : dur de travailler dehors, dur de dormir. Plus c’est rouge, plus il y a de jours comme ça.',
@@ -390,6 +394,7 @@ const TEXTES = {
       mer: 'Ces terres sont si basses que la mer peut les recouvrir pendant une grosse tempête. La mer monte, et par endroits le sol s’enfonce en plus. Les digues ne sont pas comptées : on montre le terrain tel qu’il est.',
       fleuves: 'Quand une très grosse pluie arrive, les rivières débordent. La carte montre jusqu’où l’eau peut aller. Une inondation comme ça a environ 1 chance sur 5 d’arriver d’ici 2050.',
       stabilite: 'Un endroit où il fait bon vivre, c’est aussi un endroit qui ne change pas trop vite. En violet : là où le climat de 2050 ne ressemblera plus du tout à celui d’aujourd’hui.',
+      declin: 'Dans les pays en gris-mauve, il y aura moins d’habitants en 2050 qu’aujourd’hui. Moins de monde, c’est souvent moins de services, d’écoles, de travail — mais aussi plus de place. Les chiffres viennent des Nations unies.',
     },
     infoSource: {
       chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de chaleur de Rothfusz',
@@ -398,8 +403,12 @@ const TEXTES = {
       mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (subsidence VLM)',
       fleuves: 'JRC Global River Flood Hazard · crue centennale',
       stabilite: 'Écart CMIP6 2026→2050, quatre canaux combinés',
+      declin: 'ONU WPP 2024 (médiane) · Our World in Data · Natural Earth',
     },
     pedagoOk: 'Compris',
+    sansDonnees: 'Données insuffisantes',
+    sansDonneesLong: 'Cette ville est hors des grilles climatiques mondiales (petite île ou atoll) : plutôt que d’inventer un score, on n’en affiche pas.',
+    popPays: p => `population du pays : ${p > 0 ? '+' : '−'}${Math.abs(p)} % d’ici 2050 (ONU)`,
     critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
     legendeIndice: '／100 · habitabilité physique · défenses non comptées',
@@ -437,7 +446,8 @@ const TEXTES = {
     son: e => e ? 'Sound · on' : 'Sound · off',
     calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
       secheresse: 'Drought',
-      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
+      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift',
+      declin: 'Population decline' },
     info: {
       chaleur: 'Days too hot to live normally outside.',
       feux: 'Where hot, dry weather can start wildfires.',
@@ -445,6 +455,7 @@ const TEXTES = {
       mer: 'Where the sea can cover the land.',
       fleuves: 'Where rivers can overflow and flood everything.',
       stabilite: 'Where the climate is changing fastest by 2050.',
+      declin: 'Countries losing people by 2050.',
     },
     infoplus: {
       chaleur: 'The colored areas show where it gets very hot and humid, more and more often. On those days the body can’t cool down anymore: hard to work outside, hard to sleep. The redder it is, the more days like that.',
@@ -453,6 +464,7 @@ const TEXTES = {
       mer: 'This land is so low that the sea can cover it during a big storm. The sea is rising, and in some places the ground is also sinking. Sea walls are not counted: we show the land as it is.',
       fleuves: 'When a really big rain comes, rivers overflow. The map shows how far the water can reach. A flood like that has about a 1-in-5 chance of happening by 2050.',
       stabilite: 'A good place to live is also a place that doesn’t change too fast. In violet: where the climate of 2050 will no longer look anything like today’s.',
+      declin: 'In the grey-mauve countries, there will be fewer people in 2050 than today. Fewer people often means fewer services, schools, jobs — but also more room. The numbers come from the United Nations.',
     },
     infoSource: {
       chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · Rothfusz heat index',
@@ -461,8 +473,12 @@ const TEXTES = {
       mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (VLM subsidence)',
       fleuves: 'JRC Global River Flood Hazard · 100-year flood',
       stabilite: 'CMIP6 2026→2050 drift, four channels combined',
+      declin: 'UN WPP 2024 (medium) · Our World in Data · Natural Earth',
     },
     pedagoOk: 'Got it',
+    sansDonnees: 'Not enough data',
+    sansDonneesLong: 'This city sits outside the global climate grids (small island or atoll): rather than invent a score, we show none.',
+    popPays: p => `country population: ${p > 0 ? '+' : '−'}${Math.abs(p)}% by 2050 (UN)`,
     critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
     legendeIndice: '／100 · physical habitability · defenses not counted',
@@ -544,7 +560,8 @@ function lire(cle, canal, lat, lon){
         const x = ((x0 + dx) % g.w + g.w) % g.w;
         const y = Math.min(g.h - 1, Math.max(0, y0 + dy));
         // canal vert de grille_c = masque terre
-        if (terre && terre.px[(y * terre.w + x) * 4 + 1] < 128) continue;
+        // canal rouge de grille_c = climat défini (historique ET CMIP6)
+        if (terre && terre.px[(y * terre.w + x) * 4] < 128) continue;
         return g.px[(y * g.w + x) * 4 + canal] / 255;
       }
     }
@@ -602,7 +619,7 @@ const CRITERES = [
 ];
 for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
 const CRITERES_COULEURS = { chaleur: '#E06A3C', feux: '#C94F2E', secheresse: '#A07830',
-  mer: '#4D7CF2', fleuves: '#6FA3FF', stabilite: '#B08CE8' };
+  mer: '#4D7CF2', fleuves: '#6FA3FF', stabilite: '#B08CE8', declin: '#9A8FB8' };
 const POIDS_TOTAL = CRITERES.reduce((s, c) => s + c.poids, 0);
 
 /* Calibration : distribution des pénalités sur les 3579 villes (produite par
@@ -757,8 +774,12 @@ function latLonVersVec3(lat, lon, r = 1){
    ===================================================================== */
 const chargeur = new THREE.LoadingManager();
 const texChargeur = new THREE.TextureLoader(chargeur);
-const texCouleur = texChargeur.load('./assets/textures/earth_color_2048.jpg'); // NASA Blue Marble (domaine public)
-const texMasque  = texChargeur.load('./assets/textures/earth_mask_2048.jpg');  // masque terre/océan
+// 4K : même coût de rendu (mips), +24 Mo GPU — net sur Retina. Le masque est
+// régénéré depuis ETOPO 60'' : côtes bien plus précises que l'ancien 2048.
+const texCouleur = texChargeur.load('./assets/textures/earth_color_4096.jpg'); // NASA Blue Marble (domaine public)
+const texMasque  = texChargeur.load('./assets/textures/earth_mask_4096.png');  // masque terre/océan (ETOPO)
+texCouleur.anisotropy = 8;   // netteté aux angles rasants, quasi gratuit
+texMasque.anisotropy = 4;
 texCouleur.colorSpace = THREE.SRGBColorSpace;
 
 /* Grilles de risques précalculées (tools/pipeline.py) : 2160x1080, une valeur
@@ -786,6 +807,7 @@ const uniformsGlobe = {
   uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },
   uChaleur:    { value: 0 },
   uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
+  uDeclin: { value: 0 },
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
   uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
   uC:     { value: texC },
@@ -804,7 +826,7 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite;
+    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin;
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
@@ -851,12 +873,13 @@ const matGlobe = new THREE.ShaderMaterial({
 
       // R-01 CHALEUR / ICU : gaussiennes thermiques sur les mégapoles, jaune → rouge vif
       if (uChaleur > 0.001){
-        // ga.r = jours/an d'indice de chaleur au-dessus de 32 °C, normalisés sur 0-300
+        // ga.r = jours/an d'indice de chaleur au-dessus de 32 °C, normalisés sur 0-300.
+        // La rampe MONTE en luminosité avec la chaleur : jaune-orangé -> rouge
+        // vif qui flambe (x1.35) — jamais un rouge sombre au maximum.
         float chaud = ga.r * terre;
-        vec3 thermique = mix(vec3(0.95, 0.62, 0.16), vec3(1.0, 0.18, 0.07), smoothstep(0.20, 0.80, chaud));
-        // lecture en nappe graduée : les zones tempérées restent lisibles
-        col = mix(col, thermique, smoothstep(0.06, 0.68, chaud) * uChaleur * 0.62);
-        col += thermique * smoothstep(0.72, 1.0, chaud) * uChaleur * 0.30;   // les extrêmes ressortent
+        float t2 = smoothstep(0.12, 0.85, chaud);
+        vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(1.0, 0.16, 0.05), t2) * (0.80 + 0.55 * t2);
+        col = mix(col, thermique, smoothstep(0.04, 0.55, chaud) * uChaleur * 0.85);
       }
 
 
@@ -894,6 +917,17 @@ const matGlobe = new THREE.ShaderMaterial({
         float souffle = 0.72 + 0.28 * sin(uTemps * 1.1 + inst * 8.0);
         vec3 violet = vec3(0.565, 0.365, 1.0);
         col = mix(col, violet * souffle, m * uStabilite * (0.45 + 0.40 * P));
+      }
+
+      // R-08 DÉCLIN DE POPULATION : pays dont la population baisse d'ici
+      // 2050 (ONU WPP 2024, médiane). Le territoire se vide : il se
+      // désature vers un gris mauve, saturé à -30 %.
+      if (uDeclin > 0.001){
+        float d = gc.b * terre;
+        float m = smoothstep(0.04, 0.85, d);
+        float gris = dot(col, vec3(0.299, 0.587, 0.114));
+        vec3 vide = mix(vec3(gris), vec3(0.475, 0.43, 0.60), 0.55) * (0.55 + 0.45 * (1.0 - d));
+        col = mix(col, vide, m * uDeclin * 0.9);
       }
 
       gl_FragColor = vec4(col, 1.0);
@@ -1252,6 +1286,7 @@ const CALQUES = {
   mer:        { uniforme: uniformsGlobe.uMer,        son: 'layer_on' },
   fleuves:    { uniforme: fleuvesUniforms.uCrue,     son: 'layer_on', objet: groupeFleuves },
   stabilite:  { uniforme: uniformsGlobe.uStabilite,  son: 'layer_on' },
+  declin:     { uniforme: uniformsGlobe.uDeclin,     son: 'layer_on' },
 };
 const etat = { progression: 0, annee: 2026, feuxCible: 0, crise: false };
 
@@ -1428,9 +1463,11 @@ function deployerRecherche(){
   gsap.to(etatRecherche, { w: largeurBarre(), duration: 0.65, ease: EASE,
     onUpdate: appliquerLargeurRecherche,
     onComplete: () => {
-      // balayage lumineux sur « Chercher une ville — ⌘K »
-      gsap.fromTo(balayage, { x: -90, opacity: 0 },
-        { x: largeurBarre() + 40, opacity: 1, duration: 0.9, ease: 'power2.inOut',
+      // balayage lumineux sur « Chercher une ville — ⌘K », calé sur le champ
+      balayage.style.left = champ.offsetLeft + 'px';
+      balayage.style.top = (champ.offsetTop + champ.offsetHeight / 2) + 'px';
+      gsap.fromTo(balayage, { x: -70, opacity: 0 },
+        { x: largeurBarre() + 30, opacity: 1, duration: 0.9, ease: 'power2.inOut',
           onComplete: () => gsap.set(balayage, { opacity: 0 }) });
     } });
   gsap.to(loupe, { opacity: 0, scale: 0.6, duration: 0.3, ease: EASE });
@@ -1558,10 +1595,14 @@ function diagnostiquer(l, an){
 function alternatives(l, an, combien = 3){
   const memePays = LIEUX.filter(v => v[1] === l[1] && v !== l && v[4] >= Math.min(l[4] * 0.15, 150000));
   const bassin = memePays.length >= 4 ? memePays
-    : LIEUX.filter(v => v !== l && v[4] >= 400000
-        && Math.abs(v[2] - l[2]) < 22 && Math.abs(v[3] - l[3]) < 32);
+    : LIEUX.filter(v => {
+        const dlon = Math.abs(v[3] - l[3]);
+        return v !== l && v[4] >= 400000
+          && Math.abs(v[2] - l[2]) < 22 && Math.min(dlon, 360 - dlon) < 32;
+      });
   const ici = indiceHabitabilite(l, an);
   return bassin
+    .filter(v => v[7])
     .map(v => ({ lieu: v, indice: indiceHabitabilite(v, an) }))
     .filter(o => o.indice > ici + 4)
     .sort((a, b) => b.indice - a.indice)
@@ -1618,15 +1659,40 @@ function majDetail(rangee){
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
+  document.getElementById('dossier-coords').textContent =
+    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${nomPays(l[1]).toUpperCase()}`;
+  if (!l[7]){
+    // sentinelle : île ou atoll hors des grilles — pas de score inventé
+    const elLieu0 = document.getElementById('dossier-lieu');
+    if (elLieu0.dataset.lieu !== nomVille(l)){ elLieu0.dataset.lieu = nomVille(l); revelerChars(elLieu0, nomVille(l)); }
+    document.getElementById('dossier-score').textContent = '——';
+    document.getElementById('dossier-verdict-txt').textContent = t.sansDonnees;
+    document.getElementById('dossier-verdict').className = 'verdict';
+    document.getElementById('dossier-delta').textContent = '';
+    document.getElementById('dossier-conseil').textContent = t.sansDonneesLong;
+    document.getElementById('dossier-pop').textContent = '';
+    document.getElementById('dossier-risques').innerHTML = '';
+    document.getElementById('dossier-detail').textContent = '';
+    document.getElementById('dossier-ailleurs').innerHTML = '';
+    document.getElementById('dossier-courbe').innerHTML = '';
+    return;
+  }
   const { criteres, indice } = diagnostiquer(l, an);
   const indice2050 = indiceHabitabilite(l, 2050);
   const niveau = niveauDe(indice);
 
-  document.getElementById('dossier-coords').textContent =
-    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${nomPays(l[1]).toUpperCase()}`;
   const elLieu = document.getElementById('dossier-lieu');
   if (elLieu.dataset.lieu !== nomVille(l)){ elLieu.dataset.lieu = nomVille(l); revelerChars(elLieu, nomVille(l)); }
   document.getElementById('dossier-annee').textContent = an;
+  {
+    const elScore = document.getElementById('dossier-score');
+    if (!elScore.querySelector('.odo')){ elScore.textContent = ''; odoIndice.constructor && (odoIndice.el = elScore); odoIndice.colonnes = null; }
+  }
+  if (!odoIndice.colonnes){
+    // l'état « données insuffisantes » a vidé le nœud : on reconstruit
+    const neuf = new Odometre(document.getElementById('dossier-score'), 3);
+    odoIndice.colonnes = neuf.colonnes; odoIndice.el = neuf.el; odoIndice.valeur = null;
+  }
   odoIndice.set(indice, !dossierEl.classList.contains('ouvert'));
 
   const v = document.getElementById('dossier-verdict');
@@ -1709,6 +1775,9 @@ function majDossier(){
       : ` · devant ${rg} % des ${LIEUX.length.toLocaleString('fr-FR')} villes`);
   const elDelta = document.getElementById('dossier-delta');
   elDelta.textContent = texteEcart + texteRang;
+  const pop50 = l[7].pop50;
+  document.getElementById('dossier-pop').textContent =
+    (pop50 !== null && pop50 !== undefined && Math.abs(pop50) >= 2) ? t.popPays(pop50) : '';
   elDelta.dataset.sens = ecart < 0 ? 'bas' : 'haut';
 
   const alt = alternatives(l, an);
@@ -2062,18 +2131,24 @@ Promise.all([
     const ORDRE = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
     LIEUX = j.villes.map((n, i) => {
       const o = i * REC;
+      // premier octet de pénalité à 255 = sentinelle « données insuffisantes »
+      // (atolls et îles hors des grilles climatiques) : pas de score inventé
+      const nodata = dv.getUint8(o + 4) === 255;
       const pen26 = {}, pen50 = {};
       ORDRE.forEach((k, k2) => {
         pen26[k] = dv.getUint8(o + 4 + k2) / 250;
         pen50[k] = dv.getUint8(o + 10 + k2) / 250;
       });
+      const pop = dv.getUint8(o + 23);
       return [n[0], n[1],
         dv.getInt16(o, true) / 100, dv.getInt16(o + 2, true) / 100,
         n[2], n[3], n[4],
+        nodata ? null :
         { pen: { 2026: pen26, 2050: pen50 },
           mer: { f50: dv.getUint8(o + 16) / 250, f5: dv.getUint8(o + 17) / 250,
                  med: dv.getUint16(o + 18, true) / 10, sub: dv.getUint8(o + 20) / 100 },
-          crue: { f: dv.getUint8(o + 21) / 250, d90: dv.getUint8(o + 22) / 10 } }];
+          crue: { f: dv.getUint8(o + 21) / 250, d90: dv.getUint8(o + 22) / 10 },
+          pop50: pop === 128 ? null : pop - 128 }];
     });
   }),
   fetch('./data/calibration.json').then(r => r.json()).then(j => { CALIBRATION = j; }),

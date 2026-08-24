@@ -227,15 +227,20 @@ def canal_fleuves(prec_an, terre):
         en_cellules.append(cellules)
     # le bassin se calcule par fleuve NOMMÉ, tous tronçons confondus : le
     # tronçon égyptien du Nil est désertique, sa crue vient des tronçons amont
+    def cle_bassin(f, cellules):
+        # nom + région grossière du premier point : deux « Colorado » sur deux
+        # continents ne partagent plus leur crue
+        y0, x0 = cellules[0] if cellules else (0, 0)
+        return (f['name'] or f['nom'] or id(f), y0 // 120, x0 // 120)
     bassin_par_nom = {}
     for f, cellules in zip(fleuves, en_cellules):
-        nom = f['name'] or f['nom'] or id(f)
         m = max(intensite_locale[y, x] for y, x in cellules)
-        bassin_par_nom[nom] = max(bassin_par_nom.get(nom, 0.0), m)
+        k = cle_bassin(f, cellules)
+        bassin_par_nom[k] = max(bassin_par_nom.get(k, 0.0), m)
     valeur_fleuve = np.zeros((H, W), np.float32)
     masque = np.zeros((H, W), bool)
     for f, cellules in zip(fleuves, en_cellules):
-        bassin = bassin_par_nom[f['name'] or f['nom'] or id(f)]
+        bassin = bassin_par_nom[cle_bassin(f, cellules)]
         for y, x in cellules:
             masque[y, x] = True
             valeur_fleuve[y, x] = max(valeur_fleuve[y, x], bassin)
@@ -325,6 +330,89 @@ def exporter_fleuves(seuil_rang=4):
     return sorties
 
 
+def declin_population():
+    """Variation de population 2025 -> 2050 par pays (ONU WPP 2024, variante
+    médiane, miroir Our World in Data) : {ISO_A2: pct}, et la grille W x H du
+    DÉCLIN (0-1, 0 = stable ou croissance) rasterisée depuis Natural Earth."""
+    import csv, io
+    from PIL import Image, ImageDraw
+
+    # % de variation par ISO3
+    delta3 = {}
+    with open(RAW / 'owid_population_projections.csv') as fh:
+        courant = {}
+        for r in csv.reader(fh):
+            if r[0] == 'entity':
+                continue
+            code, an = r[1], int(r[2])
+            if not code or code.startswith('OWID'):
+                continue
+            val = r[3] or r[4]
+            if val and an in (2025, 2050):
+                courant.setdefault(code, {})[an] = float(val)
+        for c, v in courant.items():
+            if 2025 in v and 2050 in v and v[2025] > 0:
+                delta3[c] = (v[2050] / v[2025] - 1.0) * 100.0
+
+    # polygones Natural Earth admin-0 + attributs ISO
+    z = zipfile.ZipFile(RAW / 'ne_admin0.zip')
+    dbf = z.read('ne_10m_admin_0_countries.dbf')
+    nrec = struct.unpack('<i', dbf[4:8])[0]
+    hlen = struct.unpack('<h', dbf[8:10])[0]
+    rlen = struct.unpack('<h', dbf[10:12])[0]
+    champs, off = [], 32
+    while dbf[off] != 0x0D:
+        champs.append((dbf[off:off + 11].split(b'\0')[0].decode(), dbf[off + 16]))
+        off += 32
+    attrs = []
+    for i in range(nrec):
+        pos, ligne = hlen + i * rlen + 1, {}
+        for nom, taille in champs:
+            ligne[nom] = dbf[pos:pos + taille].decode('utf8', 'replace').strip(' \x00\t')
+            pos += taille
+        attrs.append(ligne)
+
+    buf = z.read('ne_10m_admin_0_countries.shp')
+    img = Image.new('F', (W, H), 0.0)
+    dess = ImageDraw.Draw(img)
+    iso2_delta = {}
+    pos, i = 100, 0
+    while pos + 8 <= len(buf):
+        _, longueur = struct.unpack('>ii', buf[pos:pos + 8])
+        corps = pos + 8
+        pos = corps + longueur * 2
+        (typ,) = struct.unpack('<i', buf[corps:corps + 4])
+        a = attrs[i]; i += 1
+        if typ != 5:
+            continue
+        iso3 = a.get('ISO_A3_EH') or a.get('ISO_A3') or a.get('ADM0_A3')
+        if iso3 in ('-99', '', None):
+            iso3 = a.get('ADM0_A3')
+        pct = delta3.get(iso3)
+        iso2 = a.get('ISO_A2_EH') or a.get('ISO_A2')
+        if iso2 and iso2 != '-99' and pct is not None:
+            iso2_delta[iso2] = pct
+        if pct is None or pct >= 0:
+            continue                                    # seule la décroissance colore
+        val = min(1.0, -pct / 30.0)                     # -30 % et au-delà : saturé
+        n_parts, n_pts = struct.unpack('<ii', buf[corps + 36:corps + 44])
+        parts = np.frombuffer(buf, '<i4', count=n_parts, offset=corps + 44)
+        pts = np.frombuffer(buf, '<f8', count=n_pts * 2,
+                            offset=corps + 44 + n_parts * 4).reshape(-1, 2)
+        for k in range(n_parts):
+            deb = parts[k]
+            fin = parts[k + 1] if k + 1 < n_parts else n_pts
+            seg = pts[deb:fin]
+            if len(seg) < 3:
+                continue
+            poly = [((x + 180.0) / 360.0 * W, (90.0 - y) / 180.0 * H) for x, y in seg]
+            # les anneaux intérieurs (trous, sens horaire inverse) repeignent 0 :
+            # approximation honnête à 10' — les enclaves sont plus petites qu'un texel
+            dess.polygon(poly, fill=val)
+    grille = np.asarray(img, dtype=np.float32)
+    return iso2_delta, grille
+
+
 def canal_argiles(terre):
     """Retrait-gonflement des argiles : bassins sédimentaires argileux
     (France + grandes plaines connues). Faute de source globale ouverte,
@@ -354,7 +442,7 @@ def ecrire_png(chemin, canaux):
     """
     from PIL import Image
     assert len(canaux) == 3, 'trois canaux par texture'
-    rgb = np.stack([np.clip(c * 255.0, 0, 255).astype(np.uint8) for c in canaux], axis=-1)
+    rgb = np.stack([np.round(np.clip(c * 255.0, 0, 255)).astype(np.uint8) for c in canaux], axis=-1)
     Image.fromarray(rgb, 'RGB').save(chemin, optimize=True)
     print('  ->', chemin.name, chemin.stat().st_size // 1024, 'Ko')
 
@@ -371,20 +459,21 @@ PROF_REF_M = 3.0             # ~ un étage : les courbes de dégâts s'aplatisse
 
 
 def _disque(arr, sh, sw, lat, lon, cell_deg, rayon_km=RAYON_VILLE_KM):
-    """Cellules du disque de RAYON_VILLE_KM autour du point, dans une grille
-    equirectangulaire de pas `cell_deg` (origine 90N/180W pleine grille)."""
-    y = int((90.0 - lat) / cell_deg)
-    x = int((lon + 180.0) / cell_deg)
+    """Cellules du disque autour du point, grille equirectangulaire de pas
+    `cell_deg` (origine 90N/180W). Les colonnes BOUCLENT à l'antiméridien
+    (Suva, Funafuti perdaient la moitié de leur fenêtre) ; rayon en ceil et
+    centre en round : la troncature rabotait ~8 % de l'aire partout."""
+    import math
+    y = round((90.0 - lat) / cell_deg)
+    x = round((lon + 180.0) / cell_deg)
     km_par_cell = 111.0 * cell_deg
-    dy = max(1, int(rayon_km / km_par_cell))
-    dx = max(1, int(rayon_km / (km_par_cell * max(0.2, np.cos(np.radians(lat))))))
-    b = np.asarray(arr[max(0, y - dy):y + dy + 1, max(0, x - dx):x + dx + 1],
-                   dtype=np.float32)
-    if b.size == 0:
-        return b
+    dy = max(1, math.ceil(rayon_km / km_par_cell))
+    dx = max(1, math.ceil(rayon_km / (km_par_cell * max(0.2, np.cos(np.radians(lat))))))
+    ys = np.clip(np.arange(y - dy, y + dy + 1), 0, sh - 1)
+    xs = np.arange(x - dx, x + dx + 1) % sw
+    b = np.asarray(arr[ys][:, xs], dtype=np.float32)
     yy, xx = np.mgrid[0:b.shape[0], 0:b.shape[1]]
-    cy, cx = min(dy, y), min(dx, x)
-    d2 = ((yy - cy) / max(dy, 1)) ** 2 + ((xx - cx) / max(dx, 1)) ** 2
+    d2 = ((yy - dy) / dy) ** 2 + ((xx - dx) / dx) ** 2
     return b[d2 <= 1.0]
 
 
@@ -404,12 +493,18 @@ def stats_elevation(elev, eh, ew, lat, lon, rayon_km=RAYON_VILLE_KM, sub50=0.0):
 
 
 def stats_crue(jrc, jh, jw, jpx, jx0, jy0, lat, lon, rayon_km=RAYON_VILLE_KM):
-    """Carte JRC rp100 (profondeur m) -> fraction inondée > 0.5 m, d90."""
-    y = int((jy0 - lat) / jpx)
-    x = int((lon - jx0) / jpx)
+    """Carte JRC rp100 (profondeur m) -> fraction inondée > 0.5 m, d90.
+
+    Le .tfw donne le CENTRE du pixel haut-gauche : +0.5 sinon toute fenêtre
+    glisse d'un demi-pixel. Colonnes bouclées à l'antiméridien."""
+    import math
+    y = int((jy0 - lat) / jpx + 0.5)
+    x = int((lon - jx0) / jpx + 0.5)
     km_par_cell = 111.0 * jpx
-    d = max(1, int(rayon_km / km_par_cell))
-    b = jrc[max(0, y - d):y + d + 1, max(0, x - d):x + d + 1]
+    d = max(1, math.ceil(rayon_km / km_par_cell))
+    ys = np.clip(np.arange(y - d, y + d + 1), 0, jh - 1)
+    xs = np.arange(x - d, x + d + 1) % jw
+    b = jrc[ys][:, xs]
     b = np.where(np.isfinite(b) & (b > 0), b, 0.0).astype(np.float32)
     if b.size == 0:
         return dict(f=0.0, d90=0.0)
@@ -452,7 +547,9 @@ def charger_vlm():
 def subsidence_2050(vlat, vlon, vvlm, lat, lon):
     """Enfoncement cumulé d'ici 2050 (m, >= 0) : pire décile des points VLM
     dans une boîte de 0.6°. Aucun point mesuré -> 0 (et rien d'inventé)."""
-    m = (np.abs(vlat - lat) < 0.6) & (np.abs(vlon - lon) < 0.6) & np.isfinite(vvlm)
+    dlon = np.abs(vlon - lon)
+    dlon = np.minimum(dlon, 360.0 - dlon)           # bouclage antiméridien
+    m = (np.abs(vlat - lat) < 0.6) & (dlon < 0.6) & np.isfinite(vvlm)
     if not m.any():
         return 0.0
     p10 = float(np.percentile(vvlm[m], 10))          # mm/an, négatif = enfoncement
@@ -483,16 +580,22 @@ def precompute_villes(couches, terre):
         cr = stats_crue(jrc, jrc.shape[0], jrc.shape[1], jpx, jx0, jy0, la, lo, rayon)
         clim = penalites(couches, la, lo, terre)
         pen = {}
+        brut_total = 0.0
         for an, t in ((2026, 0.0), (2050, 1.0)):
-            pen[an] = {
-                'thermique': round(clim[an]['thermique'], 4),
-                'eau': round(clim[an]['eau'], 4),
-                'feux': round(clim[an]['feux'], 4),
-                'mer': round(penalite_mer(el, t), 4),
-                'fleuves': round(penalite_crue(cr), 4),
-                'stabilite': round(clim[an]['stabilite'], 4),
+            brut = {
+                'thermique': clim[an]['thermique'],
+                'eau': clim[an]['eau'],
+                'feux': clim[an]['feux'],
+                'mer': penalite_mer(el, t),
+                'fleuves': penalite_crue(cr),
+                'stabilite': clim[an]['stabilite'],
             }
+            brut_total += sum(brut.values())
+            # quantifié sur 1/250 DÈS ICI : la calibration et le binaire
+            # partagent exactement les mêmes valeurs que le client relira
+            pen[an] = {k: round(v * 250) / 250 for k, v in brut.items()}
         sortie.append(dict(
+            nodata=bool(brut_total < 1e-9),
             mer=dict(f50=round(el['f50'], 3), f5=round(el['f5'], 3), med=round(el['med'], 1),
                      sub=round(sub, 2)),
             crue=dict(f=round(cr['f'], 3), d90=round(cr['d90'], 2)),
@@ -604,8 +707,9 @@ def penalites(couches, la, lo, terre):
              + abs(lit(2050, 'mer') - lit(2026, 'mer')) * 1.2) / 3.6
     out = {}
     for an in (2026, 2050):
-        # même accumulation que le client : la dérive n'a presque pas eu lieu
-        # en 2026, elle est entière en 2050
+        # même accumulation que le client. Le plancher 0.25 en 2026 est un
+        # choix assumé : un site qui VA basculer porte déjà un quart de sa
+        # pénalité aujourd'hui — l'instabilité se paie avant d'arriver
         t = 0.0 if an == 2026 else 1.0
         out[an] = {
             'thermique': min(1, lit(an, 'chaud') * 1.15 + lit(an, 'froid') * 0.45),
@@ -699,7 +803,8 @@ def main():
         c = couches[an]
         ecrire_png(OUT / f'grille_a_{an}.png', [flou(c['chaud']), flou(c['froid']), flou(c['sec'])])
         ecrire_png(OUT / f'grille_b_{an}.png', [flou(c['feux']), c['mer'], c['fleuves']])
-    ecrire_png(OUT / 'grille_c.png', [argiles, terre, np.zeros_like(terre)])
+    iso2_delta, grille_declin = declin_population()
+    ecrire_png(OUT / 'grille_c.png', [terre_climat(), terre, grille_declin])
 
     fl = exporter_fleuves()
     (OUT / 'rivers.json').write_text(json.dumps(fl, ensure_ascii=False, separators=(',', ':')))
@@ -721,13 +826,19 @@ def main():
     for ligne, r in zip(v, risques):
         p26, p50 = r['pen'][2026], r['pen'][2050]
         m, c = r['mer'], r['crue']
-        buf += struct.pack('<hh', round(ligne[2] * 100), round(ligne[3] * 100))
-        buf += bytes(q250(p26[k]) for k in ORDRE_PEN)
-        buf += bytes(q250(p50[k]) for k in ORDRE_PEN)
-        buf += bytes([q250(m['f50']), q250(m['f5'])])
-        buf += struct.pack('<H', max(0, min(65535, round(m['med'] * 10))))
-        buf += bytes([max(0, min(255, round((m.get('sub') or 0) * 100)))])
-        buf += bytes([q250(c['f']), max(0, min(255, round(c['d90'] * 10))), 0])
+        rec = bytearray()
+        rec += struct.pack('<hh', round(ligne[2] * 100), round(ligne[3] * 100))
+        rec += bytes(q250(p26[k]) for k in ORDRE_PEN)
+        rec += bytes(q250(p50[k]) for k in ORDRE_PEN)
+        rec += bytes([q250(m['f50']), q250(m['f5'])])
+        rec += struct.pack('<H', max(0, min(65535, round(m['med'] * 10))))
+        rec += bytes([max(0, min(255, round((m.get('sub') or 0) * 100)))])
+        pct = iso2_delta.get(ligne[1])
+        octet_pop = 128 if pct is None else max(0, min(255, round(pct) + 128))
+        rec += bytes([q250(c['f']), max(0, min(255, round(c['d90'] * 10))), octet_pop])
+        if r.get('nodata'):
+            rec[4] = 255      # sentinelle : première pénalité hors gamme = pas de score
+        buf += rec
     assert len(buf) == 24 * len(v)
     (OUT / 'places.bin').write_bytes(buf)
     noms = [[l[0], l[1], l[4], l[5], l[6]] for l in v]
