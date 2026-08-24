@@ -80,11 +80,6 @@
   .calque .nom{font-size:13px;font-weight:600;letter-spacing:.02em;flex:1}
   .calque .code{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--muter)}
 
-  #fiche{margin-top:16px;min-height:118px}
-  #fiche h2{font-size:26px;font-weight:800;letter-spacing:-.01em;line-height:1.05;margin:6px 0 8px}
-  #fiche .metrique{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--ambre);text-transform:uppercase}
-  #fiche p{font-size:12px;line-height:1.55;color:var(--muter);margin-top:8px}
-
   /* timeline bas */
   #timeline{left:50%;bottom:34px;transform:translate(-50%,10px);width:min(560px,72vw);
     padding:16px 26px 18px;text-align:center}
@@ -198,7 +193,6 @@
   <svg id="loupe" viewBox="0 0 20 20" aria-hidden="true">
     <circle cx="8.6" cy="8.6" r="5.4"/><path d="M12.8 12.8 L17.2 17.2"/>
   </svg>
-  <span id="balayage" aria-hidden="true"></span>
   <span id="mesure-recherche" aria-hidden="true"></span>
   <span id="caret-dos" aria-hidden="true"></span>
   <ul id="resultats"></ul>
@@ -1370,28 +1364,58 @@ toile.addEventListener('pointerdown', () => {
 const champ = document.getElementById('champ-recherche');
 const liste = document.getElementById('resultats');
 let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
+/* la liste n'est pas une boîte sous la barre : c'est la barre elle-même qui
+   s'étire en carré de verre — la lentille WebGL suit le rectangle vivant */
+const etatListe = { anim: null };
+function ouvrirListe(){
+  liste.style.width = champ.offsetWidth + 'px';
+  liste.style.top = champ.offsetTop + 'px';
+  liste.style.paddingTop = champ.offsetHeight + 'px';
+  const deja = liste.classList.contains('ouvert');
+  liste.classList.add('ouvert');
+  const hAvant = deja ? liste.getBoundingClientRect().height : champ.offsetHeight;
+  liste.style.height = 'auto';
+  const hCible = liste.offsetHeight;
+  if (etatListe.anim) etatListe.anim.kill();
+  etatListe.anim = gsap.fromTo(liste, { height: hAvant },
+    { height: hCible, duration: deja ? 0.35 : 0.5, ease: EASE, onUpdate: majVerre,
+      onComplete: () => { liste.style.height = 'auto'; majVerre(); } });
+}
+function fermerListe(){
+  if (!liste.classList.contains('ouvert')) return;
+  if (etatListe.anim) etatListe.anim.kill();
+  etatListe.anim = gsap.to(liste, { height: champ.offsetHeight, duration: 0.3, ease: EASE,
+    onUpdate: majVerre, onComplete: () => {
+      liste.classList.remove('ouvert'); liste.style.height = ''; majVerre();
+    } });
+}
+/* dernières villes choisies — seules candidates au focus sur champ vide */
+let recents = [];
+try { recents = JSON.parse(localStorage.getItem('terra-recents') || '[]'); } catch (e) {}
 const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 function afficherResultats(){
   const q = normaliser(champ.value.trim());
   liste.innerHTML = ''; indiceChoisi = -1;
   if (q.length < 2){
-    // champ vide : trois grandes villes contrastées comme premières marches —
-    // une question personnelle a besoin d'un premier nom sur quoi cliquer
-    if (!q && !focusProgramme && document.activeElement === champ && LIEUX.length){
-      const noms = ['Paris', 'Miami', 'Jakarta'];
-      resultatsActuels = noms.map(n => LIEUX.find(l => l[0] === n)).filter(Boolean);
-      for (const l of resultatsActuels){
-        const li = document.createElement('li');
-        li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
-        li.addEventListener('click', () => choisirLieu(l));
-        li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
-        liste.appendChild(li);
+    // champ vide : rien d'imposé — seulement les villes déjà choisies avant
+    if (!q && !focusProgramme && document.activeElement === champ && recents.length){
+      resultatsActuels = recents
+        .map(n => LIEUX.find(l => l[0] === n) || PAYS_LIGNES.find(l => l[0] === n))
+        .filter(Boolean);
+      if (resultatsActuels.length){
+        for (const l of resultatsActuels){
+          const li = document.createElement('li');
+          li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
+          li.addEventListener('click', () => choisirLieu(l));
+          li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
+          liste.appendChild(li);
+        }
+        ouvrirListe();
+        return;
       }
-      liste.classList.add('ouvert');
-      return;
     }
-    liste.classList.remove('ouvert'); return;
+    fermerListe(); return;
   }
   // priorité au préfixe puis à la population : « par » doit donner Paris d'abord
   // les deux graphies sont cherchées : « Seville » comme « Séville »
@@ -1418,10 +1442,12 @@ function afficherResultats(){
       liste.appendChild(li);
     }
   }
-  liste.classList.add('ouvert');
+  ouvrirListe();
 }
 function choisirLieu(l){
-  liste.classList.remove('ouvert');
+  fermerListe();
+  recents = [l[0], ...recents.filter(n => n !== l[0])].slice(0, 3);
+  try { localStorage.setItem('terra-recents', JSON.stringify(recents)); } catch (e) {}
   champ.value = nomVille(l); champ.blur();
   ouvrirDossier(l);
   SoundManager.play('camera_fly');
@@ -1452,11 +1478,11 @@ champ.addEventListener('keydown', e => {
     e.preventDefault();
     choisirLieu(resultatsActuels[Math.max(indiceChoisi, 0)]);
   } else if (e.key === 'Escape'){
-    champ.blur(); liste.classList.remove('ouvert');
+    champ.blur(); fermerListe();
   }
 });
 document.addEventListener('click', e => {
-  if (!document.getElementById('recherche').contains(e.target)) liste.classList.remove('ouvert');
+  if (!document.getElementById('recherche').contains(e.target)) fermerListe();
 });
 
 /* ---- timeline 2026 → 2050 ---- */
@@ -1505,32 +1531,26 @@ curseur.addEventListener('input', () => {
 const LARGEUR_LOUPE = 46;
 const etatRecherche = { w: LARGEUR_LOUPE };
 const loupe = document.getElementById('loupe');
-const balayage = document.getElementById('balayage');
 function largeurBarre(){ return Math.min(252, innerWidth * 0.37); }
+let placerCaret = () => {};
 function appliquerLargeurRecherche(){
   champ.style.width = etatRecherche.w + 'px';
-  majVerre();
+  // le carré de verre reste collé au champ pendant le déploiement
+  if (liste.classList.contains('ouvert')) liste.style.width = etatRecherche.w + 'px';
+  majVerre(); placerCaret();
 }
 function deployerRecherche(){
   if (!document.body.classList.contains('loupe')) return;
   document.body.classList.remove('loupe');
   gsap.to(etatRecherche, { w: largeurBarre(), duration: 0.65, ease: EASE,
-    onUpdate: appliquerLargeurRecherche,
-    onComplete: () => {
-      // balayage lumineux sur « Chercher une ville — ⌘K », calé sur le champ
-      balayage.style.left = champ.offsetLeft + 'px';
-      balayage.style.top = (champ.offsetTop + champ.offsetHeight / 2) + 'px';
-      gsap.fromTo(balayage, { x: -70, opacity: 0 },
-        { x: largeurBarre() + 30, opacity: 1, duration: 0.9, ease: 'power2.inOut',
-          onComplete: () => gsap.set(balayage, { opacity: 0 }) });
-    } });
+    onUpdate: appliquerLargeurRecherche });
   gsap.to(loupe, { opacity: 0, scale: 0.6, duration: 0.3, ease: EASE });
 }
 function replierRecherche(){
   if (document.body.classList.contains('loupe')) return;
   if (champ.value || lieuDossier || document.activeElement === champ) return;
   document.body.classList.add('loupe');
-  liste.classList.remove('ouvert');
+  fermerListe();
   gsap.to(etatRecherche, { w: LARGEUR_LOUPE, duration: 0.55, ease: EASE,
     onUpdate: appliquerLargeurRecherche });
   gsap.to(loupe, { opacity: 0.8, scale: 1, duration: 0.4, delay: 0.15, ease: EASE });
@@ -1552,7 +1572,7 @@ addEventListener('resize', () => {
 {
   const v = document.getElementById('v-video');
   if (v){
-    const lancer = () => v.paused && v.play().catch(() => {});
+    const lancer = () => !document.body.classList.contains('pret') && v.paused && v.play().catch(() => {});
     lancer();
     addEventListener('pointermove', lancer, { once: true });
     document.addEventListener('visibilitychange', () => !document.hidden && lancer());
@@ -1573,6 +1593,7 @@ addEventListener('resize', () => {
     const depart = style.textAlign === 'center' ? (utile - largeurTexte) / 2 : 0;
     caret.style.left = (champ.offsetLeft + parseFloat(style.paddingLeft) + depart + largeurTexte) + 'px';
   };
+  placerCaret = placer;
   champ.addEventListener('focus', () => { document.body.classList.add('recherche-active'); placer(); });
   champ.addEventListener('blur',  () => document.body.classList.remove('recherche-active'));
   champ.addEventListener('input', placer);
@@ -1626,15 +1647,17 @@ const etatVerre = { force: 0 };
 function majVerre(){
   // le rect du CHAMP, pas de #recherche : ce dernier englobe la liste de
   // résultats repliée, ce qui rendait la lentille bien plus haute que la barre
-  const r = champ.getBoundingClientRect();
-  const marge = 0;                                   // la lentille épouse le bord du champ
+  const rc = champ.getBoundingClientRect();
+  const r = (typeof liste !== 'undefined' && liste.classList.contains('ouvert'))
+    ? liste.getBoundingClientRect() : rc;
   matPost.uniforms.uRatio.value = innerWidth / innerHeight;
   matPost.uniforms.uVerre.value.set(
     (r.left + r.width / 2) / innerWidth,
     1 - (r.top + r.height / 2) / innerHeight,
-    (r.width / 2 + marge) / innerWidth,
-    (r.height / 2 + marge) / innerHeight);
-  matPost.uniforms.uVerreRayon.value = Math.min(r.height / 2 + marge, r.width / 2) / innerHeight;
+    (r.width / 2) / innerWidth,
+    (r.height / 2) / innerHeight);
+  // le rayon reste celui de la pilule : ouvert, le verre devient un carré arrondi
+  matPost.uniforms.uVerreRayon.value = Math.min(rc.height / 2, r.height / 2, r.width / 2) / innerHeight;
   matPost.uniforms.uVerreForce.value = etatVerre.force;
 }
 addEventListener('resize', majVerre);
@@ -1724,6 +1747,7 @@ function majDetail(rangee){
    habitables du pays en puces. */
 function majDossierPays(l, an, t, dossierNeuf){
   const iso = l[1];
+  document.getElementById('dossier-annee').textContent = an;
   const indice = indicePays(iso, an);
   const indice2050 = indicePays(iso, 2050);
   const niveau = niveauDe(indice);
@@ -1818,6 +1842,11 @@ function majRangeePop(pct, t, detail){
   el.dataset.detail = detail || t.popPays(pct);
   el.dataset.couleur = teinte;
 }
+{
+  const rp = document.getElementById('dossier-pop');
+  rp.addEventListener('mouseenter', () => rp.dataset.detail && majDetail(rp));
+  rp.addEventListener('mouseleave', () => majDetail(null));
+}
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
@@ -1831,6 +1860,7 @@ function majDossier(){
   if (!l[7]){
     // sentinelle : île ou atoll hors des grilles — pas de score inventé
     document.getElementById('dossier-score').textContent = '——';
+    odoIndice.colonnes = null;        // le nœud est détruit : forcer la reconstruction
     document.getElementById('dossier-verdict-txt').textContent = t.sansDonnees;
     document.getElementById('dossier-verdict').className = 'verdict';
     document.getElementById('dossier-delta').textContent = '';
@@ -1900,9 +1930,6 @@ function majDossier(){
         if (r) majDetail(r);
       });
       conteneur.addEventListener('mouseleave', () => majDetail(null));
-      const rp = document.getElementById('dossier-pop');
-      rp.addEventListener('mouseenter', () => rp.dataset.detail && majDetail(rp));
-      rp.addEventListener('mouseleave', () => majDetail(null));
     }
   }
   conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
@@ -1999,7 +2026,8 @@ function fermerDossier(){
     onComplete: () => { controles.autoRotate = true; },
   });
   if (document.activeElement === champ) champ.blur();
-  liste.classList.remove('ouvert');
+  fermerListe();
+  clearTimeout(minuterieRepos);
   setTimeout(replierRecherche, 180);
   retirerMarqueur();
   history.replaceState(null, '', location.pathname);
@@ -2045,7 +2073,8 @@ function ouvrirDepuisLien(){
   if (!m) return;
   let nom;
   try { nom = decodeURIComponent(m[1]); } catch (e) { return; }   // hash tronqué
-  const l = LIEUX.find(x => x[0] === nom || x[6] === nom);
+  const l = LIEUX.find(x => x[0] === nom || x[6] === nom)
+    || PAYS_LIGNES.find(x => x[0] === nom || x[6] === nom);
   if (!l) return;
   if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); }
   choisirLieu(l);
@@ -2395,6 +2424,8 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   SoundManager.setVolume(1);
   SoundManager.play('ambient_loop', true);   // boucle à 0.5, fondu 2 s — après le geste utilisateur
   SoundManager.play('camera_fly');
+  const vVideo = document.getElementById('v-video');
+  if (vVideo) setTimeout(() => vVideo.pause(), 1400);
   boutonSon.textContent = T().son(true); boutonSon.classList.add('actif');
   // plan d'ouverture : recul caméra progressif — sauf si un lien profond a
   // déjà lancé un vol vers une ville (les deux tweens se battaient)
@@ -2484,7 +2515,6 @@ function revelerChrome(){
   tl.fromTo('#wordmark .lettre', { yPercent: 115 },
     { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
   entree('#recherche', { opacity: 0, y: -10 }, 0.15);
-  entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.04 });
   entree('#bouton-reglages', { opacity: 0, y: -8 }, 0.4);
   entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.05 });
   entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });

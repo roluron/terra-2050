@@ -379,8 +379,8 @@ body.recherche-active #caret-dos { animation: caret-dos 1.06s steps(1) infinite;
 .v-eyebrow { font-family: var(--police); font-weight: 500;
   font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
   color: rgba(255, 253, 226, 0.66); overflow: visible; white-space: normal;
-  line-height: 1.6; text-align: center; align-self: stretch;
-  max-width: 100%; padding-bottom: 0.2em; }
+  line-height: 1.6; text-align: center;
+  width: 0; min-width: 100%; padding-bottom: 0.2em; }
 .v-eyebrow-bas { margin-top: -6px; }
 
 #v-wordmark { font-family: var(--police); font-weight: 600;
@@ -708,6 +708,7 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
   #dossier .lieu { font-size: 34px; }
   #dossier .score .valeur { font-size: 52px; }
   #dossier-croix { top: auto; bottom: calc(62vh - 46px); right: 16px; }
+  body.dossier-ouvert #timeline { bottom: calc(62vh + 10px); }
   #champ-recherche { width: min(220px, 56vw); }
 }
 
@@ -853,23 +854,11 @@ body.loupe #champ-recherche::placeholder { color: transparent; }
   stroke: var(--texte); stroke-width: 1.4; fill: none; stroke-linecap: round; }
 body:not(.loupe) #loupe { opacity: 0; }
 
-/* balayage lumineux : une lame de lumière passe sur le placeholder */
-#balayage { position: absolute; top: 50%; left: 0; width: 70px; height: 34px;
-  margin: -17px 0 0 0; pointer-events: none; opacity: 0;
-  background: linear-gradient(100deg, transparent 15%,
-    rgba(255, 253, 226, 0.28) 45%, rgba(255, 255, 255, 0.5) 50%,
-    rgba(255, 253, 226, 0.28) 55%, transparent 85%);
-  filter: blur(1px); mix-blend-mode: screen; }
-
 /* la roue ne garde plus de rotation CSS : tout passe par GSAP */
 #bouton-reglages .rouage { transition: none; }
 #bouton-reglages.ouvert .rouage { transform: none; }
 
-/* population du pays sous le delta ; pastille du calque déclin */
-#dossier .pop-pays { margin-top: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(255, 253, 226, 0.45); }
-#dossier .pop-pays:empty { display: none; }
+/* pastille du calque déclin */
 .calque[data-cle="declin"].actif .pastille { background: #9A8FB8; }
 
 /* =====================================================================
@@ -940,3 +929,17 @@ body.loupe #loupe { animation: loupe-souffle 3.8s var(--ease) infinite; }
 /* le caret DOS n'existe qu'en barre déployée — replié en loupe, rien */
 body.loupe #caret-dos { display: none; }
 body.loupe #mesure-recherche { display: none; }
+
+
+/* =====================================================================
+   RECHERCHE VIVANTE — la barre est le seul verre : au moment de chercher,
+   elle s'étire en carré arrondi et les résultats vivent dedans. La
+   lentille WebGL (uVerre) suit ce rectangle pendant tout le morph.
+   ===================================================================== */
+#champ-recherche { position: relative; z-index: 2; }
+#caret-dos { z-index: 3; }
+#resultats { position: absolute; left: auto; margin: 0; border: none;
+  border-radius: 23px; background: rgba(5, 18, 54, 0.55); overflow: hidden;
+  transform: none; transition: opacity 0.25s var(--ease); }
+#resultats.ouvert { transform: none; }
+#resultats li:first-child { border-top: 1px solid var(--hairline); }
