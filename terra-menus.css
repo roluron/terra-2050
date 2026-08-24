@@ -688,7 +688,7 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
 #resultats li.vide:hover { background: none; }
 
 /* bouton « ma position » : réticule hairline à droite de la pilule */
-#bouton-position { position: absolute; left: calc(50% + min(126px, 18.5vw) + 14px);
+#bouton-position { display: none; /* géolocalisation en retrait pour l'instant */ position: absolute; left: calc(50% + min(126px, 18.5vw) + 14px);
   top: 50%; transform: translateY(-50%); width: 30px; height: 30px; padding: 7px;
   background: none; border: none; cursor: pointer; opacity: 0.45;
   transition: opacity 0.3s var(--ease); }
