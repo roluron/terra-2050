@@ -943,3 +943,27 @@ body.loupe #mesure-recherche { display: none; }
   transform: none; transition: opacity 0.25s var(--ease); }
 #resultats.ouvert { transform: none; }
 #resultats li:first-child { border-top: 1px solid var(--hairline); }
+
+
+/* le champ du carré de verre reste transparent : la teinte ne commence
+   qu'au bord des résultats */
+#resultats { background: linear-gradient(180deg,
+  rgba(5, 18, 54, 0) 0, rgba(5, 18, 54, 0) var(--h-champ, 47px),
+  rgba(5, 18, 54, 0.55) var(--h-champ, 47px)); }
+
+/* la piste sous l'année épouse exactement la largeur du millésime */
+#timeline .an { display: inline-block; }
+#curseur { display: block; width: var(--l-an, 100%); margin-left: auto; margin-right: auto; }
+#timeline .piste { left: 50%; right: auto; transform: translateX(-50%); width: var(--l-an, 100%); }
+#timeline .graduations { left: 50%; right: auto; transform: translateX(-50%); width: var(--l-an, 100%); }
+#timeline .bornes { width: var(--l-an, 100%); margin: 0 auto; }
+@media (min-width: 721px) {
+  body.dossier-ouvert #curseur, body.dossier-ouvert #timeline .bornes { margin-left: 0; }
+  body.dossier-ouvert #timeline .piste,
+  body.dossier-ouvert #timeline .graduations { left: 0; transform: none; }
+}
+
+/* les paliers en toutes lettres tiennent sur la rangée */
+#dossier .risque .v-now { font-size: 13px; }
+#dossier .risque-pop .v-now { font-size: 14px; }
+#dossier .risque .v-vers { font-size: 11px; }

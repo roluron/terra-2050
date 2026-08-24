@@ -275,7 +275,7 @@
   <div id="dossier-detail"></div>
   <div id="dossier-ailleurs"></div>
   <div class="sources" id="dossier-sources"></div>
-  <div class="actions"><span class="fa-lien" id="dossier-partage"></span></div>
+  <div class="actions"><span class="fa-lien" id="dossier-partage"></span><span class="fa-lien" id="dossier-story"></span></div>
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
@@ -407,8 +407,8 @@ const TEXTES = {
     popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1).replace('.', ',')} M habitants → ${(p50 / 1e6).toFixed(1).replace('.', ',')} M en 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)} %, ONU)`,
     conseilPays: (verdict, an) => `En ${an}, le pays dans son ensemble : ${verdict} — la moyenne cache les écarts entre villes, ouvrez-les.`,
     meilleuresVilles: 'Les plus habitables du pays',
-    critere: { thermique: 'Confort thermique', eau: 'Ressource en eau', feux: 'Risque incendie',
-      mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Stabilité du climat' },
+    critere: { thermique: 'Chaleur extrême', eau: 'Stress hydrique', feux: 'Feux de forêt',
+      mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Bascule du climat' },
     legendeIndice: '／100 · habitabilité physique · défenses non comptées',
     verdict: { bon: 'Habitabilité solide', moyen: 'Habitabilité sous tension', dur: 'Habitabilité dégradée' },
     conseil: (n, faible, an, delta) => ({
@@ -420,7 +420,8 @@ const TEXTES = {
     trajectoire: 'Trajectoire de l’indice',
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
-    fermer: 'Fermer ×', partage: 'Partager ↗',
+    fermer: 'Fermer ×', partage: 'Partager le lien ↗', story: 'Image story ↗',
+    paliers: ['très improbable', 'improbable', 'possible', 'probable', 'très probable'],
     detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
     detFroid: j => `${j} jours de gel par an`,
     detEau: (v, pct, d) => `réserve en eau : déficit ${v}/100${v ? ` · plus sec que ${pct} % des villes` : ''}${d > 2 ? ` · s’aggrave de ${d} d’ici 2050` : ''}`,
@@ -481,8 +482,8 @@ const TEXTES = {
     popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1)}M people → ${(p50 / 1e6).toFixed(1)}M by 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)}%, UN)`,
     conseilPays: (verdict, an) => `In ${an}, the country as a whole: ${verdict} — the average hides gaps between cities, open them.`,
     meilleuresVilles: 'Most habitable in the country',
-    critere: { thermique: 'Thermal comfort', eau: 'Water resource', feux: 'Wildfire risk',
-      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate stability' },
+    critere: { thermique: 'Extreme heat', eau: 'Water stress', feux: 'Wildfire',
+      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
     legendeIndice: '／100 · physical habitability · defenses not counted',
     verdict: { bon: 'Solid habitability', moyen: 'Habitability under strain', dur: 'Degraded habitability' },
     conseil: (n, faible, an, delta) => ({
@@ -494,7 +495,8 @@ const TEXTES = {
     trajectoire: 'Index trajectory',
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
-    fermer: 'Close ×', partage: 'Share ↗',
+    fermer: 'Close ×', partage: 'Share link ↗', story: 'Story image ↗',
+    paliers: ['very unlikely', 'unlikely', 'possible', 'likely', 'very likely'],
     detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
     detFroid: j => `${j} freezing days a year`,
     detEau: (v, pct, d) => `water reserve: deficit ${v}/100${v ? ` · drier than ${pct}% of cities` : ''}${d > 2 ? ` · worsens by ${d} by 2050` : ''}`,
@@ -1360,6 +1362,14 @@ toile.addEventListener('pointerdown', () => {
   minuterieRepos = setTimeout(() => (controles.autoRotate = true), 4000);
 });
 
+/* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
+{
+  const an = document.getElementById('an'), tl = document.getElementById('timeline');
+  const caler = () => tl.style.setProperty('--l-an', an.offsetWidth + 'px');
+  new ResizeObserver(caler).observe(an);
+  caler(); document.fonts.ready.then(caler);
+}
+
 /* ---- recherche de lieu : filtrage instantané + vol caméra ---- */
 const champ = document.getElementById('champ-recherche');
 const liste = document.getElementById('resultats');
@@ -1371,6 +1381,7 @@ function ouvrirListe(){
   liste.style.width = champ.offsetWidth + 'px';
   liste.style.top = champ.offsetTop + 'px';
   liste.style.paddingTop = champ.offsetHeight + 'px';
+  liste.style.setProperty('--h-champ', champ.offsetHeight + 'px');
   const deja = liste.classList.contains('ouvert');
   liste.classList.add('ouvert');
   const hAvant = deja ? liste.getBoundingClientRect().height : champ.offsetHeight;
@@ -1670,6 +1681,10 @@ const scrimEl = document.getElementById('scrim-dossier');
 const odoIndice = new Odometre(document.getElementById('dossier-score'), 3);
 let lieuDossier = null;
 /* Diagnostic d'un lieu à une année : six critères + indice /100. */
+/* la note 0-100 lue comme un pourcentage inversait le sens (« River
+   flooding 100 » vert se lisait « inondation certaine ») : les rangées
+   parlent désormais en probabilité — vert = improbable */
+const motRisque = (t, n) => t.paliers[n >= 85 ? 0 : n >= 70 ? 1 : n >= 50 ? 2 : n >= 30 ? 3 : 4];
 function diagnostiquer(l, an){
   const t = Math.min(1, Math.max(0, (an - 2026) / 24));
   const criteres = CRITERES.map(c => {
@@ -1790,11 +1805,12 @@ function majDossierPays(l, an, t, dossierNeuf){
   conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
     const n = notes[i], fin = notes50[i], teinte = couleurNote(n);
     const vNow = rangee.querySelector('.v-now');
-    vNow.style.color = teinte; vNow.textContent = n;
+    vNow.style.color = teinte; vNow.textContent = motRisque(t, n);
     rangee.querySelector('.chemin').style.background = teinte;
     rangee.querySelector('.pt-now').style.background = teinte;
     rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
-    rangee.querySelector('.v-vers').textContent = an < 2050 && fin !== n ? `→ ${fin}` : '';
+    rangee.querySelector('.v-vers').textContent =
+      an < 2050 && motRisque(t, fin) !== motRisque(t, n) ? `→ ${motRisque(t, fin)}` : '';
     const bas = Math.min(n, fin), haut = Math.max(n, fin);
     const chemin = rangee.querySelector('.chemin');
     chemin.style.left = bas + '%'; chemin.style.width = Math.max(haut - bas, 0) + '%';
@@ -1940,12 +1956,13 @@ function majDossier(){
     rangee.querySelector('.chemin').style.background = teinte;
     rangee.querySelector('.pt-now').style.background = teinte;
     rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
-    if (vNow.textContent !== String(c.note)){
-      vNow.textContent = c.note;
+    const mot = motRisque(t, c.note), mot50 = motRisque(t, fin);
+    if (vNow.textContent !== mot){
+      vNow.textContent = mot;
       gsap.fromTo(vNow, { opacity: 0.35 }, { opacity: 1, duration: 0.4, ease: EASE });
     }
     rangee.querySelector('.v-vers').textContent =
-      an < 2050 && fin !== c.note ? `→ ${fin}` : '';
+      an < 2050 && mot50 !== mot ? `→ ${mot50}` : '';
     const bas = Math.min(c.note, fin), haut = Math.max(c.note, fin);
     const chemin = rangee.querySelector('.chemin');
     chemin.style.left = bas + '%';
@@ -2067,6 +2084,126 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
     SoundManager.play('ui_click');
   } catch (e) {}
 });
+/* =====================================================================
+   IMAGE STORY — un portrait 1080x1920 dessiné au canvas dans le système
+   fromanother (encre, creme, Lausanne, verdict Herbik) : partage natif
+   (Instagram dans la feuille iOS/Android), telechargement sinon.
+   ===================================================================== */
+async function genererStory(){
+  const l = lieuDossier; if (!l) return null;
+  const an = etat.annee, t = T(), pays = estPays(l);
+  const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
+  const indice50 = pays ? indicePays(l[1], 2050) : (l[7] ? indiceHabitabilite(l, 2050) : null);
+  await Promise.all(['600 340px "TWK Lausanne"', '500 36px "TWK Lausanne"',
+    '400 36px "TWK Lausanne"', 'italic 500 46px "Herbik"'].map(f => document.fonts.load(f)));
+  const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
+  const g = cv.getContext('2d');
+  const CREME = '#FFFDE2', MUTER = 'rgba(255,253,226,0.5)';
+  g.fillStyle = '#070706'; g.fillRect(0, 0, 1080, 1920);
+  const lueur = g.createRadialGradient(540, 2050, 100, 540, 2050, 980);
+  lueur.addColorStop(0, 'rgba(23,64,169,0.5)'); lueur.addColorStop(1, 'rgba(23,64,169,0)');
+  g.fillStyle = lueur; g.fillRect(0, 0, 1080, 1920);
+
+  // wordmark terra / 2050
+  g.font = '600 62px "TWK Lausanne"';
+  const seg = [['terra', CREME], [' / ', '#1740A9'], ['2050', CREME]];
+  let x = 540 - seg.reduce((a, [txt]) => a + g.measureText(txt).width, 0) / 2;
+  g.textAlign = 'left';
+  for (const [txt, col] of seg){ g.fillStyle = col; g.fillText(txt, x, 200); x += g.measureText(txt).width; }
+  g.textAlign = 'center';
+  g.letterSpacing = '10px'; g.font = '500 28px "TWK Lausanne"'; g.fillStyle = MUTER;
+  g.fillText((langue === 'en' ? 'HABITABILITY ' : 'HABITABILITÉ ') + an, 540, 320);
+  g.letterSpacing = '0px';
+
+  // le nom, ajusté à la largeur
+  let taille = 150; g.font = `600 ${taille}px "TWK Lausanne"`;
+  const nom = nomVille(l);
+  while (g.measureText(nom).width > 930 && taille > 54){ taille -= 6; g.font = `600 ${taille}px "TWK Lausanne"`; }
+  g.fillStyle = CREME; g.fillText(nom, 540, 545);
+  g.letterSpacing = '6px'; g.font = '500 28px "TWK Lausanne"'; g.fillStyle = MUTER;
+  g.fillText(pays ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1]).toUpperCase(), 540, 615);
+  g.letterSpacing = '0px';
+
+  // le score — ou la sentinelle
+  if (indice === null){
+    g.fillStyle = MUTER; g.font = '600 200px "TWK Lausanne"'; g.fillText('——', 540, 1020);
+    g.font = 'italic 500 46px "Herbik"'; g.fillText(t.sansDonnees, 540, 1130);
+  } else {
+    const teinte = couleurNote(indice);
+    g.font = '600 340px "TWK Lausanne"';
+    const lg = g.measureText(String(indice)).width;
+    g.textAlign = 'left'; g.fillStyle = teinte;
+    const x0 = 540 - (lg + 14 + 96) / 2;
+    g.fillText(String(indice), x0, 1050);
+    g.fillStyle = MUTER; g.font = '500 52px "TWK Lausanne"'; g.fillText('/100', x0 + lg + 14, 1050);
+    g.textAlign = 'center';
+    g.fillStyle = teinte; g.font = 'italic 500 46px "Herbik"';
+    g.fillText(t.verdict[niveauDe(indice)], 540, 1150);
+    if (indice50 !== null && an < 2050){
+      g.fillStyle = MUTER; g.font = '500 32px "TWK Lausanne"';
+      g.fillText(`${an} · ${indice}    →    2050 · ${indice50}`, 540, 1230);
+    }
+  }
+
+  // les trois axes les plus durs, en probabilité — ou la population du pays
+  let rangs = [];
+  if (pays){
+    const tAn = Math.min(1, Math.max(0, (an - 2026) / 24));
+    const ns = notesPays(l[1], tAn);
+    rangs = CRITERES.map((c, i) => ({ nom: t.critere[c.cle], note: ns[i] }));
+  } else if (l[7]){
+    rangs = diagnostiquer(l, an).criteres.map(c => ({ nom: t.critere[c.cle], note: c.note }));
+  }
+  rangs = rangs.sort((a, b) => a.note - b.note).slice(0, 3);
+  let y = 1390;
+  for (const r of rangs){
+    g.strokeStyle = 'rgba(255,253,226,0.14)'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
+    g.textAlign = 'left'; g.fillStyle = CREME; g.font = '400 36px "TWK Lausanne"';
+    g.fillText(r.nom, 120, y);
+    g.textAlign = 'right'; g.fillStyle = couleurNote(r.note); g.font = '500 36px "TWK Lausanne"';
+    g.fillText(motRisque(t, r.note), 960, y);
+    y += 92;
+  }
+  if (pays && PAYS_POP[l[1]]){
+    const pop = PAYS_POP[l[1]], pct = Math.round((pop[1] / pop[0] - 1) * 100);
+    g.strokeStyle = 'rgba(255,253,226,0.14)';
+    g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
+    g.textAlign = 'left'; g.fillStyle = CREME; g.font = '400 36px "TWK Lausanne"';
+    g.fillText(t.popLabel, 120, y);
+    g.textAlign = 'right';
+    g.fillStyle = pct <= -15 ? '#E0452E' : pct <= -4 ? '#E06A3C' : pct < 5 ? '#4D7CF2' : '#2E8F6A';
+    g.font = '500 36px "TWK Lausanne"';
+    g.fillText(`${pct > 0 ? '+' : '−'}${Math.abs(pct)} %`, 960, y);
+  }
+
+  g.textAlign = 'center'; g.letterSpacing = '5px';
+  g.fillStyle = MUTER; g.font = '500 26px "TWK Lausanne"';
+  g.fillText(langue === 'en' ? 'WILL YOUR CITY STILL BE LIVABLE IN 2050?'
+    : 'VOTRE VILLE SERA-T-ELLE ENCORE VIVABLE EN 2050 ?', 540, 1790);
+  g.letterSpacing = '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = '400 24px "TWK Lausanne"';
+  g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}`, 540, 1848);
+  g.letterSpacing = '0px';
+  return new Promise(res => cv.toBlob(res, 'image/png'));
+}
+document.getElementById('dossier-story').addEventListener('click', async () => {
+  if (!lieuDossier) return;
+  const blob = await genererStory(); if (!blob) return;
+  majLien();
+  const fichier = new File([blob],
+    `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.png`, { type: 'image/png' });
+  // feuille de partage native quand elle accepte les fichiers (mobile :
+  // Instagram y apparait) — telechargement direct sinon
+  if (navigator.canShare && navigator.canShare({ files: [fichier] })){
+    try { await navigator.share({ files: [fichier], title: 'TERRA/2050' });
+      SoundManager.play('ui_click'); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = fichier.name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  SoundManager.play('ui_click');
+});
+
 // à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
 function ouvrirDepuisLien(){
   const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?/);
@@ -2311,6 +2448,7 @@ function traduire(){
   champ.placeholder = t.chercher;
   if (lieuDossier) champ.value = nomVille(lieuDossier);
   document.getElementById('dossier-partage').textContent = t.partage;
+  document.getElementById('dossier-story').textContent = t.story;
   document.getElementById('dossier-sources').textContent = t.sources;
   boutonSon.textContent = t.son(!SoundManager.mute);
   document.getElementById('bouton-langue').innerHTML = langue === 'fr'
