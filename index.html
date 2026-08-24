@@ -160,7 +160,10 @@
 
 <!-- voile d'entrée : sert aussi de geste utilisateur pour l'audio -->
 <div id="voile">
-  <div class="v-champ" aria-hidden="true"><svg id="v-flux" viewBox="0 0 1000 420" preserveAspectRatio="none"></svg></div>
+  <!-- artwork fromanother : le soleil, en fond du voile -->
+  <div class="v-champ" aria-hidden="true">
+    <video id="v-video" src="assets/video/sun_02.mp4" muted loop playsinline autoplay preload="auto"></video>
+  </div>
   <div class="v-grain" aria-hidden="true"></div>
 
   <div class="v-centre">
@@ -786,6 +789,7 @@ try {
 } catch (e) {
   document.getElementById('secours').style.display = 'flex';
   document.getElementById('voile').classList.add('cache');
+  setTimeout(() => document.getElementById('v-video')?.pause(), 900);
   throw e;
 }
 moteur.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // DPR plafonné à 2
@@ -1541,6 +1545,19 @@ addEventListener('resize', () => {
     etatRecherche.w = largeurBarre(); appliquerLargeurRecherche();
   }
 });
+
+/* ---- soleil du voile : l'autoplay muet peut être différé par le
+   navigateur (onglet caché, économie d'énergie) — on relance au premier
+   geste et à la visibilité ---- */
+{
+  const v = document.getElementById('v-video');
+  if (v){
+    const lancer = () => v.paused && v.play().catch(() => {});
+    lancer();
+    addEventListener('pointermove', lancer, { once: true });
+    document.addEventListener('visibilitychange', () => !document.hidden && lancer());
+  }
+}
 
 /* ---- caret bloc façon terminal DOS : le placeholder disparaît au focus,
    un bloc plein clignote à la position d'insertion ---- */
