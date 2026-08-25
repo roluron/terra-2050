@@ -240,6 +240,22 @@
   <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
 </div>
 
+<div id="story-popup" hidden aria-modal="true" role="dialog">
+  <div class="pedago-carte story-carte">
+    <div class="pedago-titre"><span class="pastille-pedago" style="background:#4D7CF2"></span><span id="story-titre"></span></div>
+    <div class="story-corps">
+      <canvas id="story-apercu" width="540" height="960"></canvas>
+      <div class="story-opts">
+        <label class="story-opt"><input type="checkbox" data-opt="planete" checked><i></i><span></span></label>
+        <label class="story-opt"><input type="checkbox" data-opt="trajectoire" checked><i></i><span></span></label>
+        <label class="story-opt"><input type="checkbox" data-opt="axes" checked><i></i><span></span></label>
+        <label class="story-opt"><input type="checkbox" data-opt="population" checked><i></i><span></span></label>
+        <label class="story-opt"><input type="checkbox" data-opt="question" checked><i></i><span></span></label>
+        <button class="entree-pedago" id="story-partager"></button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="pedago" aria-modal="true" role="dialog" hidden>
   <div class="pedago-carte">
     <div class="pedago-titre"><span class="pastille-pedago"></span><span id="pedago-nom"></span></div>
@@ -420,6 +436,10 @@ const TEXTES = {
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     fermer: 'Fermer ×', partage: 'Partager le lien ↗', story: 'Image story ↗',
+    storyTitre: 'Composer la story', storyPartager: 'Partager ↗',
+    optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
+    optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
+    optQuestion: 'La question + le lien',
     paliers: ['très improbable', 'improbable', 'possible', 'probable', 'très probable'],
     detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
     detFroid: j => `${j} jours de gel par an`,
@@ -495,6 +515,10 @@ const TEXTES = {
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     fermer: 'Close ×', partage: 'Share link ↗', story: 'Story image ↗',
+    storyTitre: 'Compose your story', storyPartager: 'Share ↗',
+    optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
+    optAxes: 'The hardest risks', optPop: 'Country population',
+    optQuestion: 'The question + link',
     paliers: ['very unlikely', 'unlikely', 'possible', 'likely', 'very likely'],
     detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
     detFroid: j => `${j} freezing days a year`,
@@ -1378,6 +1402,7 @@ let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
 const etatListe = { anim: null };
 function ouvrirListe(){
   liste.style.width = champ.offsetWidth + 'px';
+  liste.style.left = champ.offsetLeft + 'px'; liste.style.right = 'auto';
   liste.style.top = champ.offsetTop + 'px';
   liste.style.paddingTop = champ.offsetHeight + 'px';
   const deja = liste.classList.contains('ouvert');
@@ -2043,9 +2068,16 @@ function ouvrirDossier(l){
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
+  majCentreDossier();
   poserMarqueur(l);
   majLien();
 }
+function majCentreDossier(){
+  const r = dossierEl.getBoundingClientRect();
+  document.documentElement.style.setProperty('--centre-dossier',
+    (innerWidth - (r.left + r.width / 2)) + 'px');
+}
+addEventListener('resize', () => document.body.classList.contains('dossier-ouvert') && majCentreDossier());
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(){
   lieuDossier = null;
@@ -2105,7 +2137,7 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
    fromanother (encre, creme, Lausanne, verdict Herbik) : partage natif
    (Instagram dans la feuille iOS/Android), telechargement sinon.
    ===================================================================== */
-async function genererStory(){
+async function genererStory(opts){
   const l = lieuDossier; if (!l) return null;
   const an = etat.annee, t = T(), pays = estPays(l);
   const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
@@ -2116,6 +2148,16 @@ async function genererStory(){
   const g = cv.getContext('2d');
   const CREME = '#FFFDE2', MUTER = 'rgba(255,253,226,0.5)';
   g.fillStyle = '#070706'; g.fillRect(0, 0, 1080, 1920);
+  if (opts.planete && toile.width > 0){
+    // la scène (sans post) rendue à l'instant, recadrée en couverture,
+    // puis voilée pour la lisibilité
+    moteur.setRenderTarget(null);
+    moteur.render(scene, camera);
+    const k = Math.max(1080 / toile.width, 1920 / toile.height);
+    const cw = 1080 / k, ch = 1920 / k;
+    g.drawImage(toile, (toile.width - cw) / 2, (toile.height - ch) / 2, cw, ch, 0, 0, 1080, 1920);
+    g.fillStyle = 'rgba(4, 4, 6, 0.58)'; g.fillRect(0, 0, 1080, 1920);
+  }
   const lueur = g.createRadialGradient(540, 2050, 100, 540, 2050, 980);
   lueur.addColorStop(0, 'rgba(23,64,169,0.5)'); lueur.addColorStop(1, 'rgba(23,64,169,0)');
   g.fillStyle = lueur; g.fillRect(0, 0, 1080, 1920);
@@ -2155,7 +2197,7 @@ async function genererStory(){
     g.textAlign = 'center';
     g.fillStyle = teinte; g.font = 'italic 500 46px "Herbik"';
     g.fillText(t.verdict[niveauDe(indice)], 540, 1150);
-    if (indice50 !== null && an < 2050){
+    if (opts.trajectoire && indice50 !== null && an < 2050){
       g.fillStyle = MUTER; g.font = '500 32px "TWK Lausanne"';
       g.fillText(`${an} · ${indice}    →    2050 · ${indice50}`, 540, 1230);
     }
@@ -2170,7 +2212,7 @@ async function genererStory(){
   } else if (l[7]){
     rangs = diagnostiquer(l, an).criteres.map(c => ({ nom: t.critere[c.cle], note: c.note }));
   }
-  rangs = rangs.sort((a, b) => a.note - b.note).slice(0, 3);
+  rangs = opts.axes ? rangs.sort((a, b) => a.note - b.note).slice(0, 3) : [];
   let y = 1390;
   for (const r of rangs){
     g.strokeStyle = 'rgba(255,253,226,0.14)'; g.lineWidth = 1;
@@ -2181,7 +2223,7 @@ async function genererStory(){
     g.fillText(motRisque(t, r.note), 960, y);
     y += 92;
   }
-  if (pays && PAYS_POP[l[1]]){
+  if (opts.population && PAYS_POP[l[1]]){
     const pop = PAYS_POP[l[1]], pct = Math.round((pop[1] / pop[0] - 1) * 100);
     g.strokeStyle = 'rgba(255,253,226,0.14)';
     g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
@@ -2193,18 +2235,59 @@ async function genererStory(){
     g.fillText(`${pct > 0 ? '+' : '−'}${Math.abs(pct)} %`, 960, y);
   }
 
-  g.textAlign = 'center'; g.letterSpacing = '5px';
-  g.fillStyle = MUTER; g.font = '500 26px "TWK Lausanne"';
-  g.fillText(langue === 'en' ? 'WILL YOUR CITY STILL BE LIVABLE IN 2050?'
-    : 'VOTRE VILLE SERA-T-ELLE ENCORE VIVABLE EN 2050 ?', 540, 1790);
-  g.letterSpacing = '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = '400 24px "TWK Lausanne"';
-  g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}`, 540, 1848);
-  g.letterSpacing = '0px';
-  return new Promise(res => cv.toBlob(res, 'image/png'));
+  if (opts.question){
+    g.textAlign = 'center'; g.letterSpacing = '5px';
+    g.fillStyle = MUTER; g.font = '500 26px "TWK Lausanne"';
+    g.fillText(langue === 'en' ? 'WILL YOUR CITY STILL BE LIVABLE IN 2050?'
+      : 'VOTRE VILLE SERA-T-ELLE ENCORE VIVABLE EN 2050 ?', 540, 1790);
+    g.letterSpacing = '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = '400 24px "TWK Lausanne"';
+    g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}`, 540, 1848);
+    g.letterSpacing = '0px';
+  }
+  return cv;
 }
-document.getElementById('dossier-story').addEventListener('click', async () => {
+/* le composeur : cocher les données, aperçu vivant, puis partager */
+const storyPopup = document.getElementById('story-popup');
+const storyApercu = document.getElementById('story-apercu');
+let storyOuvert = false, storyGen = 0;
+let optsStory = { planete: true, trajectoire: true, axes: true, population: true, question: true };
+try { optsStory = { ...optsStory, ...JSON.parse(localStorage.getItem('terra-story-opts') || '{}') }; } catch (e) {}
+storyPopup.querySelectorAll('input[data-opt]').forEach(ch => {
+  ch.checked = optsStory[ch.dataset.opt];
+  ch.addEventListener('change', () => {
+    optsStory[ch.dataset.opt] = ch.checked;
+    try { localStorage.setItem('terra-story-opts', JSON.stringify(optsStory)); } catch (e) {}
+    majApercuStory();
+  });
+});
+async function majApercuStory(){
+  const jeton = ++storyGen;
+  const cv = await genererStory(optsStory);
+  if (!cv || jeton !== storyGen) return;
+  const g = storyApercu.getContext('2d');
+  g.clearRect(0, 0, 540, 960);
+  g.drawImage(cv, 0, 0, 540, 960);
+}
+function ouvrirStory(){
   if (!lieuDossier) return;
-  const blob = await genererStory(); if (!blob) return;
+  const t = T();
+  document.getElementById('story-titre').textContent = t.storyTitre;
+  const libelles = [t.optPlanete, t.optTrajectoire, t.optAxes, t.optPop, t.optQuestion];
+  storyPopup.querySelectorAll('.story-opt span').forEach((sp, i) => (sp.textContent = libelles[i]));
+  document.getElementById('story-partager').textContent = t.storyPartager;
+  storyPopup.hidden = false; storyOuvert = true;
+  gsap.fromTo('.story-carte', { opacity: 0, scale: 0.94, y: 8 },
+    { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)', clearProps: 'transform' });
+  majApercuStory();
+  SoundManager.play('ui_click');
+}
+function fermerStory(){ storyPopup.hidden = true; storyOuvert = false; }
+document.getElementById('dossier-story').addEventListener('click', ouvrirStory);
+storyPopup.addEventListener('click', e => { if (e.target === storyPopup) fermerStory(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && storyOuvert) fermerStory(); });
+document.getElementById('story-partager').addEventListener('click', async () => {
+  const cv = await genererStory(optsStory); if (!cv) return;
+  const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
   majLien();
   const fichier = new File([blob],
     `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.png`, { type: 'image/png' });
@@ -2212,12 +2295,12 @@ document.getElementById('dossier-story').addEventListener('click', async () => {
   // Instagram y apparait) — telechargement direct sinon
   if (navigator.canShare && navigator.canShare({ files: [fichier] })){
     try { await navigator.share({ files: [fichier], title: 'TERRA/2050' });
-      SoundManager.play('ui_click'); return; } catch (e) { if (e.name === 'AbortError') return; }
+      SoundManager.play('ui_click'); fermerStory(); return; } catch (e) { if (e.name === 'AbortError') return; }
   }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = fichier.name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  SoundManager.play('ui_click');
+  SoundManager.play('ui_click'); fermerStory();
 });
 
 // à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
@@ -2290,7 +2373,7 @@ document.getElementById('dossier-croix').addEventListener('click', () => { ferme
 addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); champ.focus(); champ.select(); }
   else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ
-           && !surfaceAuDessus()) fermerDossier();
+           && !storyOuvert && !surfaceAuDessus()) fermerDossier();
 });
 
 /* =====================================================================
@@ -2700,6 +2783,7 @@ function boucle(){
   moteur.setRenderTarget(null);
   matPost.uniforms.tScene.value = cibles[indiceCible].texture;
   moteur.render(scenePost, cameraPost);
+  majVerre();
 
   // HUD (mis à jour 2×/s seulement — pas de layout thrash)
   if (hud.classList.contains('visible') && t - dernierHUD > 0.5){

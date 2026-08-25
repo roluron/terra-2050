@@ -124,14 +124,14 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 #dossier .verdict.faible .point { background: #2E8F6A; }
 #dossier .verdict.moderee .point { background: #A07830; }
 #dossier .verdict.forte .point { background: #E06A3C; }
-#dossier-risques { flex: 1 0 auto; min-height: 140px; overflow-y: visible; }
+#dossier-risques { flex: none; min-height: 0; overflow-y: visible; }
 #dossier .risque { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
 #dossier .risque .ligne { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
 #dossier .risque .pourcent { font-size: 13px; }
 #dossier .risque .barre { height: 2px; background: var(--hairline); }
 #dossier .risque .barre i { display: block; height: 2px; transition: width 600ms var(--ease); }
 #dossier .risque .detail { font-size: 12px; font-weight: 300; color: var(--muter); }
-#dossier .sources { margin-top: auto; flex: none; font-size: 10px; letter-spacing: 0.1em; color: var(--muter); text-transform: uppercase; }
+#dossier .sources { margin-top: 0; flex: none; font-size: 10px; letter-spacing: 0.1em; color: var(--muter); text-transform: uppercase; }
 #dossier .actions { display: flex; gap: 22px; font-size: 12px; font-weight: 500; margin-top: 12px; }
 #dossier .actions span { cursor: pointer; border-bottom: 1px solid var(--hairline); padding-bottom: 3px; transition: opacity 150ms ease; }
 #dossier .actions span:hover { opacity: 0.65; }
@@ -982,3 +982,41 @@ body.loupe #mesure-recherche { display: none; }
 #dossier .delta-score { margin-top: 2px; padding-top: 7px;
   border-top: 1px solid var(--filet); }
 #dossier .delta-score:empty { display: none; }
+
+
+/* =====================================================================
+   BARRE CENTRÉE SUR LE DOSSIER — quand la fiche est ouverte, la barre de
+   recherche s'aligne sur l'axe de la colonne ville (--centre-dossier est
+   posé en JS : distance bord droit → centre du panneau).
+   ===================================================================== */
+#recherche { transition: padding-right 0.6s var(--ease); }
+body.dossier-ouvert #recherche {
+  padding-right: max(24px, calc(var(--centre-dossier, 204px) - 126px)); }
+
+/* =====================================================================
+   COMPOSEUR DE STORY — pop-up en verre : aperçu vivant à gauche, les
+   données à cocher à droite, la planète en fond en option.
+   ===================================================================== */
+#story-popup { position: fixed; inset: 0; z-index: 70;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.35); }
+#story-popup[hidden] { display: none; }
+.story-carte { width: min(620px, 92vw); }
+.story-corps { display: flex; gap: 28px; margin-top: 20px; align-items: stretch; }
+#story-apercu { width: 240px; height: 427px; border-radius: 14px; flex: none;
+  border: 1px solid rgba(255, 253, 226, 0.16); background: #070706; }
+.story-opts { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.story-opt { display: flex; align-items: center; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 253, 226, 0.1); cursor: pointer;
+  font-size: 13px; letter-spacing: -0.01em; color: rgba(255, 253, 226, 0.88); }
+.story-opt input { display: none; }
+.story-opt i { width: 9px; height: 9px; border-radius: 50%; flex: none;
+  border: 1px solid rgba(255, 253, 226, 0.45);
+  transition: background 0.25s var(--ease), border-color 0.25s var(--ease); }
+.story-opt input:checked + i { background: var(--texte); border-color: var(--texte); }
+#story-partager { margin-top: auto; align-self: flex-start; }
+@media (max-width: 720px) {
+  .story-corps { flex-direction: column; align-items: center; }
+  #story-apercu { width: 180px; height: 320px; }
+  .story-opts { width: 100%; }
+}
