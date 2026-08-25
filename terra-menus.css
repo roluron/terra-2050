@@ -212,7 +212,7 @@ body.dossier-ouvert #timeline { left: calc((100% - min(440px, 34vw) - 64px) / 2)
 /* Le soulignement .fa-lien remplace les bordures statiques */
 #dossier .actions span.fa-lien { border-bottom: none; }
 /* Le voile s'efface vite : c'est le rideau WebGL qui porte la transition */
-#voile { transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease); }
+#voile { transition: opacity 1.4s var(--ease), visibility 1.4s var(--ease); }
 
 /* Jauge de chargement : même surtitre Herbik italic que le reste du voile */
 #voile .jauge { font-family: var(--herbik); font-style: italic; font-weight: 500;
