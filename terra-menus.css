@@ -696,15 +696,16 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
   #timeline .an { font-size: 56px; white-space: nowrap; }
   #dossier {
     right: 0; left: 0; top: auto; bottom: 0; width: 100%;
-    max-height: 62vh; padding: 22px 20px calc(18px + env(safe-area-inset-bottom));
+    max-height: 62vh; max-height: 62dvh;
+    padding: 22px 20px calc(18px + env(safe-area-inset-bottom));
     background: rgba(0, 0, 0, 0.82);
     border-top: 1px solid var(--filet);
   }
   #scrim-dossier { background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 40%, transparent 70%); }
   #dossier .lieu { font-size: 34px; }
   #dossier .score .valeur { font-size: 52px; }
-  #dossier-croix { top: auto; bottom: calc(62vh - 46px); right: 16px; }
-  body.dossier-ouvert #timeline { bottom: calc(62vh + 10px); }
+  #dossier-croix { top: auto; bottom: calc(62vh - 46px); bottom: calc(62dvh - 46px); right: 16px; }
+  body.dossier-ouvert #timeline { bottom: calc(62vh + 10px); bottom: calc(62dvh + 10px); }
   #champ-recherche { width: min(220px, 56vw); }
 }
 

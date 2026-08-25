@@ -1382,7 +1382,7 @@ toile.addEventListener('pointerdown', () => {
   clearTimeout(minuterieRepos);
 });toile.addEventListener('pointerup', () => {
   clearTimeout(minuterieRepos);
-  minuterieRepos = setTimeout(() => (controles.autoRotate = true), 4000);
+  minuterieRepos = setTimeout(() => { if (!lieuDossier) controles.autoRotate = true; }, 4000);
 });
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
@@ -1436,7 +1436,8 @@ function fermerListe(){
 /* dernières villes choisies — seules candidates au focus sur champ vide */
 let recents = [];
 try { recents = JSON.parse(localStorage.getItem('terra-recents') || '[]'); } catch (e) {}
-const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '')
+  .toLowerCase().replace(/[-'’]/g, ' ');
 
 function afficherResultats(){
   const q = normaliser(champ.value.trim());
@@ -1470,8 +1471,9 @@ function afficherResultats(){
   }
   for (const l of LIEUX){
     const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
-    if (a.startsWith(q) || b.startsWith(q)) debut.push(l);
-    else if (a.includes(q) || b.includes(q)) dedans.push(l);
+    const c2 = l[8] ? normaliser(l[8]) : '';
+    if (a.startsWith(q) || b.startsWith(q) || (c2 && c2.startsWith(q))) debut.push(l);
+    else if (a.includes(q) || b.includes(q) || (c2 && c2.includes(q))) dedans.push(l);
     if (debut.length > 40) break;
   }
   resultatsActuels = debut.concat(dedans).slice(0, 7);
@@ -1507,7 +1509,7 @@ champ.addEventListener('input', afficherResultats);
 // reprendre une recherche = tourner la page : le dossier ouvert se ferme et
 // le nom en place est sélectionné pour être remplacé au premier caractère
 champ.addEventListener('focus', () => {
-  if (lieuDossier) fermerDossier();
+  if (lieuDossier) fermerDossier(true);
   if (champ.value) champ.select();
 });
 champ.addEventListener('focus', afficherResultats);
@@ -2088,9 +2090,9 @@ function majCentreDossier(){
 }
 addEventListener('resize', () => document.body.classList.contains('dossier-ouvert') && majCentreDossier());
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
-function fermerDossier(){
+function fermerDossier(depuisChamp){
   lieuDossier = null;
-  champ.value = '';                 // la barre se vide et la loupe revient
+  if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
   // la terre reprend son cadrage d'arrivée
   if (volEnCours) volEnCours.kill();
   gsap.killTweensOf(camera.position);
@@ -2099,10 +2101,12 @@ function fermerDossier(){
     onUpdate: () => camera.lookAt(0, 0, 0),
     onComplete: () => { controles.autoRotate = true; },
   });
-  if (document.activeElement === champ) champ.blur();
-  fermerListe();
+  if (!depuisChamp){
+    if (document.activeElement === champ) champ.blur();
+    fermerListe();
+    setTimeout(replierRecherche, 180);
+  }
   clearTimeout(minuterieRepos);
-  setTimeout(replierRecherche, 180);
   retirerMarqueur();
   history.replaceState(null, '', location.pathname);
   dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
@@ -2121,7 +2125,7 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
   if (!lieuDossier) return;
   majLien();
   const l = lieuDossier, an = etat.annee;
-  const indice = l[7] ? indiceHabitabilite(l, an) : null;
+  const indice = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const t = T();
   const texte = indice === null
     ? `${nomVille(l)} — TERRA/2050`
@@ -2293,7 +2297,9 @@ function ouvrirStory(){
 function fermerStory(){ storyPopup.hidden = true; storyOuvert = false; }
 document.getElementById('dossier-story').addEventListener('click', ouvrirStory);
 storyPopup.addEventListener('click', e => { if (e.target === storyPopup) fermerStory(); });
-addEventListener('keydown', e => { if (e.key === 'Escape' && storyOuvert) fermerStory(); });
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && storyOuvert){ fermerStory(); e.stopImmediatePropagation(); }
+});
 document.getElementById('story-partager').addEventListener('click', async () => {
   const cv = await genererStory(optsStory); if (!cv) return;
   const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
@@ -2604,7 +2610,7 @@ Promise.all([
         pen50[k] = dv.getUint8(o + 10 + k2) / 250;
       });
       const pop = dv.getUint8(o + 23);
-      return [n[0], n[1],
+      const rangee = [n[0], n[1],
         dv.getInt16(o, true) / 100, dv.getInt16(o + 2, true) / 100,
         n[2], n[3], n[4],
         nodata ? null :
@@ -2613,6 +2619,8 @@ Promise.all([
                  med: dv.getUint16(o + 18, true) / 10, sub: dv.getUint8(o + 20) / 100 },
           crue: { f: dv.getUint8(o + 21) / 250, d90: dv.getUint8(o + 22) / 10 },
           pop50: pop === 128 ? null : pop - 128 }];
+      rangee[8] = n[5] || '';        // alias GeoNames : cherchable, jamais affiché
+      return rangee;
     });
   }),
   fetch('./data/calibration.json').then(r => r.json()).then(j => { CALIBRATION = j; }),
@@ -2677,7 +2685,7 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   // déjà lancé un vol vers une ville (les deux tweens se battaient)
   if (!lieuDossier){
     gsap.killTweensOf(camera.position);
-    gsap.from(camera.position, { x: 0.35, y: 0.55, z: 6.2, duration: 2, ease: EASE });
+    volEnCours = gsap.from(camera.position, { x: 0.35, y: 0.55, z: 6.2, duration: 2, ease: EASE });
   }
   // le rideau se dissout par le bruit, en même temps que le recul caméra
   gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
