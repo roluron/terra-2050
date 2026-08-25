@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta property="og:title" content="TERRA／2050 — Will your city still be livable in 2050?">
 <meta property="og:description" content="34,099 cities · one habitability index built only from open scientific data (WorldClim, CMIP6, ETOPO, JRC, UN). Search yours.">
-<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og.jpg">
+<meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <title>TERRA//2050 — Résilience Climatique</title>
@@ -446,6 +447,9 @@ const TEXTES = {
     frappeChaud: (j, an) => `${j} jours d’indice de chaleur au-dessus de 32 °C par an en ${an}`,
     frappeMer: f => `${f} % des terres sous la ligne de submersion 2050`,
     frappeFleuves: f => `${f} % du territoire en zone de crue centennale`,
+    frappeEau: p => `plus aride que ${p} % des villes du monde`,
+    frappeFeux: p => `une météo de feu au-dessus de ${p} % des villes`,
+    frappeStab: p => `un climat qui bascule plus vite que ${p} % des villes`,
     accrocheTz: n => `${n} — c’est chez vous ?`,
     accrocheDefi: 'Et ta ville ? Compare.',
     distanceAn: n => n <= 0 ? 'aujourd’hui' : n === 1 ? 'dans 1 an' : `dans ${n} ans`,
@@ -531,6 +535,9 @@ const TEXTES = {
     frappeChaud: (j, an) => `${j} days a year above a 32 °C heat index in ${an}`,
     frappeMer: f => `${f}% of the land below the 2050 flood line`,
     frappeFleuves: f => `${f}% of the area inside the 100-yr flood zone`,
+    frappeEau: p => `drier than ${p}% of the world’s cities`,
+    frappeFeux: p => `fire weather above ${p}% of cities`,
+    frappeStab: p => `a climate shifting faster than ${p}% of cities`,
     accrocheTz: n => `${n} — is this home?`,
     accrocheDefi: 'And your city? Compare.',
     distanceAn: n => n <= 0 ? 'today' : n === 1 ? 'in 1 year' : `in ${n} years`,
@@ -2067,6 +2074,9 @@ function majDossier(){
       if (pire.cle === 'thermique') txt = t.frappeChaud(Math.round(lireT('a', 0, l[2], l[3], tAn) * 300), an);
       else if (pire.cle === 'mer' && l[7] && l[7].mer) txt = t.frappeMer(Math.round(l[7].mer.f50 * 100));
       else if (pire.cle === 'fleuves' && l[7] && l[7].crue) txt = t.frappeFleuves(Math.round(l[7].crue.f * 100));
+      else if (pire.cle === 'eau') txt = t.frappeEau(Math.round(percentile('eau', penVille(l, 'eau', tAn)) * 100));
+      else if (pire.cle === 'feux') txt = t.frappeFeux(Math.round(percentile('feux', penVille(l, 'feux', tAn)) * 100));
+      else if (pire.cle === 'stabilite') txt = t.frappeStab(Math.round(percentile('stabilite', penVille(l, 'stabilite', tAn)) * 100));
     }
     fr.textContent = txt;
     fr.style.color = txt ? couleurNote(pire.note) : '';
