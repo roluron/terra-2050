@@ -409,7 +409,7 @@ const TEXTES = {
       secheresse: 'Ici, il ne pleut plus assez par rapport à la chaleur. Les réserves d’eau baissent année après année : moins d’eau pour boire, arroser, cultiver.',
       mer: 'Ces terres sont si basses que la mer peut les recouvrir pendant une grosse tempête. La mer monte, et par endroits le sol s’enfonce en plus. Les digues ne sont pas comptées : on montre le terrain tel qu’il est.',
       fleuves: 'Quand une très grosse pluie arrive, les rivières débordent. La carte montre jusqu’où l’eau peut aller. Une inondation comme ça a environ 1 chance sur 5 d’arriver d’ici 2050.',
-      stabilite: 'Un endroit où il fait bon vivre, c’est aussi un endroit qui ne change pas trop vite. En violet : là où le climat de 2050 ne ressemblera plus du tout à celui d’aujourd’hui.',
+      stabilite: 'Un endroit où il fait bon vivre, c’est aussi un endroit qui ne change pas trop vite. En violet : là où le climat s’est le plus éloigné de celui des années 1970-2000 — c’est l’Arctique qui bouge le plus vite.',
       declin: 'Dans les pays en gris-mauve, il y aura moins d’habitants en 2050 qu’aujourd’hui. Moins de monde, c’est souvent moins de services, d’écoles, de travail — mais aussi plus de place. Les chiffres viennent des Nations unies.',
     },
     infoSource: {
@@ -418,7 +418,7 @@ const TEXTES = {
       secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de De Martonne',
       mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (subsidence VLM)',
       fleuves: 'JRC Global River Flood Hazard · crue centennale',
-      stabilite: 'Écart CMIP6 2026→2050, quatre canaux combinés',
+      stabilite: 'Écart au climat 1970-2000 : température moyenne et précipitations, WorldClim ＋ CMIP6',
       declin: 'ONU WPP 2024 (médiane) · Our World in Data · Natural Earth',
     },
     pedagoOk: 'Compris',
@@ -463,7 +463,7 @@ const TEXTES = {
     detFeux: (v, pct, d) => `météo propice aux feux ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
     detMer: (f, f5, med, sub, r) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous 5 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ 2 m de surcote · digues non comptées · relief ETOPO 1,85 km : un liseré côtier étroit échappe à la mesure`,
     detFleuves: (f, d90, r) => `crue centennale (1 %/an · ≈22 % d’ici 2050) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
-    detStab: v => `d’ici 2050, le climat local dérive de ${v} points (0 = stable) · mesure la vitesse du basculement, pas son niveau`,
+    detStab: v => `le climat local a déjà dérivé de ${v} °C par rapport à 1970-2000 · température moyenne et précipitations, WorldClim ＋ CMIP6`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (scénario émissions élevées, un seul modèle) · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
   },
   en: {
@@ -497,7 +497,7 @@ const TEXTES = {
       secheresse: 'Here, it no longer rains enough for how hot it is. Water reserves drop year after year: less water to drink, to water, to grow food.',
       mer: 'This land is so low that the sea can cover it during a big storm. The sea is rising, and in some places the ground is also sinking. Sea walls are not counted: we show the land as it is.',
       fleuves: 'When a really big rain comes, rivers overflow. The map shows how far the water can reach. A flood like that has about a 1-in-5 chance of happening by 2050.',
-      stabilite: 'A good place to live is also a place that doesn’t change too fast. In violet: where the climate of 2050 will no longer look anything like today’s.',
+      stabilite: 'A good place to live is also a place that doesn’t change too fast. In violet: where the climate has drifted furthest from the 1970-2000 baseline — the Arctic moves fastest of all.',
       declin: 'In the grey-mauve countries, there will be fewer people in 2050 than today. Fewer people often means fewer services, schools, jobs — but also more room. The numbers come from the United Nations.',
     },
     infoSource: {
@@ -506,7 +506,7 @@ const TEXTES = {
       secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · De Martonne index',
       mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (VLM subsidence)',
       fleuves: 'JRC Global River Flood Hazard · 100-year flood',
-      stabilite: 'CMIP6 2026→2050 drift, four channels combined',
+      stabilite: 'Drift from the 1970-2000 climate: mean temperature and rainfall, WorldClim + CMIP6',
       declin: 'UN WPP 2024 (medium) · Our World in Data · Natural Earth',
     },
     pedagoOk: 'Got it',
@@ -551,7 +551,7 @@ const TEXTES = {
     detFeux: (v, pct, d) => `fire-prone weather ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
     detMer: (f, f5, med, sub, r) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below 5 m · median elevation ${med} m · line = 2050 level + 2 m surge · defenses not counted · ETOPO relief at 1.85 km: a narrow coastal strip escapes measurement`,
     detFleuves: (f, d90, r) => `100-year flood (1%/yr · ≈22% by 2050): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
-    detStab: v => `by 2050 the local climate drifts by ${v} points (0 = stable) · measures how fast it shifts, not its level`,
+    detStab: v => `the local climate has already drifted ${v} °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (high-emissions scenario, single model) · NOAA ETOPO 2022 · JRC 100-yr flood · Oelsmann 2025 (VLM subsidence) · Natural Earth · GeoNames',
   },
 };
@@ -673,7 +673,8 @@ const CRITERES = [
       return c ? T().detFleuves(Math.round(c.f * 100), c.d90, rayonVille(l)) : '';
     } },
   { cle: 'stabilite', poids: 0.12, couleur: '#2E8F6A',
-    detail: (l) => T().detStab(Math.round(penVille(l, 'stabilite', 1) / 2.2 * 100)) },
+    detail: (l, t) => T().detStab(
+      ((lire('d', 0, l[2], l[3]) * (1 - t) + lire('d', 1, l[2], l[3]) * t) * 8).toFixed(1)) },
 ];
 for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
 /* La couleur dit la note, pas le critère : vert super, bleu bien, jaune
@@ -870,7 +871,10 @@ const texChargeur = new THREE.TextureLoader(chargeur);
 // 4K : même coût de rendu (mips), +24 Mo GPU — net sur Retina. Le masque est
 // régénéré depuis ETOPO 60'' : côtes bien plus précises que l'ancien 2048.
 const texCouleur = texChargeur.load('./assets/textures/earth_color_4096.jpg'); // NASA Blue Marble (domaine public)
-const texMasque  = texChargeur.load('./assets/textures/earth_mask_4096.png');  // masque terre/océan (ETOPO)
+// masque terre/mer derive de GEBCO 15" : la mer est l'eau RELIEE a l'ocean,
+// donc les terres sous le niveau marin (depression caspienne, polders) ne sont
+// plus peintes en mer — Astrakhan ne flotte plus au milieu de l'eau
+const texMasque  = texChargeur.load('./assets/textures/earth_mask_8640.png');
 texCouleur.anisotropy = 8;   // netteté aux angles rasants, quasi gratuit
 texMasque.anisotropy = 4;
 texCouleur.colorSpace = THREE.SRGBColorSpace;
@@ -891,6 +895,7 @@ const texA2050 = chargerGrille('./data/grille_a_2050.png');
 const texB2026 = chargerGrille('./data/grille_b_2026.png');
 const texB2050 = chargerGrille('./data/grille_b_2050.png');
 const texC     = chargerGrille('./data/grille_c.png');
+const texD     = chargerGrille('./data/grille_d.png');   // derive climatique reelle (r = 2026, g = 2050)
 
 const uniformsGlobe = {
   uMap:        { value: texCouleur },
@@ -905,7 +910,7 @@ const uniformsGlobe = {
   uIndice: { value: 1 },     // teinte ambiante de sévérité quand aucun calque
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
   uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
-  uC:     { value: texC },
+  uC:     { value: texC }, uD: { value: texD },
 };
 
 const matGlobe = new THREE.ShaderMaterial({
@@ -923,7 +928,7 @@ const matGlobe = new THREE.ShaderMaterial({
     uniform sampler2D uMap; uniform sampler2D uMasque;
     uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice;
     uniform vec3 uSoleil;
-    uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC;
+    uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC, uD;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
 
     // hachage & bruit 3D (bruit de valeur, 2 octaves — suffisant à cette échelle)
@@ -1004,11 +1009,12 @@ const matGlobe = new THREE.ShaderMaterial({
       // 2026, toutes grilles confondues — mêmes pondérations que le critère
       // « stabilité » du dossier. Lueur violette qui respire lentement.
       if (uStabilite > 0.001){
-        float inst = (abs(a50.r - a26.r) * 1.0 + abs(a50.b - a26.b) * 0.8
-                    + abs(b50.r - b26.r) * 0.6 + abs(b50.g - b26.g) * 1.2) / 3.6;
-        // dynamique réelle de l'écart : médiane ~0.001, p90 ~0.024, p99 ~0.056.
-        // Le seuil suit ces percentiles, pas une échelle 0-1 imaginaire.
-        float m = smoothstep(0.006, 0.055, inst) * terre;
+        /* dérive du climat lui-même (température moyenne et précipitations)
+           depuis la période 1970-2000, et non plus la variation d'indicateurs
+           à seuil qui saturaient et rendaient l'Arctique muet. */
+        vec2 gd = texture2D(uD, vUv).rg;
+        float inst = mix(gd.r, gd.g, P) * 8.0;          // °C d'écart au climat 1970-2000
+        float m = smoothstep(1.0, 3.5, inst) * terre;
         float souffle = 0.72 + 0.28 * sin(uTemps * 1.1 + inst * 8.0);
         vec3 violet = vec3(0.565, 0.365, 1.0);
         col = mix(col, violet * souffle, m * uStabilite * (0.45 + 0.40 * P));
@@ -1948,9 +1954,9 @@ function majDossierPays(l, an, t, dossierNeuf){
     rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
     rangee.querySelector('.v-vers').textContent =
       an < 2050 && motRisque(t, fin) !== motRisque(t, n) ? `→ ${motRisque(t, fin)}` : '';
-    const bas = Math.min(n, fin), haut = Math.max(n, fin);
+    // barre pleine : plus elle est remplie, mieux la ville se porte
     const chemin = rangee.querySelector('.chemin');
-    chemin.style.left = bas + '%'; chemin.style.width = Math.max(haut - bas, 0) + '%';
+    chemin.style.left = '0%'; chemin.style.width = n + '%';
     rangee.querySelector('.pt-now').style.left = n + '%';
     rangee.querySelector('.pt-fin').style.left = fin + '%';
     rangee.dataset.nom = t.critere[CRITERES[i].cle];
@@ -2138,10 +2144,10 @@ function majDossier(){
     }
     rangee.querySelector('.v-vers').textContent =
       an < 2050 && mot50 !== mot ? `→ ${mot50}` : '';
-    const bas = Math.min(c.note, fin), haut = Math.max(c.note, fin);
+    // barre pleine : plus elle est remplie, mieux la ville se porte
     const chemin = rangee.querySelector('.chemin');
-    chemin.style.left = bas + '%';
-    chemin.style.width = Math.max(haut - bas, 0) + '%';
+    chemin.style.left = '0%';
+    chemin.style.width = c.note + '%';
     rangee.querySelector('.pt-now').style.left = c.note + '%';
     rangee.querySelector('.pt-fin').style.left = fin + '%';
     rangee.dataset.nom = t.critere[c.cle];
@@ -2755,6 +2761,7 @@ Promise.all([
   chargerGrilleDonnees('./data/grille_b_2026.png', 'b2026'),
   chargerGrilleDonnees('./data/grille_b_2050.png', 'b2050'),
   chargerGrilleDonnees('./data/grille_c.png', 'c'),
+  chargerGrilleDonnees('./data/grille_d.png', 'd'),
   /* Annuaire : les noms viennent du JSON mince, tout le numérique d'un
      binaire à pas fixe de 24 octets par ville (voir tools/pipeline.py).
      On reconstruit ici les rangées au format historique

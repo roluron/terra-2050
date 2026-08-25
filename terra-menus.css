@@ -1085,3 +1085,18 @@ body:not(.pret) #scrim-dossier {
 
 /* fiche ouverte : la puce s'écarte de la croix */
 
+
+
+/* =====================================================================
+   BARRES DE CRITERE — la barre se remplit a la note : pleine = tout va
+   bien, presque vide = critique. Le tiret marque la valeur 2050.
+   ===================================================================== */
+#dossier .risque .rail { height: 6px; margin: 10px 0 9px; }
+#dossier .risque .rail::before { top: 1px; height: 4px; border-radius: 2px;
+  background: rgba(255, 253, 226, 0.10); }
+#dossier .risque .chemin { top: 1px; height: 4px; border-radius: 2px;
+  opacity: 1; transition: width 0.45s var(--ease), background 0.45s var(--ease); }
+#dossier .risque .pt-now { display: none; }
+#dossier .risque .pt-fin { top: -1px; width: 2px; height: 8px; border: none;
+  border-radius: 1px; background: rgba(255, 253, 226, 0.75); opacity: 0.9;
+  transition: left 0.45s var(--ease); }
