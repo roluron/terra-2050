@@ -448,7 +448,7 @@ const TEXTES = {
     frappeFleuves: f => `${f} % du territoire en zone de crue centennale`,
     accrocheTz: n => `${n} — c’est chez vous ?`,
     accrocheDefi: 'Et ta ville ? Compare.',
-    distanceAn: n => n <= 0 ? 'aujourd’hui' : `dans ${n} ans`,
+    distanceAn: n => n <= 0 ? 'aujourd’hui' : n === 1 ? 'dans 1 an' : `dans ${n} ans`,
     optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
     optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
     optQuestion: 'La question + le lien',
@@ -533,7 +533,7 @@ const TEXTES = {
     frappeFleuves: f => `${f}% of the area inside the 100-yr flood zone`,
     accrocheTz: n => `${n} — is this home?`,
     accrocheDefi: 'And your city? Compare.',
-    distanceAn: n => n <= 0 ? 'today' : `in ${n} years`,
+    distanceAn: n => n <= 0 ? 'today' : n === 1 ? 'in 1 year' : `in ${n} years`,
     optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
     optAxes: 'The hardest risks', optPop: 'Country population',
     optQuestion: 'The question + link',
@@ -1886,6 +1886,8 @@ function majDetail(rangee){
 function majDossierPays(l, an, t, dossierNeuf){
   const iso = l[1];
   document.getElementById('dossier-annee').textContent = an;
+  document.getElementById('dossier-frappe').textContent = '';
+  majDuel(l, an);
   const indice = indicePays(iso, an);
   const indice2050 = indicePays(iso, 2050);
   const niveau = niveauDe(indice);
@@ -1987,6 +1989,7 @@ function majDuel(l, an){
 document.getElementById('dossier-duel').addEventListener('click', () => {
   if (!lieuVs) return;
   const autre = lieuVs; lieuVs = lieuDossier;
+  sansBalayage = true;               // l'échange garde l'année affichée
   choisirLieu(autre);
 });
 function majRangeePop(pct, t, detail){
@@ -2018,6 +2021,8 @@ function majDossier(){
   if (!l[7]){
     // sentinelle : île ou atoll hors des grilles — pas de score inventé
     document.getElementById('dossier-score').textContent = '——';
+    document.getElementById('dossier-frappe').textContent = '';
+    majDuel(l, an);
     odoIndice.colonnes = null;        // le nœud est détruit : forcer la reconstruction
     document.getElementById('dossier-verdict-txt').textContent = t.sansDonnees;
     document.getElementById('dossier-verdict').className = 'verdict';
@@ -2199,7 +2204,7 @@ addEventListener('resize', () => document.body.classList.contains('dossier-ouver
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(depuisChamp){
   lieuDossier = null;
-  lieuVs = null; defiLien = null;
+  if (!depuisChamp){ lieuVs = null; defiLien = null; cacherAccroche(); }
   if (balayageAnnee) balayageAnnee.kill();
   if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
   // la terre reprend son cadrage d'arrivée
@@ -2232,7 +2237,7 @@ function majLien(immediat){
   const ecrire = () => { if (!lieuDossier) return;
     history.replaceState(null, '',
       `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}&cc=${lieuDossier[1]}`
-      + (lieuVs ? `&vs=${encodeURIComponent(lieuVs[0])}` : '')); };
+      + (lieuVs ? `&vs=${encodeURIComponent(lieuVs[0])}&vc=${lieuVs[1]}` : '')); };
   // Safari plafonne replaceState (~100/30 s) : le scrub est différé
   if (immediat) ecrire(); else minuterieLien = setTimeout(ecrire, 350);
 }
@@ -2448,7 +2453,7 @@ document.getElementById('story-partager').addEventListener('click', async () => 
 
 // à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
 function ouvrirDepuisLien(){
-  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?(?:&cc=([A-Z]{2}))?(?:&vs=([^&]+))?/);
+  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?(?:&cc=([A-Z]{2}))?(?:&vs=([^&]+))?(?:&vc=([A-Z]{2}))?/);
   if (!m) return;
   let nom;
   try { nom = decodeURIComponent(m[1]); } catch (e) { return; }   // hash tronqué
@@ -2460,8 +2465,9 @@ function ouvrirDepuisLien(){
   if (m[4]){
     let nomVs; try { nomVs = decodeURIComponent(m[4]); } catch (e) { nomVs = null; }
     if (nomVs){
-      lieuVs = LIEUX.find(x => x[0] === nomVs || x[6] === nomVs)
-        || PAYS_LIGNES.find(x => x[0] === nomVs || x[6] === nomVs) || null;
+      const cVs = LIEUX.filter(x => x[0] === nomVs || x[6] === nomVs)
+        .concat(PAYS_LIGNES.filter(x => x[0] === nomVs || x[6] === nomVs));
+      lieuVs = (m[5] && cVs.find(x => x[1] === m[5])) || cVs[0] || null;
       if (lieuVs === l) lieuVs = null;
     }
   } else {
@@ -2709,7 +2715,7 @@ function traduire(){
   document.getElementById('dossier-partage').textContent = t.partage;
   document.getElementById('dossier-story').textContent = t.story;
   document.getElementById('dossier-sources').textContent = t.sources;
-  majDistanceAn();
+  majDistanceAn(); cacherAccroche();
   boutonSon.textContent = t.son(!SoundManager.mute);
   document.getElementById('bouton-langue').innerHTML = langue === 'fr'
     ? 'FR · <em>en</em>' : '<em>fr</em> · EN';

@@ -1071,5 +1071,11 @@ body.dossier-ouvert #recherche {
 /* avant l'entrée, le voile est transparent : le chrome attend son heure
    (les tweens d'entrée posent l'opacité inline au clic Explorer) */
 body:not(.pret) #titre, body:not(.pret) #recherche, body:not(.pret) #util,
-body:not(.pret) #calques, body:not(.pret) #timeline, body:not(.pret) #accroche {
+body:not(.pret) #calques, body:not(.pret) #timeline, body:not(.pret) #accroche,
+body:not(.pret) #dossier, body:not(.pret) #dossier-croix,
+body:not(.pret) #scrim-dossier {
   opacity: 0; pointer-events: none; }
+
+
+/* fiche ouverte : la puce s'écarte de la croix */
+body.dossier-ouvert #accroche { right: 132px; }
