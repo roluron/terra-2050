@@ -161,9 +161,6 @@
 <!-- voile d'entrée : sert aussi de geste utilisateur pour l'audio -->
 <div id="voile">
   <!-- artwork fromanother : le soleil, en fond du voile -->
-  <div class="v-champ" aria-hidden="true">
-    <video id="v-video" src="assets/video/sun_02.mp4" muted loop playsinline autoplay preload="auto"></video>
-  </div>
   <div class="v-grain" aria-hidden="true"></div>
 
   <div class="v-centre">
@@ -206,6 +203,7 @@
 <div id="timeline" class="panneau">
   <div class="micro">Projection temporelle</div>
   <div class="an" id="an">2026</div>
+  <div class="an-distance" id="an-distance"></div>
   <div class="regle" aria-hidden="true"></div>
   <input type="range" id="curseur" min="2026" max="2050" step="1" value="2026" aria-label="Année de projection">
   <div class="bornes micro"><span>2026</span><span>2050</span></div>
@@ -245,6 +243,7 @@
   <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
 </div>
 
+<button id="accroche" hidden></button>
 <div id="story-popup" hidden aria-modal="true" role="dialog">
   <div class="pedago-carte story-carte">
     <div class="pedago-titre"><span class="pastille-pedago" style="background:#4D7CF2"></span><span id="story-titre"></span></div>
@@ -276,6 +275,7 @@
 </button>
 <aside id="dossier" aria-label="Diagnostic du lieu">
   <div class="coords" id="dossier-coords"></div>
+  <div class="frappe" id="dossier-frappe"></div>
   <div class="score">
     <span class="valeur" id="dossier-score"></span>
     <div>
@@ -283,6 +283,7 @@
       <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
     </div>
   </div>
+  <button class="duel" id="dossier-duel" hidden></button>
   <p class="conseil" id="dossier-conseil"></p>
   <div class="trajectoire">
     <div class="titre-bloc"><span data-t="trajectoire"></span></div>
@@ -442,6 +443,12 @@ const TEXTES = {
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     fermer: 'Fermer ×', partage: 'Partager le lien ↗', story: 'Image story ↗',
     storyTitre: 'Composer la story', storyPartager: 'Partager ↗',
+    frappeChaud: (j, an) => `${j} jours d’indice de chaleur au-dessus de 32 °C par an en ${an}`,
+    frappeMer: f => `${f} % des terres sous la ligne de submersion 2050`,
+    frappeFleuves: f => `${f} % du territoire en zone de crue centennale`,
+    accrocheTz: n => `${n} — c’est chez vous ?`,
+    accrocheDefi: 'Et ta ville ? Compare.',
+    distanceAn: n => n <= 0 ? 'aujourd’hui' : `dans ${n} ans`,
     optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
     optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
     optQuestion: 'La question + le lien',
@@ -521,6 +528,12 @@ const TEXTES = {
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     fermer: 'Close ×', partage: 'Share link ↗', story: 'Story image ↗',
     storyTitre: 'Compose your story', storyPartager: 'Share ↗',
+    frappeChaud: (j, an) => `${j} days a year above a 32 °C heat index in ${an}`,
+    frappeMer: f => `${f}% of the land below the 2050 flood line`,
+    frappeFleuves: f => `${f}% of the area inside the 100-yr flood zone`,
+    accrocheTz: n => `${n} — is this home?`,
+    accrocheDefi: 'And your city? Compare.',
+    distanceAn: n => n <= 0 ? 'today' : `in ${n} years`,
     optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
     optAxes: 'The hardest risks', optPop: 'Country population',
     optQuestion: 'The question + link',
@@ -813,7 +826,6 @@ try {
 } catch (e) {
   document.getElementById('secours').style.display = 'flex';
   document.getElementById('voile').classList.add('cache');
-  setTimeout(() => document.getElementById('v-video')?.pause(), 900);
   throw e;
 }
 moteur.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // DPR plafonné à 2
@@ -880,6 +892,8 @@ const uniformsGlobe = {
   uChaleur:    { value: 0 },
   uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
   uDeclin: { value: 0 },
+  uEveil:  { value: 0 },     // 0 = intro sombre derrière le voile, 1 = éveillé
+  uIndice: { value: 1 },     // teinte ambiante de sévérité quand aucun calque
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
   uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
   uC:     { value: texC },
@@ -898,7 +912,7 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin;
+    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice;
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
@@ -1003,6 +1017,18 @@ const matGlobe = new THREE.ShaderMaterial({
         col = mix(col, vide, m * uDeclin);
         col += vec3(0.42, 0.34, 0.66) * m * uDeclin * 0.35;
       }
+
+      // teinte ambiante : la sévérité composite ombre la terre quand aucun
+      // calque n'est actif — le globe raconte avant qu'on touche au rail
+      if (uIndice > 0.001){
+        float sev = clamp(ga.r + ga.b * 0.45 + gb.r * 0.4 + gb.g * 1.1 + gb.b * 0.5, 0.0, 1.0) * terre;
+        vec3 braise = vec3(0.95, 0.38, 0.14);
+        col = mix(col, braise, smoothstep(0.10, 0.75, sev) * uIndice * (0.16 + 0.14 * P));
+      }
+
+      // l'intro laisse la surface dans l'ombre, le halo bleu intact ; le
+      // clic Explorer éveille la terre
+      col *= mix(0.24, 1.0, uEveil);
 
       gl_FragColor = vec4(col, 1.0);
     }`,
@@ -1347,6 +1373,7 @@ const matRideau = new THREE.ShaderMaterial({
     }`,
 });
 const rideau = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), matRideau);
+matRideau.uniforms.uProgression.value = 1.2;   // l'intro montre la planète, pas un rideau
 rideau.renderOrder = 10; rideau.frustumCulled = false;
 scenePost.add(rideau);
 /* =====================================================================
@@ -1376,10 +1403,34 @@ for (const btn of document.querySelectorAll('.calque')){
       value: actif ? 1 : 0, duration: 0.6, ease: EASE,    // tempo standard 0.5-0.6 s
       onComplete: () => { if (c.objet && !actif) c.objet.visible = false; },
     });
+    // un calque actif devient l'inspecteur : la teinte ambiante s'efface
+    const unActif = [...document.querySelectorAll('.calque')].some(b => b.classList.contains('actif'));
+    gsap.to(uniformsGlobe.uIndice, { value: unActif ? 0 : 1, duration: 0.6, ease: EASE });
   });
   btn.addEventListener('mouseenter', () => SoundManager.play('ui_hover')); // anti-rebond intégré
 }
 
+let lieuVs = null, defiLien = null;
+/* accroche : une invitation contextuelle, en verre, sous la barre */
+const accroche = document.getElementById('accroche');
+let accrocheAction = null, minuterieAccroche = null;
+function montrerAccroche(txt, action, delai){
+  clearTimeout(minuterieAccroche);
+  minuterieAccroche = setTimeout(() => {
+    accroche.textContent = txt; accrocheAction = action;
+    accroche.hidden = false;
+    gsap.fromTo(accroche, { opacity: 0, y: -6 },
+      { opacity: 1, y: 0, duration: 0.6, ease: EASE, clearProps: 'transform' });
+  }, delai);
+}
+function cacherAccroche(){
+  clearTimeout(minuterieAccroche);
+  accroche.hidden = true; accrocheAction = null;
+}
+accroche.addEventListener('click', () => {
+  const a = accrocheAction; cacherAccroche(); if (a) a();
+  SoundManager.play('ui_click');
+});
 let volEnCours = null, minuterieRepos = null;
 // rotation auto reprise après 4 s sans interaction
 toile.addEventListener('pointerdown', () => {
@@ -1496,6 +1547,10 @@ function afficherResultats(){
   ouvrirListe();
 }
 function choisirLieu(l){
+  // arrivé par un lien partagé : la ville qu'on choisit ensuite ouvre le duel
+  if (defiLien && l !== defiLien){ lieuVs = defiLien; defiLien = null; }
+  else if (lieuVs === l) lieuVs = null;
+  cacherAccroche();
   fermerListe();
   recents = [l[0], ...recents.filter(n => n !== l[0])].slice(0, 3);
   try { localStorage.setItem('terra-recents', JSON.stringify(recents)); } catch (e) {}
@@ -1542,6 +1597,9 @@ const odoAn = new Odometre(affichageAn, 4); odoAn.set(2026, true);
 /* la règle : un trait par année, 2026 → 2050. Une vague liquide se
    soulève autour de l'année active et anticipe le survol ; l'année
    courante est une aiguille pleine. Ressort par trait, rien d'instantané. */
+const anDistance = document.getElementById('an-distance');
+function majDistanceAn(){ anDistance.textContent = T().distanceAn(+curseur.value - 2026); }
+majDistanceAn();
 const regle = document.querySelector('#timeline .regle');
 regle.innerHTML = Array.from({ length: 25 }, () => '<i></i>').join('');
 const traits = [...regle.children];
@@ -1592,7 +1650,7 @@ addEventListener('pointerup', () => document.body.classList.remove('cale-annee')
 curseur.addEventListener('input', () => {
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
-  odoAn.set(an);
+  odoAn.set(an); majDistanceAn();
   if (lieuDossier){ majDossier(); majLien(); }
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE, overwrite: 'auto',
@@ -1654,19 +1712,6 @@ addEventListener('resize', () => {
     etatRecherche.w = largeurBarre(); appliquerLargeurRecherche();
   }
 });
-
-/* ---- soleil du voile : l'autoplay muet peut être différé par le
-   navigateur (onglet caché, économie d'énergie) — on relance au premier
-   geste et à la visibilité ---- */
-{
-  const v = document.getElementById('v-video');
-  if (v){
-    const lancer = () => !document.body.classList.contains('pret') && v.paused && v.play().catch(() => {});
-    lancer();
-    addEventListener('pointermove', lancer, { once: true });
-    document.addEventListener('visibilitychange', () => !document.hidden && lancer());
-  }
-}
 
 /* ---- caret bloc façon terminal DOS : le placeholder disparaît au focus,
    un bloc plein clignote à la position d'insertion ---- */
@@ -1925,6 +1970,25 @@ function majDossierPays(l, an, t, dossierNeuf){
 /* Rangée « population » alignée sur les autres indices : nom + pourcentage
    coloré par gravité (fort déclin rouge, léger orange, stable bleu,
    croissance verte). Le détail ONU vit dans l'emplacement de survol. */
+/* duel : la fiche porte la comparaison quand un lien « vs » est actif */
+function majDuel(l, an){
+  const el = document.getElementById('dossier-duel');
+  if (!lieuVs || lieuVs === l){ el.hidden = true; return; }
+  const sV = estPays(lieuVs) ? indicePays(lieuVs[1], an)
+    : (lieuVs[7] ? indiceHabitabilite(lieuVs, an) : null);
+  const sL = estPays(l) ? indicePays(l[1], an)
+    : (l[7] ? indiceHabitabilite(l, an) : null);
+  if (sV === null || sL === null){ el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = `<b style="color:${couleurNote(sL)}">${nomVille(l)} ${sL}</b>`
+    + `<span class="vs">vs</span>`
+    + `<b style="color:${couleurNote(sV)}">${nomVille(lieuVs)} ${sV}</b>`;
+}
+document.getElementById('dossier-duel').addEventListener('click', () => {
+  if (!lieuVs) return;
+  const autre = lieuVs; lieuVs = lieuDossier;
+  choisirLieu(autre);
+});
 function majRangeePop(pct, t, detail){
   const el = document.getElementById('dossier-pop');
   if (pct === null || pct === undefined){ el.innerHTML = ''; el.dataset.detail = ''; return; }
@@ -1990,6 +2054,19 @@ function majDossier(){
   // (le rang parmi les villes), sinon la phrase contredit les notes
   const pire = criteres.slice().sort((a, b) =>
     a.note - b.note || b.poids - a.poids)[0];
+  {
+    const fr = document.getElementById('dossier-frappe');
+    const tAn = Math.min(1, Math.max(0, (an - 2026) / 24));
+    let txt = '';
+    if (pire.note < 70){
+      if (pire.cle === 'thermique') txt = t.frappeChaud(Math.round(lireT('a', 0, l[2], l[3], tAn) * 300), an);
+      else if (pire.cle === 'mer' && l[7] && l[7].mer) txt = t.frappeMer(Math.round(l[7].mer.f50 * 100));
+      else if (pire.cle === 'fleuves' && l[7] && l[7].crue) txt = t.frappeFleuves(Math.round(l[7].crue.f * 100));
+    }
+    fr.textContent = txt;
+    fr.style.color = txt ? couleurNote(pire.note) : '';
+  }
+  majDuel(l, an);
   document.getElementById('dossier-conseil').textContent =
     pire.note >= 85 ? t.conseilSain(an)
       : t.conseil(niveau, t.critere[pire.cle], an, indice2050 - indice);
@@ -2122,6 +2199,7 @@ addEventListener('resize', () => document.body.classList.contains('dossier-ouver
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(depuisChamp){
   lieuDossier = null;
+  lieuVs = null; defiLien = null;
   if (balayageAnnee) balayageAnnee.kill();
   if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
   // la terre reprend son cadrage d'arrivée
@@ -2153,7 +2231,8 @@ function majLien(immediat){
   clearTimeout(minuterieLien);
   const ecrire = () => { if (!lieuDossier) return;
     history.replaceState(null, '',
-      `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}&cc=${lieuDossier[1]}`); };
+      `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}&cc=${lieuDossier[1]}`
+      + (lieuVs ? `&vs=${encodeURIComponent(lieuVs[0])}` : '')); };
   // Safari plafonne replaceState (~100/30 s) : le scrub est différé
   if (immediat) ecrire(); else minuterieLien = setTimeout(ecrire, 350);
 }
@@ -2249,6 +2328,19 @@ async function genererStory(opts){
     if (opts.trajectoire && indice50 !== null && an < 2050){
       g.fillStyle = MUTER; g.font = '500 32px "TWK Lausanne"';
       g.fillText(`${an} · ${indice}    →    2050 · ${indice50}`, 540, 1230);
+    }
+    if (lieuVs && lieuVs !== l){
+      const sV = estPays(lieuVs) ? indicePays(lieuVs[1], an)
+        : (lieuVs[7] ? indiceHabitabilite(lieuVs, an) : null);
+      if (sV !== null){
+        g.font = '600 44px "TWK Lausanne"';
+        const seg2 = [[`${nomVille(l)} ${indice}`, couleurNote(indice)],
+          ['   vs   ', MUTER], [`${nomVille(lieuVs)} ${sV}`, couleurNote(sV)]];
+        let x2 = 540 - seg2.reduce((a2, [t2]) => a2 + g.measureText(t2).width, 0) / 2;
+        g.textAlign = 'left';
+        for (const [t2, c2] of seg2){ g.fillStyle = c2; g.fillText(t2, x2, 1310); x2 += g.measureText(t2).width; }
+        g.textAlign = 'center';
+      }
     }
   }
 
@@ -2356,7 +2448,7 @@ document.getElementById('story-partager').addEventListener('click', async () => 
 
 // à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
 function ouvrirDepuisLien(){
-  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?(?:&cc=([A-Z]{2}))?/);
+  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?(?:&cc=([A-Z]{2}))?(?:&vs=([^&]+))?/);
   if (!m) return;
   let nom;
   try { nom = decodeURIComponent(m[1]); } catch (e) { return; }   // hash tronqué
@@ -2365,8 +2457,19 @@ function ouvrirDepuisLien(){
     .concat(PAYS_LIGNES.filter(x => x[0] === nom || x[6] === nom));
   const l = (m[3] && cands.find(x => x[1] === m[3])) || cands[0];
   if (!l) return;
+  if (m[4]){
+    let nomVs; try { nomVs = decodeURIComponent(m[4]); } catch (e) { nomVs = null; }
+    if (nomVs){
+      lieuVs = LIEUX.find(x => x[0] === nomVs || x[6] === nomVs)
+        || PAYS_LIGNES.find(x => x[0] === nomVs || x[6] === nomVs) || null;
+      if (lieuVs === l) lieuVs = null;
+    }
+  } else {
+    defiLien = l;    // le destinataire d'un lien simple sera invité à comparer
+  }
   if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); sansBalayage = true; }
   choisirLieu(l);
+  if (defiLien) montrerAccroche(T().accrocheDefi, () => champ.focus(), 3400);
 }
 
 /* ---- marqueur de la ville : anneau + point qui respire, un seul sprite ---- */
@@ -2606,6 +2709,7 @@ function traduire(){
   document.getElementById('dossier-partage').textContent = t.partage;
   document.getElementById('dossier-story').textContent = t.story;
   document.getElementById('dossier-sources').textContent = t.sources;
+  majDistanceAn();
   boutonSon.textContent = t.son(!SoundManager.mute);
   document.getElementById('bouton-langue').innerHTML = langue === 'fr'
     ? 'FR · <em>en</em>' : '<em>fr</em> · EN';
@@ -2720,8 +2824,6 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   SoundManager.setVolume(1);
   SoundManager.play('ambient_loop', true);   // boucle à 0.5, fondu 2 s — après le geste utilisateur
   SoundManager.play('camera_fly');
-  const vVideo = document.getElementById('v-video');
-  if (vVideo) setTimeout(() => vVideo.pause(), 1400);
   boutonSon.textContent = T().son(true); boutonSon.classList.add('actif');
   // plan d'ouverture : recul caméra progressif — sauf si un lien profond a
   // déjà lancé un vol vers une ville (les deux tweens se battaient)
@@ -2729,10 +2831,26 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
     gsap.killTweensOf(camera.position);
     volEnCours = gsap.from(camera.position, { x: 0.35, y: 0.55, z: 6.2, duration: 2, ease: EASE });
   }
-  // le rideau se dissout par le bruit, en même temps que le recul caméra
-  gsap.to(matRideau.uniforms.uProgression, { value: 1.2, duration: DUREE.vslow, ease: EASE_INOUT });
+  // la terre s'éveille : la surface s'éclaircit pendant le recul caméra
+  gsap.to(uniformsGlobe.uEveil, { value: 1, duration: 2.8, ease: EASE });
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
   revelerChrome();
+  // « Paris — c'est chez vous ? » : la ville du fuseau horaire, sans permission
+  if (!location.hash.includes('v=')){
+    try {
+      if (!sessionStorage.getItem('terra-accroche')){
+        const nomTz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '')
+          .split('/').pop().replace(/_/g, ' ');
+        const q = normaliser(nomTz);
+        const chez = q.length > 2 && LIEUX.find(x =>
+          normaliser(x[0]) === q || (x[6] && normaliser(x[6]) === q));
+        if (chez){
+          sessionStorage.setItem('terra-accroche', '1');
+          montrerAccroche(T().accrocheTz(nomVille(chez)), () => choisirLieu(chez), 2600);
+        }
+      }
+    } catch (e) {}
+  }
 });
 
 /* =====================================================================

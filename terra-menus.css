@@ -1024,3 +1024,52 @@ body.dossier-ouvert #recherche {
 
 /* pastille du calque déclin : mauve aussi à l'état actif */
 .calque[data-cle="declin"].actif .pastille::after { background: #9A8FB8; }
+
+
+/* =====================================================================
+   INTRO PLANÈTE — le voile laisse voir la terre, surface sombre, halo
+   bleu ; le clic Explorer éveille la surface (uEveil côté WebGL).
+   ===================================================================== */
+#voile { background: radial-gradient(ellipse 100% 92% at 50% 44%,
+  rgba(4, 4, 5, 0.26) 0%, rgba(4, 4, 5, 0.52) 60%, rgba(4, 4, 5, 0.82) 100%); }
+
+/* accroche : « Paris — c'est chez vous ? » / « Et ta ville ? » */
+#accroche { position: fixed; top: 78px; right: 78px; z-index: 25;
+  font-family: var(--police); font-size: 12.5px; letter-spacing: -0.01em;
+  color: var(--texte); background: rgba(5, 18, 54, 0.45);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 253, 226, 0.16); border-radius: 999px;
+  padding: 9px 16px; cursor: pointer;
+  transition: border-color 0.3s var(--ease); }
+#accroche:hover { border-color: rgba(255, 253, 226, 0.42); }
+#accroche[hidden] { display: none; }
+@media (max-width: 720px) { #accroche { right: 60px; top: 66px; } }
+
+/* phrase choc : le pire axe en chiffre concret, avant le score */
+#dossier .frappe { font-family: var(--herbik); font-style: italic; font-weight: 500;
+  font-size: 18px; line-height: 1.3; letter-spacing: -0.01em; margin: -6px 0 -8px; }
+#dossier .frappe:empty { display: none; }
+
+/* duel : deux villes face à face */
+#dossier .duel { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  background: none; border: none; border-top: 1px solid var(--filet);
+  padding: 8px 0 0; margin: -8px 0 -6px; cursor: pointer;
+  font-family: var(--police); font-size: 14px; color: var(--texte); text-align: left; }
+#dossier .duel .vs { font-size: 10px; letter-spacing: 0.2em;
+  color: var(--muter); text-transform: uppercase; }
+#dossier .duel[hidden] { display: none; }
+
+/* « dans 24 ans » : la distance vécue, sous le millésime */
+#timeline .an-distance { font-family: var(--police); font-weight: 500;
+  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muter); margin: -2px 0 4px; }
+@media (min-width: 721px) {
+  body.dossier-ouvert #timeline .an-distance { text-align: left; }
+}
+
+
+/* avant l'entrée, le voile est transparent : le chrome attend son heure
+   (les tweens d'entrée posent l'opacité inline au clic Explorer) */
+body:not(.pret) #titre, body:not(.pret) #recherche, body:not(.pret) #util,
+body:not(.pret) #calques, body:not(.pret) #timeline, body:not(.pret) #accroche {
+  opacity: 0; pointer-events: none; }
