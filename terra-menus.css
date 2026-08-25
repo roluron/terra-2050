@@ -900,7 +900,6 @@ body.loupe #loupe { animation: loupe-souffle 3.8s var(--ease) infinite; }
   #dossier .risque { padding: 5px 0 6px; }
   #dossier-detail { min-height: 30px; font-size: 11px; }
   #dossier-ailleurs .titre-bloc { margin-bottom: 6px; }
-  #dossier .sources { display: none; }   /* la ligne sources vit dans la pédagogie */
   #dossier .actions { margin-top: 2px; }
 
   /* l'année rejoint le rail des calques quand le dossier est ouvert : même
@@ -1021,3 +1020,7 @@ body.dossier-ouvert #recherche {
   #story-apercu { width: 180px; height: 320px; }
   .story-opts { width: 100%; }
 }
+
+
+/* pastille du calque déclin : mauve aussi à l'état actif */
+.calque[data-cle="declin"].actif .pastille::after { background: #9A8FB8; }

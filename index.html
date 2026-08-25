@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta property="og:title" content="TERRA／2050 — Will your city still be livable in 2050?">
+<meta property="og:description" content="34,099 cities · one habitability index built only from open scientific data (WorldClim, CMIP6, ETOPO, JRC, UN). Search yours.">
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <title>TERRA//2050 — Résilience Climatique</title>
 <!--
   TERRA//2050 — globe tactique des risques climatiques.
@@ -422,9 +427,9 @@ const TEXTES = {
     popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1).replace('.', ',')} M habitants → ${(p50 / 1e6).toFixed(1).replace('.', ',')} M en 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)} %, ONU)`,
     conseilPays: (verdict, an) => `En ${an}, le pays dans son ensemble : ${verdict} — la moyenne cache les écarts entre villes, ouvrez-les.`,
     meilleuresVilles: 'Les plus habitables du pays',
-    critere: { thermique: 'Chaleur extrême', eau: 'Stress hydrique', feux: 'Feux de forêt',
+    critere: { thermique: 'Stress thermique', eau: 'Stress hydrique', feux: 'Feux de forêt',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Bascule du climat' },
-    legendeIndice: '／100 · habitabilité physique · défenses non comptées',
+    legendeIndice: '／100 · indice d’habitabilité physique · défenses non comptées',
     verdict: { bon: 'Habitabilité solide', moyen: 'Habitabilité sous tension', dur: 'Habitabilité dégradée' },
     conseil: (n, faible, an, delta) => ({
       bon: `En ${an}, rester tient : aucun facteur n’est critique. Le point faible reste ${faible.toLowerCase()}.`,
@@ -440,15 +445,15 @@ const TEXTES = {
     optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
     optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
     optQuestion: 'La question + le lien',
-    paliers: ['très improbable', 'improbable', 'possible', 'probable', 'très probable'],
+    paliers: ['risque minime', 'risque faible', 'risque modéré', 'risque élevé', 'risque sévère'],
     detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
     detFroid: j => `${j} jours de gel par an`,
     detEau: (v, pct, d) => `réserve en eau : déficit ${v}/100${v ? ` · plus sec que ${pct} % des villes` : ''}${d > 2 ? ` · s’aggrave de ${d} d’ici 2050` : ''}`,
     detFeux: (v, pct, d) => `météo propice aux feux ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
-    detMer: (f, f5, med, sub) => `${f} % des terres à moins de 12 km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous 5 m · altitude médiane ${med} m · digues non comptées`,
+    detMer: (f, f5, med, sub) => `${f} % des terres à moins de 12 km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous 5 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ 2 m de surcote · digues non comptées`,
     detFleuves: (f, d90) => `crue centennale (1 %/an · ≈22 % d’ici 2050) : ${f} % des terres à moins de 12 km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
     detStab: v => `d’ici 2050, le climat local dérive de ${v} points (0 = stable) · mesure la vitesse du basculement, pas son niveau`,
-    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (scénario émissions élevées, un seul modèle) · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
   },
   en: {
     lang: 'en',
@@ -501,9 +506,9 @@ const TEXTES = {
     popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1)}M people → ${(p50 / 1e6).toFixed(1)}M by 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)}%, UN)`,
     conseilPays: (verdict, an) => `In ${an}, the country as a whole: ${verdict} — the average hides gaps between cities, open them.`,
     meilleuresVilles: 'Most habitable in the country',
-    critere: { thermique: 'Extreme heat', eau: 'Water stress', feux: 'Wildfire',
+    critere: { thermique: 'Thermal stress', eau: 'Water stress', feux: 'Wildfire',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
-    legendeIndice: '／100 · physical habitability · defenses not counted',
+    legendeIndice: '／100 · physical habitability index · defenses not counted',
     verdict: { bon: 'Solid habitability', moyen: 'Habitability under strain', dur: 'Degraded habitability' },
     conseil: (n, faible, an, delta) => ({
       bon: `In ${an}, staying holds: no factor is critical. The weak point is ${faible.toLowerCase()}.`,
@@ -519,15 +524,15 @@ const TEXTES = {
     optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
     optAxes: 'The hardest risks', optPop: 'Country population',
     optQuestion: 'The question + link',
-    paliers: ['very unlikely', 'unlikely', 'possible', 'likely', 'very likely'],
+    paliers: ['minimal risk', 'low risk', 'moderate risk', 'high risk', 'severe risk'],
     detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
     detFroid: j => `${j} freezing days a year`,
     detEau: (v, pct, d) => `water reserve: deficit ${v}/100${v ? ` · drier than ${pct}% of cities` : ''}${d > 2 ? ` · worsens by ${d} by 2050` : ''}`,
     detFeux: (v, pct, d) => `fire-prone weather ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
-    detMer: (f, f5, med, sub) => `${f}% of land within 12 km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below 5 m · median elevation ${med} m · defenses not counted`,
+    detMer: (f, f5, med, sub) => `${f}% of land within 12 km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below 5 m · median elevation ${med} m · line = 2050 level + 2 m surge · defenses not counted`,
     detFleuves: (f, d90) => `100-year flood (1%/yr · ≈22% by 2050): ${f}% of land within 12 km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
     detStab: v => `by 2050 the local climate drifts by ${v} points (0 = stable) · measures how fast it shifts, not its level`,
-    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR SSP3-7.0 · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (high-emissions scenario, single model) · NOAA ETOPO 2022 · JRC 100-yr flood · Oelsmann 2025 (VLM subsidence) · Natural Earth · GeoNames',
   },
 };
 let langue = 'en';   // anglais d'abord — le toggle FR·EN mémorise le choix
@@ -667,8 +672,8 @@ let CALIBRATION = null;
 function rangScore(sc){
   const q = CALIBRATION && CALIBRATION.scores;
   if (!q) return null;
-  if (sc <= q[0]) return 0;
-  if (sc >= q[q.length - 1]) return 100;
+  if (sc <= q[0]) return 1;
+  if (sc >= q[q.length - 1]) return 99;
   for (let i = 1; i < q.length; i++){
     if (sc <= q[i]){
       const large = q[i] - q[i - 1];
@@ -1552,10 +1557,17 @@ function majRegle(){
       cible += 0.9 * Math.exp(-(dS * dS) / 5);
       if (Math.abs(dS) < 1) op = Math.max(op, 0.85);
     }
-    etatRegle.h[i] += (cible - etatRegle.h[i]) * 0.22;
-    etatRegle.o[i] += (op - etatRegle.o[i]) * 0.22;
-    traits[i].style.transform = `scaleY(${etatRegle.h[i].toFixed(3)})`;
-    traits[i].style.opacity = etatRegle.o[i].toFixed(3);
+    const nh = etatRegle.h[i] + (cible - etatRegle.h[i]) * 0.22;
+    const no = etatRegle.o[i] + (op - etatRegle.o[i]) * 0.22;
+    // au repos, zéro écriture de style : le rAF ne paie que le mouvement
+    if (Math.abs(nh - etatRegle.h[i]) > 0.0015){
+      etatRegle.h[i] = nh;
+      traits[i].style.transform = `scaleY(${nh.toFixed(3)})`;
+    }
+    if (Math.abs(no - etatRegle.o[i]) > 0.0015){
+      etatRegle.o[i] = no;
+      traits[i].style.opacity = no.toFixed(3);
+    }
   }
 }
 gsap.ticker.add(majRegle);
@@ -1564,6 +1576,17 @@ curseur.addEventListener('pointermove', ev => {
   etatRegle.survol = Math.max(0, Math.min(24, Math.round((ev.clientX - r.left) / r.width * 24)));
 });
 curseur.addEventListener('pointerleave', () => (etatRegle.survol = null));
+let balayageAnnee = null, sansBalayage = false;
+function balayerVers2050(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (+curseur.value >= 2050) return;
+  const p = { v: +curseur.value };
+  if (balayageAnnee) balayageAnnee.kill();
+  balayageAnnee = gsap.to(p, { v: 2050, duration: 2.6, ease: 'power2.inOut', delay: 1.1,
+    onUpdate: () => { const an = Math.round(p.v);
+      if (+curseur.value !== an){ curseur.value = an; curseur.dispatchEvent(new Event('input')); } } });
+}
+curseur.addEventListener('pointerdown', () => { if (balayageAnnee) balayageAnnee.kill(); });
 curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-annee'));
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 curseur.addEventListener('input', () => {
@@ -1594,7 +1617,10 @@ curseur.addEventListener('input', () => {
 const LARGEUR_LOUPE = 46;
 const etatRecherche = { w: LARGEUR_LOUPE };
 const loupe = document.getElementById('loupe');
-function largeurBarre(){ return Math.min(252, innerWidth * 0.37); }
+function largeurBarre(){
+  return innerWidth <= 720 ? Math.min(220, innerWidth * 0.56)
+                           : Math.min(252, innerWidth * 0.37);
+}
 let placerCaret = () => {};
 function appliquerLargeurRecherche(){
   champ.style.width = etatRecherche.w + 'px';
@@ -1920,7 +1946,7 @@ function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
   document.getElementById('dossier-coords').textContent =
-    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : 'O'} · ${nomPays(l[1]).toUpperCase()}`;
+    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (langue === 'en' ? 'W' : 'O')} · ${nomPays(l[1]).toUpperCase()}`;
   if (estPays(l)){
     majDossierPays(l, an, t, dossierNeuf);
     return;
@@ -2038,8 +2064,8 @@ function majDossier(){
   const rg = rangScore(indice);
   const texteRang = rg === null ? '' :
     (langue === 'en'
-      ? ` · above ${rg}% of ${LIEUX.length.toLocaleString('en')} cities`
-      : ` · devant ${rg} % des ${LIEUX.length.toLocaleString('fr-FR')} villes`);
+      ? ` · above ${rg}% of ${LIEUX.length.toLocaleString('en')} cities (2026 baseline)`
+      : ` · devant ${rg} % des ${LIEUX.length.toLocaleString('fr-FR')} villes (référence 2026)`);
   const elDelta = document.getElementById('dossier-delta');
   elDelta.textContent = texteEcart + texteRang;
   majRangeePop(l[7].pop50, t);
@@ -2080,18 +2106,23 @@ function ouvrirDossier(l){
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
   majCentreDossier();
+  setTimeout(majCentreDossier, 600);   // re-mesure après l'entrée de la fiche
   poserMarqueur(l);
   majLien();
+  if (!sansBalayage) balayerVers2050();
+  sansBalayage = false;
 }
 function majCentreDossier(){
   const r = dossierEl.getBoundingClientRect();
   document.documentElement.style.setProperty('--centre-dossier',
     (innerWidth - (r.left + r.width / 2)) + 'px');
+  document.documentElement.style.setProperty('--h-fiche', r.height + 'px');
 }
 addEventListener('resize', () => document.body.classList.contains('dossier-ouvert') && majCentreDossier());
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(depuisChamp){
   lieuDossier = null;
+  if (balayageAnnee) balayageAnnee.kill();
   if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
   // la terre reprend son cadrage d'arrivée
   if (volEnCours) volEnCours.kill();
@@ -2116,14 +2147,19 @@ function fermerDossier(depuisChamp){
    PARTAGE & LIEN PROFOND — l'URL porte la ville et l'année : un dossier
    peut s'envoyer, et s'ouvre tel quel chez le destinataire.
    ===================================================================== */
-function majLien(){
+let minuterieLien = null;
+function majLien(immediat){
   if (!lieuDossier) return;
-  const h = `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}`;
-  history.replaceState(null, '', h);
+  clearTimeout(minuterieLien);
+  const ecrire = () => { if (!lieuDossier) return;
+    history.replaceState(null, '',
+      `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}&cc=${lieuDossier[1]}`); };
+  // Safari plafonne replaceState (~100/30 s) : le scrub est différé
+  if (immediat) ecrire(); else minuterieLien = setTimeout(ecrire, 350);
 }
 document.getElementById('dossier-partage').addEventListener('click', async () => {
   if (!lieuDossier) return;
-  majLien();
+  majLien(true);
   const l = lieuDossier, an = etat.annee;
   const indice = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const t = T();
@@ -2226,7 +2262,7 @@ async function genererStory(opts){
     rangs = diagnostiquer(l, an).criteres.map(c => ({ nom: t.critere[c.cle], note: c.note }));
   }
   rangs = opts.axes ? rangs.sort((a, b) => a.note - b.note).slice(0, 3) : [];
-  let y = 1390;
+  let y = 1370;
   for (const r of rangs){
     g.strokeStyle = 'rgba(255,253,226,0.14)'; g.lineWidth = 1;
     g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
@@ -2234,7 +2270,7 @@ async function genererStory(opts){
     g.fillText(r.nom, 120, y);
     g.textAlign = 'right'; g.fillStyle = couleurNote(r.note); g.font = '500 36px "TWK Lausanne"';
     g.fillText(motRisque(t, r.note), 960, y);
-    y += 92;
+    y += 88;
   }
   if (opts.population && PAYS_POP[l[1]]){
     const pop = PAYS_POP[l[1]], pct = Math.round((pop[1] / pop[0] - 1) * 100);
@@ -2252,9 +2288,9 @@ async function genererStory(opts){
     g.textAlign = 'center'; g.letterSpacing = '5px';
     g.fillStyle = MUTER; g.font = '500 26px "TWK Lausanne"';
     g.fillText(langue === 'en' ? 'WILL YOUR CITY STILL BE LIVABLE IN 2050?'
-      : 'VOTRE VILLE SERA-T-ELLE ENCORE VIVABLE EN 2050 ?', 540, 1790);
+      : 'VOTRE VILLE SERA-T-ELLE ENCORE VIVABLE EN 2050 ?', 540, 1690);
     g.letterSpacing = '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = '400 24px "TWK Lausanne"';
-    g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}`, 540, 1848);
+    g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}`, 540, 1746);
     g.letterSpacing = '0px';
   }
   return cv;
@@ -2303,7 +2339,7 @@ addEventListener('keydown', e => {
 document.getElementById('story-partager').addEventListener('click', async () => {
   const cv = await genererStory(optsStory); if (!cv) return;
   const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
-  majLien();
+  majLien(true);
   const fichier = new File([blob],
     `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.png`, { type: 'image/png' });
   // feuille de partage native quand elle accepte les fichiers (mobile :
@@ -2320,14 +2356,16 @@ document.getElementById('story-partager').addEventListener('click', async () => 
 
 // à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
 function ouvrirDepuisLien(){
-  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?/);
+  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?(?:&cc=([A-Z]{2}))?/);
   if (!m) return;
   let nom;
   try { nom = decodeURIComponent(m[1]); } catch (e) { return; }   // hash tronqué
-  const l = LIEUX.find(x => x[0] === nom || x[6] === nom)
-    || PAYS_LIGNES.find(x => x[0] === nom || x[6] === nom);
+  // homonymes (Valence, Suzhou…) : l'iso2 du lien départage
+  const cands = LIEUX.filter(x => x[0] === nom || x[6] === nom)
+    .concat(PAYS_LIGNES.filter(x => x[0] === nom || x[6] === nom));
+  const l = (m[3] && cands.find(x => x[1] === m[3])) || cands[0];
   if (!l) return;
-  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); }
+  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); sansBalayage = true; }
   choisirLieu(l);
 }
 
@@ -2550,6 +2588,10 @@ boutonSon.addEventListener('click', () => {
    construits en JS. Le choix est mémorisé et pilote aussi Intl.DisplayNames.
    ===================================================================== */
 function traduire(){
+  document.documentElement.lang = langue;
+  document.title = langue === 'en'
+    ? 'TERRA／2050 — Will your city still be livable in 2050?'
+    : 'TERRA／2050 — Votre ville sera-t-elle encore vivable en 2050 ?';
   const t = T();
   document.documentElement.lang = t.lang;
   for (const el of document.querySelectorAll('[data-t]')){
@@ -2618,7 +2660,7 @@ Promise.all([
           mer: { f50: dv.getUint8(o + 16) / 250, f5: dv.getUint8(o + 17) / 250,
                  med: dv.getUint16(o + 18, true) / 10, sub: dv.getUint8(o + 20) / 100 },
           crue: { f: dv.getUint8(o + 21) / 250, d90: dv.getUint8(o + 22) / 10 },
-          pop50: pop === 128 ? null : pop - 128 }];
+          pop50: pop === 255 ? null : pop - 128 }];
       rangee[8] = n[5] || '';        // alias GeoNames : cherchable, jamais affiché
       return rangee;
     });

@@ -843,7 +843,7 @@ def main():
         rec += struct.pack('<H', max(0, min(65535, round(m['med'] * 10))))
         rec += bytes([max(0, min(255, round((m.get('sub') or 0) * 100)))])
         pct = iso2_delta.get(ligne[1])
-        octet_pop = 128 if pct is None else max(0, min(255, round(pct) + 128))
+        octet_pop = 255 if pct is None else max(0, min(254, round(pct) + 128))
         rec += bytes([q250(c['f']), max(0, min(255, round(c['d90'] * 10))), octet_pop])
         if r.get('nodata'):
             rec[4] = 255      # sentinelle : première pénalité hors gamme = pas de score
