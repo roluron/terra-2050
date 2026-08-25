@@ -2779,8 +2779,10 @@ Promise.all([
         n[2], n[3], n[4],
         nodata ? null :
         { pen: { 2026: pen26, 2050: pen50 },
+          // altitude mediane : decimetres decales de 500 m, pour que les villes
+          // sous le niveau de la mer gardent leur altitude reelle (Astrakhan, -25 m)
           mer: { f50: dv.getUint8(o + 16) / 250, f5: dv.getUint8(o + 17) / 250,
-                 med: dv.getUint16(o + 18, true) / 10, sub: dv.getUint8(o + 20) / 100 },
+                 med: (dv.getUint16(o + 18, true) - 5000) / 10, sub: dv.getUint8(o + 20) / 100 },
           crue: { f: dv.getUint8(o + 21) / 250, d90: dv.getUint8(o + 22) / 10 },
           pop50: pop === 255 ? null : pop - 128 }];
       rangee[8] = n[5] || '';        // alias GeoNames : cherchable, jamais affiché
