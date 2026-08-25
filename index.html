@@ -1400,13 +1400,22 @@ let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
 /* la liste n'est pas une boîte sous la barre : c'est la barre elle-même qui
    s'étire en carré de verre — la lentille WebGL suit le rectangle vivant */
 const etatListe = { anim: null };
+/* le carré reste soudé au champ à chaque frame : la barre bouge (déploiement,
+   centrage sur la fiche, resize) et la liste suit, jamais de décrochage */
+function calerListe(){
+  if (!liste.classList.contains('ouvert')) return;
+  const l = champ.offsetLeft + 'px', w = champ.offsetWidth + 'px',
+        t = champ.offsetTop + 'px', h = champ.offsetHeight + 'px';
+  if (liste.style.left !== l) liste.style.left = l;
+  if (liste.style.width !== w) liste.style.width = w;
+  if (liste.style.top !== t) liste.style.top = t;
+  if (liste.style.paddingTop !== h) liste.style.paddingTop = h;
+}
 function ouvrirListe(){
-  liste.style.width = champ.offsetWidth + 'px';
-  liste.style.left = champ.offsetLeft + 'px'; liste.style.right = 'auto';
-  liste.style.top = champ.offsetTop + 'px';
-  liste.style.paddingTop = champ.offsetHeight + 'px';
+  liste.style.right = 'auto';
   const deja = liste.classList.contains('ouvert');
   liste.classList.add('ouvert');
+  calerListe();
   const hAvant = deja ? liste.getBoundingClientRect().height : champ.offsetHeight;
   liste.style.height = 'auto';
   const hCible = liste.offsetHeight;
@@ -2783,7 +2792,8 @@ function boucle(){
   moteur.setRenderTarget(null);
   matPost.uniforms.tScene.value = cibles[indiceCible].texture;
   moteur.render(scenePost, cameraPost);
-  majVerre();
+  majVerre(); calerListe();
+  if (document.body.classList.contains('recherche-active')) placerCaret();
 
   // HUD (mis à jour 2×/s seulement — pas de layout thrash)
   if (hud.classList.contains('visible') && t - dernierHUD > 0.5){
