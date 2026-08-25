@@ -202,6 +202,7 @@
 </div>
 
 <div id="timeline" class="panneau">
+  <div id="accroche" hidden><button id="accroche-txt"></button><button id="accroche-x" aria-label="Fermer">×</button></div>
   <div class="micro">Projection temporelle</div>
   <div class="an" id="an">2026</div>
   <div class="an-distance" id="an-distance"></div>
@@ -244,7 +245,6 @@
   <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
 </div>
 
-<button id="accroche" hidden></button>
 <div id="story-popup" hidden aria-modal="true" role="dialog">
   <div class="pedago-carte story-carte">
     <div class="pedago-titre"><span class="pastille-pedago" style="background:#4D7CF2"></span><span id="story-titre"></span></div>
@@ -1426,7 +1426,7 @@ let accrocheAction = null, minuterieAccroche = null;
 function montrerAccroche(txt, action, delai){
   clearTimeout(minuterieAccroche);
   minuterieAccroche = setTimeout(() => {
-    accroche.textContent = txt; accrocheAction = action;
+    document.getElementById('accroche-txt').textContent = txt; accrocheAction = action;
     accroche.hidden = false;
     gsap.fromTo(accroche, { opacity: 0, y: -6 },
       { opacity: 1, y: 0, duration: 0.6, ease: EASE, clearProps: 'transform' });
@@ -1436,9 +1436,12 @@ function cacherAccroche(){
   clearTimeout(minuterieAccroche);
   accroche.hidden = true; accrocheAction = null;
 }
-accroche.addEventListener('click', () => {
+document.getElementById('accroche-txt').addEventListener('click', () => {
   const a = accrocheAction; cacherAccroche(); if (a) a();
   SoundManager.play('ui_click');
+});
+document.getElementById('accroche-x').addEventListener('click', e => {
+  e.stopPropagation(); cacherAccroche(); SoundManager.play('ui_click');
 });
 let volEnCours = null, minuterieRepos = null;
 // rotation auto reprise après 4 s sans interaction

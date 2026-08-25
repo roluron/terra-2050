@@ -1034,16 +1034,22 @@ body.dossier-ouvert #recherche {
   rgba(4, 4, 5, 0.26) 0%, rgba(4, 4, 5, 0.52) 60%, rgba(4, 4, 5, 0.82) 100%); }
 
 /* accroche : « Paris — c'est chez vous ? » / « Et ta ville ? » */
-#accroche { position: fixed; top: 78px; right: 78px; z-index: 25;
-  font-family: var(--police); font-size: 12.5px; letter-spacing: -0.01em;
-  color: var(--texte); background: rgba(5, 18, 54, 0.45);
+/* pastille d'invitation : posee au-dessus du millesime, dans le panneau
+   temporel, avec une croix pour la congedier */
+#accroche { position: absolute; bottom: 100%; left: 0; margin-bottom: 14px;
+  display: inline-flex; align-items: center; gap: 2px; z-index: 25;
+  background: rgba(5, 18, 54, 0.5);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 253, 226, 0.16); border-radius: 999px;
-  padding: 9px 16px; cursor: pointer;
-  transition: border-color 0.3s var(--ease); }
+  border: 1px solid rgba(255, 253, 226, 0.18); border-radius: 999px;
+  padding: 0 4px 0 2px; transition: border-color 0.3s var(--ease); }
 #accroche:hover { border-color: rgba(255, 253, 226, 0.42); }
 #accroche[hidden] { display: none; }
-@media (max-width: 720px) { #accroche { right: 60px; top: 66px; } }
+#accroche button { background: none; border: none; cursor: pointer;
+  font-family: var(--police); color: var(--texte); }
+#accroche-txt { font-size: 13px; letter-spacing: -0.01em; padding: 9px 6px 9px 14px; }
+#accroche-x { font-size: 15px; line-height: 1; padding: 8px 9px; opacity: 0.5;
+  transition: opacity 0.25s var(--ease); }
+#accroche-x:hover { opacity: 1; }
 
 /* phrase choc : le pire axe en chiffre concret, avant le score */
 #dossier .frappe { font-family: var(--herbik); font-style: italic; font-weight: 500;
@@ -1078,4 +1084,4 @@ body:not(.pret) #scrim-dossier {
 
 
 /* fiche ouverte : la puce s'écarte de la croix */
-body.dossier-ouvert #accroche { right: 132px; }
+
