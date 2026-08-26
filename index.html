@@ -463,6 +463,7 @@ const TEXTES = {
     paliers: ['risque minime', 'risque faible', 'risque modéré', 'risque élevé', 'risque sévère'],
     detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
     detFroid: j => `${j} jours de gel par an`,
+    detChaud40: j => `dont ${j} jours au-dessus de 40 °C (seuil « danger » NWS)`,
     detEau: (v, pct, d) => `réserve en eau : déficit ${v}/100${v ? ` · plus sec que ${pct} % des villes` : ''}${d > 2 ? ` · s’aggrave de ${d} d’ici 2050` : ''}`,
     detFeux: (v, pct, d) => `météo propice aux feux ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
     detMer: (f, f5, med, sub, r) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous 5 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ 2 m de surcote · digues non comptées · relief ETOPO 1,85 km : un liseré côtier étroit échappe à la mesure`,
@@ -552,6 +553,7 @@ const TEXTES = {
     paliers: ['minimal risk', 'low risk', 'moderate risk', 'high risk', 'severe risk'],
     detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
     detFroid: j => `${j} freezing days a year`,
+    detChaud40: j => `of which ${j} days above 40 °C (NWS “danger” threshold)`,
     detEau: (v, pct, d) => `water reserve: deficit ${v}/100${v ? ` · drier than ${pct}% of cities` : ''}${d > 2 ? ` · worsens by ${d} by 2050` : ''}`,
     detFeux: (v, pct, d) => `fire-prone weather ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
     detMer: (f, f5, med, sub, r) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below 5 m · median elevation ${med} m · line = 2050 level + 2 m surge · defenses not counted · ETOPO relief at 1.85 km: a narrow coastal strip escapes measurement`,
@@ -569,14 +571,16 @@ const T = () => TEXTES[langue];
    que le shader, donc le dossier ne peut pas diverger du globe.
    ===================================================================== */
 let LIEUX = [];
-/* Valeurs thermiques exactes par ville (data/thermo.bin, 4 octets : chaud
-   2026, chaud 2050, gel 2026, gel 2050). Le PNG du globe est floute et
-   quantifie pour le rendu : le lire pour le TEXTE faisait diverger le chiffre
-   affiche de la note — jusqu'a 49 points sur les cotes et les iles. */
+/* Valeurs thermiques exactes par ville (data/thermo.bin, 6 octets : jours
+   > 32 °C en 2026 et 2050, jours de gel, puis jours > 40 °C — le seuil
+   « Danger » du NWS, qui redonne du relief la ou 32 °C sature). Le PNG du
+   globe est floute et quantifie pour le rendu : le lire pour le TEXTE
+   faisait diverger le chiffre affiche de la note. */
 let THERMO = null;
+const THERMO_PAS = 6;
 const thermoVille = (i, canal, t) => {
   if (!THERMO) return null;
-  const a = THERMO[i * 4 + canal] / 255, b = THERMO[i * 4 + canal + 1] / 255;
+  const a = THERMO[i * THERMO_PAS + canal] / 255, b = THERMO[i * THERMO_PAS + canal + 1] / 255;
   return a * (1 - t) + b * t;
 };
 let PAYS_POP = {};                 // iso2 -> [habitants 2025, habitants 2050] (ONU)
@@ -674,7 +678,9 @@ const CRITERES = [
       const j50 = i >= 0 && THERMO ? thermoVille(i, 0, 1) : lireT('a', 0, l[2], l[3], 1);
       const j26 = i >= 0 && THERMO ? thermoVille(i, 0, 0) : lireT('a', 0, l[2], l[3], 0);
       const g = i >= 0 && THERMO ? thermoVille(i, 2, t) : lireT('a', 1, l[2], l[3], t);
+      const j40 = i >= 0 && THERMO ? thermoVille(i, 4, t) : null;
       return T().detChaud(Math.round(j * 300), Math.round((j50 - j26) * 300))
+        + (j40 !== null && j40 > 0.005 ? ' · ' + T().detChaud40(Math.round(j40 * 200)) : '')
         + ' · ' + T().detFroid(Math.round(g * 200));
     } },
   { cle: 'eau', poids: 0.18, couleur: '#A07830',
