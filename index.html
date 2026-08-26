@@ -166,7 +166,7 @@
 
   <div class="v-centre">
     <div class="v-eyebrow"><span data-t="sous1"></span></div>
-    <h1 id="v-wordmark">terra<em>／</em>2050</h1>
+    <div id="v-wordmark" aria-hidden="true">terra<em>／</em>2050</div>
     <div class="v-eyebrow v-eyebrow-bas"><span data-t="sous2"></span></div>
 
     <div class="v-charge">
@@ -212,13 +212,13 @@
 </div>
 
 <nav id="calques" aria-label="Calques de risque">
-      <button class="calque" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
-      <button class="calque" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
-      <button class="calque" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
-      <button class="calque" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
-      <button class="calque" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
-      <button class="calque" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
-      <button class="calque" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
+      <button class="calque" aria-pressed="false" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
+      <button class="calque" aria-pressed="false" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
+      <button class="calque" aria-pressed="false" data-cle="secheresse" data-couleur="ambre"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-04</span></button>
+      <button class="calque" aria-pressed="false" data-cle="mer"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-05</span></button>
+      <button class="calque" aria-pressed="false" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
+      <button class="calque" aria-pressed="false" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
+      <button class="calque" aria-pressed="false" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
     </nav>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 
@@ -273,7 +273,8 @@
 <button id="dossier-croix" aria-label="Fermer / Close">
   <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1 L11 11 M11 1 L1 11"/></svg>
 </button>
-<aside id="dossier" aria-label="Diagnostic du lieu">
+<aside id="dossier" role="region" aria-label="Diagnostic du lieu">
+  <p id="annonce" class="lecteur-seul" role="status" aria-live="polite"></p>
   <div class="coords" id="dossier-coords"></div>
   <div class="frappe" id="dossier-frappe"></div>
   <div class="score">
@@ -1411,6 +1412,7 @@ for (const btn of document.querySelectorAll('.calque')){
   btn.addEventListener('click', () => {
     const c = CALQUES[btn.dataset.cle], actif = !btn.classList.contains('actif');
     btn.classList.toggle('actif', actif);
+    btn.setAttribute('aria-pressed', actif ? 'true' : 'false');
     if (actif) montrerPedago(btn.dataset.cle);
     if (c.objet && actif) c.objet.visible = true;
     SoundManager.play(actif ? 'layer_on' : 'layer_off');
@@ -1670,6 +1672,7 @@ curseur.addEventListener('input', () => {
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
   odoAn.set(an); majDistanceAn();
+  curseur.setAttribute('aria-valuetext', `${an} — ${T().distanceAn(an - 2026)}`);
   if (lieuDossier){ majDossier(); majLien(); }
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE, overwrite: 'auto',
@@ -2209,6 +2212,15 @@ function ouvrirDossier(l){
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
+  {
+    // l'odometre empile toutes ses colonnes de chiffres : on annonce la
+    // valeur calculee, pas le contenu du noeud
+    const t = T(), an = etat.annee;
+    const sc = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
+    document.getElementById('annonce').textContent = sc === null
+      ? `${nomVille(l)} · ${t.sansDonnees}`
+      : `${nomVille(l)} · ${sc}/100 · ${t.verdict[niveauDe(sc)]}`;
+  }
   majCentreDossier();
   setTimeout(majCentreDossier, 600);   // re-mesure après l'entrée de la fiche
   poserMarqueur(l);
@@ -2436,6 +2448,25 @@ async function majApercuStory(){
   g.clearRect(0, 0, 540, 960);
   g.drawImage(cv, 0, 0, 540, 960);
 }
+/* piege de focus : dans une modale, la tabulation tourne en boucle a
+   l'interieur au lieu de filer derriere le pop-up */
+let rendreFocus = null;
+function piegerFocus(boite){
+  const cibles = () => [...boite.querySelectorAll('button,input,[href],[tabindex]:not([tabindex="-1"])')]
+    .filter(e => e.offsetParent !== null);
+  const surTab = e => {
+    if (e.key !== 'Tab') return;
+    const f = cibles(); if (!f.length) return;
+    const premier = f[0], dernier = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === premier){ e.preventDefault(); dernier.focus(); }
+    else if (!e.shiftKey && document.activeElement === dernier){ e.preventDefault(); premier.focus(); }
+  };
+  boite.addEventListener('keydown', surTab);
+  const avant = document.activeElement;
+  const f = cibles(); if (f.length) f[0].focus();
+  return () => { boite.removeEventListener('keydown', surTab);
+    if (avant && avant.focus) avant.focus(); };
+}
 function ouvrirStory(){
   if (!lieuDossier) return;
   const t = T();
@@ -2449,9 +2480,13 @@ function ouvrirStory(){
   gsap.fromTo('.story-carte', { opacity: 0, scale: 0.94, y: 8 },
     { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)', clearProps: 'transform' });
   majApercuStory();
+  rendreFocus = piegerFocus(storyPopup);
   SoundManager.play('ui_click');
 }
-function fermerStory(){ storyPopup.hidden = true; storyOuvert = false; }
+function fermerStory(){
+  storyPopup.hidden = true; storyOuvert = false;
+  if (rendreFocus){ rendreFocus(); rendreFocus = null; }
+}
 document.getElementById('dossier-story').addEventListener('click', ouvrirStory);
 storyPopup.addEventListener('click', e => { if (e.target === storyPopup) fermerStory(); });
 addEventListener('keydown', e => {
@@ -2673,9 +2708,11 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
   const pedago = document.getElementById('pedago');
   const carte = pedago.querySelector('.pedago-carte');
   let pedagoOuvert = false;
+  let rendreFocusPedago = null;
   function fermerPedago(){
     if (!pedagoOuvert) return;
     pedagoOuvert = false;
+    if (rendreFocusPedago){ rendreFocusPedago(); rendreFocusPedago = null; }
     gsap.to(carte, { opacity: 0, y: 8, scale: 0.985, duration: 0.3, ease: EASE,
       onComplete: () => { pedago.hidden = true; } });
     gsap.to(pedago, { opacity: 0, duration: 0.3, ease: EASE });
@@ -2696,6 +2733,7 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
     document.getElementById('pedago-fermer').textContent = t.pedagoOk;
     pedago.hidden = false;
     pedagoOuvert = true;
+    rendreFocusPedago = piegerFocus(pedago);
     verreMenu.panneau = carte;
     gsap.fromTo(pedago, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: EASE });
     gsap.fromTo(carte, { opacity: 0, y: 14, scale: 0.97 },
