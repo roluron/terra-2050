@@ -1122,3 +1122,11 @@ body:not(.pret) #scrim-dossier {
   outline: 2px solid var(--texte); outline-offset: 3px; border-radius: 6px; }
 /* les cases du composeur sont masquees : le focus se voit sur leur pastille */
 .story-opt input:focus-visible + i { outline: 2px solid var(--texte); outline-offset: 3px; }
+
+
+/* le curseur d'annee : son pouce est invisible, il lui faut un focus visible */
+#curseur:focus-visible { outline: none; }
+#curseur:focus-visible ~ .regle i:nth-child(1),
+#timeline:focus-within .regle i { background: var(--texte); }
+#timeline:focus-within .an { text-decoration: underline; text-underline-offset: 10px;
+  text-decoration-thickness: 2px; text-decoration-color: rgba(255, 253, 226, 0.5); }

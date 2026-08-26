@@ -186,7 +186,7 @@
 
 <div id="recherche" class="panneau">
   <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
-    autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu">
+    autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu" role="combobox" aria-expanded="false" aria-controls="resultats" aria-autocomplete="list">
   <button id="bouton-position" aria-label="Ma position / My location">
     <svg viewBox="0 0 16 16" aria-hidden="true">
       <circle cx="8" cy="8" r="2.6"/>
@@ -198,7 +198,7 @@
   </svg>
   <span id="mesure-recherche" aria-hidden="true"></span>
   <span id="caret-dos" aria-hidden="true"></span>
-  <ul id="resultats"></ul>
+  <ul id="resultats" role="listbox" aria-label="Résultats"></ul>
 </div>
 
 <div id="timeline" class="panneau">
@@ -879,7 +879,7 @@ const texCouleur = texChargeur.load('./assets/textures/earth_color_4096.jpg'); /
 // masque terre/mer derive de GEBCO 15" : la mer est l'eau RELIEE a l'ocean,
 // donc les terres sous le niveau marin (depression caspienne, polders) ne sont
 // plus peintes en mer — Astrakhan ne flotte plus au milieu de l'eau
-const texMasque  = texChargeur.load('./assets/textures/earth_mask_8640.png');
+const texMasque  = texChargeur.load('./assets/textures/earth_mask_4320.png');
 texCouleur.anisotropy = 8;   // netteté aux angles rasants, quasi gratuit
 texMasque.anisotropy = 4;
 texCouleur.colorSpace = THREE.SRGBColorSpace;
@@ -1392,8 +1392,12 @@ const matRideau = new THREE.ShaderMaterial({
       gl_FragColor = vec4(uCouleur, masque);
     }`,
 });
+/* le rideau de bruit appartenait a l'ancienne intro : la planete est
+   desormais visible des le voile, il ne dissimule plus rien et coutait un
+   plan plein ecran par frame */
 const rideau = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), matRideau);
-matRideau.uniforms.uProgression.value = 1.2;   // l'intro montre la planète, pas un rideau
+matRideau.uniforms.uProgression.value = 1.2;
+rideau.visible = false;
 rideau.renderOrder = 10; rideau.frustumCulled = false;
 scenePost.add(rideau);
 /* =====================================================================
@@ -1492,6 +1496,7 @@ function calerListe(){
   if (liste.style.paddingTop !== h) liste.style.paddingTop = h;
 }
 function ouvrirListe(){
+  champ.setAttribute('aria-expanded', 'true');
   liste.style.right = 'auto';
   const deja = liste.classList.contains('ouvert');
   liste.classList.add('ouvert');
@@ -1506,6 +1511,8 @@ function ouvrirListe(){
       onComplete: () => { liste.style.height = 'auto'; majVerre(); } });
 }
 function fermerListe(){
+  champ.setAttribute('aria-expanded', 'false');
+  champ.removeAttribute('aria-activedescendant');
   if (!liste.classList.contains('ouvert')) return;
   if (etatListe.anim) etatListe.anim.kill();
   etatListe.anim = gsap.to(liste, { height: champ.offsetHeight, duration: 0.3, ease: EASE,
@@ -1531,6 +1538,7 @@ function afficherResultats(){
       if (resultatsActuels.length){
         for (const l of resultatsActuels){
           const li = document.createElement('li');
+          li.setAttribute('role', 'option'); li.id = 'res-' + resultatsActuels.indexOf(l);
           li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
           li.addEventListener('click', () => choisirLieu(l));
           li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
@@ -1572,6 +1580,7 @@ function afficherResultats(){
   } else {
     for (const l of resultatsActuels){
       const li = document.createElement('li');
+      li.setAttribute('role', 'option'); li.id = 'res-' + resultatsActuels.indexOf(l);
       li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
       li.addEventListener('click', () => choisirLieu(l));
       li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
@@ -1613,6 +1622,7 @@ champ.addEventListener('keydown', e => {
     e.preventDefault();
     indiceChoisi = (indiceChoisi + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % Math.max(items.length, 1);
     items.forEach((li, i) => li.classList.toggle('choisi', i === indiceChoisi));
+    champ.setAttribute('aria-activedescendant', indiceChoisi >= 0 ? 'res-' + indiceChoisi : '');
     if (indiceChoisi >= 0) SoundManager.play('ui_hover');
   } else if (e.key === 'Enter' && resultatsActuels.length){
     e.preventDefault();
@@ -1678,7 +1688,9 @@ function balayerVers2050(){
     onUpdate: () => { const an = Math.round(p.v);
       if (+curseur.value !== an){ curseur.value = an; curseur.dispatchEvent(new Event('input')); } } });
 }
-curseur.addEventListener('pointerdown', () => { if (balayageAnnee) balayageAnnee.kill(); });
+const stopperBalayage = () => { if (balayageAnnee) balayageAnnee.kill(); };
+curseur.addEventListener('pointerdown', stopperBalayage);
+curseur.addEventListener('keydown', stopperBalayage);   // les fleches aussi rendent la main
 curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-annee'));
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 curseur.addEventListener('input', () => {
@@ -1753,18 +1765,28 @@ addEventListener('resize', () => {
 {
   const mesure = document.getElementById('mesure-recherche');
   const caret = document.getElementById('caret-dos');
+  /* le style calcule ne change qu'au focus/blur et au resize : le relire a
+     chaque frame forcait un calcul de style inutile pendant la frappe */
+  let padG = 0, padD = 0, centre = true;
+  const relireStyle = () => {
+    const st = getComputedStyle(champ);
+    padG = parseFloat(st.paddingLeft); padD = parseFloat(st.paddingRight);
+    centre = st.textAlign === 'center';
+  };
   const placer = () => {
     mesure.textContent = champ.value;
     const largeurTexte = mesure.getBoundingClientRect().width;
-    const style = getComputedStyle(champ);
-    const utile = champ.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const utile = champ.clientWidth - padG - padD;
     // le champ est centré au repos, aligné à gauche au focus (cf. terra-menus.css)
-    const depart = style.textAlign === 'center' ? (utile - largeurTexte) / 2 : 0;
-    caret.style.left = (champ.offsetLeft + parseFloat(style.paddingLeft) + depart + largeurTexte) + 'px';
+    const depart = centre ? (utile - largeurTexte) / 2 : 0;
+    caret.style.left = (champ.offsetLeft + padG + depart + largeurTexte) + 'px';
   };
   placerCaret = placer;
-  champ.addEventListener('focus', () => { document.body.classList.add('recherche-active'); placer(); });
-  champ.addEventListener('blur',  () => document.body.classList.remove('recherche-active'));
+  relireStyle();
+  addEventListener('resize', relireStyle);
+  champ.addEventListener('focus', () => { document.body.classList.add('recherche-active');
+    relireStyle(); placer(); });
+  champ.addEventListener('blur',  () => { document.body.classList.remove('recherche-active'); relireStyle(); });
   champ.addEventListener('input', placer);
   champ.addEventListener('keyup', placer);
   addEventListener('resize', placer);
@@ -2448,7 +2470,7 @@ async function genererStory(opts){
     g.fillText(langue === 'en' ? 'WILL YOUR CITY STILL BE LIVABLE IN 2050?'
       : 'VOTRE VILLE SERA-T-ELLE ENCORE VIVABLE EN 2050 ?', 540, 1690);
     g.letterSpacing = '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = '400 24px "TWK Lausanne"';
-    g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}`, 540, 1746);
+    g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}&cc=${l[1]}`, 540, 1746);
     g.letterSpacing = '0px';
   }
   return cv;
