@@ -569,6 +569,16 @@ const T = () => TEXTES[langue];
    que le shader, donc le dossier ne peut pas diverger du globe.
    ===================================================================== */
 let LIEUX = [];
+/* Valeurs thermiques exactes par ville (data/thermo.bin, 4 octets : chaud
+   2026, chaud 2050, gel 2026, gel 2050). Le PNG du globe est floute et
+   quantifie pour le rendu : le lire pour le TEXTE faisait diverger le chiffre
+   affiche de la note — jusqu'a 49 points sur les cotes et les iles. */
+let THERMO = null;
+const thermoVille = (i, canal, t) => {
+  if (!THERMO) return null;
+  const a = THERMO[i * 4 + canal] / 255, b = THERMO[i * 4 + canal + 1] / 255;
+  return a * (1 - t) + b * t;
+};
 let PAYS_POP = {};                 // iso2 -> [habitants 2025, habitants 2050] (ONU)
 let PAYS_LIGNES = [];              // pseudo-rangées pays pour la recherche
 let VILLES_PAR_PAYS = {};          // iso2 -> rangées de villes
@@ -656,9 +666,17 @@ function penVille(l, cle, t){
 
 const CRITERES = [
   { cle: 'thermique', poids: 0.22, couleur: '#E06A3C',
-    detail: (l, t) => T().detChaud(Math.round(lireT('a', 0, l[2], l[3], t) * 300),
-                                   Math.round((lireT('a', 0, l[2], l[3], 1) - lireT('a', 0, l[2], l[3], 0)) * 300))
-            + ' · ' + T().detFroid(Math.round(lireT('a', 1, l[2], l[3], t) * 200)) },
+    detail: (l, t) => {
+      // meme source que la note : thermo.bin, et non le PNG floute du globe
+      const i = LIEUX.indexOf(l);
+      const ch = i >= 0 ? thermoVille(i, 0, t) : null;
+      const j = ch !== null ? ch : lireT('a', 0, l[2], l[3], t);
+      const j50 = i >= 0 && THERMO ? thermoVille(i, 0, 1) : lireT('a', 0, l[2], l[3], 1);
+      const j26 = i >= 0 && THERMO ? thermoVille(i, 0, 0) : lireT('a', 0, l[2], l[3], 0);
+      const g = i >= 0 && THERMO ? thermoVille(i, 2, t) : lireT('a', 1, l[2], l[3], t);
+      return T().detChaud(Math.round(j * 300), Math.round((j50 - j26) * 300))
+        + ' · ' + T().detFroid(Math.round(g * 200));
+    } },
   { cle: 'eau', poids: 0.18, couleur: '#A07830',
     detail: (l, t) => T().detEau(Math.round(penVille(l, 'eau', t) * 100),
       Math.round(percentile('eau', penVille(l, 'eau', t)) * 100),
@@ -2177,7 +2195,11 @@ function majDossier(){
     const tAn = Math.min(1, Math.max(0, (an - 2026) / 24));
     let txt = '';
     if (pire.note < 70){
-      if (pire.cle === 'thermique') txt = t.frappeChaud(Math.round(lireT('a', 0, l[2], l[3], tAn) * 300), an);
+      if (pire.cle === 'thermique'){
+        const iv = LIEUX.indexOf(l);
+        const j = (iv >= 0 && THERMO) ? thermoVille(iv, 0, tAn) : lireT('a', 0, l[2], l[3], tAn);
+        txt = t.frappeChaud(Math.round(j * 300), an);
+      }
       else if (pire.cle === 'mer' && l[7] && l[7].mer) txt = t.frappeMer(Math.round(l[7].mer.f50 * 100));
       else if (pire.cle === 'fleuves' && l[7] && l[7].crue) txt = t.frappeFleuves(Math.round(l[7].crue.f * 100));
       else if (pire.cle === 'eau') txt = t.frappeEau(Math.round(percentile('eau', penVille(l, 'eau', tAn)) * 100));
@@ -2915,6 +2937,8 @@ Promise.all([
   Promise.all([
     fetch('./data/places.json').then(r => r.json()),
     fetch('./data/places.bin').then(r => r.arrayBuffer()),
+    fetch('./data/thermo.bin').then(r => r.arrayBuffer())
+      .then(b => { THERMO = new Uint8Array(b); }).catch(() => {}),
   ]).then(([j, bin]) => {
     const dv = new DataView(bin), REC = 24;
     const ORDRE = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
