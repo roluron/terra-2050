@@ -1112,87 +1112,108 @@ scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
     new THREE.LineBasicMaterial({ color: 0x1740A9, transparent: true, opacity: 0.085 })));
 }
 /* =====================================================================
-   5. R-02 FEUX — un seul THREE.Points (6000 max), scintillement GPU,
-      la densité croît avec la projection via drawRange.
+   5. R-02 FEUX — un seul THREE.Points (6000 max), scintillement GPU.
+      Chaque foyer porte SON danger aux deux horizons : la timeline ne fait
+      plus varier une densité sur la seule carte 2050, elle déplace la
+      géographie du feu entre 2026 et 2050.
    ===================================================================== */
 const FEUX_MAX = 6000;
-let feux, feuxUniforms, feuxActifs = 0;
+let feux, feuxUniforms;
 {
   const positions = new Float32Array(FEUX_MAX * 3);
   const graines = new Float32Array(FEUX_MAX);
+  const dangers = new Float32Array(FEUX_MAX * 2);   // danger 2026, danger 2050
   for (let i = 0; i < FEUX_MAX; i++) graines[i] = Math.random();
 
   /* Semis par rejet sur la grille de danger météo de feu (canal rouge de
      grille_b_2050.png, dérivée de WorldClim/CMIP6). Un foyer ne peut pas
      tomber en mer : la grille vaut zéro hors du masque terre. Les points
-     sont triés par danger décroissant, de sorte que le drawRange piloté par
-     la timeline fasse d'abord apparaître les cœurs, puis l'expansion. */
+     sont triés par danger décroissant : les cœurs d'abord, puis l'expansion. */
   const semerFeux = () => {
-    const img = new Image();
-    img.src = './data/grille_b_2050.png';
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = img.width; c.height = img.height;
-      const ctx = c.getContext('2d', { willReadFrequently: true });
-      ctx.drawImage(img, 0, 0);
-      const px = ctx.getImageData(0, 0, c.width, c.height).data;
-      const dangerEn = (x, y) => px[(y * c.width + x) * 4] / 255;       // canal rouge = danger de feu
+    const lire = (src) => new Promise(res => {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = img.width; c.height = img.height;
+        const ctx = c.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+        res({ px: ctx.getImageData(0, 0, c.width, c.height).data, w: c.width, h: c.height });
+      };
+      img.onerror = () => res(null);
+      img.src = src;
+    });
+    Promise.all([lire('./data/grille_b_2026.png'), lire('./data/grille_b_2050.png')]).then(([g26, g50]) => {
+      if (!g50) return;
+      const w = g50.w, h = g50.h;
+      const dg = (g, x, y) => (g ? g.px[(y * g.w + x) * 4] / 255 : 0);   // canal rouge = danger de feu
 
+      /* Semis par rejet sur le PIRE des deux horizons : un foyer qui n'existe
+         qu'en 2050 doit avoir sa place, un foyer de 2026 qui s'éteint aussi. */
       const tirages = [];
       let essais = 0;
       while (tirages.length < FEUX_MAX && essais < FEUX_MAX * 400){
         essais++;
-        const x = (Math.random() * c.width) | 0;
+        const x = (Math.random() * w) | 0;
         // tirage uniforme en surface : sin(lat) plutôt que lat
         const lat = Math.asin(Math.random() * 2 - 1) * 180 / Math.PI;
-        const y = Math.min(c.height - 1, Math.max(0, ((90 - lat) / 180 * c.height) | 0));
-        const d = dangerEn(x, y);
-        if (d > 0.06 && Math.random() < d * d){
-          tirages.push([d, (x + Math.random()) / c.width * 360 - 180, lat]);
+        const y = Math.min(h - 1, Math.max(0, ((90 - lat) / 180 * h) | 0));
+        const d26 = dg(g26, x, y), d50 = dg(g50, x, y), pire = Math.max(d26, d50);
+        if (pire > 0.06 && Math.random() < pire * pire){
+          tirages.push([pire, (x + Math.random()) / w * 360 - 180, lat, d26, d50]);
         }
       }
       tirages.sort((a, b) => b[0] - a[0]);
       for (let i = 0; i < FEUX_MAX; i++){
-        const t = tirages[i % Math.max(tirages.length, 1)] || [0, 0, 0];
+        const t = tirages[i % Math.max(tirages.length, 1)] || [0, 0, 0, 0, 0];
         const v = latLonVersVec3(t[2], t[1], 1.012);
         positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
+        dangers[i * 2] = t[3]; dangers[i * 2 + 1] = t[4];
       }
       feux.geometry.attributes.position.needsUpdate = true;
-    };
+      feux.geometry.attributes.aDanger.needsUpdate = true;
+    });
   };
-  semerFeux();
 
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geo.setAttribute('aGraine', new THREE.BufferAttribute(graines, 1));
+  geo.setAttribute('aDanger', new THREE.BufferAttribute(dangers, 2));
   feuxUniforms = {
-    uTemps: { value: 0 }, uIntensite: { value: 0 },
+    uTemps: { value: 0 }, uIntensite: { value: 0 }, uProgression: { value: 0 },
     uPixelRatio: { value: moteur.getPixelRatio() },
   };
   feux = new THREE.Points(geo, new THREE.ShaderMaterial({
     uniforms: feuxUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     vertexShader: /* glsl */`
       attribute float aGraine;
-      uniform float uTemps, uIntensite, uPixelRatio;
-      varying float vFlamme;
+      attribute vec2 aDanger;                 // danger de feu en 2026, en 2050
+      uniform float uTemps, uIntensite, uPixelRatio, uProgression;
+      varying float vFlamme, vVif;
       void main(){
+        /* le foyer suit SON propre danger a l'annee affichee : un feu qui
+           n'apparait qu'en 2050 s'allume en cours de route, un feu de 2026
+           qui s'apaise s'eteint — la geographie bouge, pas seulement la densite */
+        float d = mix(aDanger.x, aDanger.y, uProgression);
+        vVif = smoothstep(0.06, 0.30, d);
         float scintille = 0.55 + 0.45 * sin(uTemps * (5.0 + aGraine * 5.0) + aGraine * 43.0);
         vFlamme = scintille;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = (2.2 + 3.2 * scintille) * uIntensite * uPixelRatio * (2.6 / -mv.z);
+        gl_PointSize = (2.2 + 3.2 * scintille) * uIntensite * vVif * uPixelRatio * (2.6 / -mv.z);
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: /* glsl */`
-      uniform float uIntensite; varying float vFlamme;
+      uniform float uIntensite; varying float vFlamme, vVif;
       void main(){
+        if (vVif < 0.02) discard;
         float d = length(gl_PointCoord - 0.5);
-        float alpha = smoothstep(0.5, 0.05, d) * vFlamme * uIntensite;
+        float alpha = smoothstep(0.5, 0.05, d) * vFlamme * uIntensite * vVif;
         vec3 col = mix(vec3(1.0, 0.72, 0.2), vec3(1.0, 0.2, 0.08), d * 2.0);
         gl_FragColor = vec4(col, alpha);
       }`,
   }));
   feux.visible = false;
   scene.add(feux);
+  semerFeux();
 }
 
 /* =====================================================================
@@ -3112,9 +3133,8 @@ function boucle(){
   marqueurUniforms.uTemps.value = t;
   fleuvesUniforms.uTemps.value = t;
 
-  // densité des feux pilotée par la projection (multiplication réelle via drawRange)
-  const cibleFeux = Math.floor(FEUX_MAX * Math.pow(0.05 + 0.95 * etat.progression, 1.6) * feuxUniforms.uIntensite.value);
-  if (cibleFeux !== feuxActifs){ feuxActifs = cibleFeux; feux.geometry.setDrawRange(0, cibleFeux); }
+  // chaque foyer decide lui-meme s il brule a l annee affichee (aDanger)
+  feuxUniforms.uProgression.value = etat.progression;
 
   controles.update();
   indiceCible = 1 - indiceCible;
