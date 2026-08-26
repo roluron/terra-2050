@@ -255,7 +255,6 @@
         <label class="story-opt"><input type="checkbox" data-opt="trajectoire" checked><i></i><span></span></label>
         <label class="story-opt"><input type="checkbox" data-opt="axes" checked><i></i><span></span></label>
         <label class="story-opt"><input type="checkbox" data-opt="population" checked><i></i><span></span></label>
-        <label class="story-opt"><input type="checkbox" data-opt="question" checked><i></i><span></span></label>
         <button class="entree-pedago" id="story-partager"></button>
       </div>
     </div>
@@ -443,7 +442,8 @@ const TEXTES = {
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     fermer: 'Fermer ×', partage: 'Partager le lien ↗', story: 'Image story ↗',
-    storyTitre: 'Composer la story', storyPartager: 'Partager ↗',
+    storyTitre: 'Composer la story', storyPartager: 'Partager en story ↗',
+    storyEnregistrer: 'Enregistrer en JPEG ↓', storyEnregistree: 'Enregistré ✓',
     frappeChaud: (j, an) => `${j} jours d’indice de chaleur au-dessus de 32 °C par an en ${an}`,
     frappeMer: f => `${f} % des terres sous la ligne de submersion 2050`,
     frappeFleuves: f => `${f} % du territoire en zone de crue centennale`,
@@ -531,7 +531,8 @@ const TEXTES = {
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     fermer: 'Close ×', partage: 'Share link ↗', story: 'Story image ↗',
-    storyTitre: 'Compose your story', storyPartager: 'Share ↗',
+    storyTitre: 'Compose your story', storyPartager: 'Share to Stories ↗',
+    storyEnregistrer: 'Save as JPEG ↓', storyEnregistree: 'Saved ✓',
     frappeChaud: (j, an) => `${j} days a year above a 32 °C heat index in ${an}`,
     frappeMer: f => `${f}% of the land below the 2050 flood line`,
     frappeFleuves: f => `${f}% of the area inside the 100-yr flood zone`,
@@ -2402,7 +2403,7 @@ async function genererStory(opts){
     g.fillText(`${pct > 0 ? '+' : '−'}${Math.abs(pct)} %`, 960, y);
   }
 
-  if (opts.question){
+  {   // signature toujours presente : la question et le lien font l'image
     g.textAlign = 'center'; g.letterSpacing = '5px';
     g.fillStyle = MUTER; g.font = '500 26px "TWK Lausanne"';
     g.fillText(langue === 'en' ? 'WILL YOUR CITY STILL BE LIVABLE IN 2050?'
@@ -2439,9 +2440,11 @@ function ouvrirStory(){
   if (!lieuDossier) return;
   const t = T();
   document.getElementById('story-titre').textContent = t.storyTitre;
-  const libelles = [t.optPlanete, t.optTrajectoire, t.optAxes, t.optPop, t.optQuestion];
+  const libelles = [t.optPlanete, t.optTrajectoire, t.optAxes, t.optPop];
   storyPopup.querySelectorAll('.story-opt span').forEach((sp, i) => (sp.textContent = libelles[i]));
-  document.getElementById('story-partager').textContent = t.storyPartager;
+  document.getElementById('story-partager').textContent =
+    (navigator.canShare && navigator.canShare({ files: [new File([new Blob()], 'x.jpg', { type: 'image/jpeg' })] }))
+      ? t.storyPartager : t.storyEnregistrer;
   storyPopup.hidden = false; storyOuvert = true;
   gsap.fromTo('.story-carte', { opacity: 0, scale: 0.94, y: 8 },
     { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)', clearProps: 'transform' });
@@ -2454,23 +2457,32 @@ storyPopup.addEventListener('click', e => { if (e.target === storyPopup) fermerS
 addEventListener('keydown', e => {
   if (e.key === 'Escape' && storyOuvert){ fermerStory(); e.stopImmediatePropagation(); }
 });
-document.getElementById('story-partager').addEventListener('click', async () => {
+async function partagerStory(){
   const cv = await genererStory(optsStory); if (!cv) return;
-  const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+  const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
   majLien(true);
-  const fichier = new File([blob],
-    `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.png`, { type: 'image/png' });
-  // feuille de partage native quand elle accepte les fichiers (mobile :
-  // Instagram y apparait) — telechargement direct sinon
+  const nom = `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.jpg`;
+  const fichier = new File([blob], nom, { type: 'image/jpeg' });
+  const t = T();
+  // la feuille de partage native EST le chemin vers Instagram Stories : le
+  // systeme y propose « Stories » des que l'app est installee. Il faut que
+  // l'appel parte du geste utilisateur, sans await intercale avant.
   if (navigator.canShare && navigator.canShare({ files: [fichier] })){
-    try { await navigator.share({ files: [fichier], title: 'TERRA/2050' });
-      SoundManager.play('ui_click'); fermerStory(); return; } catch (e) { if (e.name === 'AbortError') return; }
+    try {
+      await navigator.share({ files: [fichier], title: 'TERRA／2050',
+        text: `${nomVille(lieuDossier)} — ${location.host}${location.pathname}` });
+      SoundManager.play('ui_click'); fermerStory(); return;
+    } catch (e) { if (e.name === 'AbortError') return; }
   }
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = fichier.name; a.click();
+  a.href = URL.createObjectURL(blob); a.download = nom; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  SoundManager.play('ui_click'); fermerStory();
-});
+  const el = document.getElementById('story-partager');
+  const avant = el.textContent; el.textContent = t.storyEnregistree;
+  setTimeout(() => (el.textContent = avant), 1800);
+  SoundManager.play('ui_click');
+}
+document.getElementById('story-partager').addEventListener('click', partagerStory);
 
 // à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
 function ouvrirDepuisLien(){
