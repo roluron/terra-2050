@@ -297,7 +297,7 @@
   <div id="dossier-detail"></div>
   <div id="dossier-ailleurs"></div>
   <div class="sources" id="dossier-sources"></div>
-  <div class="actions"><span class="fa-lien" id="dossier-partage"></span><span class="fa-lien" id="dossier-story"></span></div>
+  <div class="actions"><button type="button" class="fa-lien" id="dossier-partage"></button><button type="button" class="fa-lien" id="dossier-story"></button></div>
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
@@ -311,6 +311,9 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 /* =====================================================================
    0. EASING SIGNATURE — courbes du design system fromanother (GSAP 3)
    ===================================================================== */
+/* « reduire les animations » du systeme : on coupe reellement le mouvement
+   (GSAP, rotation auto, vols camera), pas seulement quelques effets CSS */
+const MOINS_ANIM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const EASE = 'power3.out';          // Ease.DEFAULT du site fromanother (easeOutQuart)
 const EASE_INOUT = 'power3.inOut';  // Ease.INOUT
 const DUREE = { sfast: 0.6, fast: 0.8, normal: 1.4, slow: 1.6, vslow: 1.8 };  // enum Duration du site
@@ -854,9 +857,9 @@ controles.enableDamping = true;
 controles.dampingFactor = 0.25;          // amorti signature de la référence
 controles.enablePan = false;
 controles.minDistance = 1.45;            // zoom borné
-controles.maxDistance = 5.0;
+controles.maxDistance = 6.4;   // laisse vivre le plan large de l'intro (z = 6,2)
 controles.rotateSpeed = 0.55;
-controles.autoRotate = true;             // rotation lente par défaut
+controles.autoRotate = !MOINS_ANIM;      // rotation lente par défaut
 controles.autoRotateSpeed = 0.35;
 
 // conversion lat/lon → vecteur unitaire
@@ -1459,7 +1462,7 @@ toile.addEventListener('pointerdown', () => {
   clearTimeout(minuterieRepos);
 });toile.addEventListener('pointerup', () => {
   clearTimeout(minuterieRepos);
-  minuterieRepos = setTimeout(() => { if (!lieuDossier) controles.autoRotate = true; }, 4000);
+  minuterieRepos = setTimeout(() => { if (!lieuDossier && !MOINS_ANIM) controles.autoRotate = true; }, 4000);
 });
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
@@ -1553,7 +1556,17 @@ function afficherResultats(){
     else if (a.includes(q) || b.includes(q) || (c2 && c2.includes(q))) dedans.push(l);
     if (debut.length > 40) break;
   }
+  /* un site de villes montre d'abord des VILLES — mais un nom tape en entier
+     gagne toujours, et un pays qui correspond garde sa place plutot que d'etre
+     noye sous ses propres villes (« fran » doit proposer la France). */
+  const exact = l => (normaliser(l[0]) === q || normaliser(l[6] || '') === q ? 0 : 1);
+  const rang = l => exact(l) * 2 + (estPays(l) ? 1 : 0);
+  debut.sort((a, b) => rang(a) - rang(b) || (b[4] || 0) - (a[4] || 0));
   resultatsActuels = debut.concat(dedans).slice(0, 7);
+  const pays = debut.find(estPays);
+  if (pays && !resultatsActuels.includes(pays)){
+    resultatsActuels = resultatsActuels.slice(0, 6).concat([pays]);
+  }
   if (!resultatsActuels.length){
     liste.innerHTML = `<li class="vide">${T().aucunLieu}</li>`;
   } else {
@@ -1582,7 +1595,7 @@ function choisirLieu(l){
   const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(estPays(l) ? 3.1 : 2.45);
   if (volEnCours) volEnCours.kill();
   volEnCours = gsap.to(camera.position, {
-    x: cible.x, y: cible.y, z: cible.z, duration: 1.8, ease: EASE,
+    x: cible.x, y: cible.y, z: cible.z, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
   });
 }
@@ -1823,6 +1836,8 @@ champ.addEventListener('blur',  () => gsap.to(etatVerre, { force: 0.55, duration
 /* ---- dossier lieu : diagnostic par ville (valeurs illustratives, déterministes) ---- */
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
+document.getElementById('dossier-score').setAttribute('aria-hidden', 'true');
+document.getElementById('an').setAttribute('aria-hidden', 'true');
 const odoIndice = new Odometre(document.getElementById('dossier-score'), 3);
 let lieuDossier = null;
 /* Diagnostic d'un lieu à une année : six critères + indice /100. */
@@ -1924,7 +1939,7 @@ function majDossierPays(l, an, t, dossierNeuf){
   v.className = 'verdict ' + niveau;
   document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
 
-  const ecart = indice2050 - indicePays(iso, 2026);
+  const ecart = indice2050 - indice;   // meme reference que le conseil : l'annee affichee
   document.getElementById('dossier-delta').textContent =
     (ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'} · `) +
     (langue === 'en' ? `${nVilles} cities weighted by population` : `${nVilles} villes pondérées par population`);
@@ -2166,7 +2181,7 @@ function majDossier(){
   }
 
   tracerTrajectoire(l, an);
-  const ecart = indice2050 - indiceHabitabilite(l, 2026);
+  const ecart = indice2050 - indice;   // meme reference que le conseil : l'annee affichee
   const texteEcart = ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'}`;
   const rg = rangScore(indice);
   const texteRang = rg === null ? '' :
@@ -2238,6 +2253,18 @@ addEventListener('resize', () => document.body.classList.contains('dossier-ouver
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(depuisChamp){
   lieuDossier = null;
+  // fermeture douce (on repart chercher) : la camera reste ou elle est,
+  // sinon elle s'eloigne pour rien avant de replonger sur la ville suivante
+  if (depuisChamp){
+    if (balayageAnnee) balayageAnnee.kill();
+    lieuVs = null; defiLien = null;
+    retirerMarqueur();
+    history.replaceState(null, '', location.pathname);
+    dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
+    document.body.classList.remove('dossier-ouvert');
+    clearTimeout(minuterieLien);
+    return;
+  }
   if (!depuisChamp){ lieuVs = null; defiLien = null; cacherAccroche(); }
   if (balayageAnnee) balayageAnnee.kill();
   if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
@@ -2245,9 +2272,9 @@ function fermerDossier(depuisChamp){
   if (volEnCours) volEnCours.kill();
   gsap.killTweensOf(camera.position);
   volEnCours = gsap.to(camera.position, {
-    ...CAMERA_ACCUEIL, duration: 1.8, ease: EASE,
+    ...CAMERA_ACCUEIL, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
-    onComplete: () => { controles.autoRotate = true; },
+    onComplete: () => { controles.autoRotate = !MOINS_ANIM; },
   });
   if (!depuisChamp){
     if (document.activeElement === champ) champ.blur();
@@ -2869,9 +2896,11 @@ Promise.all([
               PAYS_POP[iso][0], 2, nomEn, null];
     });
   document.body.classList.add('donnees-pretes');
+  donneesPretes = true; peutEntrer();
   if (lieuDossier) majDossier();
   ouvrirDepuisLien();
 }).catch(err => {
+  donneesPretes = true; peutEntrer();   // l entree reste possible, la recherche le dira
   // le chrome et le globe restent utilisables ; la recherche affichera
   // simplement « aucune ville » tant que l'annuaire manque
   console.error('données indisponibles :', err);
@@ -2892,11 +2921,14 @@ chargeur.onProgress = (u, charge, total) => {
   document.getElementById('jauge').textContent = pct + '%';
   document.getElementById('v-barre-fill').style.width = pct + '%';
 };
-chargeur.onLoad = () => {
+let texturesPretes = false, donneesPretes = false;
+function peutEntrer(){
+  if (!texturesPretes || !donneesPretes) return;
   document.getElementById('jauge').textContent = '100%';
   document.getElementById('v-barre-fill').style.width = '100%';
   document.getElementById('voile').classList.add('pret');
-};
+}
+chargeur.onLoad = () => { texturesPretes = true; peutEntrer(); };
 
 document.getElementById('bouton-entree').addEventListener('click', () => {
   const voile = document.getElementById('voile');
@@ -2913,7 +2945,7 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   // déjà lancé un vol vers une ville (les deux tweens se battaient)
   if (!lieuDossier){
     gsap.killTweensOf(camera.position);
-    volEnCours = gsap.to(camera.position, { ...CAMERA_ACCUEIL, duration: 2.6, ease: EASE });
+    volEnCours = gsap.to(camera.position, { ...CAMERA_ACCUEIL, duration: MOINS_ANIM ? 0 : 2.6, ease: EASE });
   }
   // la terre s'éveille : la surface s'éclaircit pendant le recul caméra
   gsap.to(uniformsGlobe.uEveil, { value: 1, duration: 2.8, ease: EASE });
