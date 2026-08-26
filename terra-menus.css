@@ -833,8 +833,13 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
   #calques { left: 14px; }
   body.dossier-ouvert #calques { opacity: 0; pointer-events: none; }
   body.dossier-ouvert #dossier-croix { z-index: 40; }
-  #calques .calque .nom { display: none; }
-  #calques .calque .pastille { width: 12px; height: 12px; }
+  /* les noms restaient caches : sept pastilles anonymes, impossible de
+     savoir ce qu'on allume. Ils reviennent, plus petits, et la cible tactile
+     fait la hauteur recommandee. */
+  #calques .calque .nom { display: block; font-size: 11px; letter-spacing: 0; }
+  #calques .calque .code { display: none; }
+  #calques .calque { padding: 9px 8px; gap: 9px; min-height: 44px; }
+  #calques .calque .pastille { width: 11px; height: 11px; }
   #calque-bulle { display: none; }
 }
 

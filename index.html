@@ -1931,6 +1931,18 @@ function tracerTrajectoire(l, an){
 /* État « en ce moment » : événements naturels réellement en cours autour du
    lieu (NASA EONET + USGS). Aucune projection ici, que de l'observé. */
 
+{
+  /* un seul emplacement de detail pour les six criteres. Les ecouteurs vivent
+     sur le conteneur, pose une fois : ils survivent aux reconstructions et
+     valent pour les fiches ville COMME pays. Le clic et le focus doublent le
+     survol, sans quoi cinq details sur six sont inatteignables au doigt. */
+  const conteneur = document.getElementById('dossier-risques');
+  const versDetail = e => { const r = e.target.closest('.risque'); if (r) majDetail(r); };
+  conteneur.addEventListener('mouseover', versDetail);
+  conteneur.addEventListener('click', versDetail);
+  conteneur.addEventListener('focusin', versDetail);
+  conteneur.addEventListener('mouseleave', () => majDetail(null));
+}
 function majDetail(rangee){
   const slot = document.getElementById('dossier-detail');
   const cible = rangee || document.querySelector('#dossier-risques .risque.pire')
@@ -2004,6 +2016,7 @@ function majDossierPays(l, an, t, dossierNeuf){
     rangee.dataset.detail = langue === 'en'
       ? `population-weighted mean of ${nVilles} cities` : `moyenne pondérée des ${nVilles} villes`;
     rangee.dataset.couleur = teinte;
+    rangee.classList.toggle('pire', n === Math.min(...notes));
   });
   majDetail(null);
   tracerTrajectoire(l, an);
@@ -2161,14 +2174,6 @@ function majDossier(){
     /* un seul emplacement de détail pour les six critères : celui de la rangée
        survolée, sinon celui du pire axe — six détails sur deux lignes chacun
        forçaient le panneau à défiler sur un MacBook */
-    if (!conteneur.dataset.survol){
-      conteneur.dataset.survol = '1';
-      conteneur.addEventListener('mouseover', e => {
-        const r = e.target.closest('.risque');
-        if (r) majDetail(r);
-      });
-      conteneur.addEventListener('mouseleave', () => majDetail(null));
-    }
   }
   conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
     const c = criteres[i], fin = criteres50[i];
