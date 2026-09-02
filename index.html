@@ -870,7 +870,10 @@ function distanceKm(la1, lo1, la2, lo2){
       Fichiers : placeholders générés, à remplacer à l'identique.
    ===================================================================== */
 const SoundManager = new class {
-  constructor(){ this.registre = {}; this.derniereLecture = {}; this.volumeGlobal = 1; this._mute = false; }
+  constructor(){ this.registre = {}; this.derniereLecture = {}; this.volumeGlobal = 1; this._mute = false;
+    // boucles creees a la demande : un lien profond en 2040+ declenche la
+    // crise avant l entree, donc avant chargerBoucles()
+    this.differes = { ambient_loop: ['ambient_loop.mp3', 0.5, true], crisis_loop: ['crisis_loop.mp3', 0.5, true] }; }
   init(){
     this.creer('ui_click',      'ui_click.mp3',      1.0);
     this.creer('ui_hover',      'ui_hover.mp3',      1.0);
@@ -893,7 +896,9 @@ const SoundManager = new class {
   }
   // lecture ponctuelle avec anti-rebond (150 ms min entre deux plays du même id)
   play(id, fondu = false){
-    const s = this.registre[id]; if (!s) return;
+    let s = this.registre[id];
+    if (!s && this.differes[id]) s = this.creer(id, ...this.differes[id]);
+    if (!s) return;
     const maintenant = performance.now();
     if (maintenant - (this.derniereLecture[id] || 0) < 150) return;
     this.derniereLecture[id] = maintenant;
@@ -1724,6 +1729,9 @@ function afficherResultats(){
       volEnCours = gsap.to(camera.position, { x: cible.x, y: cible.y, z: cible.z,
         duration: MOINS_ANIM ? 0 : 2.4, ease: EASE,
         onUpdate: () => camera.lookAt(0, 0, 0),
+        // kill() ne declenche pas onComplete : sans onInterrupt, une ville
+        // choisie pendant le vol laissait la classe posee et l oeuf mort
+        onInterrupt: () => document.body.classList.remove('atlantide'),
         onComplete: () => document.body.classList.remove('atlantide') });
     }
   } else {

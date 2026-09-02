@@ -1207,7 +1207,10 @@ button, .calque, #curseur { touch-action: manipulation; }
    partageaient le meme coin ; tout se resserre pour tenir en 343 px de haut.
    `body.pret #timeline` est necessaire : la regle d'entree porte cette
    specificite et gagnerait sinon avec son translate(-50%). */
-@media (min-width: 721px) and (max-height: 520px) {
+/* (pointer: coarse) est indispensable : sans lui, une fenetre de bureau
+   simplement basse (1440x500) basculait dans la mise en page telephone,
+   croix detachee de la fiche et rail des calques efface. */
+@media (min-width: 721px) and (max-height: 520px) and (pointer: coarse) {
   #timeline, body.pret #timeline {
     left: auto; right: 24px; bottom: 6px; transform: none;
     width: min(280px, 34vw); text-align: right; }
