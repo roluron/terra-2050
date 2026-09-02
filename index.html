@@ -425,6 +425,7 @@ const TEXTES = {
     aucunLieu: 'Aucune ville trouvée',
     atlantide: 'Atlantide — submergée depuis −9600. Indice 0/100. Essayez une ville encore émergée.',
     chargementVilles: 'Chargement des 34 099 villes…',
+    calquesHS: 'Cartes de calques indisponibles — rechargez la page',
     detEnAttente: 'Mesure en cours de chargement…',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     calques: 'Calques de risque',
@@ -523,6 +524,7 @@ const TEXTES = {
     aucunLieu: 'No city found',
     atlantide: 'Atlantis — underwater since 9600 BC. Index 0/100. Try a city still above the sea.',
     chargementVilles: 'Loading 34,099 cities…',
+    calquesHS: 'Layer maps unavailable — reload the page',
     detEnAttente: 'Measurement still loading…',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     calques: 'Risk layers',
@@ -658,21 +660,6 @@ const nomPays = (() => {
 })();
 
 const GRILLES = {};
-function chargerGrilleDonnees(fichier, cle){
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = img.width; c.height = img.height;
-      const ctx = c.getContext('2d', { willReadFrequently: true });
-      ctx.drawImage(img, 0, 0);
-      GRILLES[cle] = { w: c.width, h: c.height, px: ctx.getImageData(0, 0, c.width, c.height).data };
-      resolve(true);
-    };
-    img.onerror = () => resolve(false);
-    img.src = fichier;
-  });
-}
 
 /* Lecture d'un canal à une position. Une ville côtière tombe souvent sur un
    texel d'océan à 10' : on cherche alors le texel terrestre le plus proche,
@@ -932,10 +919,14 @@ let moteur;
 try {
   moteur = new THREE.WebGLRenderer({ canvas: toile, antialias: false, powerPreference: 'high-performance' });
 } catch (e) {
+  // le message de secours EST la reponse : relancer l erreur la faisait
+  // remonter en exception non capturee dans la console du visiteur
   document.getElementById('secours').style.display = 'flex';
   document.getElementById('voile').classList.add('cache');
-  throw e;
+  console.warn('WebGL indisponible :', e && e.message);
 }
+// arret propre : le module s interrompt ici, sans exception remontee
+if (!moteur) await new Promise(() => {});
 moteur.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // DPR plafonné à 2
 moteur.setSize(innerWidth, innerHeight);
 moteur.info.autoReset = false;   // stats cumulées scène + post, remises à zéro en début de frame
@@ -964,8 +955,9 @@ function latLonVersVec3(lat, lon, r = 1){
    4. GLOBE — un ShaderMaterial unique projette 4 calques de surface
       (chaleur, argile, sécheresse, submersion). Aucun mesh par risque.
    ===================================================================== */
-const chargeur = new THREE.LoadingManager();
-const texChargeur = new THREE.TextureLoader(chargeur);
+// plus de LoadingManager : il declarait « terminee » une image en echec et
+// liberait le bouton Explorer sur une planete noire. Les trois images du
+// chemin critique sont suivies une par une (voir IMAGES_CRITIQUES).
 // 4K : même coût de rendu (mips), +24 Mo GPU — net sur Retina. Le masque est
 // régénéré depuis ETOPO 60'' : côtes bien plus précises que l'ancien 2048.
 // Telephone : la moitie de la resolution suffit a l'ecran, et epargne 750 Ko
@@ -973,15 +965,44 @@ const texChargeur = new THREE.TextureLoader(chargeur);
 // desktop gardent le 4K. Le masque, lui, porte la justesse des cotes : il
 // reste en 4320 partout (295 Ko).
 const PETIT_ECRAN = Math.min(innerWidth, innerHeight) < 500;
-/* WebP, avec repli sur le fichier d origine si le navigateur n en veut pas :
-   500 Ko -> 202 Ko pour la couleur, 288 -> 211 pour le masque. Sur un lien
-   ouvert en 4G, c est un tiers du chemin critique qui disparait. */
-function chargerTextureImage(webp, repli){
-  const t = texChargeur.load(webp, undefined, undefined, () => {
-    new THREE.TextureLoader().load(repli, r => {
-      t.image = r.image; t.needsUpdate = true;
-    });
-  });
+/* WebP quand le navigateur en veut, fichier d origine sinon : 500 Ko -> 202
+   pour la couleur, 288 -> 211 pour le masque. Sur un lien ouvert en 4G, c est
+   un tiers du chemin critique qui disparait.
+
+   Le format est decide AVANT de charger, par un test d une image d un pixel
+   sans reseau. Un repli branche sur l erreur ne convenait pas : il partait
+   d un chargeur non surveille, si bien que le bouton Explorer s ouvrait sur
+   une planete noire et que l annuaire demarrait dans les jambes du JPEG
+   encore en cours de telechargement. */
+const WEBP_OK = await new Promise(res => {
+  const i = new Image();
+  i.onload = () => res(i.height === 1);
+  i.onerror = () => res(false);
+  i.src = 'data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA==';
+});
+/* Le gestionnaire de Three.js considere une image en echec comme « terminee »
+   et libere le bouton Explorer : la planete restait noire et l annuaire
+   partait dans les jambes du repli. Les trois images du chemin critique sont
+   donc suivies ici, et une image qui echoue attend son repli avant de
+   compter comme prete. */
+const IMAGES_CRITIQUES = [];
+function chargerTextureImage(webp, repli, donnees){
+  const t = new THREE.Texture();
+  if (donnees){   // une grille est une donnee, pas une couleur
+    t.colorSpace = THREE.NoColorSpace;
+    t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
+    t.minFilter = t.magFilter = THREE.LinearFilter;
+    t.generateMipmaps = false;
+  }
+  IMAGES_CRITIQUES.push(new Promise(res => {
+    const essayer = (url, suite) => {
+      const im = new Image();
+      im.onload = () => { t.image = im; t.needsUpdate = true; res(true); };
+      im.onerror = () => (suite ? essayer(suite, null) : res(false));
+      im.src = url;
+    };
+    essayer(WEBP_OK ? webp : repli, WEBP_OK ? repli : null);
+  }));
   return t;
 }
 const texCouleur = chargerTextureImage(
@@ -996,16 +1017,6 @@ texCouleur.anisotropy = 8;   // netteté aux angles rasants, quasi gratuit
 texMasque.anisotropy = 4;
 texCouleur.colorSpace = THREE.SRGBColorSpace;
 
-/* Grilles de risques précalculées (tools/pipeline.py) : 2160x1080, une valeur
-   par canal. Le shader interpole entre l'horizon 2026 et l'horizon 2050. */
-function chargerGrille(fichier){
-  const t = texChargeur.load(fichier);
-  t.colorSpace = THREE.NoColorSpace;              // ce sont des données, pas des couleurs
-  t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
-  t.minFilter = t.magFilter = THREE.LinearFilter;
-  t.generateMipmaps = false;
-  return t;
-}
 /* a = chaleur ressentie / gel / deficit hydrique ; b = feu / submersion /
    fleuves ; c = argiles / masque terre ; d = derive climatique (r=2026, g=2050).
 
@@ -1017,7 +1028,8 @@ function chargerGrille(fichier){
 const texVide = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
 texVide.needsUpdate = true;
 let texA2026 = texVide, texA2050 = texVide, texB2026 = texVide, texB2050 = texVide;
-const texC     = chargerGrille('./data/grille_c.png');   // texture gatee : le shader la lit a chaque pixel
+// grille_c : le shader la lit a chaque pixel du globe, elle bloque l entree
+const texC = chargerTextureImage('./data/grille_c.png', './data/grille_c.png', true);
 let texD = texVide;
 
 /* Une grille se telecharge UNE fois et sert deux fois : les pixels au
@@ -1025,10 +1037,13 @@ let texD = texVide;
    Avant, grille_c, grille_d et les deux grille_b partaient chacune deux fois
    dans la meme milliseconde — 1,8 Mo payes en double sur le chemin qu on
    cherchait justement a alleger. */
-function pixelsDepuisTexture(tex, cle){
+function pixelsDepuisTexture(tex, cle, replier){
   return new Promise(res => {
     const img = tex.image;
-    if (!img || !img.width){ res(false); return; }   // texture absente : lire() renverra 0
+    // le filet des 30 s peut nous amener ici avant la fin de la texture : on
+    // charge alors le fichier pour de bon, sinon le masque des terres serait
+    // perdu en silence et les villes cotieres liraient des texels d ocean
+    if (!img || !img.width){ res(replier ? chargerGrilleUneFois(replier, cle, null) : false); return; }
     const c = document.createElement('canvas');
     c.width = img.width; c.height = img.height;
     const ctx = c.getContext('2d', { willReadFrequently: true });
@@ -1633,7 +1648,20 @@ const etat = { progression: 0, annee: 2026, feuxCible: 0, crise: false };
 
 // le rail ne se declare pret que si les grilles sont VRAIMENT la : sur echec,
 // un calque allume afficherait « aucun risque » partout, indiscernable du vrai
-calquesPrets.then(ok => { if (ok) document.body.classList.remove('calques-en-attente'); });
+calquesPrets.then(ok => {
+  document.body.classList.remove('calques-en-attente');
+  if (ok) return;
+  // une grille manquante ferait lire « aucun risque » sur toute la Terre, ce
+  // qui ressemble a une mesure. Les calques deviennent inertes et le disent.
+  document.body.classList.add('calques-indisponibles');
+  for (const b of document.querySelectorAll('.calque')){
+    b.disabled = true; b.setAttribute('aria-disabled', 'true');
+    b.title = T().calquesHS;
+  }
+  const note = document.createElement('div');
+  note.className = 'calques-note'; note.textContent = T().calquesHS;
+  document.getElementById('calques').appendChild(note);
+});
 document.body.classList.add('calques-en-attente');
 for (const btn of document.querySelectorAll('.calque')){
   btn.addEventListener('click', () => {
@@ -2212,7 +2240,9 @@ function majDetail(rangee){
   const cible = rangee || document.querySelector('#dossier-risques .risque.pire')
     || document.querySelector('#dossier-risques .risque');
   if (!cible){ slot.textContent = ''; return; }
-  slot.innerHTML = `<b style="color:${cible.dataset.couleur}">${cible.dataset.nom}</b> · ${cible.dataset.detail}`;
+  const d = (cible.dataset.detail || '').trim();
+  slot.innerHTML = `<b style="color:${cible.dataset.couleur}">${cible.dataset.nom}</b>`
+    + (d ? ` · ${d}` : '');   // sans detail, pas de separateur orphelin
 }
 
 /* Fiche PAYS : score pondéré, habitants 2026 -> 2050 (ONU), déclin, mêmes
@@ -2622,6 +2652,9 @@ function majLien(immediat, pousser){
 }
 document.getElementById('dossier-partage').addEventListener('click', async () => {
   if (!lieuDossier) return;
+  // le balayage d ouverture avance encore : sans cela le lien partageait une
+  // annee de plus que celle lue a l ecran
+  stopperBalayage();
   majLien(true);
   const l = lieuDossier, an = etat.annee;
   const indice = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
@@ -2868,6 +2901,7 @@ addEventListener('keydown', e => {
 });
 async function partagerStory(){
   if (!lieuDossier) return;
+  stopperBalayage();
   majLien(true);
   let fichier = storyFichier;
   if (!fichier){
@@ -3219,7 +3253,7 @@ function chargerAnnuaire(){
   // processeur ; les grilles a et b ne servent qu aux shaders des calques
   // grille_c est deja telechargee comme texture (elle bloque l entree) : on
   // decode ses pixels depuis cette image-la, sans seconde requete
-  pixelsDepuisTexture(texC, 'c'),
+  pixelsDepuisTexture(texC, 'c', './data/grille_c.png'),
   /* Annuaire : les noms viennent du JSON mince, tout le numérique d'un
      binaire à pas fixe de 24 octets par ville (voir tools/pipeline.py).
      On reconstruit ici les rangées au format historique
@@ -3310,11 +3344,19 @@ try { new PerformanceObserver(l => (longuesTaches += l.getEntries().length)).obs
 /* =====================================================================
    10. ENTRÉE — voile, geste audio, boucle de rendu unique
    ===================================================================== */
-chargeur.onProgress = (u, charge, total) => {
-  const pct = Math.round(charge / total * 100);
-  document.getElementById('jauge').textContent = pct + '%';
-  document.getElementById('v-barre-fill').style.width = pct + '%';
-};
+{
+  let faits = 0;
+  const total = IMAGES_CRITIQUES.length;
+  const avancer = () => {
+    const pct = Math.round(++faits / total * 100);
+    document.getElementById('jauge').textContent = pct + '%';
+    document.getElementById('v-barre-fill').style.width = pct + '%';
+  };
+  for (const p of IMAGES_CRITIQUES) p.then(avancer);
+  Promise.all(IMAGES_CRITIQUES).then(() => {
+    texturesPretes = true; peutEntrer(); chargerAnnuaire(); chargerGrillesCalques();
+  });
+}
 /* Ce qui retient le bouton Explorer, c est le globe : sa texture, son masque
    de cotes et la grille du masque des terres. L annuaire des 34 099 villes
    (1,1 Mo) continue d arriver derriere — on entre, on tourne la planete, et
@@ -3328,7 +3370,7 @@ function peutEntrer(){
   document.getElementById('voile').classList.add('pret');
   if (donneesPretes) document.body.classList.remove('villes-en-attente');
 }
-chargeur.onLoad = () => { texturesPretes = true; peutEntrer(); chargerAnnuaire(); chargerGrillesCalques(); };
+
 // filet, si une texture ne repond jamais. Trente secondes et pas six : a
 // 6 s, sur une 4G faible, l annuaire partait AVANT la fin de la texture de
 // la Terre et lui prenait la bande passante — le bouton Explorer arrivait

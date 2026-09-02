@@ -1317,3 +1317,9 @@ body.villes-en-attente #loupe { opacity: 0.45; }
   .entree { min-height: 48px; padding-top: 14px; padding-bottom: 14px; }
   #accroche button { min-height: 44px; }
 }
+
+/* grille de calque manquante : le rail devient inerte et le dit, plutot que
+   d'afficher « aucun risque » sur toute la Terre */
+body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
+.calques-note { margin-top: 10px; max-width: 150px; font-size: 10px; line-height: 1.5;
+  letter-spacing: 0.02em; color: rgba(255, 253, 226, 0.6); }
