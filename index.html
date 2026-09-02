@@ -424,6 +424,7 @@ const TEXTES = {
     chercher: 'Chercher une ville — ⌘K',
     aucunLieu: 'Aucune ville trouvée',
     atlantide: 'Atlantide — submergée depuis −9600. Indice 0/100. Essayez une ville encore émergée.',
+    chargementVilles: 'Chargement des 34 099 villes…',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     calques: 'Calques de risque',
     conditions: 'Conditions de vie',
@@ -520,6 +521,7 @@ const TEXTES = {
     chercher: 'Search a city — ⌘K',
     aucunLieu: 'No city found',
     atlantide: 'Atlantis — underwater since 9600 BC. Index 0/100. Try a city still above the sea.',
+    chargementVilles: 'Loading 34,099 cities…',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     calques: 'Risk layers',
     conditions: 'Life conditions',
@@ -755,8 +757,8 @@ const CRITERES = [
       return c ? T().detFleuves(Math.round(c.f * 100), c.d90, rayonVille(l)) : '';
     } },
   { cle: 'stabilite', poids: 0.12, couleur: '#2E8F6A',
-    detail: (l, t) => T().detStab(
-      ((lire('d', 0, l[2], l[3]) * (1 - t) + lire('d', 1, l[2], l[3]) * t) * 8).toFixed(1)) },
+    detail: (l, t) => GRILLES.d ? T().detStab(
+      ((lire('d', 0, l[2], l[3]) * (1 - t) + lire('d', 1, l[2], l[3]) * t) * 8).toFixed(1)) : '' },
 ];
 for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
 /* La couleur dit la note, pas le critère : vert super, bleu bien, jaune
@@ -916,7 +918,8 @@ const SoundManager = new class {
   set mute(b){ this._mute = b; Howler.mute(b); }
   get mute(){ return this._mute; }
 }();
-SoundManager.init();
+// SoundManager.init() est appele au clic d entree : six fichiers et 60 Ko
+// de moins sur le chemin critique, et aucun son ne sert avant ce geste
 
 /* =====================================================================
    3. BASE THREE.JS — renderer strict (perf gate)
@@ -988,13 +991,39 @@ function chargerGrille(fichier){
   t.generateMipmaps = false;
   return t;
 }
-// a = chaleur ressentie / gel / déficit hydrique ; b = feu / submersion / fleuves ; c = argiles / masque terre
-const texA2026 = chargerGrille('./data/grille_a_2026.png');
-const texA2050 = chargerGrille('./data/grille_a_2050.png');
-const texB2026 = chargerGrille('./data/grille_b_2026.png');
-const texB2050 = chargerGrille('./data/grille_b_2050.png');
+/* a = chaleur ressentie / gel / deficit hydrique ; b = feu / submersion /
+   fleuves ; c = argiles / masque terre ; d = derive climatique (r=2026, g=2050).
+
+   c et d bloquent l entree : c affine le masque des terres a chaque pixel du
+   globe, d porte la ligne de derive de la fiche. Les quatre autres, 2,3 Mo,
+   ne servent qu a un calque allume — or aucun ne l est a l arrivee. Un texel
+   noir tient leur place et la vraie grille se glisse dedans apres l entree.
+   C est 40 % du poids retire de l attente sur un reseau mobile. */
+const texVide = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
+texVide.needsUpdate = true;
+let texA2026 = texVide, texA2050 = texVide, texB2026 = texVide, texB2050 = texVide;
 const texC     = chargerGrille('./data/grille_c.png');
-const texD     = chargerGrille('./data/grille_d.png');   // derive climatique reelle (r = 2026, g = 2050)
+let texD = texVide;
+const GRILLES_CALQUES = [['./data/grille_a_2026.png', 'uA2026'], ['./data/grille_a_2050.png', 'uA2050'],
+                         ['./data/grille_b_2026.png', 'uB2026'], ['./data/grille_b_2050.png', 'uB2050'],
+                         ['./data/grille_d.png', 'uD']];
+let calquesCharges = null;
+function chargerGrillesCalques(){
+  if (calquesCharges) return calquesCharges;
+  const hors = new THREE.TextureLoader();   // hors du gestionnaire : ne retient pas l entree
+  chargerGrilleDonnees('./data/grille_d.png', 'd').then(() => { if (lieuDossier) majDossier(); });
+  calquesCharges = Promise.all(GRILLES_CALQUES.map(([f, u]) => new Promise(res => {
+    hors.load(f, t => {
+      t.colorSpace = THREE.NoColorSpace;
+      t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
+      t.minFilter = t.magFilter = THREE.LinearFilter;
+      t.generateMipmaps = false;
+      uniformsGlobe[u].value = t;
+      res(true);
+    }, undefined, () => res(false));
+  })));
+  return calquesCharges;
+}
 
 const uniformsGlobe = {
   uMap:        { value: texCouleur },
@@ -1307,7 +1336,9 @@ let feux, feuxUniforms;
   }));
   feux.visible = false;
   scene.add(feux);
-  semerFeux();
+  // le semis lit grille_b (1 Mo) : il attend le geste d entree pour ne pas
+  // disputer la bande passante au premier affichage
+  document.getElementById('bouton-entree').addEventListener('click', semerFeux, { once: true });
 }
 
 /* =====================================================================
@@ -1550,6 +1581,8 @@ const CALQUES = {
 };
 const etat = { progression: 0, annee: 2026, feuxCible: 0, crise: false };
 
+chargerGrillesCalques().then(() => document.body.classList.remove('calques-en-attente'));
+document.body.classList.add('calques-en-attente');
 for (const btn of document.querySelectorAll('.calque')){
   btn.addEventListener('click', () => {
     const c = CALQUES[btn.dataset.cle], actif = !btn.classList.contains('actif');
@@ -1718,6 +1751,10 @@ function afficherResultats(){
   if (pays && !resultatsActuels.includes(pays)){
     resultatsActuels = resultatsActuels.slice(0, 6).concat([pays]);
   }
+  if (!resultatsActuels.length && !donneesPretes){
+    liste.innerHTML = `<li class="vide">${T().chargementVilles}</li>`;
+    ouvrirListe(); return;
+  }
   if (!resultatsActuels.length){
     // clin d'oeil : la cite deja submergee. Il ne se declenche que dans l'etat
     // « aucun resultat » — Atlantis (Afrique du Sud) existe et garde sa fiche.
@@ -1759,7 +1796,8 @@ function choisirLieu(l){
   recents = [cleRecent, ...recents.filter(n => n !== cleRecent)].slice(0, 3);
   try { localStorage.setItem('terra-recents', JSON.stringify(recents)); } catch (e) {}
   champ.value = nomVille(l); champ.blur();
-  pousserHistorique = !retourHistorique;
+  if (!retourHistorique && !interdirePile) empilerProchaine = true;
+  interdirePile = false;
   ouvrirDossier(l);
   SoundManager.play('camera_fly');
   controles.autoRotate = false;
@@ -1920,7 +1958,14 @@ document.body.classList.add('loupe');
 // au boot, seulement la largeur : la lentille (etatVerre) n'existe pas encore
 champ.style.width = etatRecherche.w + 'px';
 champ.addEventListener('focus', deployerRecherche);
-champ.addEventListener('blur', () => setTimeout(replierRecherche, 140));
+champ.addEventListener('blur', () => setTimeout(() => {
+  // on a ouvert la recherche puis renonce : l URL ne doit plus nommer la ville
+  // qu on vient de quitter, sinon on la partage telle quelle, ou un
+  // rechargement la rouvre avec l invitation reservee aux liens recus
+  if (!lieuDossier && location.hash.includes('v=') && !retourHistorique)
+    history.replaceState(null, '', location.pathname + location.search);
+  replierRecherche();
+}, 140));
 addEventListener('resize', () => {
   if (!document.body.classList.contains('loupe')){
     etatRecherche.w = largeurBarre(); appliquerLargeurRecherche();
@@ -2435,7 +2480,11 @@ function annoncer(){
   derniereAnnonce = txt;
   document.getElementById('annonce').textContent = txt;
 }
-let pousserHistorique = false;
+/* Historique, en une regle : une ouverture voulue par un geste empile une
+   entree, une ouverture qui vient du navigateur ou d un rechargement remplace
+   celle qui existe deja. L entree que nous posons porte une marque, ce qui
+   permet de la reconnaitre apres un F5. */
+let empilerProchaine = false, interdirePile = false;
 function ouvrirDossier(l){
   lieuDossier = l;
   tracerTrajectoire.animer = true;
@@ -2446,8 +2495,8 @@ function ouvrirDossier(l){
   majCentreDossier();
   setTimeout(majCentreDossier, 600);   // re-mesure après l'entrée de la fiche
   poserMarqueur(l);
-  majLien(true, pousserHistorique);
-  pousserHistorique = false;
+  majLien(true, empilerProchaine);
+  empilerProchaine = false;
   if (!sansBalayage) balayerVers2050();
   sansBalayage = false;
 }
@@ -2495,6 +2544,10 @@ function fermerDossier(depuisChamp){
   }
   clearTimeout(minuterieRepos);
   retirerMarqueur();
+  // l URL revient au globe, sans navigation : depiler ramenait l adresse
+  // d une autre ville alors que rien n est ouvert, et l adresse doit toujours
+  // dire ce qui est a l ecran. Seul cas restant : une premiere ville fermee
+  // par la croix laisse un Precedent sans effet avant de sortir du site.
   if (!retourHistorique) history.replaceState(null, '', location.pathname + location.search);
   dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
   document.body.classList.remove('dossier-ouvert');
@@ -2508,7 +2561,8 @@ function majLien(immediat, pousser){
   if (!lieuDossier) return;
   clearTimeout(minuterieLien);
   const ecrire = () => { if (!lieuDossier) return;
-    history[pousser ? 'pushState' : 'replaceState'](null, '',
+    history[pousser ? 'pushState' : 'replaceState'](
+      { terra: 'ville' }, '',
       `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}&cc=${lieuDossier[1]}`
       + (lieuVs ? `&vs=${encodeURIComponent(lieuVs[0])}&vc=${lieuVs[1]}` : '')); };
   // Safari plafonne replaceState (~100/30 s) : le scrub est différé
@@ -2783,9 +2837,7 @@ async function partagerStory(){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(fichier); a.download = fichier.name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  const el = document.getElementById('story-partager');
-  const avant = el.textContent; el.textContent = t.storyEnregistree;
-  setTimeout(() => (el.textContent = avant), 1800);
+  flashBouton(document.getElementById('story-partager'), t.storyEnregistree, 1800);
   SoundManager.play('ui_click');
 }
 document.getElementById('story-partager').addEventListener('click', partagerStory);
@@ -2827,7 +2879,13 @@ function ouvrirDepuisLien(sansDefi){
   if (sansDefi) sansBalayage = true;
   // a l arrivee (pas au retour arriere) : le lien devient deux entrees,
   // le globe puis la ville, pour que le Precedent reste dans le site
-  if (!retourHistorique) history.replaceState(null, '', location.pathname + location.search);
+  // Le lien devient deux entrees, le globe puis la ville : le Precedent
+  // ramene au globe au lieu de jeter dehors. Un rechargement reconnait sa
+  // propre marque et ne rempile pas — sinon chaque F5 ajoutait un
+  // Precedent mort.
+  const dejaPosee = !!(history.state && history.state.terra === 'ville');
+  if (!retourHistorique && !dejaPosee) history.replaceState(null, '', location.pathname + location.search);
+  interdirePile = retourHistorique || dejaPosee;
   choisirLieu(l);
   if (defiLien) montrerAccroche(T().accrocheDefi, () => champ.focus(), 3400);
 }
@@ -3101,13 +3159,13 @@ traduire();
    ===================================================================== */
 // un 404 servi en HTML ne doit jamais passer pour des donnees
 const charger = (url, mode) => fetch(url).then(r => { if (!r.ok) throw new Error(url + ' ' + r.status); return r[mode](); });
-Promise.all([
-  chargerGrilleDonnees('./data/grille_a_2026.png', 'a2026'),
-  chargerGrilleDonnees('./data/grille_a_2050.png', 'a2050'),
-  chargerGrilleDonnees('./data/grille_b_2026.png', 'b2026'),
-  chargerGrilleDonnees('./data/grille_b_2050.png', 'b2050'),
+let annuaireLance = false;
+function chargerAnnuaire(){
+  if (annuaireLance) return; annuaireLance = true;
+  return Promise.all([
+  // seules c (masque des terres) et d (derive climatique) sont lues au
+  // processeur ; les grilles a et b ne servent qu aux shaders des calques
   chargerGrilleDonnees('./data/grille_c.png', 'c'),
-  chargerGrilleDonnees('./data/grille_d.png', 'd'),
   /* Annuaire : les noms viennent du JSON mince, tout le numérique d'un
      binaire à pas fixe de 24 octets par ville (voir tools/pipeline.py).
      On reconstruit ici les rangées au format historique
@@ -3172,15 +3230,18 @@ Promise.all([
               PAYS_POP[iso][0], 2, nomEn, null];
     });
   document.body.classList.add('donnees-pretes');
+  document.body.classList.remove('villes-en-attente');
   donneesPretes = true; peutEntrer();
   if (lieuDossier) majDossier();
   ouvrirDepuisLien();
 }).catch(err => {
   donneesPretes = true; peutEntrer();   // l entree reste possible, la recherche le dira
+  document.body.classList.remove('villes-en-attente');
   // le chrome et le globe restent utilisables ; la recherche affichera
   // simplement « aucune ville » tant que l'annuaire manque
   console.error('données indisponibles :', err);
 });
+}
 
 const hud = document.getElementById('hud');
 // HUD perf : réservé au débogage, activé par ?perf dans l'URL
@@ -3197,28 +3258,39 @@ chargeur.onProgress = (u, charge, total) => {
   document.getElementById('jauge').textContent = pct + '%';
   document.getElementById('v-barre-fill').style.width = pct + '%';
 };
+/* Ce qui retient le bouton Explorer, c est le globe : sa texture, son masque
+   de cotes et la grille du masque des terres. L annuaire des 34 099 villes
+   (1,1 Mo) continue d arriver derriere — on entre, on tourne la planete, et
+   la recherche dit qu elle charge tant qu il n est pas la. Avant ce partage,
+   un lien ouvert sur une 4G faible faisait attendre 24 s devant un voile. */
 let texturesPretes = false, donneesPretes = false;
 function peutEntrer(){
-  if (!texturesPretes || !donneesPretes) return;
+  if (!texturesPretes) return;
   document.getElementById('jauge').textContent = '100%';
   document.getElementById('v-barre-fill').style.width = '100%';
   document.getElementById('voile').classList.add('pret');
+  if (donneesPretes) document.body.classList.remove('villes-en-attente');
 }
-chargeur.onLoad = () => { texturesPretes = true; peutEntrer(); };
+chargeur.onLoad = () => { texturesPretes = true; peutEntrer(); chargerAnnuaire(); chargerGrillesCalques(); };
+// filet : si une texture ne repond jamais, l annuaire part quand meme
+setTimeout(chargerAnnuaire, 6000);
 
 // tant que le voile est la, la tabulation ne doit pas atteindre le chrome
 // derriere lui : un clavier pouvait allumer un calque avant meme d entrer
+document.body.classList.add('villes-en-attente');
 const CHROME = ['titre', 'recherche', 'util', 'calques', 'timeline', 'dossier', 'dossier-croix', 'hud'];
 for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert = true; }
 document.getElementById('bouton-entree').addEventListener('click', () => {
   const voile = document.getElementById('voile');
   if (document.body.classList.contains('pret')) return;   // Entree clavier apres le clic : une seule entree
   for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert = false; }
+  chargerGrillesCalques();
   voile.style.pointerEvents = 'none';
   gsap.to('#voile .v-centre > *', { opacity: 0, y: -16, duration: 0.7,
     ease: EASE, stagger: 0.055 });
   setTimeout(() => voile.classList.add('cache'), 480);
   document.body.classList.add('pret');
+  SoundManager.init();
   SoundManager.setVolume(1);
   try { if (localStorage.getItem('terra-son') === 'off') SoundManager.mute = true; } catch (e) {}
   SoundManager.chargerBoucles();

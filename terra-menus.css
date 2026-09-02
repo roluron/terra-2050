@@ -1012,7 +1012,10 @@ body.dossier-ouvert #recherche {
 #story-popup[hidden] { display: none; }
 .story-carte { width: min(620px, 92vw); }
 .story-corps { display: flex; gap: 28px; margin-top: 20px; align-items: stretch; }
-#story-apercu { width: 240px; height: 427px; border-radius: 14px; flex: none;
+/* hauteur fluide partout : une fenetre basse, de bureau comme de telephone,
+   ne doit jamais pousser le bouton de partage sous la ligne de flottaison */
+#story-apercu { width: auto; height: min(427px, 62dvh); aspect-ratio: 9 / 16;
+  border-radius: 14px; flex: none;
   border: 1px solid rgba(255, 253, 226, 0.16); background: #070706; }
 .story-opts { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .story-opt { display: flex; align-items: center; gap: 12px; padding: 10px 0;
@@ -1028,9 +1031,9 @@ body.dossier-ouvert #recherche {
   .story-corps { flex-direction: column; align-items: center; }
   /* l'apercu tenait 320 px de haut : le bouton de partage tombait alors sous
      la ligne de flottaison de la carte, il fallait defiler pour partager */
-  /* hauteur fluide : lisible sur un grand telephone, et la carte ne defile
-     jamais sur un petit — le rapport 9/16 tient la largeur */
-  #story-apercu { width: auto; height: min(313px, 42dvh); aspect-ratio: 9 / 16; }
+  /* telephone en portrait : les options passent SOUS l apercu, il faut donc
+     lui laisser moins de hauteur pour que le bouton reste visible */
+  #story-apercu { height: min(313px, 42dvh); }
   .story-opts { width: 100%; }
   .story-corps { gap: 14px; margin-top: 14px; }
   .story-carte { padding: 22px 22px 18px; }
@@ -1264,12 +1267,15 @@ button, .calque, #curseur { touch-action: manipulation; }
 }
 /* ecran bas (paysage telephone) : l'apercu retrecit pour que le bouton
    de partage reste visible sans defiler */
-/* (pointer: coarse) : sinon une fenetre de bureau basse reduisait l apercu
-   a 108 px de large, illisible sur un ecran de 1440 */
-@media (max-height: 560px) and (pointer: coarse) {
-  #story-apercu { width: auto; height: min(192px, 46dvh); aspect-ratio: 9 / 16; }
-  .story-corps { flex-direction: row; gap: 18px; margin-top: 12px; }
-  .story-opt { padding: 6px 0; }
+/* ecran bas, de bureau comme de telephone : les options reviennent A COTE de
+   l apercu, ce qui rend sa hauteur possible. Pas de (pointer: coarse) ici :
+   c est cette regle qui empeche le bouton de partage de tomber sous la ligne
+   de flottaison dans une fenetre de 500 px. */
+@media (max-height: 560px) {
+  #story-apercu { height: min(313px, 62dvh); }
+  .story-corps { flex-direction: row; gap: 18px; margin-top: 12px; align-items: flex-start; }
+  .story-opt { padding: 6px 0; min-height: 38px; }
+  .story-carte { padding: 18px 22px 14px; }
 }
 
 /* =====================================================================
@@ -1279,3 +1285,19 @@ button, .calque, #curseur { touch-action: manipulation; }
    ===================================================================== */
 #dossier .sources { color: rgba(255, 253, 226, 0.56); }
 #dossier .coords { color: rgba(255, 253, 226, 0.56); }
+
+/* les grilles des calques arrivent apres l entree : tant qu'elles ne sont pas
+   la, le rail respire doucement plutot que d'allumer un calque vide */
+body.calques-en-attente #calques { opacity: 0.55; }
+body.calques-en-attente .calque .pastille { animation: attente-calque 1.6s ease-in-out infinite; }
+@keyframes attente-calque { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.9; } }
+@media (prefers-reduced-motion: reduce) { body.calques-en-attente .calque .pastille { animation: none; } }
+
+/* l'annuaire des villes arrive apres le globe : la loupe respire tant qu'il
+   n'est pas la, et la liste le dit si l'on cherche trop tot */
+body.villes-en-attente #loupe { opacity: 0.45; }
+
+/* les rangees de resultats faisaient 41 px sous le doigt, sous le seuil de 44 */
+@media (pointer: coarse) {
+  #resultats li { min-height: 44px; display: flex; align-items: center; }
+}
