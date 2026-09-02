@@ -1308,3 +1308,12 @@ body.villes-en-attente #loupe { opacity: 0.45; }
    reste net (0,58 contre 0,95), la hierarchie tient. */
 .calque:not(.actif) { opacity: 0.58; }
 .calque { opacity: 0.95; }
+
+/* defaut releve en relecture : les boutons du chrome restaient sous 44 px au
+   doigt (partage 34, son 35, langue 35, Explorer 24) */
+@media (pointer: coarse) {
+  .bouton-ico, #bouton-partager, #bouton-son, #bouton-langue { min-height: 44px;
+    display: inline-flex; align-items: center; }
+  .entree { min-height: 48px; padding-top: 14px; padding-bottom: 14px; }
+  #accroche button { min-height: 44px; }
+}

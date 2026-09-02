@@ -425,6 +425,7 @@ const TEXTES = {
     aucunLieu: 'Aucune ville trouvée',
     atlantide: 'Atlantide — submergée depuis −9600. Indice 0/100. Essayez une ville encore émergée.',
     chargementVilles: 'Chargement des 34 099 villes…',
+    detEnAttente: 'Mesure en cours de chargement…',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     calques: 'Calques de risque',
     conditions: 'Conditions de vie',
@@ -522,6 +523,7 @@ const TEXTES = {
     aucunLieu: 'No city found',
     atlantide: 'Atlantis — underwater since 9600 BC. Index 0/100. Try a city still above the sea.',
     chargementVilles: 'Loading 34,099 cities…',
+    detEnAttente: 'Measurement still loading…',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     calques: 'Risk layers',
     conditions: 'Life conditions',
@@ -758,7 +760,8 @@ const CRITERES = [
     } },
   { cle: 'stabilite', poids: 0.12, couleur: '#2E8F6A',
     detail: (l, t) => GRILLES.d ? T().detStab(
-      ((lire('d', 0, l[2], l[3]) * (1 - t) + lire('d', 1, l[2], l[3]) * t) * 8).toFixed(1)) : '' },
+      ((lire('d', 0, l[2], l[3]) * (1 - t) + lire('d', 1, l[2], l[3]) * t) * 8).toFixed(1))
+      : T().detEnAttente },
 ];
 for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
 /* La couleur dit la note, pas le critère : vert super, bleu bien, jaune
@@ -1014,26 +1017,70 @@ function chargerGrille(fichier){
 const texVide = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
 texVide.needsUpdate = true;
 let texA2026 = texVide, texA2050 = texVide, texB2026 = texVide, texB2050 = texVide;
-const texC     = chargerGrille('./data/grille_c.png');
+const texC     = chargerGrille('./data/grille_c.png');   // texture gatee : le shader la lit a chaque pixel
 let texD = texVide;
-const GRILLES_CALQUES = [['./data/grille_a_2026.png', 'uA2026'], ['./data/grille_a_2050.png', 'uA2050'],
-                         ['./data/grille_b_2026.png', 'uB2026'], ['./data/grille_b_2050.png', 'uB2050'],
-                         ['./data/grille_d.png', 'uD']];
+
+/* Une grille se telecharge UNE fois et sert deux fois : les pixels au
+   processeur pour les fiches, la meme image en texture pour le shader.
+   Avant, grille_c, grille_d et les deux grille_b partaient chacune deux fois
+   dans la meme milliseconde — 1,8 Mo payes en double sur le chemin qu on
+   cherchait justement a alleger. */
+function pixelsDepuisTexture(tex, cle){
+  return new Promise(res => {
+    const img = tex.image;
+    if (!img || !img.width){ res(false); return; }   // texture absente : lire() renverra 0
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0);
+    GRILLES[cle] = { w: c.width, h: c.height, px: ctx.getImageData(0, 0, c.width, c.height).data };
+    res(true);
+  });
+}
+function chargerGrilleUneFois(fichier, cle, uniforme){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      if (cle){
+        const c = document.createElement('canvas');
+        c.width = img.width; c.height = img.height;
+        const ctx = c.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+        GRILLES[cle] = { w: c.width, h: c.height, px: ctx.getImageData(0, 0, c.width, c.height).data };
+      }
+      if (uniforme){
+        const t = new THREE.Texture(img);
+        t.colorSpace = THREE.NoColorSpace;
+        t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
+        t.minFilter = t.magFilter = THREE.LinearFilter;
+        t.generateMipmaps = false; t.needsUpdate = true;
+        uniformsGlobe[uniforme].value = t;
+      }
+      res(true);
+    };
+    img.onerror = () => res(false);
+    img.src = fichier;
+  });
+}
+/* `calquesPrets` est disponible tout de suite et ne declenche RIEN : c est la
+   promesse que quelqu un attend. Le telechargement, lui, ne part qu au premier
+   appel de chargerGrillesCalques(), depuis chargeur.onLoad ou le clic d entree.
+   Sans cette separation, un `.then()` ecrit au fil du module appelait la
+   fonction des l analyse du script et les 2,9 Mo repartaient concurrencer la
+   texture de la Terre — c est exactement ce qui etait arrive. */
+let resoudreCalques;
+const calquesPrets = new Promise(r => (resoudreCalques = r));
 let calquesCharges = null;
 function chargerGrillesCalques(){
   if (calquesCharges) return calquesCharges;
-  const hors = new THREE.TextureLoader();   // hors du gestionnaire : ne retient pas l entree
-  chargerGrilleDonnees('./data/grille_d.png', 'd').then(() => { if (lieuDossier) majDossier(); });
-  calquesCharges = Promise.all(GRILLES_CALQUES.map(([f, u]) => new Promise(res => {
-    hors.load(f, t => {
-      t.colorSpace = THREE.NoColorSpace;
-      t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
-      t.minFilter = t.magFilter = THREE.LinearFilter;
-      t.generateMipmaps = false;
-      uniformsGlobe[u].value = t;
-      res(true);
-    }, undefined, () => res(false));
-  })));
+  calquesCharges = Promise.all([
+    chargerGrilleUneFois('./data/grille_a_2026.png', null,   'uA2026'),
+    chargerGrilleUneFois('./data/grille_a_2050.png', null,   'uA2050'),
+    // les grilles b servent aussi au semis des foyers de feu, cote processeur
+    chargerGrilleUneFois('./data/grille_b_2026.png', 'b2026', 'uB2026'),
+    chargerGrilleUneFois('./data/grille_b_2050.png', 'b2050', 'uB2050'),
+    chargerGrilleUneFois('./data/grille_d.png',      'd',     'uD'),
+  ]).then(r => { if (lieuDossier) majDossier(); const ok = r.every(Boolean); resoudreCalques(ok); return ok; });
   return calquesCharges;
 }
 
@@ -1265,19 +1312,10 @@ let feux, feuxUniforms;
      tomber en mer : la grille vaut zéro hors du masque terre. Les points
      sont triés par danger décroissant : les cœurs d'abord, puis l'expansion. */
   const semerFeux = () => {
-    const lire = (src) => new Promise(res => {
-      const img = new Image();
-      img.onload = () => {
-        const c = document.createElement('canvas');
-        c.width = img.width; c.height = img.height;
-        const ctx = c.getContext('2d', { willReadFrequently: true });
-        ctx.drawImage(img, 0, 0);
-        res({ px: ctx.getImageData(0, 0, c.width, c.height).data, w: c.width, h: c.height });
-      };
-      img.onerror = () => res(null);
-      img.src = src;
-    });
-    Promise.all([lire('./data/grille_b_2026.png'), lire('./data/grille_b_2050.png')]).then(([g26, g50]) => {
+    // les pixels de grille_b sont deja decodes par chargerGrillesCalques :
+    // les retelecharger coutait 1 Mo pour rien
+    calquesPrets.then(() => {
+      const g26 = GRILLES.b2026, g50 = GRILLES.b2050;
       if (!g50) return;
       const w = g50.w, h = g50.h;
       const dg = (g, x, y) => (g ? g.px[(y * g.w + x) * 4] / 255 : 0);   // canal rouge = danger de feu
@@ -1362,7 +1400,7 @@ const groupeFleuves = new THREE.Group();
 /* Tracés réels : Natural Earth 10m rivers & lake centerlines, scalerank <= 4
    (data/rivers.json, produit par tools/pipeline.py). Un seul LineSegments
    pour les 400+ tronçons : 1 draw call au lieu de 400 tubes. */
-chargerGrillesCalques().then(() => fetch('./data/rivers.json').then(r => r.json())).then(fleuves => {
+calquesPrets.then(() => fetch('./data/rivers.json').then(r => r.json())).then(fleuves => {
   const sommets = [], parcours = [];
   for (const f of fleuves){
     let cumul = 0;
@@ -1593,7 +1631,9 @@ const CALQUES = {
 };
 const etat = { progression: 0, annee: 2026, feuxCible: 0, crise: false };
 
-chargerGrillesCalques().then(() => document.body.classList.remove('calques-en-attente'));
+// le rail ne se declare pret que si les grilles sont VRAIMENT la : sur echec,
+// un calque allume afficherait « aucun risque » partout, indiscernable du vrai
+calquesPrets.then(ok => { if (ok) document.body.classList.remove('calques-en-attente'); });
 document.body.classList.add('calques-en-attente');
 for (const btn of document.querySelectorAll('.calque')){
   btn.addEventListener('click', () => {
@@ -3177,7 +3217,9 @@ function chargerAnnuaire(){
   return Promise.all([
   // seules c (masque des terres) et d (derive climatique) sont lues au
   // processeur ; les grilles a et b ne servent qu aux shaders des calques
-  chargerGrilleDonnees('./data/grille_c.png', 'c'),
+  // grille_c est deja telechargee comme texture (elle bloque l entree) : on
+  // decode ses pixels depuis cette image-la, sans seconde requete
+  pixelsDepuisTexture(texC, 'c'),
   /* Annuaire : les noms viennent du JSON mince, tout le numérique d'un
      binaire à pas fixe de 24 octets par ville (voir tools/pipeline.py).
      On reconstruit ici les rangées au format historique
@@ -3244,6 +3286,9 @@ function chargerAnnuaire(){
   document.body.classList.add('donnees-pretes');
   document.body.classList.remove('villes-en-attente');
   donneesPretes = true; peutEntrer();
+  // une recherche tapee pendant le chargement restait sur « chargement » :
+  // on la rejoue des que l annuaire est la
+  if (champ.value.trim()) afficherResultats();
   if (lieuDossier) majDossier();
   ouvrirDepuisLien();
 }).catch(err => {
