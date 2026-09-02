@@ -1323,3 +1323,8 @@ body.villes-en-attente #loupe { opacity: 0.45; }
 body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
 .calques-note { margin-top: 10px; max-width: 150px; font-size: 10px; line-height: 1.5;
   letter-spacing: 0.02em; color: rgba(255, 253, 226, 0.6); }
+
+/* perte de cartes au chargement : le voile le dit, au lieu d'afficher un
+   « 100 % » propre suivi d'un globe incomplet */
+.v-panne { margin-top: 18px; max-width: 320px; font-size: 11px; line-height: 1.6;
+  color: rgba(255, 253, 226, 0.66); }

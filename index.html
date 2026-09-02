@@ -426,6 +426,7 @@ const TEXTES = {
     atlantide: 'Atlantide — submergée depuis −9600. Indice 0/100. Essayez une ville encore émergée.',
     chargementVilles: 'Chargement des 34 099 villes…',
     calquesHS: 'Cartes de calques indisponibles — rechargez la page',
+    cartesPartielles: 'Certaines cartes n’ont pas pu être chargées : le globe sera incomplet.',
     detEnAttente: 'Mesure en cours de chargement…',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     calques: 'Calques de risque',
@@ -525,6 +526,7 @@ const TEXTES = {
     atlantide: 'Atlantis — underwater since 9600 BC. Index 0/100. Try a city still above the sea.',
     chargementVilles: 'Loading 34,099 cities…',
     calquesHS: 'Layer maps unavailable — reload the page',
+    cartesPartielles: 'Some maps could not be loaded: the globe will be incomplete.',
     detEnAttente: 'Measurement still loading…',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     calques: 'Risk layers',
@@ -964,7 +966,11 @@ function latLonVersVec3(lat, lon, r = 1){
 // sur le reseau mobile — c'est la ou arrive un lien partage. Tablette et
 // desktop gardent le 4K. Le masque, lui, porte la justesse des cotes : il
 // reste en 4320 partout (295 Ko).
-const PETIT_ECRAN = Math.min(innerWidth, innerHeight) < 500;
+/* La finesse utile depend des pixels REELLEMENT rendus, pas des pixels CSS.
+   Un portable 1440x900 sans Retina affichait le globe sur 800 pixels et
+   payait quand meme la texture 4096 (712 Ko) : 6 s de plus a 700 kb/s. */
+const PIXELS_RENDUS = Math.min(innerWidth, innerHeight) * Math.min(devicePixelRatio || 1, 2);
+const PETIT_ECRAN = PIXELS_RENDUS < 1100;
 /* WebP quand le navigateur en veut, fichier d origine sinon. Couleur :
    1 238 Ko -> 712 en 4096, 500 -> 202 en 2048 (telephone). Masque : 288 -> 211,
    sans perte, identique au pixel. Sur un lien ouvert en 4G, c est un tiers du
@@ -1008,9 +1014,30 @@ function chargerTextureImage(webp, repli, donnees){
   }));
   return t;
 }
-const texCouleur = chargerTextureImage(
-  PETIT_ECRAN ? './assets/textures/earth_color_2048.webp' : './assets/textures/earth_color_4096.webp',
-  PETIT_ECRAN ? './assets/textures/earth_color_2048.jpg'  : './assets/textures/earth_color_4096.jpg');   // NASA Blue Marble (domaine public)
+/* On entre TOUJOURS sur la texture 2048 : 202 Ko au lieu de 712, six secondes
+   de moins a 700 kb/s. Sur un ecran qui la merite, la 4096 arrive ensuite et
+   se glisse a sa place — le globe se precise pendant qu on le regarde, et
+   personne n a attendu devant un voile pour cela. */
+const texCouleur = chargerTextureImage('./assets/textures/earth_color_2048.webp',
+                                       './assets/textures/earth_color_2048.jpg');   // NASA Blue Marble (domaine public)
+function affinerTerre(){
+  if (PETIT_ECRAN || affinerTerre.fait) return;
+  affinerTerre.fait = true;
+  const essayer = (url, suite) => {
+    const im = new Image();
+    im.onload = () => {
+      // la 4096 est plus grande que la 2048 deja televersee : sans dispose(),
+      // Three.js tente une mise a jour partielle et WebGL refuse
+      // (glTexSubImage2D: Offset overflows texture dimensions)
+      texCouleur.dispose();
+      texCouleur.image = im; texCouleur.needsUpdate = true;
+    };
+    im.onerror = () => suite && essayer(suite, null);
+    im.src = url;
+  };
+  essayer(WEBP_OK ? './assets/textures/earth_color_4096.webp' : './assets/textures/earth_color_4096.jpg',
+          WEBP_OK ? './assets/textures/earth_color_4096.jpg' : null);
+}
 // masque terre/mer derive de GEBCO 15" : la mer est l'eau RELIEE a l'ocean,
 // donc les terres sous le niveau marin (depression caspienne, polders) ne sont
 // plus peintes en mer — Astrakhan ne flotte plus au milieu de l'eau
@@ -2961,15 +2988,17 @@ function ouvrirDepuisLien(sansDefi){
   const m = [null, q.get('v'), (q.get('an') || '').match(/^\d{4}$/) ? q.get('an') : null,
              (q.get('cc') || '').match(/^[A-Za-z]{2}$/) ? q.get('cc').toUpperCase() : null,
              q.get('vs'), (q.get('vc') || '').match(/^[A-Za-z]{2}$/) ? q.get('vc').toUpperCase() : null];
-  let nom;
-  try { nom = decodeURIComponent(m[1]); } catch (e) { return; }   // hash tronqué
+  // URLSearchParams a deja decode : un second decodage casserait un lien
+  // double-encode et jetterait sur un « % » solitaire
+  const nom = m[1];
+  if (!nom) return;
   // homonymes (Valence, Suzhou…) : l'iso2 du lien départage
   const cands = LIEUX.filter(x => x[0] === nom || x[6] === nom)
     .concat(PAYS_LIGNES.filter(x => x[0] === nom || x[6] === nom));
   const l = (m[3] && cands.find(x => x[1] === m[3])) || cands[0];
   if (!l) return;
   if (m[4]){
-    let nomVs; try { nomVs = decodeURIComponent(m[4]); } catch (e) { nomVs = null; }
+    const nomVs = m[4];
     if (nomVs){
       const cVs = LIEUX.filter(x => x[0] === nomVs || x[6] === nomVs)
         .concat(PAYS_LIGNES.filter(x => x[0] === nomVs || x[6] === nomVs));
@@ -3246,7 +3275,7 @@ function traduire(){
   boutonSon.textContent = t.son(!SoundManager.mute);
   document.getElementById('bouton-langue').innerHTML = langue === 'fr'
     ? 'FR · <em>en</em>' : '<em>fr</em> · EN';
-  if (lieuDossier) majDossier();
+  if (lieuDossier){ majDossier(); derniereAnnonce = ''; annoncer(); }
 }
 document.getElementById('bouton-langue').addEventListener('click', () => {
   langue = langue === 'fr' ? 'en' : 'fr';
@@ -3372,10 +3401,20 @@ try { new PerformanceObserver(l => (longuesTaches += l.getEntries().length)).obs
   };
   for (const p of IMAGES_CRITIQUES) p.then(avancer);
   Promise.all(IMAGES_CRITIQUES).then(r => {
-    texturesPretes = true; peutEntrer(); chargerAnnuaire(); chargerGrillesCalques();
+    texturesPretes = true; peutEntrer(); chargerAnnuaire(); chargerGrillesCalques(); affinerTerre();
     // une image du chemin critique perdue (grille_c surtout, qui porte le
     // masque des terres) faussait les fiches en silence, jauge a 100 %
-    if (!r.every(Boolean)) signalerCartesManquantes();
+    if (!r.every(Boolean)){
+      signalerCartesManquantes();
+      // le message vivait dans le rail des calques, donc DERRIERE le voile :
+      // l ecran d entree restait indiscernable d un chargement sain
+      const v = document.querySelector('#voile .v-centre');
+      if (v && !v.querySelector('.v-panne')){
+        const n = document.createElement('div');
+        n.className = 'v-panne'; n.textContent = T().cartesPartielles;
+        v.appendChild(n);
+      }
+    }
   });
 }
 /* Ce qui retient le bouton Explorer, c est le globe : sa texture, son masque

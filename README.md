@@ -53,27 +53,26 @@ Tout le reste arrive **après** :
 | grilles prêtes | `rivers.json` | sert au seul calque des fleuves |
 | clic Explorer | les sons, les foyers de feu | rien de tout cela ne sert avant le geste |
 
-Mesures sur le site en ligne (émulation réseau Chrome, profil iPhone, deux
-tirages par ligne) :
+Mesures (émulation réseau Chrome, deux tirages par ligne, navigateur relancé
+à chaque tirage, délai jusqu'à `#voile.pret`) :
 
 | Réseau | Bouton Explorer |
 |---|---|
-| 700 kb/s, 200 ms | 11,2 à 12,0 s |
+| 700 kb/s, 200 ms | 11,2 s |
 | 4G faible, 1,6 Mb/s, 150 ms | 5,2 s |
 | 4G moyenne, 4 Mb/s, 80 ms | 2,7 s |
 | Wifi, 30 Mb/s | 1,0 s |
 
-La méthode compte : le chiffre est le délai jusqu'à `#voile.pret`, mesuré
-depuis `goto` avec `waitUntil: 'commit'`, navigateur relancé à chaque tirage.
-Douze tirages, quatre configurations (local et en ligne, cache touché ou
-désactivé) : 11,2 à 11,3 s, pour **840 Ko réellement transférés**.
+Le chiffre est le même sur téléphone, sur tablette et sur poste de bureau,
+Retina ou non : **on entre toujours sur la texture 2048** (202 Ko), et la
+4096 (712 Ko) arrive ensuite sur les écrans qui la méritent, en se glissant
+à la place de l'autre. Le globe se précise pendant qu'on le regarde.
 
-Une relecture indépendante a annoncé 17 s en additionnant les tailles de
-fichiers sur disque (2,2 Mo). C'est l'erreur à ne pas refaire : GitHub Pages
-sert le JavaScript, le CSS et le JSON en gzip, et le poids qui compte est
-`transferSize`, pas la taille du fichier. 840 Ko à 87,5 Ko/s font 9,6 s, plus
-la latence : les 11,2 s mesurées sont cohérentes, les 17 s calculées ne le
-sont pas.
+C'est le correctif d'une erreur qu'il vaut mieux ne pas refaire : la version
+précédente choisissait 2048 ou 4096 selon la taille de l'écran, si bien qu'un
+poste de bureau attendait 17,3 s pour 1,41 Mo là où un téléphone en attendait
+11,2 pour 840 Ko. Les deux mesures étaient justes, mais le document n'en
+citait qu'une. Mesurer les deux profils, toujours.
 
 Quatre pièges rencontrés, à ne pas réintroduire :
 
