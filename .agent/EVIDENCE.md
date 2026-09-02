@@ -534,3 +534,56 @@ OK     earth_mask_4320.webp     sans perte, identique au pixel : True
 ```
 
 Les deux gardes attrapent chacun ce que l autre laisse passer.
+
+
+## Le canal alpha, deux pieges mesures
+
+La session voisine a trouve chez elle un faux positif : elle convertissait la
+sortie en RGB avant de comparer, donc une planche RGBA saine etait refusee.
+Le meme defaut existait ici, mais dans l autre sens, le dangereux : je
+convertissais LES DEUX cotes en RGB, donc un canal alpha ecrase passait pour
+identique. Preuve avant correction, sur un fichier dont l alpha avait ete mis
+a 255 partout :
+
+```
+OK     earth_mask_4320.webp     sans perte, identique au pixel : True
+```
+
+En corrigeant, deux pieges plus profonds sont apparus.
+
+### getbbox() est aveugle sur du RGBA
+
+Il ignore les differences situees sous un pixel totalement transparent.
+Fichier de test : 512 px, un pixel sur sept a alpha=0, encode en WebP
+lossless qui ecrase leur RGB. 37 450 pixels sur 262 144 sont perdus, le canal
+alpha est conserve.
+
+```
+methode actuelle (comparaison d octets) :
+ECHEC  earth_mask_4320.webp     sans perte, identique au pixel : False
+
+ancienne methode (getbbox) sur le meme fichier :
+OK     earth_mask_4320.webp     sans perte, identique au pixel : True
+```
+
+### WebP sans perte ecrase le RGB sous alpha=0
+
+```
+pixels differents: 16 sur 4096 — alpha des pixels differents min 0 max 0
+exemple: (104, 121, 191, 0) devient (0, 0, 0, 0)
+alpha jamais nul, identique ? True
+```
+
+C est une vraie perte si ce RGB porte de l information.
+
+### Et une non-regle : WebP n a pas de niveaux de gris
+
+```
+source : L (4320, 2160)
+webp en L   : 216486 octets
+webp en RGB : 216486 octets
+```
+
+Meme poids, et Pillow relit toujours du RGB. Exiger l egalite des modes
+refuserait tous les masques. On compare dans le mode de la source, en
+exigeant seulement qu aucun canal ne disparaisse.

@@ -94,8 +94,19 @@ def verifier(racine: Path, paires=None, bavard: bool = True) -> int:
             echecs += 1
             continue
 
-        webp = Image.open(p_webp).convert("RGB")
-        src = Image.open(p_src).convert("RGB")
+        # Convertir LES DEUX en RGB effaçait le canal alpha des deux cotes :
+        # un alpha ecrase passait pour identique. La source fait foi, on
+        # compare dans SON mode. Sans exiger l egalite des modes pour autant :
+        # WebP n a pas de niveaux de gris, un masque « L » ressort toujours en
+        # RGB, et l exiger refuserait tous les masques du monde.
+        webp_brut = Image.open(p_webp)
+        src = Image.open(p_src)
+        if "A" in src.getbands() and "A" not in webp_brut.getbands():
+            dire(bavard, f"ECHEC  {nom_webp:24} la source a un canal alpha, "
+                 f"le fichier livre ne l a pas")
+            echecs += 1
+            continue
+        webp = webp_brut.convert(src.mode)
 
         if webp.size != src.size:
             dire(bavard, f"ECHEC  {nom_webp:24} {webp.size} au lieu de {src.size}")
@@ -112,13 +123,17 @@ def verifier(racine: Path, paires=None, bavard: bool = True) -> int:
                      f"une image de donnees doit etre en VP8L (sans perte)")
                 echecs += 1
                 continue
-            identique = ImageChops.difference(webp, src).getbbox() is None
+            # PAS getbbox() : sur une image RGBA il est alpha-conscient et
+            # renvoie None malgre des pixels RGB differents — verifie ici, 16
+            # pixels sur 4096 ecrases sans qu il les voie. La comparaison
+            # d octets ne ment pas.
+            identique = webp.tobytes() == src.tobytes()
             dire(bavard, f"{'OK   ' if identique else 'ECHEC'}  {nom_webp:24} "
                  f"sans perte, identique au pixel : {identique}")
             echecs += not identique
         else:
             seuil = float(mode.split(">=")[1])
-            d = psnr(webp, src)
+            d = psnr(webp.convert("RGB"), src.convert("RGB"))
             dire(bavard, f"{'OK   ' if d >= seuil else 'ECHEC'}  {nom_webp:24} "
                  f"PSNR {d:.1f} dB (seuil {seuil:.0f})")
             echecs += d < seuil
@@ -179,6 +194,30 @@ def autotest() -> int:
         else:
             print("OK     autotest : un lossy indetectable au pixel est "
                   "rattrape par l en-tete")
+
+        # Alpha : un canal ecrase doit etre vu, et un RGBA sain doit passer.
+        # C est le meme piege dans les deux sens, a une ligne d ecart.
+        # 256 px : sous 64 px le WebP est plus lourd que le PNG et la regle de
+        # poids se declencherait sur la fixture. Alpha jamais nul : WebP
+        # lossless ecrase le RGB des pixels totalement transparents, c est une
+        # vraie perte mais elle n a rien a voir avec ce qu on teste ici.
+        m = 256
+        rgba = Image.frombytes("RGBA", (m, m), bytes(
+            (random.randrange(256) if i % 4 < 3 else random.randrange(1, 256))
+            for i in range(m * m * 4)))
+        rgba.save(rep / "a_src.png")
+        rgba.save(rep / "a_bon.webp", "WEBP", lossless=True)
+        rgba.convert("RGB").save(rep / "a_casse.webp", "WEBP", lossless=True)
+        if verifier(rep, [("a_bon.webp", "a_src.png", "exact")], bavard=False) != 0:
+            print("ECHEC  autotest : un RGBA sans perte est refuse a tort")
+            echecs += 1
+        else:
+            print("OK     autotest : un RGBA sans perte est accepte")
+        if verifier(rep, [("a_casse.webp", "a_src.png", "exact")], bavard=False) == 0:
+            print("ECHEC  autotest : un canal alpha perdu est passe inaperçu")
+            echecs += 1
+        else:
+            print("OK     autotest : un canal alpha perdu est refuse")
 
         bon = verifier(rep, [("sans_perte.webp", "src.png", "exact")], bavard=False)
         mauvais = verifier(rep, [("avec_perte.webp", "src.png", "exact")], bavard=False)

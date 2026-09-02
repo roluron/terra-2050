@@ -203,6 +203,22 @@ reste. Refuser tout le reste plutôt que tester `VP8 ` n'est pas de la
 prudence gratuite : un WebP lossy **avec canal alpha** se déclare `VP8X`, ce
 qui échapperait à un test écrit en binaire lossless-ou-`VP8 `.
 
+Deux pièges mesurés autour du canal alpha, à ne pas réintroduire :
+
+- **`getbbox()` est aveugle sur du RGBA.** Il ignore les différences situées
+  sous un pixel totalement transparent. Sur un fichier où 37 450 pixels sur
+  262 144 avaient perdu leur RGB, il répondait « identique ». La comparaison
+  se fait donc sur les octets, `tobytes()`, qui ne ment pas.
+- **WebP sans perte écrase le RGB des pixels dont l'alpha vaut 0.** C'est une
+  vraie perte si ce RGB porte de l'information. Aucune de nos textures n'a
+  d'alpha aujourd'hui, mais le contrôle le verrait.
+
+Et une non-règle, mesurée elle aussi : **WebP n'a pas de mode niveaux de
+gris**. Notre masque est un `L` de 4320 px qui ressort forcément en `RGB`.
+Exiger l'égalité des modes refuserait tous les masques du monde ; on compare
+donc dans le mode de la source, en exigeant seulement que le fichier livré ne
+perde aucun canal.
+
 Le script vérifie enfin ses propres déclarations : une image dont le nom dit
 qu'elle porte des données (masque, grille) et qui serait déclarée en tolérance
 PSNR au lieu de « exact » est refusée. Le tableau des paires s'édite à la
