@@ -156,6 +156,23 @@ avec l'université de Bristol si le projet devient commercial. COAST-RP est en
 CC BY 4.0, libre y compris commercialement. WorldClim, CMIP6, GEBCO, JRC, GeoNames,
 Natural Earth et l'ONU sont libres sans condition.
 
+## Vérifier les textures avant de déployer
+
+```bash
+python3 tools/verifier_assets.py
+```
+
+Le site sert des WebP. **WebP est lossy par défaut**, et une image qui porte
+une valeur plutôt qu'une couleur, réencodée par distraction en lossy,
+s'affiche exactement pareil en décalant ses canaux : le globe reste beau, les
+chiffres deviennent faux, et rien ne casse. Le script relit chaque WebP servi
+et le compare à son original. Le masque des côtes doit revenir identique au
+pixel, les textures de couleur au-dessus de 38 dB de PSNR. Code de retour 1
+si une seule échoue, et il a été éprouvé contre un masque volontairement
+dégradé pour vérifier qu'il sait dire non.
+
+À lancer après toute régénération d'image dans `assets/textures/`.
+
 ## Vérification
 
 Les critères d'acceptation et l'état courant vivent dans `.agent/`. La matrice de QA
