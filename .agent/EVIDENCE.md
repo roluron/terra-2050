@@ -238,3 +238,16 @@ terra-menus.css          identique en ligne
 manifest.webmanifest     identique en ligne
 assets/og-globe.jpg      identique en ligne
 ```
+
+
+## iPhone SE (375x667), parcours complet sur le site public (scratchpad/se.mjs)
+
+```
+PASS SE globe : rien ne deborde, cibles a 44 px — {"overflowX":false,"small":[],"off":[]}
+PASS SE recherche donne des resultats — 2 lignes
+PASS SE fiche ouverte
+PASS SE fiche : mise en page saine — {"overflowX":false,"small":[],"off":[]}
+PASS SE composeur story tient dans l ecran — {"defile":false,"partage":true,"apercu":[158,280]}
+PASS SE partage sans erreur — Share link
+PASS SE aucune erreur console ni 4xx
+```
