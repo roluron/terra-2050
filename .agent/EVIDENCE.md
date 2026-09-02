@@ -694,3 +694,40 @@ supprimer cette cle morte a casse le test au lieu de le faire echouer
 proprement. Il prend desormais la premiere cle venue.
 
 Matrice de lancement apres nettoyage : 25 sur 25, code de retour 0 sans tube.
+
+
+## Un seul geste, un seul code de sortie
+
+Dernier defaut de la meme classe, un cran au-dessus : mes trois controles
+existaient mais aucun lanceur ne les rassemblait. Un quatrieme ajoute demain
+n aurait ete lance par personne, et son absence n aurait produit aucun signal.
+
+`tools/check.py` decouvre `tools/verifier_*.py` et `tools/qa/*.mjs`, lance
+chacun ET son autotest, et rend un seul code.
+
+```
+$ python3 tools/check.py
+OK     verifier_assets.py  (code 0)
+OK     verifier_assets.py --autotest  (code 0)
+OK     verifier_i18n.py  (code 0)
+OK     verifier_i18n.py --autotest  (code 0)
+SAUTE  matrice.mjs  (lance avec --qa ...)
+4 sur 4 controles passent (suites QA non lancees).
+code SANS TUBE : 0
+
+$ URL0=https://roluron.github.io/terra-2050/ python3 tools/check.py --qa
+5 sur 5 controles passent.
+code SANS TUBE : 0
+```
+
+Autotest du lanceur, qui depose un controle voue a l echec puis le retire :
+
+```
+OK     autotest : un controle ajoute est decouvert
+OK     autotest : un controle en echec fait echouer le lanceur
+OK     autotest : le projet sain passe
+```
+
+Trois regles inscrites dans son en-tete, chacune payee dans ce fil : le code
+se lit sans tube, zero controle decouvert est une panne et non un succes, et
+une suite sautee le dit a voix haute.

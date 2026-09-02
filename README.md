@@ -234,6 +234,21 @@ volontairement. Un garde-fou qu'on n'a jamais vu refuser ne prouve rien.
 ## Vérification
 
 ```bash
+python3 tools/check.py                                            # rapide
+URL0=https://roluron.github.io/terra-2050/ python3 tools/check.py --qa   # tout
+```
+
+Un seul geste, un seul code de sortie. Le lanceur **découvre** les contrôles
+au lieu de les énumérer, `tools/verifier_*.py` et `tools/qa/*.mjs`, pour qu'un
+contrôle ajouté demain soit lancé sans que personne pense à l'inscrire. Sans
+`--qa` les suites longues sont sautées, et il l'écrit à voix haute : un
+contrôle silencieusement absent ressemble trait pour trait à un contrôle qui
+passe. Zéro contrôle découvert est traité comme une panne, pas comme un
+succès.
+
+### La matrice, en direct
+
+```bash
 URL0=https://roluron.github.io/terra-2050/ node tools/qa/matrice.mjs
 ```
 
