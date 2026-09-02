@@ -587,3 +587,32 @@ webp en RGB : 216486 octets
 Meme poids, et Pillow relit toujours du RGB. Exiger l egalite des modes
 refuserait tous les masques. On compare dans le mode de la source, en
 exigeant seulement qu aucun canal ne disparaisse.
+
+
+## Le controle regardait seulement ou on lui avait dit de regarder
+
+Dernier angle mort de ce fil : PAIRES est une liste ecrite a la main, donc un
+WebP ajoute demain — une grille de donnees, par exemple — n aurait ete
+verifie par personne, en silence. Le script cherche desormais tous les .webp
+de assets/ et data/ et refuse l intrus. Preuve, avec un fichier non declare
+depose dans le dossier controle :
+
+```
+ECHEC  grille_secrete.webp      present dans ... mais absent de PAIRES :
+       sa fidelite n est verifiee par personne
+Au moins une texture est infidèle : NE PAS DEPLOYER.
+code de retour reel: 1
+```
+
+Note de methode : la premiere verification de ce garde passait par
+`| head -2`, et `$?` renvoyait alors le code de `head`, pas celui du script.
+Il affichait 0 alors que le script sortait bien en 1. Verifier un code de
+retour derriere un tube ne verifie rien.
+
+## Ce qui ne nous concerne pas
+
+La session voisine a etabli qu il ne faut jamais marquer une cellule sans
+donnee par alpha=0 en gardant une valeur dans son RGB : WebP sans perte la
+mange. Regle juste, sans effet ici — aucune de nos textures n a de canal
+alpha, et les grilles de donnees restent en PNG. Notre sentinelle « donnees
+insuffisantes » est l octet 255 de places.bin, un binaire gzippe sans perte.

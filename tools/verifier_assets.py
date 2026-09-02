@@ -46,6 +46,23 @@ PAIRES = [
 MOTS_DONNEES = ("mask", "masque", "grille", "grid", "data", "depth", "height")
 
 
+def verifier_couverture(racines, paires=None) -> int:
+    """Un controle qui ne regarde que la ou on lui a dit de regarder ne protege
+    de rien. Tout .webp trouve dans le projet doit etre declare dans PAIRES :
+    sinon, ajouter demain une grille de donnees en WebP passerait sous le
+    radar, et c est exactement la faute que ce fichier existe pour empecher."""
+    declares = {n for n, _, _ in (paires or PAIRES)}
+    manquants = []
+    for racine in racines:
+        if racine.exists():
+            manquants += [f for f in sorted(racine.rglob("*.webp"))
+                          if f.name not in declares]
+    for f in manquants:
+        print(f"ECHEC  {f.name:24} present dans {f.parent} mais absent de PAIRES : "
+              f"sa fidelite n est verifiee par personne")
+    return 1 if manquants else 0
+
+
 def verifier_declarations(paires=None) -> int:
     fautes = 0
     for nom_webp, _, mode in (paires or PAIRES):
@@ -245,7 +262,9 @@ if __name__ == "__main__":
         sys.exit(code)
 
     racine = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAUT
-    code = verifier_declarations() | verifier(racine)
+    projet = Path(__file__).resolve().parent.parent
+    racines = [racine] if len(sys.argv) > 1 else [projet / "assets", projet / "data"]
+    code = verifier_couverture(racines) | verifier_declarations() | verifier(racine)
     print("Toutes les textures sont fidèles." if code == 0
           else "Au moins une texture est infidèle : NE PAS DÉPLOYER.")
     sys.exit(code)

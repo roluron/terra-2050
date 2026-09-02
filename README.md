@@ -219,10 +219,14 @@ Exiger l'égalité des modes refuserait tous les masques du monde ; on compare
 donc dans le mode de la source, en exigeant seulement que le fichier livré ne
 perde aucun canal.
 
-Le script vérifie enfin ses propres déclarations : une image dont le nom dit
-qu'elle porte des données (masque, grille) et qui serait déclarée en tolérance
-PSNR au lieu de « exact » est refusée. Le tableau des paires s'édite à la
-main, c'est la faute la plus facile à commettre ici.
+Le script vérifie enfin deux choses sur lui-même. D'abord sa couverture : il
+cherche tous les `.webp` de `assets/` et de `data/`, et refuse celui qui ne
+serait pas déclaré. Un contrôle qui ne regarde que là où on lui a dit de
+regarder ne protège de rien, et ajouter demain une grille de données en WebP
+passerait sinon sous le radar. Ensuite ses déclarations : une image dont le
+nom dit qu'elle porte des données, déclarée en tolérance PSNR au lieu de
+« exact », est refusée. Le tableau des paires s'édite à la main, c'est la
+faute la plus facile à commettre ici.
 
 Chaque garde a été vu refuser avant d'être commité, en le sabotant
 volontairement. Un garde-fou qu'on n'a jamais vu refuser ne prouve rien.
