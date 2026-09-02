@@ -2431,7 +2431,7 @@ function annoncer(){
   const txt = sc === null
     ? `${nomVille(l)} · ${t.sansDonnees}`
     : `${nomVille(l)} · ${an} · ${sc}/100 · ${t.verdict[niveauDe(sc)]}`;
-  if (txt === derniereAnnonce) return;
+  if (txt === derniereAnnonce) return;   // remis a zero a la fermeture (voir fermerDossier)
   derniereAnnonce = txt;
   document.getElementById('annonce').textContent = txt;
 }
@@ -2461,13 +2461,17 @@ addEventListener('resize', () => document.body.classList.contains('dossier-ouver
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(depuisChamp){
   lieuDossier = null;
+  derniereAnnonce = '';   // rouvrir la meme ville doit reparler au lecteur d ecran
   // fermeture douce (on repart chercher) : la camera reste ou elle est,
   // sinon elle s'eloigne pour rien avant de replonger sur la ville suivante
   if (depuisChamp){
     if (balayageAnnee) balayageAnnee.kill();
     lieuVs = null;   // defiLien survit : l'invitation a comparer passe justement par le champ
     retirerMarqueur();
-    history.replaceState(null, '', location.pathname + location.search);
+    // surtout pas de reecriture d historique ici : cette fermeture-la arrive
+    // quand on clique dans le champ pour chercher une autre ville, et elle
+    // effacait l entree de la ville qu on vient de quitter (le Precedent
+    // retombait alors sur un globe vide)
     dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
     document.body.classList.remove('dossier-ouvert');
     clearTimeout(minuterieLien);
@@ -2491,7 +2495,7 @@ function fermerDossier(depuisChamp){
   }
   clearTimeout(minuterieRepos);
   retirerMarqueur();
-  history.replaceState(null, '', location.pathname + location.search);
+  if (!retourHistorique) history.replaceState(null, '', location.pathname + location.search);
   dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
   document.body.classList.remove('dossier-ouvert');
 }
@@ -2731,7 +2735,9 @@ function ouvrirStory(){
   document.getElementById('story-titre').textContent = t.storyTitre;
   const libelles = [t.optPlanete, t.optTrajectoire, t.optAxes, t.optPop];
   storyPopup.querySelectorAll('.story-opt span').forEach((sp, i) => (sp.textContent = libelles[i]));
-  document.getElementById('story-partager').textContent =
+  const bp = document.getElementById('story-partager');
+  clearTimeout(bp._flash); bp._avant = undefined;   // un « Enregistre ✓ » en cours ne doit pas revenir
+  bp.textContent =
     (navigator.canShare && navigator.canShare({ files: [new File([new Blob()], 'x.jpg', { type: 'image/jpeg' })] }))
       ? t.storyPartager : t.storyEnregistrer;
   storyPopup.hidden = false; storyOuvert = true; storyOuvertA = performance.now();
@@ -2819,6 +2825,9 @@ function ouvrirDepuisLien(sansDefi){
   }
   if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); sansBalayage = true; }
   if (sansDefi) sansBalayage = true;
+  // a l arrivee (pas au retour arriere) : le lien devient deux entrees,
+  // le globe puis la ville, pour que le Precedent reste dans le site
+  if (!retourHistorique) history.replaceState(null, '', location.pathname + location.search);
   choisirLieu(l);
   if (defiLien) montrerAccroche(T().accrocheDefi, () => champ.focus(), 3400);
 }

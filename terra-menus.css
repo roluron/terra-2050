@@ -1028,7 +1028,9 @@ body.dossier-ouvert #recherche {
   .story-corps { flex-direction: column; align-items: center; }
   /* l'apercu tenait 320 px de haut : le bouton de partage tombait alors sous
      la ligne de flottaison de la carte, il fallait defiler pour partager */
-  #story-apercu { width: 132px; height: 235px; }
+  /* hauteur fluide : lisible sur un grand telephone, et la carte ne defile
+     jamais sur un petit — le rapport 9/16 tient la largeur */
+  #story-apercu { width: auto; height: min(313px, 42dvh); aspect-ratio: 9 / 16; }
   .story-opts { width: 100%; }
   .story-corps { gap: 14px; margin-top: 14px; }
   .story-carte { padding: 22px 22px 18px; }
@@ -1262,8 +1264,10 @@ button, .calque, #curseur { touch-action: manipulation; }
 }
 /* ecran bas (paysage telephone) : l'apercu retrecit pour que le bouton
    de partage reste visible sans defiler */
-@media (max-height: 560px) {
-  #story-apercu { width: 108px; height: 192px; }
+/* (pointer: coarse) : sinon une fenetre de bureau basse reduisait l apercu
+   a 108 px de large, illisible sur un ecran de 1440 */
+@media (max-height: 560px) and (pointer: coarse) {
+  #story-apercu { width: auto; height: min(192px, 46dvh); aspect-ratio: 9 / 16; }
   .story-corps { flex-direction: row; gap: 18px; margin-top: 12px; }
   .story-opt { padding: 6px 0; }
 }
