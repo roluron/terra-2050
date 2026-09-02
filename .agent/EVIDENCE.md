@@ -332,3 +332,28 @@ en ligne  cache desactive    11.2 / 11.2 / 11.3 s   |  840 / 841 / 841 Ko
 Le calcul adverse additionnait les tailles sur disque (2,2 Mo) sans tenir
 compte du gzip servi par GitHub Pages. 840 Ko a 87,5 Ko/s font 9,6 s, plus la
 latence : la mesure est coherente, le calcul ne l etait pas.
+
+
+## Liens profonds — 20 formes eprouvees (scratchpad/liens.mjs)
+
+Ordre des parametres quelconque, annee hors bornes, annee illisible, iso2 en
+minuscules ou invalide, encodage casse, ville inexistante, balise script,
+duel sur soi-meme, parametre inconnu en plus : `TOUS LES LIENS OK`. Une annee
+illisible retombe sur le comportement « lien sans annee », une annee hors
+bornes est ramenee par le curseur.
+
+## Aller-retour de partage sur des noms qui demandent un encodage
+
+```
+PASS Ho Chi Minh        lien=#v=H%C3%B4%20Chi%20Minh%20Ville   rouvert=Ho Chi Minh City
+PASS Saint-Denis        lien=#v=Saint-Denis                     rouvert=Saint-Denis
+PASS Xi'an              lien=#v=Xi'an                           rouvert=Xi'an
+PASS Seville            lien=#v=S%C3%A9ville                    rouvert=Seville
+PASS Krakow             lien=#v=Cracovie                        rouvert=Krakow
+PASS Nizhny Novgorod    lien=#v=Nijni%20Novgorod                rouvert=Nizhny Novgorod
+PASS Al Qahirah         lien=#v=Al%20Q%C4%81hirah%20al%20Jad%C4%ABdah  rouvert=Al Qahirah al Jadidah
+PASS Malmo              lien=#v=Malm%C3%B6                      rouvert=Malmo
+```
+
+Le lien porte le nom francais, le destinataire voit le nom de sa langue : les
+deux graphies sont cherchees a la reouverture.
