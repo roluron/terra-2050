@@ -64,10 +64,16 @@ tirages par ligne) :
 | Wifi, 30 Mb/s | 1,0 s |
 
 La méthode compte : le chiffre est le délai jusqu'à `#voile.pret`, mesuré
-depuis `goto` avec `waitUntil: 'commit'`, sur un contexte neuf à chaque
-tirage. Une relecture indépendante a mesuré 17 s sur le même profil nominal
-avec son propre banc ; l'écart vient du banc, pas du code, mais il vaut mieux
-citer la méthode que le seul chiffre.
+depuis `goto` avec `waitUntil: 'commit'`, navigateur relancé à chaque tirage.
+Douze tirages, quatre configurations (local et en ligne, cache touché ou
+désactivé) : 11,2 à 11,3 s, pour **840 Ko réellement transférés**.
+
+Une relecture indépendante a annoncé 17 s en additionnant les tailles de
+fichiers sur disque (2,2 Mo). C'est l'erreur à ne pas refaire : GitHub Pages
+sert le JavaScript, le CSS et le JSON en gzip, et le poids qui compte est
+`transferSize`, pas la taille du fichier. 840 Ko à 87,5 Ko/s font 9,6 s, plus
+la latence : les 11,2 s mesurées sont cohérentes, les 17 s calculées ne le
+sont pas.
 
 Quatre pièges rencontrés, à ne pas réintroduire :
 

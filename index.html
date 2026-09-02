@@ -965,9 +965,10 @@ function latLonVersVec3(lat, lon, r = 1){
 // desktop gardent le 4K. Le masque, lui, porte la justesse des cotes : il
 // reste en 4320 partout (295 Ko).
 const PETIT_ECRAN = Math.min(innerWidth, innerHeight) < 500;
-/* WebP quand le navigateur en veut, fichier d origine sinon : 500 Ko -> 202
-   pour la couleur, 288 -> 211 pour le masque. Sur un lien ouvert en 4G, c est
-   un tiers du chemin critique qui disparait.
+/* WebP quand le navigateur en veut, fichier d origine sinon. Couleur :
+   1 238 Ko -> 712 en 4096, 500 -> 202 en 2048 (telephone). Masque : 288 -> 211,
+   sans perte, identique au pixel. Sur un lien ouvert en 4G, c est un tiers du
+   chemin critique qui disparait.
 
    Le format est decide AVANT de charger, par un test d une image d un pixel
    sans reseau. Un repli branche sur l erreur ne convenait pas : il partait
@@ -986,6 +987,7 @@ const WEBP_OK = await new Promise(res => {
    donc suivies ici, et une image qui echoue attend son repli avant de
    compter comme prete. */
 const IMAGES_CRITIQUES = [];
+let cartesPerdues = false;
 function chargerTextureImage(webp, repli, donnees){
   const t = new THREE.Texture();
   if (donnees){   // une grille est une donnee, pas une couleur
@@ -998,10 +1000,11 @@ function chargerTextureImage(webp, repli, donnees){
     const essayer = (url, suite) => {
       const im = new Image();
       im.onload = () => { t.image = im; t.needsUpdate = true; res(true); };
-      im.onerror = () => (suite ? essayer(suite, null) : res(false));
+      im.onerror = () => { if (suite) return essayer(suite, null); cartesPerdues = true; res(false); };
       im.src = url;
     };
-    essayer(WEBP_OK ? webp : repli, WEBP_OK ? repli : null);
+    const premier = WEBP_OK ? webp : (repli || webp);
+    essayer(premier, repli && repli !== premier ? repli : null);
   }));
   return t;
 }
@@ -1028,8 +1031,10 @@ texCouleur.colorSpace = THREE.SRGBColorSpace;
 const texVide = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
 texVide.needsUpdate = true;
 let texA2026 = texVide, texA2050 = texVide, texB2026 = texVide, texB2050 = texVide;
-// grille_c : le shader la lit a chaque pixel du globe, elle bloque l entree
-const texC = chargerTextureImage('./data/grille_c.png', './data/grille_c.png', true);
+// grille_c : le shader la lit a chaque pixel du globe, elle bloque l entree.
+// Pas de repli : c est le meme fichier, et reessayer la meme URL trois fois
+// sur un 404 ne fait que trois 404.
+const texC = chargerTextureImage('./data/grille_c.png', null, true);
 let texD = texVide;
 
 /* Une grille se telecharge UNE fois et sert deux fois : les pixels au
@@ -1043,7 +1048,10 @@ function pixelsDepuisTexture(tex, cle, replier){
     // le filet des 30 s peut nous amener ici avant la fin de la texture : on
     // charge alors le fichier pour de bon, sinon le masque des terres serait
     // perdu en silence et les villes cotieres liraient des texels d ocean
-    if (!img || !img.width){ res(replier ? chargerGrilleUneFois(replier, cle, null) : false); return; }
+    // texture jamais arrivee : on ne retelecharge que si elle est encore en
+    // route (filet des 30 s). Sur echec avere, un troisieme essai ne donnerait
+    // qu un troisieme 404.
+    if (!img || !img.width){ res(replier && !cartesPerdues ? chargerGrilleUneFois(replier, cle, null) : false); return; }
     const c = document.createElement('canvas');
     c.width = img.width; c.height = img.height;
     const ctx = c.getContext('2d', { willReadFrequently: true });
@@ -1648,19 +1656,23 @@ const etat = { progression: 0, annee: 2026, feuxCible: 0, crise: false };
 
 // le rail ne se declare pret que si les grilles sont VRAIMENT la : sur echec,
 // un calque allume afficherait « aucun risque » partout, indiscernable du vrai
+function signalerCartesManquantes(){
+  if (document.body.classList.contains('calques-indisponibles')) return;
+  document.body.classList.remove('calques-en-attente');
+  document.body.classList.add('calques-indisponibles');
+  for (const b of document.querySelectorAll('.calque')){
+    b.disabled = true; b.setAttribute('aria-disabled', 'true'); b.title = T().calquesHS;
+  }
+  const note = document.createElement('div');
+  note.className = 'calques-note'; note.textContent = T().calquesHS;
+  document.getElementById('calques').appendChild(note);
+}
 calquesPrets.then(ok => {
   document.body.classList.remove('calques-en-attente');
   if (ok) return;
   // une grille manquante ferait lire « aucun risque » sur toute la Terre, ce
   // qui ressemble a une mesure. Les calques deviennent inertes et le disent.
-  document.body.classList.add('calques-indisponibles');
-  for (const b of document.querySelectorAll('.calque')){
-    b.disabled = true; b.setAttribute('aria-disabled', 'true');
-    b.title = T().calquesHS;
-  }
-  const note = document.createElement('div');
-  note.className = 'calques-note'; note.textContent = T().calquesHS;
-  document.getElementById('calques').appendChild(note);
+  signalerCartesManquantes();
 });
 document.body.classList.add('calques-en-attente');
 for (const btn of document.querySelectorAll('.calque')){
@@ -2941,8 +2953,14 @@ addEventListener('popstate', () => {
   } finally { retourHistorique = false; }
 });
 function ouvrirDepuisLien(sansDefi){
-  const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?(?:&cc=([A-Z]{2}))?(?:&vs=([^&]+))?(?:&vc=([A-Z]{2}))?/);
-  if (!m) return;
+  /* Une seule expression reguliere imposait l ordre des parametres : un lien
+     reordonne a la main perdait son annee en silence et rouvrait sur 2050.
+     On lit chaque parametre pour lui-meme. */
+  const q = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (!q.has('v')) return;
+  const m = [null, q.get('v'), (q.get('an') || '').match(/^\d{4}$/) ? q.get('an') : null,
+             (q.get('cc') || '').match(/^[A-Za-z]{2}$/) ? q.get('cc').toUpperCase() : null,
+             q.get('vs'), (q.get('vc') || '').match(/^[A-Za-z]{2}$/) ? q.get('vc').toUpperCase() : null];
   let nom;
   try { nom = decodeURIComponent(m[1]); } catch (e) { return; }   // hash tronqué
   // homonymes (Valence, Suzhou…) : l'iso2 du lien départage
@@ -3353,8 +3371,11 @@ try { new PerformanceObserver(l => (longuesTaches += l.getEntries().length)).obs
     document.getElementById('v-barre-fill').style.width = pct + '%';
   };
   for (const p of IMAGES_CRITIQUES) p.then(avancer);
-  Promise.all(IMAGES_CRITIQUES).then(() => {
+  Promise.all(IMAGES_CRITIQUES).then(r => {
     texturesPretes = true; peutEntrer(); chargerAnnuaire(); chargerGrillesCalques();
+    // une image du chemin critique perdue (grille_c surtout, qui porte le
+    // masque des terres) faussait les fiches en silence, jauge a 100 %
+    if (!r.every(Boolean)) signalerCartesManquantes();
   });
 }
 /* Ce qui retient le bouton Explorer, c est le globe : sa texture, son masque
