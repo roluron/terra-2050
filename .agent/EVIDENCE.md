@@ -413,7 +413,56 @@ Le controle ne prouve rien : A REPARER AVANT DE S EN SERVIR.
 code de retour 1
 ```
 
-L image de controle est du BRUIT et non une image plate : un encodage lossy
-d une image plate peut ressortir identique au bit pres, et le test resterait
-vert sans rien avoir verifie. Le piege se deplace d un niveau a chaque fois
+L image de controle est du BRUIT, et la raison a ete mesuree (voir le tableau
+plus bas) : seule une image uniforme ET sans couleur revient identique au bit
+pres apres un encodage lossy. Le piege se deplace d un niveau a chaque fois
 qu on ajoute un garde-fou.
+
+
+## Deux affirmations verifiees plutot que crues
+
+Une session voisine m a corrige sur un point de compression. J ai mesure les
+deux affirmations en jeu au lieu de trancher a l intuition.
+
+### 1. Quand le PNG bat-il le WebP sans perte ?
+
+Poids en octets, meme image, PNG optimise contre WebP lossless :
+
+```
+contenu      taille     WebP      PNG   qui gagne
+plate          8px       38       78   WebP
+plate        256px       44      568   WebP
+plate       1024px       88     4548   WebP
+degrade      256px       90      573   WebP
+bruit          8px      320      268   PNG
+bruit         16px     1022      852   PNG
+bruit         32px     3176     3172   PNG
+bruit         64px    12416    12420   WebP
+bruit       1024px  3145808  3151227   WebP
+```
+
+Ma formulation etait fausse : ce n est pas la platitude, c est le BRUIT en
+tres petit format. Sur un aplat, WebP ecrase PNG a toutes les tailles. Le PNG
+ne gagne que sur du contenu incompressible sous 32 a 64 px, ou l en-tete
+WebP n est pas amorti. Aucune texture ni planche de donnees reelle n est
+concernee, mais le controle de taille reste, il ne coute rien.
+
+### 2. Un encodage lossy peut-il revenir identique au bit pres ?
+
+```
+contenu                  lossy revient identique ?
+aplat gris 128           True
+aplat noir               True
+aplat bleu 37,90,140     False  (ecart max 2 niveaux)
+aplat rouge 200,60,20    False  (ecart max 3 niveaux)
+masque terre/mer         False
+bruit niveaux de gris    False
+tuile du vrai masque     False
+tuile 100 % ocean        True
+```
+
+Oui, mais seulement si l image est uniforme ET sans couleur : pas de chroma a
+sous-echantillonner, pas de detail a quantifier. Une tuile entierement ocean
+du vrai masque du projet passe un encodage lossy sans une seule difference.
+C est ce qui justifie le bruit comme image de controle de l autotest, et la
+justification que j en donnais ne tenait pas debout avant cette mesure.

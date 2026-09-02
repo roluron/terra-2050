@@ -180,12 +180,15 @@ python3 tools/verifier_assets.py --autotest
 ```
 
 Il fabrique une image de **bruit**, l'encode une fois sans perte et une fois
-en lossy, et vérifie que la première passe et que la seconde échoue. Le bruit
-n'est pas un détail : sur une image très plate, un encodage lossy peut
-ressortir identique au bit près, et le test resterait vert sans avoir rien
-vérifié. Éprouvé en sabotant volontairement le contrôle, qui sort alors en
-code 1 avec « une image LOSSY est passée ». Un garde-fou qu'on n'a jamais vu
-refuser ne prouve rien.
+en lossy, et vérifie que la première passe et que la seconde échoue.
+
+Le bruit n'est pas un détail, et la raison est mesurée : une image uniforme ET sans couleur (R=G=B) revient identique au bit près après un encodage lossy : il n'y a ni chroma à sous-échantillonner ni détail à quantifier. Mesuré sur une tuile 100 % océan du vrai masque : identique. Un aplat coloré, lui, perd 2 à 3 niveaux. Une image de
+contrôle uniforme et grise passerait donc l'encodage lossy sans une seule
+différence, et le test resterait vert sans avoir rien vérifié.
+
+Éprouvé en sabotant volontairement le contrôle, qui sort alors en code 1 avec
+« une image LOSSY est passée ». Un garde-fou qu'on n'a jamais vu refuser ne
+prouve rien.
 
 ## Vérification
 

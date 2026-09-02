@@ -13,9 +13,14 @@ Sortie : une ligne par paire, code de retour 1 si une seule échoue.
 
 `--autotest` prouve que le contrôle sait dire non : il fabrique une image de
 BRUIT, l'encode une fois sans perte et une fois en lossy, et vérifie que la
-première passe et que la seconde échoue. Le bruit n'est pas un détail : sur
-une image très plate, un encodage lossy peut ressortir identique au bit près,
-et le test passerait au vert sans rien avoir vérifié.
+première passe et que la seconde échoue.
+
+Le bruit n'est pas un détail, et la raison est mesurée : une image uniforme ET
+sans couleur (R=G=B) revient identique au bit près après un encodage lossy,
+faute de chroma à sous-échantillonner et de détail à quantifier. Vérifié sur
+une tuile 100 %% océan du vrai masque : identique. Une image de contrôle
+uniforme et grise passerait donc au vert sans rien avoir vérifié. Un aplat
+coloré, lui, perd 2 à 3 niveaux.
 """
 import math
 import sys
