@@ -60,3 +60,72 @@ errs: none
 Ressources en ligne (fetch sur roluron.github.io, 2026-09-02) :
 assets/apple-touch-icon.png 200 image/png | manifest.webmanifest 200
 application/manifest+json | assets/icon.svg 200 image/svg+xml
+
+## Relecture independante n°1 — 14 defauts, tous corriges (commit 7fba8a5)
+
+Verification des correctifs, sortie verbatim de scratchpad/fixes.mjs :
+
+```
+PASS D1 odometre suit la timeline apres balayage — odometre 2050 / curseur 2050
+PASS D1 aucune erreur
+PASS D3 Precedent ferme la fiche sans quitter — {"url":"http://localhost:8080/","ouvert":false} apres #v=Paris&an=2026&cc=FR
+PASS D3 Suivant rouvre la ville
+PASS D2 double-tap laisse le composeur ouvert
+PASS D7 carte dans l ecran — {"carte":[14,574],"vh":659,"defile":false,"part":[44,true],"croix":[44,44]}
+PASS D4 bouton partager >= 44px — h=44
+PASS D7 bouton partager visible sans defiler — {"carte":[14,574],"vh":659,"defile":false,"part":[44,true],"croix":[44,44]}
+PASS D6 croix de fermeture 44px — 44x44
+PASS D5 options atteignables au clavier — story-fermer > INPUT:planete > INPUT:trajectoire > INPUT:axes > INPUT:population > story-partager > story-fermer
+PASS D6 la croix ferme
+PASS erreurs iPhone
+PASS D9 le voile retient le focus — bouton-entree > body > bouton-entree > bouton-entree > body > bouton-entree
+PASS D9 apres l entree le chrome redevient atteignable
+```
+
+## Relecture independante n°2, autre modele (Antigravity) — 3 defauts (commit 8b51411)
+
+Sortie verbatim de scratchpad/agyfix.mjs :
+
+```
+PASS agy2 oeuf declenche
+PASS agy2 classe retiree apres interruption
+PASS agy2 oeuf rejouable
+PASS agy4 des boucles existent et jouent apres lien profond 2050 — {"n":8,"joue":2}
+PASS agy4 aucune erreur
+PASS agy5 bureau bas : croix collee a la fiche — {"croix":1380,"dossier":1376,"calques":1,"colonnes":"column nowrap"}
+PASS agy5 bureau bas : rail des calques toujours visible — opacity 1
+PASS paysage telephone : la regle s applique encore — {"x":460,"bas":337,"h":343}
+```
+
+## Barre d action collante, part de la fiche (scratchpad/sticky.mjs)
+
+```
+paysage      {"fiche":279,"barre":60,"part":22,"utile":219,"defilable":true}
+portrait     {"fiche":409,"barre":70,"part":17,"utile":339,"defilable":true}
+SE portrait  {"fiche":414,"barre":70,"part":17,"utile":344,"defilable":true}
+```
+
+## Performance (scratchpad/perf.mjs, site public)
+
+```
+mobile emule, CPU /4 : pret en 3482 ms | 120.1 fps (7 calques, 2050) | longues taches 0 | heap 121 Mo
+desktop              : pret en  972 ms | 120.1 fps (7 calques, 2050) | longues taches 0 | heap 116 Mo
+```
+
+## Salle blanche (clone frais du depot)
+
+```
+references verifiees : 33
+MANQUANTES : aucune
+icones manifest manquantes : aucune
+fichiers suivis : 60 | poids data : 6.0 Mo
+```
+
+## Navigateur integre Instagram, stockage bloque (scratchpad/webview.mjs)
+
+```
+voile pret (stockage bloque, UA Instagram): true
+fiche ouverte par lien profond: true
+composeur story ouvert: true
+erreurs: aucune
+```
