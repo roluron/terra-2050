@@ -868,6 +868,11 @@ const SoundManager = new class {
     this.creer('layer_off',     'layer_off.mp3',     0.9);
     this.creer('camera_fly',    'camera_fly.mp3',    0.7);
     this.creer('timeline_tick', 'timeline_tick.mp3', 0.8);
+  }
+  /* Les deux boucles pesent 284 Ko et ne servent qu'apres le geste d'entree.
+     Elles sont creees a ce moment-la, pas au chargement : c'est autant de
+     moins sur le chemin critique d'un lien ouvert en 4G. */
+  chargerBoucles(){
     this.creer('ambient_loop',  'ambient_loop.mp3',  0.5, true);
     this.creer('crisis_loop',   'crisis_loop.mp3',   0.5, true);
   }
@@ -942,7 +947,14 @@ const chargeur = new THREE.LoadingManager();
 const texChargeur = new THREE.TextureLoader(chargeur);
 // 4K : même coût de rendu (mips), +24 Mo GPU — net sur Retina. Le masque est
 // régénéré depuis ETOPO 60'' : côtes bien plus précises que l'ancien 2048.
-const texCouleur = texChargeur.load('./assets/textures/earth_color_4096.jpg'); // NASA Blue Marble (domaine public)
+// Telephone : la moitie de la resolution suffit a l'ecran, et epargne 750 Ko
+// sur le reseau mobile — c'est la ou arrive un lien partage. Tablette et
+// desktop gardent le 4K. Le masque, lui, porte la justesse des cotes : il
+// reste en 4320 partout (295 Ko).
+const PETIT_ECRAN = Math.min(innerWidth, innerHeight) < 500;
+const texCouleur = texChargeur.load(PETIT_ECRAN
+  ? './assets/textures/earth_color_2048.jpg'
+  : './assets/textures/earth_color_4096.jpg');   // NASA Blue Marble (domaine public)
 // masque terre/mer derive de GEBCO 15" : la mer est l'eau RELIEE a l'ocean,
 // donc les terres sous le niveau marin (depression caspienne, polders) ne sont
 // plus peintes en mer — Astrakhan ne flotte plus au milieu de l'eau
@@ -3136,6 +3148,7 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   document.body.classList.add('pret');
   SoundManager.setVolume(1);
   try { if (localStorage.getItem('terra-son') === 'off') SoundManager.mute = true; } catch (e) {}
+  SoundManager.chargerBoucles();
   SoundManager.play('ambient_loop', true);   // boucle à 0.5, fondu 2 s — après le geste utilisateur
   SoundManager.play('camera_fly');
   boutonSon.textContent = T().son(!SoundManager.mute); boutonSon.classList.toggle('actif', !SoundManager.mute);
