@@ -1121,7 +1121,7 @@ body:not(.pret) #scrim-dossier {
 #util { padding-right: env(safe-area-inset-right, 0px); }
 
 /* le focus clavier doit se voir, y compris sur le champ et les actions */
-#champ-recherche:focus-visible, #dossier .actions button:focus-visible,
+#dossier .actions button:focus-visible,
 .calque:focus-visible, .bouton-ico:focus-visible, #accroche button:focus-visible,
 #dossier-croix:focus-visible, .story-opt:focus-within, #story-partager:focus-visible {
   outline: 2px solid var(--texte); outline-offset: 3px; border-radius: 6px; }
@@ -1181,3 +1181,5 @@ button, .calque, #curseur { touch-action: manipulation; }
 /* les blocs du dossier ne se compressent jamais : le detail debordait sur les alternatives */
 #dossier > * { flex-shrink: 0; }
 @media (max-width: 720px) { .story-carte { background: rgba(2, 4, 10, 0.94); } }
+/* le champ deploye est deja son propre etat de focus : pas de cadre par-dessus (rectangle blanc sur iOS) */
+#champ-recherche:focus, #champ-recherche:focus-visible { outline: none; }
