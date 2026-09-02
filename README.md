@@ -249,5 +249,23 @@ troisième ligne ». Mesuré sur cette matrice même, avec un contrôle
 volontairement saboté : sans tube le code vaut 1, derrière `| grep -c '^PASS'`
 il vaut 0, celui de `grep`.
 
+```bash
+python3 tools/verifier_i18n.py
+python3 tools/verifier_assets.py
+```
+
+Le premier compare les deux dictionnaires FR/EN : une clé présente d'un côté
+et absente de l'autre n'affiche rien du tout, et seul un lecteur de cette
+langue-là s'en aperçoit. Il refuse aussi une clé lue dans le code et définie
+nulle part, et signale sans échouer les clés définies et jamais lues. Les
+conteneurs lus par variable (`t.calque[cle]`) sont exclus du calcul des clés
+mortes : leurs sous-clés ne sont pas prouvables statiquement, et un contrôle
+qui crie sur des faux positifs coûte plus qu'il ne rapporte.
+
+Il délègue la lecture du dictionnaire à Node. Écrire un parseur JavaScript en
+Python était l'erreur : la première version bouclait sans fin sur les chaînes.
+
+Le second vérifie les textures, voir plus haut. Les deux ont un `--autotest`.
+
 Les critères d'acceptation et l'état courant vivent dans `.agent/`, les
 preuves brutes dans `.agent/EVIDENCE.md`.

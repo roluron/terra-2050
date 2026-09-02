@@ -646,3 +646,51 @@ Sur le site public, sans tube : `code de retour SANS TUBE : 0`, 25 sur 25.
 Nettoyage au passage : `.gitignore` ne couvrait pas le lien symbolique
 `node_modules` (le motif avait une barre finale, qui ne matche qu un dossier)
 ni les `.DS_Store` apparus depuis.
+
+
+## Controle des dictionnaires FR/EN, et cinq cles mortes
+
+Une relecture manuelle avait valide la symetrie FR/EN une fois, en debut de
+session. Elle n etait cablee nulle part. C est maintenant
+`tools/verifier_i18n.py`.
+
+Trois lecons de sa mise au point, toutes payees comptant :
+
+1. Ma premiere version lisait `\bt\.` comme un acces aux traductions. Or `t`
+   designait AUSSI une texture Three.js dans deux fonctions : le controle
+   signalait `t.colorSpace`, `t.wrapS`, `t.needsUpdate` comme cles manquantes.
+   Corrige a la source en renommant la texture `tex`, plutot qu en apprenant
+   au controle a vivre avec l ambiguite.
+2. Mon parseur du dictionnaire etait ancre en debut de ligne, or plusieurs
+   cles tiennent sur une meme ligne (« fermer: …, partage: …, story: … ») :
+   il n en voyait qu une sur trois et en declarait deux manquantes.
+3. Ma deuxieme tentative ecrivait un parseur JavaScript en Python. Elle
+   bouclait sans fin. Node sait deja lire du JavaScript.
+
+Sans ces trois corrections, le controle affichait 14 fausses alertes. C est
+le defaut que la session voisine decrivait : un controle mal ecrit ne rate pas
+seulement sa cible, il produit du bruit qui ressemble a des defauts.
+
+Une fois juste, il a trouve cinq cles reellement mortes, definies dans les
+deux langues et lues nulle part : `calques`, `chargement`, `conditions`,
+`fermer`, `optQuestion`. Supprimees, avec l option « question » du composeur
+de story qui n avait ni case a cocher ni lecture.
+
+```
+$ python3 tools/verifier_i18n.py
+OK     65 cles, 7 sous-objets, symetrie FR/EN
+Dictionnaires FR/EN coherents.
+code: 0
+
+$ python3 tools/verifier_i18n.py --autotest
+OK     autotest : le fichier sain passe
+OK     autotest : une cle absente de EN est vue
+OK     autotest : une cle inventee dans le code est vue
+Le controle est porteur.
+```
+
+Detail qui compte : mon autotest visait la cle « fermer » par son nom, et
+supprimer cette cle morte a casse le test au lieu de le faire echouer
+proprement. Il prend desormais la premiere cle venue.
+
+Matrice de lancement apres nettoyage : 25 sur 25, code de retour 0 sans tube.
