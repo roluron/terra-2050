@@ -155,3 +155,57 @@ iPhone 15 Pro  {"apercu":[157,277],"defile":false,"partageVisible":true,"vh":659
 SE             {"apercu":[158,280],"defile":false,"partageVisible":true,"vh":667}
 paysage        {"apercu":[89,158],"defile":false,"partageVisible":true,"vh":343}
 ```
+
+
+## Relecture independante n°3 — 7 defauts, dont une regression a moi (commits 728b826, bf2c0dc)
+
+Sortie verbatim de scratchpad/v3fix.mjs :
+
+```
+PASS D1 bureau 1440x500 : bouton visible — {"apercu":[174,310],"defile":false,"btn":291,"vh":500,"visible":true}
+PASS D1 bureau 1440x900 : bouton visible — {"apercu":[240,427],"defile":false,"btn":686,"vh":900,"visible":true}
+PASS D1 bureau 1280x720 : bouton visible — {"apercu":[240,427],"defile":false,"btn":596,"vh":720,"visible":true}
+PASS D5 paysage : apercu >= 115 px et bouton visible — {"apercu":[120,213],"defile":false,"visible":true}
+PASS D2 le libelle ne revient pas dans l ancienne langue — ["Share to Stories","Share to Stories","Partager en story","Partager en story"]
+PASS D3 l URL ne nomme plus la ville fermee — {"hash":"","ouvert":false,"len":3}
+PASS D4 apres la croix, Precedent fait quelque chose — {"c":{"hash":"","ouvert":false},"b1":{"hash":"#v=Jakarta&an=2026&cc=ID","ouvert":true}}
+PASS D7 trois rechargements n ajoutent pas d entrees — len 3 -> 3
+PASS D7 Precedent ramene au globe — {"hash":"","ouvert":false,"len":3}
+PASS D6 rangees de resultats >= 44 px — [44,44,44,44,44,44,44]
+```
+
+## Chemin critique — cascade mesuree (scratchpad/cascade.mjs, 1,6 Mb/s, 150 ms, CPU /4)
+
+Avant (24,1 s) : l annuaire, les fleuves et les marees passaient AVANT la
+texture de la Terre. Apres (9,3 s), il ne reste que l essentiel :
+
+```
+bouton Explorer a 9256 ms
+   19 Ko  fin    669 ms  terra-menus.css
+   29 Ko  fin    727 ms  gsap.min.js
+  124 Ko  fin   1858 ms  quatre TWK Lausanne
+  163 Ko  fin   2515 ms  three.module.min.js
+   73 Ko  fin   5033 ms  grille_c.png
+  203 Ko  fin   8844 ms  earth_color_2048.webp
+  212 Ko  fin   9081 ms  earth_mask_4320.webp
+```
+
+Site public apres deploiement : 4G faible 10,2 s | 4G moyenne 4,6 s | wifi 1,2 s.
+Matrice de lancement sur le site public : 25/25.
+
+## Fidelite des textures WebP
+
+```
+masque : identique au pixel ? True
+couleur 4096 : PSNR 40,3 dB, ecart moyen 1,74 niveau sur 255
+```
+
+## Contraste mesure (scratchpad/contraste.mjs)
+
+```
+coords           6,32  9px   (etait 4,39 — sous le seuil AA)
+sources          6,32  8px   (etait 2,51 — sous le seuil AA)
+frappe           4,86  18px
+critere valeur   4,86  13px
+detail           6,09  11px
+```

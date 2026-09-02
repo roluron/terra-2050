@@ -36,6 +36,39 @@ Une seule valeur est liée au domaine : les balises `og:image` / `og:url` /
 `canonical` en tête de `index.html` pointent sur `roluron.github.io` — à changer en
 cas de domaine propre, sinon les aperçus de lien cassent.
 
+## Stratégie de chargement
+
+Un lien partagé s'ouvre presque toujours sur un téléphone. Le chemin critique
+— ce qu'il faut télécharger avant que le bouton **Explorer** apparaisse — est
+donc tenu court, à **839 Ko** : la feuille de style, les trois librairies, les
+polices, `grille_c.png` (le masque des terres, que le shader lit à chaque
+pixel) et les deux textures de la planète en WebP.
+
+Tout le reste arrive **après** :
+
+| Après | Quoi | Pourquoi |
+|---|---|---|
+| textures prêtes | l'annuaire des 34 099 villes (1,1 Mo), les marées, la calibration | la recherche affiche « chargement » si on va plus vite qu'elle |
+| textures prêtes | les 4 grilles de calques et `grille_d` (3 Mo) | aucun calque n'est allumé à l'arrivée ; un texel noir tient leur place |
+| grilles prêtes | `rivers.json` | sert au seul calque des fleuves |
+| clic Explorer | les sons, les foyers de feu | rien de tout cela ne sert avant le geste |
+
+Mesures (émulation réseau Chrome, iPhone, site en ligne) :
+
+| Réseau | Bouton Explorer |
+|---|---|
+| 4G faible, 1,6 Mb/s, 150 ms | 10,2 s |
+| 4G moyenne, 4 Mb/s, 80 ms | 4,6 s |
+| Wifi, 30 Mb/s | 1,2 s |
+
+Deux pièges rencontrés, à ne pas réintroduire :
+
+- **Un filet de sécurité trop court.** `setTimeout(chargerAnnuaire, 6000)`
+  lançait l'annuaire avant la fin de la texture de la Terre et lui prenait la
+  bande passante : huit secondes perdues. Il est à 30 s.
+- **`preload: false` chez Howler ne suffit pas** : le son ne se charge alors
+  jamais et la boucle reste muette. Les boucles sont créées au clic d'entrée.
+
 ## Carte du dépôt
 
 | Chemin | Rôle |
