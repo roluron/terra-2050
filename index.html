@@ -970,13 +970,25 @@ const texChargeur = new THREE.TextureLoader(chargeur);
 // desktop gardent le 4K. Le masque, lui, porte la justesse des cotes : il
 // reste en 4320 partout (295 Ko).
 const PETIT_ECRAN = Math.min(innerWidth, innerHeight) < 500;
-const texCouleur = texChargeur.load(PETIT_ECRAN
-  ? './assets/textures/earth_color_2048.jpg'
-  : './assets/textures/earth_color_4096.jpg');   // NASA Blue Marble (domaine public)
+/* WebP, avec repli sur le fichier d origine si le navigateur n en veut pas :
+   500 Ko -> 202 Ko pour la couleur, 288 -> 211 pour le masque. Sur un lien
+   ouvert en 4G, c est un tiers du chemin critique qui disparait. */
+function chargerTextureImage(webp, repli){
+  const t = texChargeur.load(webp, undefined, undefined, () => {
+    new THREE.TextureLoader().load(repli, r => {
+      t.image = r.image; t.needsUpdate = true;
+    });
+  });
+  return t;
+}
+const texCouleur = chargerTextureImage(
+  PETIT_ECRAN ? './assets/textures/earth_color_2048.webp' : './assets/textures/earth_color_4096.webp',
+  PETIT_ECRAN ? './assets/textures/earth_color_2048.jpg'  : './assets/textures/earth_color_4096.jpg');   // NASA Blue Marble (domaine public)
 // masque terre/mer derive de GEBCO 15" : la mer est l'eau RELIEE a l'ocean,
 // donc les terres sous le niveau marin (depression caspienne, polders) ne sont
 // plus peintes en mer — Astrakhan ne flotte plus au milieu de l'eau
-const texMasque  = texChargeur.load('./assets/textures/earth_mask_4320.png');
+const texMasque  = chargerTextureImage('./assets/textures/earth_mask_4320.webp',
+                                       './assets/textures/earth_mask_4320.png');
 texCouleur.anisotropy = 8;   // netteté aux angles rasants, quasi gratuit
 texMasque.anisotropy = 4;
 texCouleur.colorSpace = THREE.SRGBColorSpace;
@@ -1350,7 +1362,7 @@ const groupeFleuves = new THREE.Group();
 /* Tracés réels : Natural Earth 10m rivers & lake centerlines, scalerank <= 4
    (data/rivers.json, produit par tools/pipeline.py). Un seul LineSegments
    pour les 400+ tronçons : 1 draw call au lieu de 400 tubes. */
-fetch('./data/rivers.json').then(r => r.json()).then(fleuves => {
+chargerGrillesCalques().then(() => fetch('./data/rivers.json').then(r => r.json())).then(fleuves => {
   const sommets = [], parcours = [];
   for (const f of fleuves){
     let cumul = 0;
@@ -3272,8 +3284,11 @@ function peutEntrer(){
   if (donneesPretes) document.body.classList.remove('villes-en-attente');
 }
 chargeur.onLoad = () => { texturesPretes = true; peutEntrer(); chargerAnnuaire(); chargerGrillesCalques(); };
-// filet : si une texture ne repond jamais, l annuaire part quand meme
-setTimeout(chargerAnnuaire, 6000);
+// filet, si une texture ne repond jamais. Trente secondes et pas six : a
+// 6 s, sur une 4G faible, l annuaire partait AVANT la fin de la texture de
+// la Terre et lui prenait la bande passante — le bouton Explorer arrivait
+// huit secondes plus tard. Mesure a l appui (scratchpad/cascade.mjs).
+setTimeout(chargerAnnuaire, 30000);
 
 // tant que le voile est la, la tabulation ne doit pas atteindre le chrome
 // derriere lui : un clavier pouvait allumer un calque avant meme d entrer
