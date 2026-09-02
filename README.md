@@ -53,19 +53,36 @@ Tout le reste arrive **après** :
 | grilles prêtes | `rivers.json` | sert au seul calque des fleuves |
 | clic Explorer | les sons, les foyers de feu | rien de tout cela ne sert avant le geste |
 
-Mesures (émulation réseau Chrome, iPhone, site en ligne) :
+Mesures sur le site en ligne (émulation réseau Chrome, profil iPhone, deux
+tirages par ligne) :
 
 | Réseau | Bouton Explorer |
 |---|---|
-| 4G faible, 1,6 Mb/s, 150 ms | 10,2 s |
-| 4G moyenne, 4 Mb/s, 80 ms | 4,6 s |
-| Wifi, 30 Mb/s | 1,2 s |
+| 700 kb/s, 200 ms | 11,2 à 12,0 s |
+| 4G faible, 1,6 Mb/s, 150 ms | 5,2 s |
+| 4G moyenne, 4 Mb/s, 80 ms | 2,7 s |
+| Wifi, 30 Mb/s | 1,0 s |
 
-Deux pièges rencontrés, à ne pas réintroduire :
+La méthode compte : le chiffre est le délai jusqu'à `#voile.pret`, mesuré
+depuis `goto` avec `waitUntil: 'commit'`, sur un contexte neuf à chaque
+tirage. Une relecture indépendante a mesuré 17 s sur le même profil nominal
+avec son propre banc ; l'écart vient du banc, pas du code, mais il vaut mieux
+citer la méthode que le seul chiffre.
 
+Quatre pièges rencontrés, à ne pas réintroduire :
+
+- **Un `.then()` écrit au fil du module appelle la fonction tout de suite.**
+  `chargerGrillesCalques().then(…)` en portée de module lançait les 2,9 Mo de
+  grilles dès l'analyse du script, et le différé annoncé n'existait pas. D'où
+  la séparation : `calquesPrets` s'attend, `chargerGrillesCalques()` déclenche.
+- **`THREE.LoadingManager` compte une image en échec comme terminée.** Le
+  bouton Explorer s'ouvrait sur une planète noire quand le WebP échouait. Le
+  gestionnaire est retiré : les trois images du chemin critique sont suivies
+  une par une dans `IMAGES_CRITIQUES`, et un repli doit aboutir avant que
+  l'image compte comme prête.
 - **Un filet de sécurité trop court.** `setTimeout(chargerAnnuaire, 6000)`
-  lançait l'annuaire avant la fin de la texture de la Terre et lui prenait la
-  bande passante : huit secondes perdues. Il est à 30 s.
+  lançait l'annuaire avant la fin de la texture et lui prenait la bande
+  passante : huit secondes perdues. Il est à 30 s.
 - **`preload: false` chez Howler ne suffit pas** : le son ne se charge alors
   jamais et la boucle reste muette. Les boucles sont créées au clic d'entrée.
 
