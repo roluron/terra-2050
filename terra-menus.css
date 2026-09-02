@@ -1271,3 +1271,11 @@ button, .calque, #curseur { touch-action: manipulation; }
   .story-corps { flex-direction: row; gap: 18px; margin-top: 12px; }
   .story-opt { padding: 6px 0; }
 }
+
+/* =====================================================================
+   CONTRASTE — mesure sur le site en ligne : la ligne des sources tombait a
+   2,51:1 et les coordonnees a 4,39:1, sous le seuil AA de 4,5. Ce sont
+   justement les deux lignes qui disent d'ou vient le chiffre.
+   ===================================================================== */
+#dossier .sources { color: rgba(255, 253, 226, 0.56); }
+#dossier .coords { color: rgba(255, 253, 226, 0.56); }
