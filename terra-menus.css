@@ -1301,3 +1301,10 @@ body.villes-en-attente #loupe { opacity: 0.45; }
 @media (pointer: coarse) {
   #resultats li { min-height: 44px; display: flex; align-items: center; }
 }
+
+/* Mesure a l'ecran : un calque eteint tombait a 3,04:1, sous le seuil AA de
+   4,5. Ce sont les sept commandes principales du produit, et elles se lisent
+   par-dessus un globe dont la luminosite varie. L'ecart avec un calque allume
+   reste net (0,58 contre 0,95), la hierarchie tient. */
+.calque:not(.actif) { opacity: 0.58; }
+.calque { opacity: 0.95; }
