@@ -443,7 +443,7 @@ const TEXTES = {
       chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de chaleur de Rothfusz',
       feux: 'WorldClim 2.1 · CMIP6 SSP3-7.0',
       secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de De Martonne',
-      mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (subsidence VLM)',
+      mer: 'NOAA ETOPO 2022 · IPCC AR6 · COAST-RP (marées de tempête, CC BY 4.0) · Oelsmann 2025 (subsidence VLM)',
       fleuves: 'JRC Global River Flood Hazard · crue centennale',
       stabilite: 'Écart au climat 1970-2000 : température moyenne et précipitations, WorldClim ＋ CMIP6',
       declin: 'ONU WPP 2024 (médiane) · Our World in Data · Natural Earth',
@@ -495,7 +495,7 @@ const TEXTES = {
     detChaud40: j => `dont ${j} jours au-dessus de 40 °C (seuil « danger » NWS)`,
     detEau: (v, pct, d) => `réserve en eau : déficit ${v}/100${v ? ` · plus sec que ${pct} % des villes` : ''}${d > 2 ? ` · s’aggrave de ${d} d’ici 2050` : ''}`,
     detFeux: (v, pct, d) => `météo propice aux feux ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
-    detMer: (f, f5, med, sub, r) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous la ligne ＋ 1 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ 2 m de surcote · seule l’eau reliée à la mer compte · les digues en terre figurent dans le relief, les ouvrages mobiles non · relief FABDEM 30 m, sol nu`,
+    detMer: (f, f5, med, sub, r, mt) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous la ligne ＋ 1 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ marée de tempête centennale (${mt} m, COAST-RP) · seule l’eau reliée à la mer compte · les digues en terre figurent dans le relief, les ouvrages mobiles non · relief FABDEM 30 m, sol nu`,
     detFleuves: (f, d90, r) => `crue centennale (1 %/an · ≈22 % d’ici 2050) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
     detStab: v => `le climat local a déjà dérivé de ${v} °C par rapport à 1970-2000 · température moyenne et précipitations, WorldClim ＋ CMIP6`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (scénario émissions élevées, un seul modèle) · FABDEM 1″ (sol nu, CC BY-NC-SA) · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
@@ -538,7 +538,7 @@ const TEXTES = {
       chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · Rothfusz heat index',
       feux: 'WorldClim 2.1 · CMIP6 SSP3-7.0',
       secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · De Martonne index',
-      mer: 'NOAA ETOPO 2022 · IPCC AR6 · Oelsmann 2025 (VLM subsidence)',
+      mer: 'NOAA ETOPO 2022 · IPCC AR6 · COAST-RP (storm tides, CC BY 4.0) · Oelsmann 2025 (VLM subsidence)',
       fleuves: 'JRC Global River Flood Hazard · 100-year flood',
       stabilite: 'Drift from the 1970-2000 climate: mean temperature and rainfall, WorldClim + CMIP6',
       declin: 'UN WPP 2024 (medium) · Our World in Data · Natural Earth',
@@ -590,7 +590,7 @@ const TEXTES = {
     detChaud40: j => `of which ${j} days above 40 °C (NWS “danger” threshold)`,
     detEau: (v, pct, d) => `water reserve: deficit ${v}/100${v ? ` · drier than ${pct}% of cities` : ''}${d > 2 ? ` · worsens by ${d} by 2050` : ''}`,
     detFeux: (v, pct, d) => `fire-prone weather ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
-    detMer: (f, f5, med, sub, r) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below the line + 1 m · median elevation ${med} m · line = 2050 level + 2 m surge · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth`,
+    detMer: (f, f5, med, sub, r, mt) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below the line + 1 m · median elevation ${med} m · line = 2050 level + the 1-in-100-year storm tide (${mt} m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth`,
     detFleuves: (f, d90, r) => `100-year flood (1%/yr · ≈22% by 2050): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
     detStab: v => `the local climate has already drifted ${v} °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (high-emissions scenario, single model) · FABDEM 1″ (bare earth, CC BY-NC-SA) · NOAA ETOPO 2022 · JRC 100-yr flood · Oelsmann 2025 (VLM subsidence) · Natural Earth · GeoNames',
@@ -611,6 +611,12 @@ let LIEUX = [];
    globe est floute et quantifie pour le rendu : le lire pour le TEXTE
    faisait diverger le chiffre affiche de la note. */
 let THERMO = null;
+/* Maree de tempete centennale par ville (data/maree.bin, u16 en centimetres),
+   COAST-RP : la cote submersible n'est plus un forfait de 2 m partout mais le
+   niveau reellement atteint une fois par siecle a cet endroit — 4,90 m a
+   Beira, 0,73 m a Miami. */
+let MAREE = null;
+const mareeVille = i => (MAREE && i >= 0 && i < MAREE.length ? MAREE[i] / 100 : null);
 const THERMO_PAS = 6;
 const thermoVille = (i, canal, t) => {
   if (!THERMO) return null;
@@ -728,7 +734,8 @@ const CRITERES = [
   { cle: 'mer', poids: 0.20, couleur: '#4D7CF2',
     detail: (l) => {
       const m = l[7] && l[7].mer;
-      return m ? T().detMer(Math.round(m.f50 * 100), Math.round(m.f5 * 100), m.med, m.sub || 0, rayonVille(l)) : '';
+      return m ? T().detMer(Math.round(m.f50 * 100), Math.round(m.f5 * 100), m.med, m.sub || 0, rayonVille(l),
+        (mareeVille(LIEUX.indexOf(l)) ?? 2).toFixed(2)) : '';
     } },
   { cle: 'fleuves', poids: 0.16, couleur: '#6FA3FF',
     detail: (l) => {
@@ -3016,6 +3023,8 @@ Promise.all([
     charger('./data/places.bin', 'arrayBuffer'),
     charger('./data/thermo.bin', 'arrayBuffer')
       .then(b => { THERMO = new Uint8Array(b); }).catch(() => {}),
+    charger('./data/maree.bin', 'arrayBuffer')
+      .then(b => { MAREE = new Uint16Array(b); }).catch(() => {}),
   ]).then(([j, bin]) => {
     const dv = new DataView(bin), REC = 24;
     if (bin.byteLength !== j.villes.length * REC) throw new Error('places.bin : taille inattendue ' + bin.byteLength);
