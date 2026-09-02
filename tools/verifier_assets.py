@@ -57,6 +57,22 @@ def verifier_declarations(paires=None) -> int:
     return 1 if fautes else 0
 
 
+def codec_webp(chemin: Path):
+    """Le mode d'encodage est ecrit DANS le fichier, pas dans notre table.
+
+    En-tete RIFF : « RIFF » (0-4), taille, « WEBP » (8-12), puis le tag du
+    codec (12-16). « VP8L » est le seul mode sans perte. Attention au
+    raccourci « VP8L ou VP8  » : un WebP lossy AVEC ALPHA se declare « VP8X »,
+    verifie ici meme. On exige donc VP8L et on refuse tout le reste, ce qui
+    couvre le cas alpha sans avoir a le nommer.
+    """
+    with open(chemin, "rb") as f:
+        tete = f.read(16)
+    if len(tete) < 16 or tete[:4] != b"RIFF" or tete[8:12] != b"WEBP":
+        return None
+    return tete[12:16]
+
+
 def dire(bavard: bool, texte: str) -> None:
     if bavard:
         print(texte)
@@ -87,6 +103,15 @@ def verifier(racine: Path, paires=None, bavard: bool = True) -> int:
             continue
 
         if mode == "exact":
+            # La comparaison au pixel est AVEUGLE sur une region uniforme et
+            # sans couleur : une tuile 100 % ocean de ce masque survit intacte
+            # a un encodage lossy. L en-tete, lui, ne ment pas.
+            codec = codec_webp(p_webp)
+            if codec != b"VP8L":
+                dire(bavard, f"ECHEC  {nom_webp:24} encode en {codec} : "
+                     f"une image de donnees doit etre en VP8L (sans perte)")
+                echecs += 1
+                continue
             identique = ImageChops.difference(webp, src).getbbox() is None
             dire(bavard, f"{'OK   ' if identique else 'ECHEC'}  {nom_webp:24} "
                  f"sans perte, identique au pixel : {identique}")
@@ -135,6 +160,25 @@ def autotest() -> int:
                   "peut rien prouver (uniforme ? sans couleur ?)")
             return 1
         print("OK     autotest : l image temoin est bien abimee par le lossy")
+
+        # Le cas que la comparaison au pixel ne peut pas voir : un aplat gris
+        # encode en lossy revient identique, seul l en-tete le trahit.
+        Image.new("RGB", (n, n), (128, 128, 128)).save(rep / "aplat.png")
+        Image.new("RGB", (n, n), (128, 128, 128)).save(
+            rep / "aplat_lossy.webp", "WEBP", quality=95, method=4)
+        pixels_aveugles = ImageChops.difference(
+            Image.open(rep / "aplat.png").convert("RGB"),
+            Image.open(rep / "aplat_lossy.webp").convert("RGB")).getbbox() is None
+        attrape = verifier(rep, [("aplat_lossy.webp", "aplat.png", "exact")], bavard=False)
+        if not pixels_aveugles:
+            print("OK     autotest : (ce Pillow abime meme un aplat gris, cas non couvert)")
+        elif attrape == 0:
+            print("ECHEC  autotest : un lossy identique au pixel est passe — "
+                  "l en-tete n est pas lu")
+            echecs += 1
+        else:
+            print("OK     autotest : un lossy indetectable au pixel est "
+                  "rattrape par l en-tete")
 
         bon = verifier(rep, [("sans_perte.webp", "src.png", "exact")], bavard=False)
         mauvais = verifier(rep, [("avec_perte.webp", "src.png", "exact")], bavard=False)

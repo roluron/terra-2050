@@ -191,10 +191,22 @@ abîmée par le lossy, avant de faire confiance à quoi que ce soit d'autre. Un
 témoin remplacé par un aplat gris sort en code 1 avec « l'image témoin survit
 au lossy, elle ne peut rien prouver ».
 
-Le script vérifie aussi ses propres déclarations : une image dont le nom dit
+**La comparaison au pixel ne suffit pas**, et c'est le point le moins
+intuitif. Elle est aveugle sur une région uniforme et sans couleur : une tuile
+100 % océan découpée dans le vrai masque, réencodée en lossy, revient
+identique au bit près. Le contrôle des pixels dit oui.
+
+Le mode d'encodage est donc lu dans le fichier lui-même. L'en-tête RIFF d'un
+WebP porte le tag du codec aux octets 12 à 16, et `VP8L` est le seul mode sans
+perte. Le script exige `VP8L` pour toute image de données et refuse tout le
+reste. Refuser tout le reste plutôt que tester `VP8 ` n'est pas de la
+prudence gratuite : un WebP lossy **avec canal alpha** se déclare `VP8X`, ce
+qui échapperait à un test écrit en binaire lossless-ou-`VP8 `.
+
+Le script vérifie enfin ses propres déclarations : une image dont le nom dit
 qu'elle porte des données (masque, grille) et qui serait déclarée en tolérance
-PSNR au lieu de « exact » est refusée. C'est la faute la plus facile à
-commettre ici, puisque le tableau des paires s'édite à la main.
+PSNR au lieu de « exact » est refusée. Le tableau des paires s'édite à la
+main, c'est la faute la plus facile à commettre ici.
 
 Chaque garde a été vu refuser avant d'être commité, en le sabotant
 volontairement. Un garde-fou qu'on n'a jamais vu refuser ne prouve rien.

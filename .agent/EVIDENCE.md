@@ -498,3 +498,39 @@ ECHEC  grille_c.webp            declare « psnr>=30 » : une image de donnees do
 code retour : 1
 et sur les vraies declarations : 0
 ```
+
+
+## Le mode d encodage se lit dans le fichier, pas dans notre table
+
+Idee venue de la session voisine, verifiee ici. Le tag du codec est aux
+octets 12 a 16 de l en-tete RIFF :
+
+```
+earth_mask_4320.webp     RIFF=b'RIFF' WEBP=b'WEBP' codec=b'VP8L'
+earth_color_4096.webp    RIFF=b'RIFF' WEBP=b'WEBP' codec=b'VP8 '
+lossless     codec=b'VP8L'
+lossy q80    codec=b'VP8 '
+lossy q100   codec=b'VP8 '
+alpha lossless codec=b'VP8L'
+alpha lossy  codec=b'VP8X'     <- le piege du raccourci
+```
+
+Un WebP lossy AVEC ALPHA se declare VP8X et non VP8 . Un test ecrit en
+binaire « VP8L ou VP8  » le laisserait passer. On exige donc VP8L et on
+refuse tout le reste.
+
+Preuve que l en-tete rattrape ce que les pixels ne voient pas, sur une tuile
+100 % ocean decoupee dans le VRAI masque et reencodee en lossy q95 :
+
+```
+la comparaison au pixel voit-elle quelque chose ? NON, identique
+en-tete du fichier : b'VP8 '
+
+avec le controle d en-tete :
+ECHEC  earth_mask_4320.webp     encode en b'VP8 ' : une image de donnees doit etre en VP8L (sans perte)
+
+sans le controle d en-tete (sabote dans une copie) :
+OK     earth_mask_4320.webp     sans perte, identique au pixel : True
+```
+
+Les deux gardes attrapent chacun ce que l autre laisse passer.
