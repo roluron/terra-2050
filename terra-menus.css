@@ -1198,3 +1198,32 @@ button, .calque, #curseur { touch-action: manipulation; }
   .calque { min-height: 44px; padding-top: 7px; padding-bottom: 7px; }
   #dossier-ailleurs .alt { min-height: 44px; }
 }
+
+/* iPhone en paysage (large mais bas) : l'annee et le rail des calques se
+   partageaient le meme coin ; tout se resserre pour tenir en 343 px de haut.
+   `body.pret #timeline` est necessaire : la regle d'entree porte cette
+   specificite et gagnerait sinon avec son translate(-50%). */
+@media (min-width: 721px) and (max-height: 520px) {
+  #timeline, body.pret #timeline {
+    left: auto; right: 24px; bottom: 6px; transform: none;
+    width: min(280px, 34vw); text-align: right; }
+  #timeline .an { font-size: 38px; text-align: right; }
+  #timeline .an-distance { text-align: right; }
+  /* fiche ouverte : elle prend le rail droit, l'annee passe a gauche et le
+     rail des calques s'efface — sinon les trois se superposent en 343 px */
+  body.dossier-ouvert #timeline, body.pret.dossier-ouvert #timeline {
+    left: 24px; right: auto; text-align: left; width: min(260px, 32vw); }
+  body.dossier-ouvert #timeline .an, body.dossier-ouvert #timeline .an-distance { text-align: left; }
+  body.dossier-ouvert #calques { opacity: 0; pointer-events: none; }
+  #curseur { margin-top: 6px; }
+  /* sept rangees a 44 px ne tiennent pas dans 343 px de haut : le rail passe
+     en deux colonnes plutot que de rapetisser les cibles tactiles */
+  #calques { top: 50%; flex-flow: column wrap; max-height: 190px; gap: 0 18px; }
+  .calque, #calques .calque { min-height: 44px; padding: 4px 8px; }
+  #dossier { top: 56px; bottom: 8px; gap: 8px; }
+  #dossier-croix { top: 52px; bottom: auto; right: 12px; }
+  /* la feuille basse du mobile n'a pas de sens sur 343 px : on revient au rail */
+  #story-apercu { width: 120px; height: 214px; }
+  .story-corps { flex-direction: row; }
+}
+@media (pointer: coarse) { #champ-recherche { min-height: 44px; } }

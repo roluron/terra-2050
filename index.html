@@ -413,6 +413,7 @@ const TEXTES = {
     initialiser: 'Explorer',
     chercher: 'Chercher une ville — ⌘K',
     aucunLieu: 'Aucune ville trouvée',
+    atlantide: 'Atlantide — submergée depuis −9600. Indice 0/100. Essayez une ville encore émergée.',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     calques: 'Calques de risque',
     conditions: 'Conditions de vie',
@@ -508,6 +509,7 @@ const TEXTES = {
     initialiser: 'Explore',
     chercher: 'Search a city — ⌘K',
     aucunLieu: 'No city found',
+    atlantide: 'Atlantis — underwater since 9600 BC. Index 0/100. Try a city still above the sea.',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     calques: 'Risk layers',
     conditions: 'Life conditions',
@@ -1687,7 +1689,20 @@ function afficherResultats(){
     resultatsActuels = resultatsActuels.slice(0, 6).concat([pays]);
   }
   if (!resultatsActuels.length){
-    liste.innerHTML = `<li class="vide">${T().aucunLieu}</li>`;
+    // clin d'oeil : la cite deja submergee. Il ne se declenche que dans l'etat
+    // « aucun resultat » — Atlantis (Afrique du Sud) existe et garde sa fiche.
+    const mythe = /^atlant(is|ide|ida)$/.test(q);
+    liste.innerHTML = `<li class="vide">${mythe ? T().atlantide : T().aucunLieu}</li>`;
+    if (mythe && !document.body.classList.contains('atlantide')){
+      document.body.classList.add('atlantide');
+      controles.autoRotate = false; SoundManager.play('camera_fly');
+      const cible = latLonVersVec3(31, -24).multiplyScalar(2.6);   // plaine abyssale, au large des Acores
+      if (volEnCours) volEnCours.kill();
+      volEnCours = gsap.to(camera.position, { x: cible.x, y: cible.y, z: cible.z,
+        duration: MOINS_ANIM ? 0 : 2.4, ease: EASE,
+        onUpdate: () => camera.lookAt(0, 0, 0),
+        onComplete: () => document.body.classList.remove('atlantide') });
+    }
   } else {
     for (const l of resultatsActuels){
       const li = document.createElement('li');
