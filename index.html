@@ -960,15 +960,14 @@ function latLonVersVec3(lat, lon, r = 1){
 // plus de LoadingManager : il declarait « terminee » une image en echec et
 // liberait le bouton Explorer sur une planete noire. Les trois images du
 // chemin critique sont suivies une par une (voir IMAGES_CRITIQUES).
-// 4K : même coût de rendu (mips), +24 Mo GPU — net sur Retina. Le masque est
-// régénéré depuis ETOPO 60'' : côtes bien plus précises que l'ancien 2048.
-// Telephone : la moitie de la resolution suffit a l'ecran, et epargne 750 Ko
-// sur le reseau mobile — c'est la ou arrive un lien partage. Tablette et
-// desktop gardent le 4K. Le masque, lui, porte la justesse des cotes : il
-// reste en 4320 partout (295 Ko).
-/* La finesse utile depend des pixels REELLEMENT rendus, pas des pixels CSS.
-   Un portable 1440x900 sans Retina affichait le globe sur 800 pixels et
-   payait quand meme la texture 4096 (712 Ko) : 6 s de plus a 700 kb/s. */
+/* Le masque des cotes reste en 4320 partout (212 Ko en WebP sans perte) :
+   c'est lui qui porte la justesse du trait de cote, on ne le degrade pas.
+
+   La couleur, elle, est toujours chargee en 2048 pour entrer, puis affinee en
+   4096 sur les ecrans qui rendent assez de pixels pour la voir. La finesse
+   utile depend des pixels REELLEMENT rendus, pas des pixels CSS : un portable
+   1440x900 sans Retina affiche le globe sur 800 pixels et payait quand meme
+   la 4096 (712 Ko), soit 6 s de plus a 700 kb/s. */
 const PIXELS_RENDUS = Math.min(innerWidth, innerHeight) * Math.min(devicePixelRatio || 1, 2);
 const PETIT_ECRAN = PIXELS_RENDUS < 1100;
 /* WebP quand le navigateur en veut, fichier d origine sinon. Couleur :
@@ -2974,6 +2973,10 @@ document.getElementById('story-fermer').addEventListener('click', fermerStory);
 let retourHistorique = false;
 addEventListener('popstate', () => {
   retourHistorique = true;
+  // le duel epingle survivait au retour et `majLien` reecrivait alors
+  // l entree restauree : l URL n etait plus celle qui avait ete empilee.
+  // Le lien lui-meme dira s il porte un duel.
+  lieuVs = null;
   try {
     if (/[#&]v=/.test(location.hash)) ouvrirDepuisLien(true);
     else if (lieuDossier){ champ.value = ''; fermerDossier(); }
