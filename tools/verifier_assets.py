@@ -40,6 +40,23 @@ PAIRES = [
 ]
 
 
+# Une image dont un canal porte une VALEUR ne tolere aucune perte. Le mode se
+# declare a la main dans PAIRES, donc c est la faute la plus facile a commettre :
+# ajouter une grille ou un masque en « psnr>= » au lieu de « exact ».
+MOTS_DONNEES = ("mask", "masque", "grille", "grid", "data", "depth", "height")
+
+
+def verifier_declarations(paires=None) -> int:
+    fautes = 0
+    for nom_webp, _, mode in (paires or PAIRES):
+        donnee = any(m in nom_webp.lower() for m in MOTS_DONNEES)
+        if donnee and mode != "exact":
+            print(f"ECHEC  {nom_webp:24} declare « {mode} » : une image de "
+                  f"donnees doit etre « exact »")
+            fautes += 1
+    return 1 if fautes else 0
+
+
 def dire(bavard: bool, texte: str) -> None:
     if bavard:
         print(texte)
@@ -108,6 +125,17 @@ def autotest() -> int:
         bruit.save(rep / "sans_perte.webp", "WEBP", lossless=True, method=4)
         bruit.save(rep / "avec_perte.webp", "WEBP", quality=80, method=4)
 
+        # D ABORD : l image temoin doit etre reellement abimee par le lossy.
+        # Une image uniforme et sans couleur y survit intacte, et tout le reste
+        # du test passerait alors au vert sans rien avoir verifie.
+        src = Image.open(rep / "src.png").convert("RGB")
+        perdue = Image.open(rep / "avec_perte.webp").convert("RGB")
+        if ImageChops.difference(src, perdue).getbbox() is None:
+            print("ECHEC  autotest : l image temoin survit au lossy, elle ne "
+                  "peut rien prouver (uniforme ? sans couleur ?)")
+            return 1
+        print("OK     autotest : l image temoin est bien abimee par le lossy")
+
         bon = verifier(rep, [("sans_perte.webp", "src.png", "exact")], bavard=False)
         mauvais = verifier(rep, [("avec_perte.webp", "src.png", "exact")], bavard=False)
 
@@ -134,7 +162,7 @@ if __name__ == "__main__":
         sys.exit(code)
 
     racine = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAUT
-    code = verifier(racine)
+    code = verifier_declarations() | verifier(racine)
     print("Toutes les textures sont fidèles." if code == 0
           else "Au moins une texture est infidèle : NE PAS DÉPLOYER.")
     sys.exit(code)

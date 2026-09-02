@@ -186,9 +186,18 @@ Le bruit n'est pas un détail, et la raison est mesurée : une image uniforme ET
 contrôle uniforme et grise passerait donc l'encodage lossy sans une seule
 différence, et le test resterait vert sans avoir rien vérifié.
 
-Éprouvé en sabotant volontairement le contrôle, qui sort alors en code 1 avec
-« une image LOSSY est passée ». Un garde-fou qu'on n'a jamais vu refuser ne
-prouve rien.
+L'autotest commence d'ailleurs par vérifier que son image témoin est bien
+abîmée par le lossy, avant de faire confiance à quoi que ce soit d'autre. Un
+témoin remplacé par un aplat gris sort en code 1 avec « l'image témoin survit
+au lossy, elle ne peut rien prouver ».
+
+Le script vérifie aussi ses propres déclarations : une image dont le nom dit
+qu'elle porte des données (masque, grille) et qui serait déclarée en tolérance
+PSNR au lieu de « exact » est refusée. C'est la faute la plus facile à
+commettre ici, puisque le tableau des paires s'édite à la main.
+
+Chaque garde a été vu refuser avant d'être commité, en le sabotant
+volontairement. Un garde-fou qu'on n'a jamais vu refuser ne prouve rien.
 
 ## Vérification
 

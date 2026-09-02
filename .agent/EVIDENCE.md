@@ -466,3 +466,35 @@ sous-echantillonner, pas de detail a quantifier. Une tuile entierement ocean
 du vrai masque du projet passe un encodage lossy sans une seule difference.
 C est ce qui justifie le bruit comme image de controle de l autotest, et la
 justification que j en donnais ne tenait pas debout avant cette mesure.
+
+
+## Les deux gardes ajoutes, chacun vu refuser
+
+Une session voisine a montre que son propre jeu de donnees rendait le piege
+concret : 86,7 % des pixels d une de ses planches valent la sentinelle mer, et
+une tuile uniforme decoupee dedans survit intacte a un encodage lossy sur
+trois planches sur quatre. La quatrieme echoue parce que sa valeur mer est
+(0,254,0) : il y a de la couleur a sous-echantillonner. Exactement la regle
+mesuree ici.
+
+Garde 1 — l autotest exige que son image temoin soit abimee par le lossy
+avant de conclure quoi que ce soit. Preuve sur une copie ou le temoin devient
+un aplat gris :
+
+```
+ECHEC  autotest : l image temoin survit au lossy, elle ne peut rien prouver (uniforme ? sans couleur ?)
+Le controle ne prouve rien : A REPARER AVANT DE S EN SERVIR.
+code de retour 1
+```
+
+Garde 2 — une image de donnees declaree en tolerance PSNR au lieu de
+« exact » est refusee. C est la faute la plus probable ici, le tableau des
+paires s editant a la main. Preuve sur des declarations volontairement
+fausses :
+
+```
+ECHEC  earth_mask_4320.webp     declare « psnr>=38 » : une image de donnees doit etre « exact »
+ECHEC  grille_c.webp            declare « psnr>=30 » : une image de donnees doit etre « exact »
+code retour : 1
+et sur les vraies declarations : 0
+```
