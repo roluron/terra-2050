@@ -1135,3 +1135,49 @@ body:not(.pret) #scrim-dossier {
 #timeline:focus-within .regle i { background: var(--texte); }
 #timeline:focus-within .an { text-decoration: underline; text-underline-offset: 10px;
   text-decoration-thickness: 2px; text-decoration-color: rgba(255, 253, 226, 0.5); }
+
+/* =====================================================================
+   PARTAGE VISIBLE — les actions du dossier restent collées au bas du
+   panneau (desktop et feuille mobile), cibles tactiles 44 px, pilules
+   du même vocabulaire que les alternatives. Le partage ne se cherche plus.
+   ===================================================================== */
+#dossier .actions { position: sticky; bottom: 0; flex: none; margin-top: auto;
+  padding: 14px 0 2px; gap: 10px; flex-wrap: wrap;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.9) 38%); }
+#dossier .actions button { min-height: 44px; padding: 10px 18px; border: 1px solid var(--filet);
+  border-radius: 999px; background: rgba(255, 253, 226, 0.06); color: var(--texte);
+  font-size: 12.5px; font-weight: 500; letter-spacing: 0; cursor: pointer;
+  --p: 0%; padding-bottom: 10px; touch-action: manipulation;
+  transition: background 0.3s var(--ease), border-color 0.3s var(--ease); }
+#dossier .actions button:hover { background: rgba(255, 253, 226, 0.14); border-color: var(--muter); background-size: 0 0; }
+#dossier .actions button#dossier-partage { background: var(--texte); color: #070706; border-color: var(--texte); }
+#dossier .actions button#dossier-partage:hover { background: rgba(255, 253, 226, 0.86); }
+@media (min-width: 721px) { #dossier .actions { margin-top: auto; padding-top: 14px; } }
+@media (max-width: 720px) {
+  #dossier { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+  #dossier .actions { padding: 12px 0 8px; background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.96) 40%); }
+  #dossier .actions button { flex: 1; text-align: center; }
+}
+
+/* composeur de story sur mobile : la carte défile, le fond se ferme */
+#story-popup { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 720px) {
+  #story-popup { align-items: flex-start; background: rgba(0, 0, 0, 0.72);
+    padding: max(14px, env(safe-area-inset-top)) 0 max(14px, env(safe-area-inset-bottom)); }
+  .story-carte { background: rgba(2, 4, 10, 0.86); }
+  #story-partager { align-self: stretch; text-align: center; min-height: 48px; margin-top: 14px; }
+  .story-opt { min-height: 44px; }
+  #pedago { background: rgba(0, 0, 0, 0.55); }
+}
+
+/* iOS : pas de rebond de page, pas de flash au toucher, pas de menu long-press sur le globe */
+html, body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+body { -webkit-tap-highlight-color: transparent; }
+#scene { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+button, .calque, #curseur { touch-action: manipulation; }
+#bouton-reglages, #dossier-croix, #accroche-x { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+/* le partage TERRA vit dans le menu réglages, en tête */
+#menu-reglages #bouton-partager { color: var(--texte); }
+/* les blocs du dossier ne se compressent jamais : le detail debordait sur les alternatives */
+#dossier > * { flex-shrink: 0; }
+@media (max-width: 720px) { .story-carte { background: rgba(2, 4, 10, 0.94); } }

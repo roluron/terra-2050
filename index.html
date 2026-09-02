@@ -8,7 +8,29 @@
 <meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og.jpg">
 <meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="TERRA／2050">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TERRA／2050 — the globe, 2050 habitability index">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TERRA／2050 — Will your city still be livable in 2050?">
+<meta name="twitter:description" content="34,099 cities · one habitability index built only from open scientific data. Search yours.">
+<meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og.jpg">
+<meta name="twitter:image:alt" content="TERRA／2050 — the globe, 2050 habitability index">
+<meta name="description" content="Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité bâti uniquement sur des données scientifiques ouvertes (WorldClim, CMIP6, FABDEM, JRC, ONU).">
+<meta name="theme-color" content="#070706">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TERRA 2050">
+<link rel="canonical" href="https://roluron.github.io/terra-2050/">
+<link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+<link rel="icon" href="./assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<link rel="manifest" href="./manifest.webmanifest">
 <title>TERRA//2050 — Résilience Climatique</title>
 <!--
   TERRA//2050 — globe tactique des risques climatiques.
@@ -232,6 +254,7 @@
       </svg>
     </button>
     <div id="menu-reglages">
+      <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language / Langue">FR · <em>en</em></button>
     </div>
@@ -243,6 +266,7 @@
 <div id="secours">
   <h2>WebGL indisponible</h2>
   <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
+  <p lang="en">This experience needs real-time GPU rendering. Your browser or device could not start WebGL — try a recent browser with hardware acceleration enabled.</p>
 </div>
 
 <div id="story-popup" hidden aria-modal="true" role="dialog">
@@ -446,6 +470,12 @@ const TEXTES = {
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     fermer: 'Fermer ×', partage: 'Partager le lien ↗', story: 'Image story ↗',
+    partagerSite: 'Partager TERRA ↗',
+    partageSite: 'Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité sur données scientifiques ouvertes.',
+    posIndispo: 'Position indisponible — cherchez votre ville',
+    aria: { 'champ-recherche': 'Rechercher un lieu', resultats: 'Résultats', 'bouton-position': 'Ma position',
+      calques: 'Calques de risque', curseur: 'Année de projection', dossier: 'Diagnostic du lieu',
+      'dossier-croix': 'Fermer', 'accroche-x': 'Fermer', 'bouton-reglages': 'Réglages', 'bouton-langue': 'Langue' },
     storyTitre: 'Composer la story', storyPartager: 'Partager en story ↗',
     storyEnregistrer: 'Enregistrer en JPEG ↓', storyEnregistree: 'Enregistré ✓',
     frappeChaud: (j, an) => `${j} jours d’indice de chaleur au-dessus de 32 °C par an en ${an}`,
@@ -536,6 +566,12 @@ const TEXTES = {
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     fermer: 'Close ×', partage: 'Share link ↗', story: 'Story image ↗',
+    partagerSite: 'Share TERRA ↗',
+    partageSite: 'Will your city still be livable in 2050? 34,099 cities, one habitability index built only from open scientific data.',
+    posIndispo: 'Location unavailable — search your city',
+    aria: { 'champ-recherche': 'Search a place', resultats: 'Results', 'bouton-position': 'My location',
+      calques: 'Risk layers', curseur: 'Projection year', dossier: 'Place diagnosis',
+      'dossier-croix': 'Close', 'accroche-x': 'Close', 'bouton-reglages': 'Settings', 'bouton-langue': 'Language' },
     storyTitre: 'Compose your story', storyPartager: 'Share to Stories ↗',
     storyEnregistrer: 'Save as JPEG ↓', storyEnregistree: 'Saved ✓',
     frappeChaud: (j, an) => `${j} days a year above a 32 °C heat index in ${an}`,
@@ -1551,9 +1587,12 @@ let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
 const etatListe = { anim: null };
 /* le carré reste soudé au champ à chaque frame : la barre bouge (déploiement,
    centrage sur la fiche, resize) et la liste suit, jamais de décrochage */
+// mobile : la liste s'elargit a gauche du champ pour que les noms restent lisibles
+const largeurListe = () => Math.max(champ.offsetWidth, innerWidth <= 720 ? Math.min(300, innerWidth - 80) : 0);
 function calerListe(){
   if (!liste.classList.contains('ouvert')) return;
-  const l = champ.offsetLeft + 'px', w = champ.offsetWidth + 'px',
+  const lw = largeurListe();
+  const l = (champ.offsetLeft + champ.offsetWidth - lw) + 'px', w = lw + 'px',
         t = champ.offsetTop + 'px', h = champ.offsetHeight + 'px';
   if (liste.style.left !== l) liste.style.left = l;
   if (liste.style.width !== w) liste.style.width = w;
@@ -1598,7 +1637,9 @@ function afficherResultats(){
     // champ vide : rien d'imposé — seulement les villes déjà choisies avant
     if (!q && !focusProgramme && document.activeElement === champ && recents.length){
       resultatsActuels = recents
-        .map(n => LIEUX.find(l => l[0] === n) || PAYS_LIGNES.find(l => l[0] === n))
+        .map(n => { const [nom, iso] = n.split('|');   // homonymes (Valence, Suzhou) : l'iso departage
+          const ok = l => l[0] === nom && (!iso || l[1] === iso);
+          return LIEUX.find(ok) || PAYS_LIGNES.find(ok); })
         .filter(Boolean);
       if (resultatsActuels.length){
         for (const l of resultatsActuels){
@@ -1660,7 +1701,8 @@ function choisirLieu(l){
   else if (lieuVs === l) lieuVs = null;
   cacherAccroche();
   fermerListe();
-  recents = [l[0], ...recents.filter(n => n !== l[0])].slice(0, 3);
+  const cleRecent = l[0] + '|' + l[1];
+  recents = [cleRecent, ...recents.filter(n => n !== cleRecent)].slice(0, 3);
   try { localStorage.setItem('terra-recents', JSON.stringify(recents)); } catch (e) {}
   champ.value = nomVille(l); champ.blur();
   ouvrirDossier(l);
@@ -1682,10 +1724,12 @@ champ.addEventListener('focus', () => {
 });
 champ.addEventListener('focus', afficherResultats);
 champ.addEventListener('keydown', e => {
+  if (e.isComposing || e.keyCode === 229) return;   // IME (JA/ZH/KO) : Entree valide la composition, pas la ville
   const items = liste.querySelectorAll('li:not(.vide)');
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
     e.preventDefault();
-    indiceChoisi = (indiceChoisi + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % Math.max(items.length, 1);
+    const n = Math.max(items.length, 1);
+    indiceChoisi = e.key === 'ArrowDown' ? (indiceChoisi + 1) % n : (indiceChoisi <= 0 ? n - 1 : indiceChoisi - 1);
     items.forEach((li, i) => li.classList.toggle('choisi', i === indiceChoisi));
     champ.setAttribute('aria-activedescendant', indiceChoisi >= 0 ? 'res-' + indiceChoisi : '');
     if (indiceChoisi >= 0) SoundManager.play('ui_hover');
@@ -1758,6 +1802,7 @@ curseur.addEventListener('pointerdown', stopperBalayage);
 curseur.addEventListener('keydown', stopperBalayage);   // les fleches aussi rendent la main
 curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-annee'));
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
+addEventListener('pointercancel', () => document.body.classList.remove('cale-annee'));
 curseur.addEventListener('input', () => {
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
@@ -1788,14 +1833,15 @@ const LARGEUR_LOUPE = 46;
 const etatRecherche = { w: LARGEUR_LOUPE };
 const loupe = document.getElementById('loupe');
 function largeurBarre(){
-  return innerWidth <= 720 ? Math.min(220, innerWidth * 0.56)
+  // mobile : le champ deploye ne doit pas couvrir le wordmark (~136 px + marges)
+  return innerWidth <= 720 ? Math.min(220, innerWidth - 215)
                            : Math.min(252, innerWidth * 0.37);
 }
 let placerCaret = () => {};
 function appliquerLargeurRecherche(){
   champ.style.width = etatRecherche.w + 'px';
   // le carré de verre reste collé au champ pendant le déploiement
-  if (liste.classList.contains('ouvert')) liste.style.width = etatRecherche.w + 'px';
+  if (liste.classList.contains('ouvert')) liste.style.width = largeurListe() + 'px';
   majVerre(); placerCaret();
 }
 function deployerRecherche(){
@@ -2355,7 +2401,7 @@ function fermerDossier(depuisChamp){
     if (balayageAnnee) balayageAnnee.kill();
     lieuVs = null; defiLien = null;
     retirerMarqueur();
-    history.replaceState(null, '', location.pathname);
+    history.replaceState(null, '', location.pathname + location.search);
     dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
     document.body.classList.remove('dossier-ouvert');
     clearTimeout(minuterieLien);
@@ -2379,7 +2425,7 @@ function fermerDossier(depuisChamp){
   }
   clearTimeout(minuterieRepos);
   retirerMarqueur();
-  history.replaceState(null, '', location.pathname);
+  history.replaceState(null, '', location.pathname + location.search);
   dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
   document.body.classList.remove('dossier-ouvert');
 }
@@ -2410,17 +2456,25 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
       ? `${nomVille(l)}: ${indice}/100 habitability in ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. What about your city?`
       : `${nomVille(l)} : ${indice}/100 d’habitabilité en ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. Et ta ville ?`);
   const titre = `${nomVille(l)} — TERRA/2050`;
+  await partagerTexte(titre, texte, location.href, document.getElementById('dossier-partage'));
+});
+// feuille native quand elle existe, presse-papiers sinon (ou si la feuille echoue)
+async function partagerTexte(titre, texte, url, bouton){
   try {
-    if (navigator.share) await navigator.share({ title: titre, text: texte, url: location.href });
-    else {
-      await navigator.clipboard.writeText(texte + '\n' + location.href);
-      const el = document.getElementById('dossier-partage');
-      const avant = el.textContent;
-      el.textContent = langue === 'en' ? 'Link copied' : 'Lien copié';
-      setTimeout(() => (el.textContent = avant), 1600);
+    if (navigator.share){
+      try { await navigator.share({ title: titre, text: texte, url }); SoundManager.play('ui_click'); return; }
+      catch (e) { if (e.name === 'AbortError') return; }
     }
+    await navigator.clipboard.writeText(texte + '\n' + url);
+    const avant = bouton.textContent;
+    bouton.textContent = langue === 'en' ? 'Link copied ✓' : 'Lien copié ✓';
+    setTimeout(() => (bouton.textContent = avant), 1600);
     SoundManager.play('ui_click');
   } catch (e) {}
+}
+document.getElementById('bouton-partager').addEventListener('click', () => {
+  const t = T();
+  partagerTexte('TERRA／2050', t.partageSite, location.origin + location.pathname, document.getElementById('bouton-partager'));
 });
 /* =====================================================================
    IMAGE STORY — un portrait 1080x1920 dessiné au canvas dans le système
@@ -2563,13 +2617,19 @@ storyPopup.querySelectorAll('input[data-opt]').forEach(ch => {
     majApercuStory();
   });
 });
+// le fichier est prepare des l'apercu : au clic, navigator.share part sans
+// await (iOS Safari revoque l'activation utilisateur pendant un rendu long)
+let storyFichier = null;
+function nomFichierStory(){ return `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.jpg`; }
 async function majApercuStory(){
-  const jeton = ++storyGen;
+  const jeton = ++storyGen; storyFichier = null;
   const cv = await genererStory(optsStory);
   if (!cv || jeton !== storyGen) return;
   const g = storyApercu.getContext('2d');
   g.clearRect(0, 0, 540, 960);
   g.drawImage(cv, 0, 0, 540, 960);
+  const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
+  if (jeton === storyGen && blob) storyFichier = new File([blob], nomFichierStory(), { type: 'image/jpeg' });
 }
 /* piege de focus : dans une modale, la tabulation tourne en boucle a
    l'interieur au lieu de filer derriere le pop-up */
@@ -2616,24 +2676,27 @@ addEventListener('keydown', e => {
   if (e.key === 'Escape' && storyOuvert){ fermerStory(); e.stopImmediatePropagation(); }
 });
 async function partagerStory(){
-  const cv = await genererStory(optsStory); if (!cv) return;
-  const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
+  if (!lieuDossier) return;
   majLien(true);
-  const nom = `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.jpg`;
-  const fichier = new File([blob], nom, { type: 'image/jpeg' });
+  let fichier = storyFichier;
+  if (!fichier){
+    const cv = await genererStory(optsStory); if (!cv) return;
+    const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
+    fichier = new File([blob], nomFichierStory(), { type: 'image/jpeg' });
+  }
   const t = T();
   // la feuille de partage native EST le chemin vers Instagram Stories : le
-  // systeme y propose « Stories » des que l'app est installee. Il faut que
-  // l'appel parte du geste utilisateur, sans await intercale avant.
+  // systeme y propose « Stories » des que l'app est installee. L'appel part
+  // du geste utilisateur, le fichier etant deja pret.
   if (navigator.canShare && navigator.canShare({ files: [fichier] })){
     try {
       await navigator.share({ files: [fichier], title: 'TERRA／2050',
-        text: `${nomVille(lieuDossier)} — ${location.host}${location.pathname}` });
+        text: `${nomVille(lieuDossier)} — ${location.href}` });
       SoundManager.play('ui_click'); fermerStory(); return;
     } catch (e) { if (e.name === 'AbortError') return; }
   }
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = nom; a.click();
+  a.href = URL.createObjectURL(fichier); a.download = fichier.name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   const el = document.getElementById('story-partager');
   const avant = el.textContent; el.textContent = t.storyEnregistree;
@@ -2719,12 +2782,15 @@ document.getElementById('bouton-position').addEventListener('click', () => {
       if (d < dMin){ dMin = d; proche = l; }
     }
     if (proche) choisirLieu(proche);
-  }, () => {}, { maximumAge: 600000, timeout: 8000 });
+  }, () => montrerAccroche(T().posIndispo, () => champ.focus(), 0), { maximumAge: 600000, timeout: 8000 });
 });
 
 document.getElementById('dossier-croix').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
 addEventListener('keydown', e => {
-  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); champ.focus(); champ.select(); }
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+    e.preventDefault();
+    if (storyOuvert || !document.getElementById('pedago').hidden) return;   // une modale garde le focus
+    champ.focus(); champ.select(); }
   else if (e.key === 'Escape' && lieuDossier && document.activeElement !== champ
            && !storyOuvert && !surfaceAuDessus()) fermerDossier();
 });
@@ -2883,6 +2949,7 @@ boutonSon.addEventListener('click', () => {
   SoundManager.mute = !SoundManager.mute;
   boutonSon.textContent = T().son(!SoundManager.mute);
   boutonSon.classList.toggle('actif', !SoundManager.mute);
+  try { localStorage.setItem('terra-son', SoundManager.mute ? 'off' : 'on'); } catch (e) {}
   if (!SoundManager.mute) SoundManager.play('ui_click');
 });
 
@@ -2904,7 +2971,11 @@ function traduire(){
   for (const btn of document.querySelectorAll('.calque')){
     btn.querySelector('[data-t-calque]').textContent = t.calque[btn.dataset.cle];
   }
-  champ.placeholder = t.chercher;
+  // sur ecran tactile, le raccourci clavier n'a pas de sens
+  champ.placeholder = matchMedia('(pointer: coarse)').matches ? t.chercher.replace(/\s*—\s*⌘K$/, '') : t.chercher;
+  for (const [id, cle] of Object.entries(t.aria)) document.getElementById(id).setAttribute('aria-label', cle);
+  curseur.setAttribute('aria-valuetext', `${etat.annee} — ${t.distanceAn(etat.annee - 2026)}`);
+  document.getElementById('bouton-partager').textContent = t.partagerSite;
   if (lieuDossier) champ.value = nomVille(lieuDossier);
   document.getElementById('dossier-partage').textContent = t.partage;
   document.getElementById('dossier-story').textContent = t.story;
@@ -2928,6 +2999,8 @@ traduire();
    DONNÉES — grilles de risque, annuaire de villes, événements en cours.
    Le chrome reste utilisable pendant le chargement : rien ne bloque.
    ===================================================================== */
+// un 404 servi en HTML ne doit jamais passer pour des donnees
+const charger = (url, mode) => fetch(url).then(r => { if (!r.ok) throw new Error(url + ' ' + r.status); return r[mode](); });
 Promise.all([
   chargerGrilleDonnees('./data/grille_a_2026.png', 'a2026'),
   chargerGrilleDonnees('./data/grille_a_2050.png', 'a2050'),
@@ -2941,12 +3014,13 @@ Promise.all([
      [nom_fr, iso2, lat, lon, pop, capitale, nom_en, risque] : rien d'autre
      dans l'application n'a besoin de savoir que le stockage a changé. */
   Promise.all([
-    fetch('./data/places.json').then(r => r.json()),
-    fetch('./data/places.bin').then(r => r.arrayBuffer()),
-    fetch('./data/thermo.bin').then(r => r.arrayBuffer())
+    charger('./data/places.json', 'json'),
+    charger('./data/places.bin', 'arrayBuffer'),
+    charger('./data/thermo.bin', 'arrayBuffer')
       .then(b => { THERMO = new Uint8Array(b); }).catch(() => {}),
   ]).then(([j, bin]) => {
     const dv = new DataView(bin), REC = 24;
+    if (bin.byteLength !== j.villes.length * REC) throw new Error('places.bin : taille inattendue ' + bin.byteLength);
     const ORDRE = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
     LIEUX = j.villes.map((n, i) => {
       const o = i * REC;
@@ -2974,9 +3048,11 @@ Promise.all([
       return rangee;
     });
   }),
-  fetch('./data/calibration.json').then(r => r.json()).then(j => { CALIBRATION = j; }),
-  fetch('./data/pays.json').then(r => r.json()).then(j => { PAYS_POP = j; }),
+  charger('./data/calibration.json', 'json').then(j => { CALIBRATION = j; }),
+  charger('./data/pays.json', 'json').then(j => { PAYS_POP = j; }),
 ]).then(() => {
+  const nomsRegion = lg => { try { return new Intl.DisplayNames([lg], { type: 'region' }); } catch (e) { return { of: () => null }; } };
+  const regionFr = nomsRegion('fr'), regionEn = nomsRegion('en');
   /* Fiches PAYS : une pseudo-rangée par pays (marqueur capitale=2), centrée
      sur le barycentre pondéré par population de ses villes. Le score pays
      sera la moyenne pondérée des indices de ses villes. */
@@ -2988,8 +3064,8 @@ Promise.all([
       const vs = VILLES_PAR_PAYS[iso];
       let sla = 0, slo = 0, sp = 0;
       for (const v of vs){ sla += v[2] * v[4]; slo += v[3] * v[4]; sp += v[4]; }
-      const nomFr = new Intl.DisplayNames(['fr'], { type: 'region' }).of(iso) || iso;
-      const nomEn = new Intl.DisplayNames(['en'], { type: 'region' }).of(iso) || iso;
+      const nomFr = regionFr.of(iso) || iso;
+      const nomEn = regionEn.of(iso) || iso;
       return [nomFr, iso, sla / Math.max(sp, 1), slo / Math.max(sp, 1),
               PAYS_POP[iso][0], 2, nomEn, null];
     });
@@ -3030,15 +3106,17 @@ chargeur.onLoad = () => { texturesPretes = true; peutEntrer(); };
 
 document.getElementById('bouton-entree').addEventListener('click', () => {
   const voile = document.getElementById('voile');
+  if (document.body.classList.contains('pret')) return;   // Entree clavier apres le clic : une seule entree
   voile.style.pointerEvents = 'none';
   gsap.to('#voile .v-centre > *', { opacity: 0, y: -16, duration: 0.7,
     ease: EASE, stagger: 0.055 });
   setTimeout(() => voile.classList.add('cache'), 480);
   document.body.classList.add('pret');
   SoundManager.setVolume(1);
+  try { if (localStorage.getItem('terra-son') === 'off') SoundManager.mute = true; } catch (e) {}
   SoundManager.play('ambient_loop', true);   // boucle à 0.5, fondu 2 s — après le geste utilisateur
   SoundManager.play('camera_fly');
-  boutonSon.textContent = T().son(true); boutonSon.classList.add('actif');
+  boutonSon.textContent = T().son(!SoundManager.mute); boutonSon.classList.toggle('actif', !SoundManager.mute);
   // plan d'ouverture : recul caméra progressif — sauf si un lien profond a
   // déjà lancé un vol vers une ville (les deux tweens se battaient)
   if (!lieuDossier){
@@ -3060,7 +3138,8 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
           normaliser(x[0]) === q || (x[6] && normaliser(x[6]) === q));
         if (chez){
           sessionStorage.setItem('terra-accroche', '1');
-          montrerAccroche(T().accrocheTz(nomVille(chez)), () => choisirLieu(chez), 2600);
+          // si une ville est choisie entre-temps, l'invitation se tait
+          setTimeout(() => { if (!lieuDossier) montrerAccroche(T().accrocheTz(nomVille(chez)), () => choisirLieu(chez), 0); }, 2600);
         }
       }
     } catch (e) {}
