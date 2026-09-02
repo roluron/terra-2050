@@ -484,7 +484,6 @@ const TEXTES = {
     frappeEau: p => `plus aride que ${p} % des villes du monde`,
     frappeFeux: p => `une météo de feu au-dessus de ${p} % des villes`,
     frappeStab: p => `un climat qui bascule plus vite que ${p} % des villes`,
-    accrocheTz: n => `${n} — c’est chez vous ?`,
     accrocheDefi: 'Et ta ville ? Compare.',
     distanceAn: n => n <= 0 ? 'aujourd’hui' : n === 1 ? 'dans 1 an' : `dans ${n} ans`,
     optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
@@ -580,7 +579,6 @@ const TEXTES = {
     frappeEau: p => `drier than ${p}% of the world’s cities`,
     frappeFeux: p => `fire weather above ${p}% of cities`,
     frappeStab: p => `a climate shifting faster than ${p}% of cities`,
-    accrocheTz: n => `${n} — is this home?`,
     accrocheDefi: 'And your city? Compare.',
     distanceAn: n => n <= 0 ? 'today' : n === 1 ? 'in 1 year' : `in ${n} years`,
     optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
@@ -3127,23 +3125,6 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   gsap.to(uniformsGlobe.uEveil, { value: 1, duration: 2.8, ease: EASE });
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
   revelerChrome();
-  // « Paris — c'est chez vous ? » : la ville du fuseau horaire, sans permission
-  if (!location.hash.includes('v=')){
-    try {
-      if (!sessionStorage.getItem('terra-accroche')){
-        const nomTz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '')
-          .split('/').pop().replace(/_/g, ' ');
-        const q = normaliser(nomTz);
-        const chez = q.length > 2 && LIEUX.find(x =>
-          normaliser(x[0]) === q || (x[6] && normaliser(x[6]) === q));
-        if (chez){
-          sessionStorage.setItem('terra-accroche', '1');
-          // si une ville est choisie entre-temps, l'invitation se tait
-          setTimeout(() => { if (!lieuDossier) montrerAccroche(T().accrocheTz(nomVille(chez)), () => choisirLieu(chez), 0); }, 2600);
-        }
-      }
-    } catch (e) {}
-  }
 });
 
 /* =====================================================================
