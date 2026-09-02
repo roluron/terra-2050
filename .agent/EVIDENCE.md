@@ -251,3 +251,38 @@ PASS SE composeur story tient dans l ecran — {"defile":false,"partage":true,"a
 PASS SE partage sans erreur — Share link
 PASS SE aucune erreur console ni 4xx
 ```
+
+
+## Relecture independante n°4 — 6 defauts, dont le pire de tous (commit 68946be)
+
+Le differe de chargement annonce par les deux commits precedents n etait PAS
+en vigueur : deux `.then()` ecrits au fil du module appelaient la fonction de
+chargement des l analyse du script. Corrige en separant la promesse du
+declencheur. Sortie verbatim de scratchpad/v4fix.mjs :
+
+```
+PASS V4-1 les grilles de calques ne partent pas avant les textures du globe — avant=[]
+PASS V4-2 aucun fichier telecharge deux fois — doublons=[]
+PASS V4-3 la liste se remplit seule quand l annuaire arrive
+PASS V4-4 grille en echec : le rail reste en attente
+PASS V4-5 detail sans grille : message d attente, pas le critere precedent
+PASS V4-6 portrait : aucune cible sous 44 px — entree=48 petits=[]
+PASS V4-6 paysage : aucune cible sous 44 px — entree=48 petits=[]
+PASS V4-6 iPad : aucune cible sous 44 px — entree=48 petits=[]
+```
+
+Temps d ouverture, site public, apres correction :
+
+```
+700 kb/s (profil du verificateur) : 11,4 s   (53,9 s avant)
+4G lente  1,6 Mb/s                :  5,2 s
+4G moyenne 4 Mb/s                 :  2,7 s
+wifi 30 Mb/s                      :  1,0 s
+```
+
+Les sept calques verifies un par un apres le changement de texture
+(scratchpad/calques7.mjs) : chaleur sur le sud des Etats-Unis et l Amazonie,
+foyers de feu dans l ouest americain et le Cerrado et aucun en mer, secheresse
+au Mexique, submersion sur les cotes et les deltas, reseau fluvial complet,
+bascule climatique sur l Arctique, declin sur les Caraibes. Zero erreur
+console sur les sept.
