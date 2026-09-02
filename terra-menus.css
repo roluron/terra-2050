@@ -704,7 +704,11 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
   #scrim-dossier { background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 40%, transparent 70%); }
   #dossier .lieu { font-size: 34px; }
   #dossier .score .valeur { font-size: 52px; }
-  #dossier-croix { top: auto; bottom: calc(62vh - 46px); bottom: calc(62dvh - 46px); right: 16px; }
+  /* la croix flottait au-dessus du texte de la feuille : elle se pose dans
+     son coin, sur un fond plein, hors du flux de lecture */
+  #dossier-croix { top: auto; bottom: calc(62vh - 52px); bottom: calc(62dvh - 52px);
+    right: 12px; width: 40px; height: 40px; padding: 11px; border-radius: 50%;
+    background: rgba(7, 7, 6, 0.92); border: 1px solid rgba(255, 253, 226, 0.16); }
   body.dossier-ouvert #timeline { bottom: calc(62vh + 10px); bottom: calc(62dvh + 10px); }
   #champ-recherche { width: min(220px, 56vw); }
 }
@@ -1155,7 +1159,12 @@ body:not(.pret) #scrim-dossier {
 @media (min-width: 721px) { #dossier .actions { margin-top: auto; padding-top: 14px; } }
 @media (max-width: 720px) {
   #dossier { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
-  #dossier .actions { padding: 12px 0 8px; background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.96) 40%); }
+  /* le degrade laissait lire le texte a travers les boutons : la barre
+     d'action pose un fond plein sous elle, avec un fondu court au-dessus */
+  #dossier .actions { position: sticky; bottom: 0; z-index: 3;
+    padding: 16px 0 10px; margin-top: 4px;
+    background: linear-gradient(180deg, transparent, #070706 22px, #070706);
+    box-shadow: 0 -1px 0 rgba(255, 253, 226, 0.08); }
   #dossier .actions button { flex: 1; text-align: center; }
 }
 
@@ -1183,3 +1192,9 @@ button, .calque, #curseur { touch-action: manipulation; }
 @media (max-width: 720px) { .story-carte { background: rgba(2, 4, 10, 0.94); } }
 /* le champ deploye est deja son propre etat de focus : pas de cadre par-dessus (rectangle blanc sur iOS) */
 #champ-recherche:focus, #champ-recherche:focus-visible { outline: none; }
+
+/* tactile large (iPad, iPhone paysage) : rangées de calques et pilules d'alternatives à 44 px */
+@media (pointer: coarse) {
+  .calque { min-height: 44px; padding-top: 7px; padding-bottom: 7px; }
+  #dossier-ailleurs .alt { min-height: 44px; }
+}

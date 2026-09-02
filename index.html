@@ -498,7 +498,7 @@ const TEXTES = {
     detMer: (f, f5, med, sub, r, mt) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous la ligne ＋ 1 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ marée de tempête centennale (${mt} m, COAST-RP) · seule l’eau reliée à la mer compte · les digues en terre figurent dans le relief, les ouvrages mobiles non · relief FABDEM 30 m, sol nu`,
     detFleuves: (f, d90, r) => `crue centennale (1 %/an · ≈22 % d’ici 2050) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
     detStab: v => `le climat local a déjà dérivé de ${v} °C par rapport à 1970-2000 · température moyenne et précipitations, WorldClim ＋ CMIP6`,
-    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (scénario émissions élevées, un seul modèle) · FABDEM 1″ (sol nu, CC BY-NC-SA) · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (scénario émissions élevées, un seul modèle) · FABDEM 1″ (sol nu, CC BY-NC-SA) · COAST-RP (marées de tempête, CC BY 4.0) · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Natural Earth · GeoNames',
   },
   en: {
     lang: 'en',
@@ -593,7 +593,7 @@ const TEXTES = {
     detMer: (f, f5, med, sub, r, mt) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below the line + 1 m · median elevation ${med} m · line = 2050 level + the 1-in-100-year storm tide (${mt} m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth`,
     detFleuves: (f, d90, r) => `100-year flood (1%/yr · ≈22% by 2050): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
     detStab: v => `the local climate has already drifted ${v} °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6`,
-    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (high-emissions scenario, single model) · FABDEM 1″ (bare earth, CC BY-NC-SA) · NOAA ETOPO 2022 · JRC 100-yr flood · Oelsmann 2025 (VLM subsidence) · Natural Earth · GeoNames',
+    sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (high-emissions scenario, single model) · FABDEM 1″ (bare earth, CC BY-NC-SA) · COAST-RP (storm tides, CC BY 4.0) · JRC 100-yr flood · Oelsmann 2025 (VLM subsidence) · Natural Earth · GeoNames',
   },
 };
 let langue = 'en';   // anglais d'abord — le toggle FR·EN mémorise le choix
@@ -2404,7 +2404,7 @@ function fermerDossier(depuisChamp){
   // sinon elle s'eloigne pour rien avant de replonger sur la ville suivante
   if (depuisChamp){
     if (balayageAnnee) balayageAnnee.kill();
-    lieuVs = null; defiLien = null;
+    lieuVs = null;   // defiLien survit : l'invitation a comparer passe justement par le champ
     retirerMarqueur();
     history.replaceState(null, '', location.pathname + location.search);
     dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
