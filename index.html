@@ -271,7 +271,10 @@
 
 <div id="story-popup" hidden aria-modal="true" role="dialog">
   <div class="pedago-carte story-carte">
-    <div class="pedago-titre"><span class="pastille-pedago" style="background:#4D7CF2"></span><span id="story-titre"></span></div>
+    <div class="pedago-titre"><span class="pastille-pedago" style="background:#4D7CF2"></span><span id="story-titre"></span>
+      <button type="button" id="story-fermer" aria-label="Fermer">
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1 L11 11 M11 1 L1 11"/></svg>
+      </button></div>
     <div class="story-corps">
       <canvas id="story-apercu" width="540" height="960"></canvas>
       <div class="story-opts">
@@ -366,6 +369,13 @@ class Odometre {
     this.valeur = null;
   }
   set(valeur, immediat = false){
+    // Appels en rafale (balayage automatique vers 2050, doigt qui glisse) : le
+    // roulement de 0,6 s etait tue et relance toutes les 108 ms, si bien que
+    // l annee affichee restait a 2026 pendant que la fiche disait 2044. Sous
+    // la duree d un roulement, les chiffres se posent au lieu de rouler.
+    const t = performance.now();
+    if (t - (this.dernier || 0) < DUREE.sfast * 1000) immediat = true;
+    this.dernier = t;
     const txt = String(valeur).padStart(this.colonnes.length, ' ');
     this.colonnes.forEach((col, i) => {
       const c = txt[i];
@@ -476,7 +486,7 @@ const TEXTES = {
     posIndispo: 'Position indisponible — cherchez votre ville',
     aria: { 'champ-recherche': 'Rechercher un lieu', resultats: 'Résultats', 'bouton-position': 'Ma position',
       calques: 'Calques de risque', curseur: 'Année de projection', dossier: 'Diagnostic du lieu',
-      'dossier-croix': 'Fermer', 'accroche-x': 'Fermer', 'bouton-reglages': 'Réglages', 'bouton-langue': 'Langue' },
+      'dossier-croix': 'Fermer', 'accroche-x': 'Fermer', 'story-fermer': 'Fermer', 'bouton-reglages': 'Réglages', 'bouton-langue': 'Langue' },
     storyTitre: 'Composer la story', storyPartager: 'Partager en story ↗',
     storyEnregistrer: 'Enregistrer en JPEG ↓', storyEnregistree: 'Enregistré ✓',
     frappeChaud: (j, an) => `${j} jours d’indice de chaleur au-dessus de 32 °C par an en ${an}`,
@@ -572,7 +582,7 @@ const TEXTES = {
     posIndispo: 'Location unavailable — search your city',
     aria: { 'champ-recherche': 'Search a place', resultats: 'Results', 'bouton-position': 'My location',
       calques: 'Risk layers', curseur: 'Projection year', dossier: 'Place diagnosis',
-      'dossier-croix': 'Close', 'accroche-x': 'Close', 'bouton-reglages': 'Settings', 'bouton-langue': 'Language' },
+      'dossier-croix': 'Close', 'accroche-x': 'Close', 'story-fermer': 'Close', 'bouton-reglages': 'Settings', 'bouton-langue': 'Language' },
     storyTitre: 'Compose your story', storyPartager: 'Share to Stories ↗',
     storyEnregistrer: 'Save as JPEG ↓', storyEnregistree: 'Saved ✓',
     frappeChaud: (j, an) => `${j} days a year above a 32 °C heat index in ${an}`,
@@ -1663,7 +1673,8 @@ function afficherResultats(){
       if (resultatsActuels.length){
         for (const l of resultatsActuels){
           const li = document.createElement('li');
-          li.setAttribute('role', 'option'); li.id = 'res-' + resultatsActuels.indexOf(l);
+          li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
+      li.id = 'res-' + resultatsActuels.indexOf(l);
           li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
           li.addEventListener('click', () => choisirLieu(l));
           li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
@@ -1718,7 +1729,8 @@ function afficherResultats(){
   } else {
     for (const l of resultatsActuels){
       const li = document.createElement('li');
-      li.setAttribute('role', 'option'); li.id = 'res-' + resultatsActuels.indexOf(l);
+      li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
+      li.id = 'res-' + resultatsActuels.indexOf(l);
       li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
       li.addEventListener('click', () => choisirLieu(l));
       li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
@@ -1737,6 +1749,7 @@ function choisirLieu(l){
   recents = [cleRecent, ...recents.filter(n => n !== cleRecent)].slice(0, 3);
   try { localStorage.setItem('terra-recents', JSON.stringify(recents)); } catch (e) {}
   champ.value = nomVille(l); champ.blur();
+  pousserHistorique = !retourHistorique;
   ouvrirDossier(l);
   SoundManager.play('camera_fly');
   controles.autoRotate = false;
@@ -1762,7 +1775,8 @@ champ.addEventListener('keydown', e => {
     e.preventDefault();
     const n = Math.max(items.length, 1);
     indiceChoisi = e.key === 'ArrowDown' ? (indiceChoisi + 1) % n : (indiceChoisi <= 0 ? n - 1 : indiceChoisi - 1);
-    items.forEach((li, i) => li.classList.toggle('choisi', i === indiceChoisi));
+    items.forEach((li, i) => { li.classList.toggle('choisi', i === indiceChoisi);
+      li.setAttribute('aria-selected', i === indiceChoisi ? 'true' : 'false'); });
     champ.setAttribute('aria-activedescendant', indiceChoisi >= 0 ? 'res-' + indiceChoisi : '');
     if (indiceChoisi >= 0) SoundManager.play('ui_hover');
   } else if (e.key === 'Enter' && resultatsActuels.length){
@@ -1819,7 +1833,7 @@ curseur.addEventListener('pointermove', ev => {
   etatRegle.survol = Math.max(0, Math.min(24, Math.round((ev.clientX - r.left) / r.width * 24)));
 });
 curseur.addEventListener('pointerleave', () => (etatRegle.survol = null));
-let balayageAnnee = null, sansBalayage = false;
+let balayageAnnee = null, sansBalayage = false, minuterieAnnonce = null;
 function balayerVers2050(){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (+curseur.value >= 2050) return;
@@ -1840,7 +1854,7 @@ curseur.addEventListener('input', () => {
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
   odoAn.set(an); majDistanceAn();
   curseur.setAttribute('aria-valuetext', `${an} — ${T().distanceAn(an - 2026)}`);
-  if (lieuDossier){ majDossier(); majLien(); }
+  if (lieuDossier){ majDossier(); majLien(); clearTimeout(minuterieAnnonce); minuterieAnnonce = setTimeout(annoncer, 400); }
   gsap.to(etat, {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE, overwrite: 'auto',
     onUpdate: () => {
@@ -2395,25 +2409,35 @@ function majDossier(){
   }
 }
 
+/* Region vivante : l'odometre empile toutes ses colonnes de chiffres, on
+   annonce donc la valeur calculee, pas le contenu du noeud. Rejouee a chaque
+   changement d'annee, sinon un lecteur d'ecran entendait le score de 2026
+   pendant que la timeline etait a 2050. */
+let derniereAnnonce = '';
+function annoncer(){
+  const l = lieuDossier; if (!l) return;
+  const t = T(), an = etat.annee;
+  const sc = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
+  const txt = sc === null
+    ? `${nomVille(l)} · ${t.sansDonnees}`
+    : `${nomVille(l)} · ${an} · ${sc}/100 · ${t.verdict[niveauDe(sc)]}`;
+  if (txt === derniereAnnonce) return;
+  derniereAnnonce = txt;
+  document.getElementById('annonce').textContent = txt;
+}
+let pousserHistorique = false;
 function ouvrirDossier(l){
   lieuDossier = l;
   tracerTrajectoire.animer = true;
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
-  {
-    // l'odometre empile toutes ses colonnes de chiffres : on annonce la
-    // valeur calculee, pas le contenu du noeud
-    const t = T(), an = etat.annee;
-    const sc = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
-    document.getElementById('annonce').textContent = sc === null
-      ? `${nomVille(l)} · ${t.sansDonnees}`
-      : `${nomVille(l)} · ${sc}/100 · ${t.verdict[niveauDe(sc)]}`;
-  }
+  annoncer();
   majCentreDossier();
   setTimeout(majCentreDossier, 600);   // re-mesure après l'entrée de la fiche
   poserMarqueur(l);
-  majLien();
+  majLien(true, pousserHistorique);
+  pousserHistorique = false;
   if (!sansBalayage) balayerVers2050();
   sansBalayage = false;
 }
@@ -2466,11 +2490,11 @@ function fermerDossier(depuisChamp){
    peut s'envoyer, et s'ouvre tel quel chez le destinataire.
    ===================================================================== */
 let minuterieLien = null;
-function majLien(immediat){
+function majLien(immediat, pousser){
   if (!lieuDossier) return;
   clearTimeout(minuterieLien);
   const ecrire = () => { if (!lieuDossier) return;
-    history.replaceState(null, '',
+    history[pousser ? 'pushState' : 'replaceState'](null, '',
       `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}&cc=${lieuDossier[1]}`
       + (lieuVs ? `&vs=${encodeURIComponent(lieuVs[0])}&vc=${lieuVs[1]}` : '')); };
   // Safari plafonne replaceState (~100/30 s) : le scrub est différé
@@ -2498,11 +2522,20 @@ async function partagerTexte(titre, texte, url, bouton){
       catch (e) { if (e.name === 'AbortError') return; }
     }
     await navigator.clipboard.writeText(texte + '\n' + url);
-    const avant = bouton.textContent;
-    bouton.textContent = langue === 'en' ? 'Link copied ✓' : 'Lien copié ✓';
-    setTimeout(() => (bouton.textContent = avant), 1600);
+    flashBouton(bouton, langue === 'en' ? 'Link copied ✓' : 'Lien copié ✓');
     SoundManager.play('ui_click');
-  } catch (e) {}
+  } catch (e) {
+    // un presse-papiers refuse (navigateur integre, permission) ne doit pas
+    // ressembler a une reussite : le lien reste lisible dans la barre d adresse
+    flashBouton(bouton, langue === 'en' ? 'Copy failed — link is in the URL bar' : 'Copie refusée — le lien est dans la barre');
+  }
+}
+function flashBouton(bouton, texte, delai = 1900){
+  if (!bouton) return;
+  clearTimeout(bouton._flash);
+  if (bouton._avant === undefined) bouton._avant = bouton.textContent;
+  bouton.textContent = texte;
+  bouton._flash = setTimeout(() => { bouton.textContent = bouton._avant; bouton._avant = undefined; }, delai);
 }
 document.getElementById('bouton-partager').addEventListener('click', () => {
   const t = T();
@@ -2638,7 +2671,7 @@ async function genererStory(opts){
 /* le composeur : cocher les données, aperçu vivant, puis partager */
 const storyPopup = document.getElementById('story-popup');
 const storyApercu = document.getElementById('story-apercu');
-let storyOuvert = false, storyGen = 0;
+let storyOuvert = false, storyGen = 0, storyOuvertA = 0;
 let optsStory = { planete: true, trajectoire: true, axes: true, population: true, question: true };
 try { optsStory = { ...optsStory, ...JSON.parse(localStorage.getItem('terra-story-opts') || '{}') }; } catch (e) {}
 storyPopup.querySelectorAll('input[data-opt]').forEach(ch => {
@@ -2691,7 +2724,7 @@ function ouvrirStory(){
   document.getElementById('story-partager').textContent =
     (navigator.canShare && navigator.canShare({ files: [new File([new Blob()], 'x.jpg', { type: 'image/jpeg' })] }))
       ? t.storyPartager : t.storyEnregistrer;
-  storyPopup.hidden = false; storyOuvert = true;
+  storyPopup.hidden = false; storyOuvert = true; storyOuvertA = performance.now();
   gsap.fromTo('.story-carte', { opacity: 0, scale: 0.94, y: 8 },
     { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)', clearProps: 'transform' });
   majApercuStory();
@@ -2703,7 +2736,11 @@ function fermerStory(){
   if (rendreFocus){ rendreFocus(); rendreFocus = null; }
 }
 document.getElementById('dossier-story').addEventListener('click', ouvrirStory);
-storyPopup.addEventListener('click', e => { if (e.target === storyPopup) fermerStory(); });
+storyPopup.addEventListener('click', e => {
+  // le 2e coup d un double-tap sur « Image story » atterrissait sur le fond
+  // qui venait d apparaitre sous le doigt, et refermait le composeur aussitot
+  if (e.target === storyPopup && performance.now() - storyOuvertA > 500) fermerStory();
+});
 addEventListener('keydown', e => {
   if (e.key === 'Escape' && storyOuvert){ fermerStory(); e.stopImmediatePropagation(); }
 });
@@ -2736,9 +2773,20 @@ async function partagerStory(){
   SoundManager.play('ui_click');
 }
 document.getElementById('story-partager').addEventListener('click', partagerStory);
+document.getElementById('story-fermer').addEventListener('click', fermerStory);
 
 // à l'arrivée : si l'URL porte une ville, on l'ouvre après le chargement
-function ouvrirDepuisLien(){
+/* Precedent et Suivant du navigateur : sans cela, quelqu un qui arrive par un
+   lien partage, ouvre une ville et fait « retour » quittait le site. */
+let retourHistorique = false;
+addEventListener('popstate', () => {
+  retourHistorique = true;
+  try {
+    if (/[#&]v=/.test(location.hash)) ouvrirDepuisLien(true);
+    else if (lieuDossier){ champ.value = ''; fermerDossier(); }
+  } finally { retourHistorique = false; }
+});
+function ouvrirDepuisLien(sansDefi){
   const m = location.hash.match(/v=([^&]+)(?:&an=(\d{4}))?(?:&cc=([A-Z]{2}))?(?:&vs=([^&]+))?(?:&vc=([A-Z]{2}))?/);
   if (!m) return;
   let nom;
@@ -2756,10 +2804,11 @@ function ouvrirDepuisLien(){
       lieuVs = (m[5] && cVs.find(x => x[1] === m[5])) || cVs[0] || null;
       if (lieuVs === l) lieuVs = null;
     }
-  } else {
+  } else if (!sansDefi){
     defiLien = l;    // le destinataire d'un lien simple sera invité à comparer
   }
   if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); sansBalayage = true; }
+  if (sansDefi) sansBalayage = true;
   choisirLieu(l);
   if (defiLien) montrerAccroche(T().accrocheDefi, () => champ.focus(), 3400);
 }
@@ -3138,9 +3187,14 @@ function peutEntrer(){
 }
 chargeur.onLoad = () => { texturesPretes = true; peutEntrer(); };
 
+// tant que le voile est la, la tabulation ne doit pas atteindre le chrome
+// derriere lui : un clavier pouvait allumer un calque avant meme d entrer
+const CHROME = ['titre', 'recherche', 'util', 'calques', 'timeline', 'dossier', 'dossier-croix', 'hud'];
+for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert = true; }
 document.getElementById('bouton-entree').addEventListener('click', () => {
   const voile = document.getElementById('voile');
   if (document.body.classList.contains('pret')) return;   // Entree clavier apres le clic : une seule entree
+  for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert = false; }
   voile.style.pointerEvents = 'none';
   gsap.to('#voile .v-centre > *', { opacity: 0, y: -16, duration: 0.7,
     ease: EASE, stagger: 0.055 });

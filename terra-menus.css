@@ -1026,8 +1026,12 @@ body.dossier-ouvert #recherche {
 #story-partager { margin-top: auto; align-self: flex-start; }
 @media (max-width: 720px) {
   .story-corps { flex-direction: column; align-items: center; }
-  #story-apercu { width: 180px; height: 320px; }
+  /* l'apercu tenait 320 px de haut : le bouton de partage tombait alors sous
+     la ligne de flottaison de la carte, il fallait defiler pour partager */
+  #story-apercu { width: 132px; height: 235px; }
   .story-opts { width: 100%; }
+  .story-corps { gap: 14px; margin-top: 14px; }
+  .story-carte { padding: 22px 22px 18px; }
 }
 
 
@@ -1227,3 +1231,33 @@ button, .calque, #curseur { touch-action: manipulation; }
   .story-corps { flex-direction: row; }
 }
 @media (pointer: coarse) { #champ-recherche { min-height: 44px; } }
+
+/* =====================================================================
+   COMPOSEUR DE STORY — relecture d'accessibilite : la carte tient toujours
+   dans l'ecran, la sortie existe au doigt, les options se prennent au
+   clavier, et rien ne descend sous 44 px sur ecran tactile.
+   ===================================================================== */
+.story-carte { max-height: calc(100dvh - 28px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.pedago-titre { position: relative; padding-right: 42px; }
+#story-fermer { position: absolute; top: -6px; right: -8px; width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer; color: var(--texte); opacity: 0.65;
+  transition: opacity 0.25s var(--ease); }
+#story-fermer:hover { opacity: 1; }
+#story-fermer svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 1.6;
+  fill: none; stroke-linecap: round; }
+/* la case reste invisible mais focalisable : `display:none` la sortait de
+   l'ordre de tabulation et des lecteurs d'ecran */
+.story-opt input { display: revert; position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (pointer: coarse) {
+  .story-opt { min-height: 44px; }
+  #story-partager { min-height: 44px; display: inline-flex; align-items: center; }
+}
+/* ecran bas (paysage telephone) : l'apercu retrecit pour que le bouton
+   de partage reste visible sans defiler */
+@media (max-height: 560px) {
+  #story-apercu { width: 108px; height: 192px; }
+  .story-corps { flex-direction: row; gap: 18px; margin-top: 12px; }
+  .story-opt { padding: 6px 0; }
+}
