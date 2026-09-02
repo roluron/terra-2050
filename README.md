@@ -233,7 +233,21 @@ volontairement. Un garde-fou qu'on n'a jamais vu refuser ne prouve rien.
 
 ## Vérification
 
-Les critères d'acceptation et l'état courant vivent dans `.agent/`. La matrice de QA
-couvre desktop 1280×720 et 1440×900, iPhone portrait et paysage, iPad,
-`prefers-reduced-motion`, panne de données et absence de WebGL. Les preuves brutes
-sont dans `.agent/EVIDENCE.md`.
+```bash
+URL0=https://roluron.github.io/terra-2050/ node tools/qa/matrice.mjs
+```
+
+Vingt-cinq contrôles sur sept configurations : desktop 1280×720 et 1440×900,
+iPhone portrait et paysage, iPad, `prefers-reduced-motion`, panne de données
+et absence de WebGL. Le script a besoin de Playwright et de ses navigateurs
+(`QA_CHROMIUM` et `QA_WEBKIT` surchargent les chemins).
+
+**Il sort en code 1 dès qu'un contrôle échoue, et ce code doit être lu sans
+tube.** Une suite qui se contente d'imprimer PASS et FAIL se lit au `grep`, et
+un `grep` ne distingue pas « tout va bien » de « le script est mort après la
+troisième ligne ». Mesuré sur cette matrice même, avec un contrôle
+volontairement saboté : sans tube le code vaut 1, derrière `| grep -c '^PASS'`
+il vaut 0, celui de `grep`.
+
+Les critères d'acceptation et l'état courant vivent dans `.agent/`, les
+preuves brutes dans `.agent/EVIDENCE.md`.

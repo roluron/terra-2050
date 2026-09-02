@@ -616,3 +616,33 @@ donnee par alpha=0 en gardant une valeur dans son RGB : WebP sans perte la
 mange. Regle juste, sans effet ici — aucune de nos textures n a de canal
 alpha, et les grilles de donnees restent en PNG. Notre sentinelle « donnees
 insuffisantes » est l octet 255 de places.bin, un binaire gzippe sans perte.
+
+
+## La matrice de QA entre dans le depot, avec un vrai code de retour
+
+Faiblesse restante, signalee par la session voisine : mes verifications les
+plus faibles n etaient pas dans le code teste, elles etaient dans la maniere
+de lire le resultat. La matrice imprimait PASS et FAIL et sortait TOUJOURS en
+code 0 ; je la lisais au grep. Un script mort a la troisieme ligne aurait
+donne le meme grep vert.
+
+Elle vit maintenant dans `tools/qa/matrice.mjs`, sort en 1 des qu un controle
+echoue, et la preuve a ete faite dans les deux sens sur un controle sabote :
+
+```
+=== sans tube
+code de retour SANS TUBE : 1
+FAIL A fiche ouverte 1280x720
+MATRICE EN ECHEC : 1 controle(s)
+24 sur 25 controles passent.
+
+=== derriere un tube
+24
+code lu derriere le tube : 0   (celui de grep, pas celui de la matrice)
+```
+
+Sur le site public, sans tube : `code de retour SANS TUBE : 0`, 25 sur 25.
+
+Nettoyage au passage : `.gitignore` ne couvrait pas le lien symbolique
+`node_modules` (le motif avait une barre finale, qui ne matche qu un dossier)
+ni les `.DS_Store` apparus depuis.
