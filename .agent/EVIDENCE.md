@@ -286,3 +286,49 @@ foyers de feu dans l ouest americain et le Cerrado et aucun en mer, secheresse
 au Mexique, submersion sur les cotes et les deltas, reseau fluvial complet,
 bascule climatique sur l Arctique, declin sur les Caraibes. Zero erreur
 console sur les sept.
+
+
+## Relectures independantes n°5 et n°6 (commits c81f97d, eb92c1e)
+
+Cinquieme passe, 8 defauts. Le plus grave venait de moi : THREE.LoadingManager
+compte une image en echec comme terminee, donc le bouton Explorer s ouvrait
+sur une planete noire quand le WebP echouait. Le gestionnaire est retire.
+
+```
+PASS V5-1 sans WebP : les textures finissent avant le bouton
+PASS V5-1 sans WebP : rien d autre ne part avant les textures
+PASS V5-2 WebGL absent : secours visible
+PASS V5-2 WebGL absent : aucune erreur non capturee
+PASS V5-3 grille manquante : calques inertes + message
+PASS V5-4 aucun separateur orphelin dans le detail
+PASS V5-5 le lien porte l annee affichee
+```
+
+Sixieme passe, 6 defauts :
+
+```
+PASS N5 lien reordonne : annee et duel respectes — {"an":"2040","duel":"Tokyo 72vsLagos 43"}
+PASS N2 grille_c morte : calques inertes et message
+PASS N3 grille_c morte : une seule requete — 1 requetes
+PASS N2 aucune erreur non capturee
+PASS N4 toutes textures mortes : l echec est dit
+PASS sain : aucun doublon — []
+PASS sain : pas de message d indisponibilite
+PASS sain : fiche correcte
+```
+
+## Le chiffre de chargement, tranche par la mesure
+
+La sixieme relecture annonçait 17 s la ou j en mesurais 11. Douze tirages,
+quatre configurations, navigateur relance a chaque fois :
+
+```
+local     cache non touche   11.2 / 11.2 / 11.2 s   |  840 / 840 / 840 Ko
+local     cache desactive    11.2 / 11.2 / 11.3 s   |  840 / 840 / 840 Ko
+en ligne  cache non touche   11.3 / 11.3 / 11.3 s   |  840 / 840 / 841 Ko
+en ligne  cache desactive    11.2 / 11.2 / 11.3 s   |  840 / 841 / 841 Ko
+```
+
+Le calcul adverse additionnait les tailles sur disque (2,2 Mo) sans tenir
+compte du gzip servi par GitHub Pages. 840 Ko a 87,5 Ko/s font 9,6 s, plus la
+latence : la mesure est coherente, le calcul ne l etait pas.
