@@ -19,8 +19,13 @@ WHAT DOES NOT / NON VERIFIE
 - Un seul modele climatique et un seul scenario : faiblesse de fond, assumee et
   affichee, pas corrigeable ici (voir PRODUCT-BENCHMARK.md, section WEAKNESSES).
 
-LAST VERIFIED STATE: e5a4c9b pousse sur main, deploye
-NEXT ACTION: traiter les defauts du verificateur independant en cours
+LAST VERIFIED STATE: f74f3a5 pousse sur main
+NEXT ACTION: attendre la 3e passe du verificateur independant
+RELECTURES: 3 passes d un agent a contexte neuf + 2 passes Antigravity (autre
+modele). 14 + 3 + 9 defauts trouves, tous traites. Les plus graves : odometre
+de l annee bloque sur 2026 pendant le balayage, retour arriere qui quittait le
+site (deux fois, la seconde parce que mon premier correctif effaçait l entree
+au clic dans le champ), double-tap qui refermait le composeur de story.
 COORDINATION: la session « Terra/2050 » partage le MEME dossier de travail. Partage
 acte : elle = data/ + tools/pipeline.py ; moi = index.html, terra-menus.css, assets/,
 .agent/. Commits toujours avec `git commit -- <fichiers>`. La session « Japan map »

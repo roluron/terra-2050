@@ -129,3 +129,29 @@ fiche ouverte par lien profond: true
 composeur story ouvert: true
 erreurs: aucune
 ```
+
+
+## Relecture independante n°2 — 9 defauts, dont l historique refait (commit f74f3a5)
+
+Sortie verbatim de scratchpad/hist.mjs :
+
+```
+PASS A Precedent revient sur Jakarta — {"a1":{"hash":"#v=Jakarta&an=2026&cc=ID","ouvert":true,"len":3},"a2":{"hash":"#v=Miami&an=2044&cc=US","ouvert":true,"len":4},"b1":{"hash":"#v=Jakarta&an=2050&cc=ID","ouvert":true,"len":4}}
+PASS A Precedent revient au globe — {"hash":"","ouvert":false,"len":4}
+PASS A Suivant rouvre Jakarta — {"hash":"#v=Jakarta&an=2050&cc=ID","ouvert":true,"len":4}
+PASS B lien : fiche ouverte — {"hash":"#v=Jakarta&an=2050&cc=ID","ouvert":true,"len":3}
+PASS B Precedent ramene au globe, pas dehors — {"hash":"","ouvert":false,"len":3} url http://localhost:8080/
+PASS B Suivant rouvre la ville du lien — {"hash":"#v=Jakarta&an=2050&cc=ID","ouvert":true,"len":3}
+PASS C la croix nettoie l URL — {"hash":"","ouvert":false,"len":3}
+PASS C Precedent reste dans le site — http://localhost:8080/
+PASS D la meme ville reannonce apres reouverture — ["Oslo · 2026 · 77/100 · Solid habitability","Oslo · 2045 · 67/100 · Solid habitability"]
+PASS D apercu lisible et bouton visible sans defiler — {"apercu":[157,277],"defile":false,"partage":true}
+```
+
+Apercu de story a hauteur fluide (scratchpad/apercu.mjs) :
+
+```
+iPhone 15 Pro  {"apercu":[157,277],"defile":false,"partageVisible":true,"vh":659}
+SE             {"apercu":[158,280],"defile":false,"partageVisible":true,"vh":667}
+paysage        {"apercu":[89,158],"defile":false,"partageVisible":true,"vh":343}
+```
