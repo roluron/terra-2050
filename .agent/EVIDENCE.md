@@ -385,3 +385,35 @@ Les deux derniers points, traites apres ce verdict : un commentaire qui
 gardait l ancienne regle des textures au-dessus de la nouvelle, et un duel
 epingle qui survivait au retour arriere et faisait reecrire l entree
 d historique restauree.
+
+
+## Le controle de fidelite des textures, et son propre controle
+
+```
+$ python3 tools/verifier_assets.py
+OK     earth_mask_4320.webp     sans perte, identique au pixel : True
+OK     earth_color_4096.webp    PSNR 40.3 dB (seuil 38)
+OK     earth_color_2048.webp    PSNR 39.3 dB (seuil 38)
+Toutes les textures sont fidèles.
+
+$ python3 tools/verifier_assets.py --autotest
+OK     autotest : une image sans perte est acceptee
+OK     autotest : une image lossy est refusee
+Le controle est porteur.
+```
+
+Preuve que l autotest est porteur, sur une copie sabotee ou la comparaison au
+pixel est remplacee par `identique = True` :
+
+```
+$ python3 casse.py --autotest
+OK     autotest : une image sans perte est acceptee
+ECHEC  autotest : une image LOSSY est passee — le controle ne controle rien
+Le controle ne prouve rien : A REPARER AVANT DE S EN SERVIR.
+code de retour 1
+```
+
+L image de controle est du BRUIT et non une image plate : un encodage lossy
+d une image plate peut ressortir identique au bit pres, et le test resterait
+vert sans rien avoir verifie. Le piege se deplace d un niveau a chaque fois
+qu on ajoute un garde-fou.

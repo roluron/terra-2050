@@ -7,8 +7,15 @@ rien ne casse. La vérification faite une fois à la main ne survit pas au
 prochain qui régénère les images.
 
     python3 tools/verifier_assets.py [dossier]
+    python3 tools/verifier_assets.py --autotest
 
 Sortie : une ligne par paire, code de retour 1 si une seule échoue.
+
+`--autotest` prouve que le contrôle sait dire non : il fabrique une image de
+BRUIT, l'encode une fois sans perte et une fois en lossy, et vérifie que la
+première passe et que la seconde échoue. Le bruit n'est pas un détail : sur
+une image très plate, un encodage lossy peut ressortir identique au bit près,
+et le test passerait au vert sans rien avoir vérifié.
 """
 import math
 import sys
@@ -17,8 +24,7 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 Image.MAX_IMAGE_PIXELS = None
-RACINE = Path(sys.argv[1]) if len(sys.argv) > 1 else (
-    Path(__file__).resolve().parent.parent / "assets" / "textures")
+DEFAUT = Path(__file__).resolve().parent.parent / "assets" / "textures"
 
 # (webp servi, original, mode). « exact » = doit être identique au pixel :
 # ce sont les images dont un canal porte une valeur, pas une couleur.
@@ -29,6 +35,11 @@ PAIRES = [
 ]
 
 
+def dire(bavard: bool, texte: str) -> None:
+    if bavard:
+        print(texte)
+
+
 def psnr(a: Image.Image, b: Image.Image) -> float:
     h = ImageChops.difference(a, b).convert("L").histogram()
     n = sum(h)
@@ -36,12 +47,12 @@ def psnr(a: Image.Image, b: Image.Image) -> float:
     return 99.0 if eqm == 0 else 10 * math.log10(255 * 255 / eqm)
 
 
-def verifier() -> int:
+def verifier(racine: Path, paires=None, bavard: bool = True) -> int:
     echecs = 0
-    for nom_webp, nom_src, mode in PAIRES:
-        p_webp, p_src = RACINE / nom_webp, RACINE / nom_src
+    for nom_webp, nom_src, mode in (paires or PAIRES):
+        p_webp, p_src = racine / nom_webp, racine / nom_src
         if not p_webp.exists() or not p_src.exists():
-            print(f"ECHEC  {nom_webp:24} fichier manquant")
+            dire(bavard, f"ECHEC  {nom_webp:24} fichier manquant")
             echecs += 1
             continue
 
@@ -49,33 +60,76 @@ def verifier() -> int:
         src = Image.open(p_src).convert("RGB")
 
         if webp.size != src.size:
-            print(f"ECHEC  {nom_webp:24} {webp.size} au lieu de {src.size}")
+            dire(bavard, f"ECHEC  {nom_webp:24} {webp.size} au lieu de {src.size}")
             echecs += 1
             continue
 
         if mode == "exact":
             identique = ImageChops.difference(webp, src).getbbox() is None
-            print(f"{'OK   ' if identique else 'ECHEC'}  {nom_webp:24} "
-                  f"sans perte, identique au pixel : {identique}")
+            dire(bavard, f"{'OK   ' if identique else 'ECHEC'}  {nom_webp:24} "
+                 f"sans perte, identique au pixel : {identique}")
             echecs += not identique
         else:
             seuil = float(mode.split(">=")[1])
             d = psnr(webp, src)
-            print(f"{'OK   ' if d >= seuil else 'ECHEC'}  {nom_webp:24} "
-                  f"PSNR {d:.1f} dB (seuil {seuil:.0f})")
+            dire(bavard, f"{'OK   ' if d >= seuil else 'ECHEC'}  {nom_webp:24} "
+                 f"PSNR {d:.1f} dB (seuil {seuil:.0f})")
             echecs += d < seuil
 
         # une texture plus lourde que son original ne sert à rien
         if p_webp.stat().st_size >= p_src.stat().st_size:
-            print(f"ECHEC  {nom_webp:24} plus lourde que l'original "
-                  f"({p_webp.stat().st_size} >= {p_src.stat().st_size})")
+            dire(bavard, f"ECHEC  {nom_webp:24} plus lourde que l'original "
+                 f"({p_webp.stat().st_size} >= {p_src.stat().st_size})")
             echecs += 1
 
     return 1 if echecs else 0
 
 
+def autotest() -> int:
+    """Prouve que le contrôle sait refuser. Sans cela, il pourrait très bien
+    comparer un fichier à lui-même et rester vert pour toujours."""
+    import random
+    import tempfile
+
+    random.seed(1789)
+    n = 256
+    bruit = Image.frombytes(
+        "RGB", (n, n), bytes(random.randrange(256) for _ in range(n * n * 3)))
+
+    echecs = 0
+    with tempfile.TemporaryDirectory() as d:
+        rep = Path(d)
+        bruit.save(rep / "src.png")
+        bruit.save(rep / "sans_perte.webp", "WEBP", lossless=True, method=4)
+        bruit.save(rep / "avec_perte.webp", "WEBP", quality=80, method=4)
+
+        bon = verifier(rep, [("sans_perte.webp", "src.png", "exact")], bavard=False)
+        mauvais = verifier(rep, [("avec_perte.webp", "src.png", "exact")], bavard=False)
+
+        if bon != 0:
+            print("ECHEC  autotest : une image sans perte a ete refusee")
+            echecs += 1
+        else:
+            print("OK     autotest : une image sans perte est acceptee")
+
+        if mauvais == 0:
+            print("ECHEC  autotest : une image LOSSY est passee — le controle ne controle rien")
+            echecs += 1
+        else:
+            print("OK     autotest : une image lossy est refusee")
+
+    return 1 if echecs else 0
+
+
 if __name__ == "__main__":
-    code = verifier()
+    if "--autotest" in sys.argv:
+        code = autotest()
+        print("Le controle est porteur." if code == 0
+              else "Le controle ne prouve rien : A REPARER AVANT DE S EN SERVIR.")
+        sys.exit(code)
+
+    racine = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAUT
+    code = verifier(racine)
     print("Toutes les textures sont fidèles." if code == 0
           else "Au moins une texture est infidèle : NE PAS DÉPLOYER.")
     sys.exit(code)

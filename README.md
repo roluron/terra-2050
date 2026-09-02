@@ -173,6 +173,20 @@ dégradé pour vérifier qu'il sait dire non.
 
 À lancer après toute régénération d'image dans `assets/textures/`.
 
+Le contrôle a lui-même son contrôle :
+
+```bash
+python3 tools/verifier_assets.py --autotest
+```
+
+Il fabrique une image de **bruit**, l'encode une fois sans perte et une fois
+en lossy, et vérifie que la première passe et que la seconde échoue. Le bruit
+n'est pas un détail : sur une image très plate, un encodage lossy peut
+ressortir identique au bit près, et le test resterait vert sans avoir rien
+vérifié. Éprouvé en sabotant volontairement le contrôle, qui sort alors en
+code 1 avec « une image LOSSY est passée ». Un garde-fou qu'on n'a jamais vu
+refuser ne prouve rien.
+
 ## Vérification
 
 Les critères d'acceptation et l'état courant vivent dans `.agent/`. La matrice de QA
