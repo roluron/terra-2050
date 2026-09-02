@@ -12,8 +12,14 @@ Date : 2026-08-20 · Mesures : Chrome headless (ANGLE) piloté via CDP, viewport
 | Triangles | — | **39k** | ✅ |
 | Poids JS total (minifié) | < 900 KB | **843 573 o ≈ 824 KB** (libs 809 KB + code applicatif 35 KB servi, ~25 KB minifié) | ✅ |
 | Transitions sur propriétés de layout/paint | 0 | **0** — uniquement `transform` / `opacity` côté CSS, uniforms côté GPU | ✅ |
-| Textures | ≤ 2048 | 2 × 2048×1024 (NASA, domaine public) + LUT 512² générée en mémoire | ✅ |
+| Textures | ≤ 2048 | couleur 2048 (téléphone) ou 4096, masque 4320, en WebP avec repli JPEG/PNG + LUT 512² générée en mémoire | ✅ |
 | Boucles rAF | 1 | 1 | ✅ |
+
+**Chargement (mesuré le 2026-09-02, émulation réseau Chrome sur le site public).**
+Chemin critique 839 Ko : bouton Explorer en 10,2 s sur 4G faible (1,6 Mb/s,
+150 ms), 4,6 s sur 4G moyenne, 1,2 s en wifi. Avant la refonte : 6,5 Mo et
+28,6 s. Le détail de ce qui charge quand est dans le README, section
+« Stratégie de chargement » — et les deux pièges à ne pas réintroduire.
 
 Mobile : non mesuré sur device réel. Les garde-fous sont structurels : DPR plafonné à 2, 39k triangles, un seul passe de post-traitement — le budget fragment est inférieur à celui de la référence qui tournait en DPR non plafonné. À confirmer sur device via le HUD intégré (bouton « Perf »).
 
