@@ -209,3 +209,32 @@ frappe           4,86  18px
 critere valeur   4,86  13px
 detail           6,09  11px
 ```
+
+
+## Repli des textures WebP (scratchpad/repli.mjs, toutes les requetes .webp avortees)
+
+```
+voile pret sans WebP : true
+reponses earth : earth_mask_4320.png:200, earth_color_4096.jpg:200
+erreurs : aucune
+```
+
+Le globe est bien peint : luminosite moyenne du disque mesuree sur la capture.
+Attention a la methode : lire le canevas WebGL avec drawImage renvoie du noir
+(pas de preserveDrawingBuffer) et fait croire a une panne. Il faut mesurer sur
+la capture d ecran.
+
+## Contraste du rail des calques
+
+```
+calque eteint, mesure a l ecran : 3,04:1 avant, 6,03:1 apres
+```
+
+## Le site public est bit a bit identique au depot
+
+```
+index.html               identique en ligne
+terra-menus.css          identique en ligne
+manifest.webmanifest     identique en ligne
+assets/og-globe.jpg      identique en ligne
+```
