@@ -13,9 +13,14 @@
  *   QA_CHROMIUM=... QA_WEBKIT=... node tools/qa/matrice.mjs
  */
 import fs from 'node:fs';
+import os from 'node:os';
 
 import { chromium, webkit, devices } from 'playwright';
-const OUT = new URL('./shots2/', import.meta.url).pathname; fs.mkdirSync(OUT, { recursive: true });
+// Les captures vont HORS du depot par defaut : un run laissait 11 Mo dans
+// tools/qa/. QA_SORTIE=/chemin/ pour les recuperer ailleurs.
+const OUT = (process.env.QA_SORTIE || fs.mkdtempSync(os.tmpdir() + '/terra-qa-')).replace(/\/?$/, '/');
+fs.mkdirSync(OUT, { recursive: true });
+console.log('captures : ' + OUT);
 const URL0 = process.env.URL0 || 'http://localhost:8080/';
 const CH = process.env.QA_CHROMIUM || '/Users/robinmahieux/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing';
 const WK = process.env.QA_WEBKIT || '/Users/robinmahieux/Library/Caches/ms-playwright/webkit-2272/pw_run.sh';
