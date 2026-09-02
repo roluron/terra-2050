@@ -357,3 +357,31 @@ PASS Malmo              lien=#v=Malm%C3%B6                      rouvert=Malmo
 
 Le lien porte le nom francais, le destinataire voit le nom de sa langue : les
 deux graphies sont cherchees a la reouverture.
+
+
+## Relectures n°7 et n°8 — la huitieme rend READY
+
+Septieme passe : elle a montre que j avais tort sur le chiffre de chargement.
+Les 17 s qu elle mesurait n etaient pas une erreur de calcul, c etait le
+chemin de BUREAU (texture 4096, 1,41 Mo) la ou j avais mesure le chemin
+telephone (2048, 840 Ko). Corrige a la racine : on entre toujours sur la
+2048, la 4096 arrive ensuite sur les ecrans qui la meritent.
+
+Huitieme passe, verdict verbatim : **READY**. Ses mesures :
+
+```
+desktop-dpr1 11203 / 11182 ms   transfer=840KB
+desktop-dpr2 11193 / 11178 ms   transfer=840KB
+iphone       11189 / 11196 ms   transfer=840KB
+ipad         11194 / 11194 ms   transfer=840KB
+```
+
+Preuve en pixels que l affinage a bien lieu : variance du laplacien sur la
+meme portion de globe, avant et apres l echange, 10,5 -> 16,0 (x1,53). Aucune
+erreur WebGL a l echange, aucun cadre noir, jamais declenche sur telephone,
+jamais deux fois, et une 4096 interrompue laisse la 2048 intacte.
+
+Les deux derniers points, traites apres ce verdict : un commentaire qui
+gardait l ancienne regle des textures au-dessus de la nouvelle, et un duel
+epingle qui survivait au retour arriere et faisait reecrire l entree
+d historique restauree.

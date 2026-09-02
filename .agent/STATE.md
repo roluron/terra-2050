@@ -21,8 +21,8 @@ WHAT DOES NOT / NON VERIFIE
 - Un seul modele climatique et un seul scenario : faiblesse de fond, assumee et
   affichee, pas corrigeable ici (voir PRODUCT-BENCHMARK.md, section WEAKNESSES).
 
-LAST VERIFIED STATE: 0e6ffc4 pousse sur main et deploye
-NEXT ACTION: attendre la 8e passe du verificateur independant
+LAST VERIFIED STATE: aa7b283 pousse, deploye, identique bit a bit en ligne
+NEXT ACTION: aucune. Verdict READY a la 8e passe, ses deux dernieres remarques traitees (aa7b283).
 RELECTURES: 7 passes d un agent a contexte neuf + 2 passes Antigravity (autre
 modele). 14 + 3 + 9 + 7 + 6 + 8 + 6 + 5 defauts trouves, tous traites. Les
 deux plus instructifs : un differe de chargement annonce que le code ne

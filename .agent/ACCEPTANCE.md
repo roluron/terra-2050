@@ -18,12 +18,12 @@ sur le site public autant que possible, pas seulement en local.
 [x] Odomètre de l'année cohérent avec la timeline pendant le balayage automatique
 [x] Contraste AA sur les lignes de sources, de coordonnées et sur le rail des calques (mesuré à l'écran)
 [x] Textures WebP avec repli JPEG/PNG vérifié : globe peint même sans WebP
-[x] Chemin critique tenu : bouton Explorer en moins de 5 s sur 4G moyenne, mesuré sur le site public
+[x] Chemin critique tenu : 840 Ko, bouton Explorer en 11,2 s à 700 kb/s et 2,7 s sur 4G moyenne, même chiffre sur téléphone, tablette et bureau, mesuré sur le site public
 [x] Navigateur intégré (Instagram) avec stockage bloqué : rien ne casse
 [x] Salle blanche : clone frais, toutes les références présentes
 [x] Le dépôt se relit seul : README avec formats de données, limites assumées, stratégie de chargement
 [x] Registre ~/.claude/REQUESTS.md à jour (fichier global, hors dépôt), .agent/STATE.md et .agent/EVIDENCE.md à jour
-[ ] Vérificateur indépendant : PASS (4e passe en cours ; 33 défauts trouvés et corrigés sur les 3 premières)
+[x] Vérificateur indépendant : PASS à la 8e passe, agent à contexte neuf, verdict « READY ». 58 défauts trouvés sur 7 passes plus 2 relectures Antigravity, tous traités et re-vérifiés
 
 NON VÉRIFIABLE ICI, à faire sur un vrai iPhone :
 - la feuille de partage iOS vers Instagram Stories
