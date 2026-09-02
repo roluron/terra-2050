@@ -1667,7 +1667,9 @@ const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '')
 function afficherResultats(){
   const q = normaliser(champ.value.trim());
   liste.innerHTML = ''; indiceChoisi = -1;
-  if (q.length < 2){
+  // une seule lettre cherche aussi : la recherche s'arretait au premier
+  // caractere et laissait une boite vide, sans rien dire
+  if (q.length < 1){
     // champ vide : rien d'imposé — seulement les villes déjà choisies avant
     if (!q && !focusProgramme && document.activeElement === champ && recents.length){
       resultatsActuels = recents
