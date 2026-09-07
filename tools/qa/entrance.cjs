@@ -11,4 +11,5 @@ exports.enter = async function(page, repeated = false) {
     await page.locator('#future').dispatchEvent('click');
   }
   await page.waitForFunction(() => !document.getElementById('earth-shell').open, null, { timeout: 20000 });
+  await page.waitForFunction(() => [...document.querySelectorAll('.calque')].every(el => !el.style.opacity && !el.style.transform));
 };

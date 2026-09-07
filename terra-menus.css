@@ -1136,7 +1136,7 @@ body:not(.pret) #model-notice { display: none; }
 #model-notice details[open] p { margin-top: 6px; }
 #model-notice:has(details[open]) { z-index: 40; }
 @media(max-width:720px) and (orientation:portrait) { #model-notice { max-width: calc(100vw - 158px); font-size: 9px; } body.pret:not(.dossier-ouvert) #timeline { left: auto; right: 12px; bottom: 16px; width: 130px; transform: none; } body.pret:not(.dossier-ouvert) #timeline .an { font-size: 46px; } }
-@media(max-height:500px) and (orientation:landscape) { #calques { top: 66px; transform: none; max-height: 176px; } #model-notice { bottom: 8px; } }
+@media(max-height:500px) and (orientation:landscape) { #calques, body.pret #calques { top: 66px; transform: none; max-height: 176px; } #model-notice { bottom: 8px; } }
 
 
 @media(max-width:720px), (max-height:500px) { #model-notice #layer-context { max-height: 1.4em; overflow: hidden; } #model-notice:has(details[open]) { max-width: min(300px,calc(100vw - 20px)); width: 300px; } #model-notice:has(details[open]) #layer-context { max-height: none; } #model-notice summary { min-height: 44px; } }

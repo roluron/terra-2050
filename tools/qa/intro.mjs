@@ -114,6 +114,19 @@ for (const [name, engine, configuration] of [
       result.normalizedRotationDisplacement=displacement;
     } else assert.ok(result.duration < 2500, 'Reduced motion bypasses assembly');
     await page.screenshot({path:out+'/'+name+'-globe.png'});
+    if (name === 'desktop') {
+      await page.goto('about:blank');
+      await page.goto((process.env.URL0 || 'http://localhost:8080/') + '#v=Dacca&an=2050&cc=BD');
+      await discover(page);
+      await page.locator('#future').click();
+      await page.waitForFunction(() => !document.querySelector('#earth-shell').open && document.querySelector('#dossier').classList.contains('ouvert'));
+      assert.equal(await page.locator('#curseur').inputValue(), '2050');
+      await page.setViewportSize({width:1280,height:720});
+      await page.locator('#dossier-croix').click();
+      await page.waitForTimeout(2500);
+      const resized = await page.evaluate(() => globalThis.__introProbe());
+      assert.ok(resized.auraBottom + 16 < resized.yearTop, 'Panel resize then close preserves year clearance: ' + JSON.stringify(resized));
+    }
     assert.deepEqual(errors,[]);
     console.log(JSON.stringify({name,pass:true,duration:result.duration,p95FrameMs:result.p95,rotation:result.normalizedRotationDisplacement,errors}));
     fs.writeFileSync(out+'/'+name+'-intro.json',JSON.stringify(result,null,2));
