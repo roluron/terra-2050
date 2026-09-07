@@ -239,10 +239,11 @@
       <button class="calque" aria-pressed="false" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
       <button class="calque" aria-pressed="false" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
       <button class="calque" aria-pressed="false" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
-      <p id="layer-context" aria-live="polite"></p>
+      
     </nav>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
+<aside id="model-notice"><p id="layer-context" aria-live="polite"></p><p data-t="betaNotice"></p><a href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a></aside>
 <div id="etiquettes"></div>
 <div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span></div>
 
@@ -449,6 +450,8 @@ const TEXTES = {
     panelCity: 'Ville',
     panelCountry: 'Vue du pays',
     panelIndex: 'Indice climatique indicatif',
+    betaNotice: 'Bêta · Les données peuvent être inexactes. Animations illustratives, pas des événements observés.',
+    betaContact: 'Votre lieu semble inexact ? Contactez-nous ↗',
     panelDataLimits: 'Traçabilité incomplète : générateurs actuels absents, certaines lacunes et marées de repli sans marqueur par ville. Zéro ne prouve pas l’absence de risque. Notes de villes non validées scientifiquement.',
     panelDirection: 'Plus haut = moins d’exposition modélisée.',
     panelRisks: 'Les risques à comprendre',
@@ -555,6 +558,8 @@ const TEXTES = {
     panelCity: 'City',
     panelCountry: 'Country overview',
     panelIndex: 'Illustrative climate index',
+    betaNotice: 'Beta · Data may be inaccurate. Animations illustrate indicators, not observed events.',
+    betaContact: 'Your place looks inaccurate? Contact us ↗',
     panelDataLimits: 'Provenance incomplete: current generators are missing; some source gaps and tide fallbacks have no per-city flag. Zero does not prove no risk. City ratings are not scientifically validated.',
     panelDirection: 'Higher = less modelled exposure.',
     panelRisks: 'Understand the risks',
@@ -1180,6 +1185,7 @@ const uniformsGlobe = {
   uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
   uDeclin: { value: 0 },
   uEveil:  { value: 0 },     // 0 = intro sombre derrière le voile, 1 = éveillé
+  uFeu: { value: 0 },
   uCrue:   { value: 0 },     // calque « inondation fluviale » : carte JRC, la MEME que la fiche
   uIndice: { value: 1 },     // teinte ambiante de sévérité quand aucun calque
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
@@ -1200,12 +1206,12 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue;
+    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue, uFeu;
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC, uD;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
 
-    // hachage & bruit 3D (bruit de valeur, 2 octaves — suffisant à cette échelle)
+    
     float hachage(vec3 p){ return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
     float bruit(vec3 p){
       vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -1216,118 +1222,113 @@ const matGlobe = new THREE.ShaderMaterial({
     }
     void main(){
       vec3 tex = texture2D(uMap, vUv).rgb;
-      float terre = 1.0 - texture2D(uMasque, vUv).r;   // le masque NASA : eau = clair
-      // base « dashboard tactique » : désaturée et sombre, mais les continents
-      // doivent rester lisibles y compris sur la face nuit
+      float terre = 1.0 - texture2D(uMasque, vUv).r;   
+      
+      
       float gris = dot(tex, vec3(0.299, 0.587, 0.114));
       vec3 ocean   = vec3(0.026, 0.058, 0.132);
       vec3 continent = mix(vec3(0.130, 0.168, 0.205), vec3(0.300, 0.325, 0.330), gris);
       vec3 base = mix(ocean, continent, terre);
 
-      // éclairage très doux : le jour/nuit module, il ne masque jamais (pas de
-      // shadow maps). Plancher haut : une face nuit ne doit pas devenir noire.
+      
+      
       float lambert = max(dot(vN, uSoleil), 0.0);
       vec3 vue = normalize(cameraPosition - vPm);
       float fresnel = pow(1.0 - max(dot(vN, vue), 0.0), 3.0);
-      // plancher haut : la face nuit reste lisible sous n'importe quelle rotation
+      
       vec3 col = base * (1.05 + 0.24 * lambert) + vec3(0.09, 0.25, 0.66) * fresnel * 0.50;
 
       float P = uProgression;
 
-      /* Grilles de risques réelles (WorldClim/CMIP6 SSP3-7.0, ETOPO 2022,
-         Natural Earth). r = chaleur, g = sécheresse, b = feux, a = submersion ;
-         st = fleuves 2026 / fleuves 2050 / argiles / masque terre ETOPO. */
+      
       vec3 a26 = texture2D(uA2026, vUv).rgb, a50 = texture2D(uA2050, vUv).rgb;
       vec3 b26 = texture2D(uB2026, vUv).rgb, b50 = texture2D(uB2050, vUv).rgb;
-      vec3 ga = mix(a26, a50, P);                    // chaud / gel / sec
-      vec3 gb = mix(b26, b50, P);                    // feu / mer / fleuves
-      /* Ce qui s'est AGGRAVÉ depuis 2026. Entre les deux horizons les grilles
-         bougent peu en valeur absolue (chaleur : +0,02 en moyenne sur les
-         terres, mesuré) et les rampes ci-dessous saturent : le curseur des
-         années ne changeait presque rien à l'écran. Chaque calque ajoute donc
-         l'écart à 2026, qui grandit avec P — c'est lui que la timeline raconte. */
+      vec3 ga = mix(a26, a50, P);                    
+      vec3 gb = mix(b26, b50, P);                    
+      
       vec3 da = max(ga - a26, 0.0), db = max(gb - b26, 0.0);
-      vec3 gc = texture2D(uC, vUv).rgb;                                          // argiles / terre
+      vec3 gc = texture2D(uC, vUv).rgb;                                          
       float submersion = gb.g;
       terre = max(terre, step(0.5, gc.g));
 
-      // R-01 CHALEUR / ICU : gaussiennes thermiques sur les mégapoles, jaune → rouge vif
+      
       if (uChaleur > 0.001){
-        // ga.r = jours/an d'indice de chaleur au-dessus de 32 °C, normalisés sur 0-300.
-        // La rampe MONTE en luminosité avec la chaleur : jaune-orangé -> rouge
-        // vif qui flambe (x1.35) — jamais un rouge sombre au maximum.
+        
+        
+        
         float chaud = ga.r * terre;
+        float souffleChaud = 0.88 + 0.12 * sin(vUv.y * 100.0 + uTemps * 2.0);
         float t2 = smoothstep(0.12, 0.85, chaud);
         vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(1.0, 0.16, 0.05), t2) * (0.80 + 0.55 * t2);
-        col = mix(col, thermique, smoothstep(0.04, 0.55, chaud) * uChaleur * 0.85);
-        // jours de chaleur gagnés depuis 2026 : de +6 à +36 j/an, la zone flambe en blanc chaud
+        col = mix(col, thermique, smoothstep(0.04, 0.55, chaud) * uChaleur * 0.85 * souffleChaud);
+        
         float gagne = smoothstep(0.02, 0.12, da.r) * terre;
         col = mix(col, vec3(1.0, 0.80, 0.45), gagne * uChaleur * 0.7);
       }
 
 
-      // R-04 SÉCHERESSE HIVERNALE : le bleu s'éteint vers gris/jaune (ruissellement)
+      
       if (uSecheresse > 0.001){
-        // ga.b = déficit hydrique (De Martonne inversé), réel
+        
         float m = clamp(ga.b, 0.0, 1.0) * terre;
-        float sec = m * uSecheresse * 0.85;
+        float sec = m * uSecheresse * (0.75 + 0.20 * sin(vUv.x * 120.0 + vUv.y * 60.0 - uTemps * 1.3));
         vec3 solSec = mix(vec3(0.16, 0.15, 0.12), vec3(0.34, 0.28, 0.14), bruit(vP * 30.0));
         col = mix(col, solSec, sec * 0.8);
-        // déficit creusé depuis 2026 : le sol qui s'assèche vire à l'ocre clair
+        
         float creuse = smoothstep(0.01, 0.07, da.b) * terre;
         col = mix(col, vec3(0.70, 0.56, 0.26), creuse * uSecheresse * 0.65);
       }
 
-      // R-05 SUBMERSION : eau bleu néon animée qui monte avec la projection
+      if (uFeu > 0.001){
+        float danger = gb.r * terre;
+        float pulse = 0.78 + 0.22 * sin(uTemps * 3.0 + vUv.x * 180.0 + vUv.y * 90.0);
+        vec3 braise = mix(vec3(0.8, 0.18, 0.035), vec3(1.0, 0.62, 0.15), clamp(db.r * 12.0, 0.0, 1.0));
+        col = mix(col, braise * pulse, danger * uFeu * 0.72);
+      }
+
+      
       if (uMer > 0.001){
-        /* gb.g = fraction du texel terrestre sous la cote submersible
-           (niveau marin SSP3-7.0 + 2 m de marée/surcote), depuis ETOPO 2022.
-           Le bruit ne sert plus qu'à animer la surface, jamais à la définir. */
+        
         float eau = smoothstep(0.06, 0.50, submersion) * terre;
         float bord = smoothstep(0.03, 0.11, submersion) - smoothstep(0.18, 0.44, submersion);
         float houle = 0.68 + 0.32 * bruit(vP * 90.0 + vec3(0.0, uTemps * 0.22, uTemps * 0.14));
         vec3 neon = vec3(0.16, 0.48, 1.0);
         col = mix(col, neon * houle, eau * uMer * 0.70);
-        col += neon * bord * terre * uMer * 0.85;             // liseré du trait de côte submersible
-        // terres passées sous la cote submersible depuis 2026 : elles s'allument
+        col += neon * bord * terre * uMer * 0.85;             
+        
         float gagneMer = smoothstep(0.004, 0.04, db.g) * terre;
         col += neon * gagneMer * uMer * 0.9;
       }
 
-      // R-07 INSTABILITÉ : où le climat de 2050 diffère le plus de celui de
-      // 2026, toutes grilles confondues — mêmes pondérations que le critère
-      // « stabilité » du dossier. Lueur violette qui respire lentement.
+      
+      
+      
       if (uStabilite > 0.001){
-        /* dérive du climat lui-même (température moyenne et précipitations)
-           depuis la période 1970-2000, et non plus la variation d'indicateurs
-           à seuil qui saturaient et rendaient l'Arctique muet. */
+        
         vec2 gd = texture2D(uD, vUv).rg;
-        float inst = mix(gd.r, gd.g, P) * 8.0;          // °C d'écart au climat 1970-2000
+        float inst = mix(gd.r, gd.g, P) * 8.0;          
         float m = clamp(inst / 8.0, 0.0, 1.0) * terre;
         float souffle = 0.72 + 0.28 * sin(uTemps * 1.1 + inst * 8.0);
         vec3 violet = vec3(0.565, 0.365, 1.0);
         col = mix(col, violet * souffle, m * uStabilite * 0.85);
       }
 
-      // R-08 DÉCLIN DE POPULATION : pays dont la population baisse d'ici
-      // 2050 (ONU WPP 2024, médiane). Le territoire se vide : il se
-      // désature vers un gris mauve, saturé à -30 %.
+      
+      
+      
       if (uDeclin > 0.001){
         float d = gc.b * terre * ((P * 24.0 + 1.0) / 25.0);
         float m = smoothstep(0.02, 0.55, d);
         float gris = dot(col, vec3(0.299, 0.587, 0.114));
-        // mauve froid net + liseré : un pays qui se vide doit se VOIR
+        
         vec3 vide = mix(vec3(gris * 0.5), vec3(0.55, 0.47, 0.78), 0.75);
-        // la courbe ONU va de 2025 à 2050 : le territoire se vide au fil du curseur
-        float vidage = uDeclin;
+        
+        float vidage = uDeclin * (0.83 + 0.17 * sin(uTemps * 1.4 + vUv.y * 30.0));
         col = mix(col, vide, m * vidage);
         col += vec3(0.42, 0.34, 0.66) * m * vidage * 0.35;
       }
 
-      /* R-06 INONDATION FLUVIALE : part des terres en zone de crue centennale,
-         carte JRC rasterisée (canal bleu de uD). 0 = HORS COUVERTURE, jamais
-         « aucun risque » : au-delà de 54°S et sous −167° la carte n'existe pas
-         et la couche reste éteinte plutôt que rassurante. */
+      
       if (uCrue > 0.001){
         float jrc = texture2D(uD, vUv).b;
         if (jrc > 0.002){
@@ -1340,22 +1341,22 @@ const matGlobe = new THREE.ShaderMaterial({
         }
       }
 
-      // teinte ambiante : la sévérité composite ombre la terre quand aucun
-      // calque n'est actif — le globe raconte avant qu'on touche au rail
+      
+      
       if (uIndice > 0.001){
         float sev26 = clamp(a26.r + a26.b * 0.45 + b26.r * 0.4 + b26.g * 1.1 + b26.b * 0.5, 0.0, 1.0) * terre;
         float sevP  = clamp(ga.r + ga.b * 0.45 + gb.r * 0.4 + gb.g * 1.1 + gb.b * 0.5, 0.0, 1.0) * terre;
         vec3 braise = vec3(0.95, 0.38, 0.14);
         col = mix(col, braise, smoothstep(0.10, 0.75, sev26) * uIndice * 0.18);
-        // l'aggravation depuis 2026, dérive du climat comprise : c'est elle
-        // que le curseur des années fait monter sur les terres
+        
+        
         vec2 gd2 = texture2D(uD, vUv).rg;
         float pire = (sevP - sev26) + 0.15 * max(gd2.g - gd2.r, 0.0) * P;
         col = mix(col, vec3(1.0, 0.52, 0.20), smoothstep(0.01, 0.10, pire) * uIndice * 0.55);
       }
 
-      // l'intro laisse la surface dans l'ombre, le halo bleu intact ; le
-      // clic Explorer éveille la terre
+      
+      
       col *= mix(0.24, 1.0, uEveil);
 
       gl_FragColor = vec4(col, 1.0);
@@ -1453,6 +1454,7 @@ let feux, feuxUniforms;
       }
       feux.geometry.attributes.position.needsUpdate = true;
       feux.geometry.attributes.aDanger.needsUpdate = true;
+      feux.geometry.computeBoundingSphere();
     });
   };
 
@@ -1461,7 +1463,7 @@ let feux, feuxUniforms;
   geo.setAttribute('aGraine', new THREE.BufferAttribute(graines, 1));
   geo.setAttribute('aDanger', new THREE.BufferAttribute(dangers, 2));
   feuxUniforms = {
-    uTemps: { value: 0 }, uIntensite: { value: 0 }, uProgression: { value: 0 },
+    uTemps: { value: 0 }, uIntensite: uniformsGlobe.uFeu, uProgression: { value: 0 },
     uPixelRatio: { value: moteur.getPixelRatio() },
   };
   feux = new THREE.Points(geo, new THREE.ShaderMaterial({
@@ -1480,7 +1482,7 @@ let feux, feuxUniforms;
         float scintille = 0.55 + 0.45 * sin(uTemps * (5.0 + aGraine * 5.0) + aGraine * 43.0);
         vFlamme = scintille;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = (2.2 + 3.2 * scintille) * uIntensite * vVif * uPixelRatio * (2.6 / -mv.z);
+        gl_PointSize = (3.0 + 5.0 * scintille) * uIntensite * sqrt(vVif) * uPixelRatio * (2.6 / -mv.z);
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: /* glsl */`
@@ -3795,22 +3797,29 @@ for (let i = 0; i < ETIQUETTES_MAX; i++){
   b.addEventListener('click', () => { const l = LIEUX[parseInt(b.dataset.i, 10)]; if (l){ cacherSurvol(); choisirLieu(l); } });
   etiquettesEl.appendChild(b); etiquettes.push(b);
 }
+let foyerEtiquettes = null;
+addEventListener('pointermove', e => {
+  foyerEtiquettes = e.pointerType === 'mouse' && (e.target === toile || e.target.closest('.etiquette')) ? [e.clientX, e.clientY] : null;
+});
+addEventListener('blur', () => { foyerEtiquettes = null; });
 let signatureEtiquettes = '';
 function majEtiquettes(){
   if (!VILLES_VEC || !document.body.classList.contains('pret')) return;
   const c = camera.position, d = c.length();
   // rien à recalculer tant que ni la caméra, ni la fenêtre, ni la langue n'ont bougé
-  const sig = `${c.x.toFixed(4)},${c.y.toFixed(4)},${c.z.toFixed(4)},${innerWidth},${innerHeight},${langue},${document.body.className}`;
+  const sig = `${c.x.toFixed(4)},${c.y.toFixed(4)},${c.z.toFixed(4)},${innerWidth},${innerHeight},${langue},${document.body.className},${foyerEtiquettes}`;
   if (sig === signatureEtiquettes) return;
   signatureEtiquettes = sig;
   _cam.copy(c).divideScalar(d);
   const horizon = 1 / d;                                  // v·ĉ au-delà : face visible
   const popMin = seuilPop(d);
+  const [fx, fy] = foyerEtiquettes || [innerWidth / 2, innerHeight / 2];
+  const rayon = Math.min(180, innerWidth * .3);
   // pas d'étiquette sous le chrome : la fiche est translucide, les noms
   // transparaissaient derrière ses lignes
   const caches = [dossierEl.classList.contains('ouvert') ? dossierEl : null,
                   document.getElementById('calques'), document.getElementById('timeline'),
-                  document.getElementById('titre'), document.getElementById('recherche'), document.getElementById('util')]
+                  document.getElementById('titre'), document.getElementById('recherche'), document.getElementById('util'), document.getElementById('model-notice')]
     .filter(Boolean).map(e => e.getBoundingClientRect()).filter(r => r.width > 0);
   const sousChrome = (x, y, w) => caches.some(r => x + w / 2 > r.left - 8 && x - w / 2 < r.right + 8 && y > r.top - 8 && y - 44 < r.bottom + 8);
   const places = [];                                      // [x, y, largeur, i, alpha]
@@ -3835,7 +3844,10 @@ function majEtiquettes(){
     const b = etiquettes[k], cle = p[3] + ':' + langue;
     if (b.dataset.i !== cle){ b.dataset.i = cle; b.textContent = nomVille(LIEUX[p[3]]); }
     b.style.transform = `translate3d(${p[0].toFixed(1)}px, ${p[1].toFixed(1)}px, 0) translate(-50%, -100%)`;
-    b.style.opacity = p[4].toFixed(2);
+    const proximite = Math.max(0, Math.min(1, (rayon - Math.hypot(p[0] - fx, p[1] - fy)) / 60));
+    b.style.opacity = (p[4] * proximite).toFixed(2);
+    b.style.pointerEvents = proximite > .2 ? 'auto' : 'none';
+    b.tabIndex = proximite > .2 ? 0 : -1;
     if (b.hidden) b.hidden = false;
   });
   for (let k = places.length; k < ETIQUETTES_MAX; k++) if (!etiquettes[k].hidden) etiquettes[k].hidden = true;
@@ -3849,8 +3861,8 @@ function boucle(){
   const dt = horloge.getDelta(), t = horloge.elapsedTime;
   if (dt > 0) fpsEMA += ((1 / dt) - fpsEMA) * 0.04;
 
-  uniformsGlobe.uTemps.value = t;
-  feuxUniforms.uTemps.value = t;
+  uniformsGlobe.uTemps.value = MOINS_ANIM ? 0 : t;
+  feuxUniforms.uTemps.value = MOINS_ANIM ? 0 : t;
   marqueurUniforms.uTemps.value = t;
   fleuvesUniforms.uTemps.value = t;
 

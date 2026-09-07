@@ -1,0 +1,5 @@
+- [ ] Actual pixels change over time for all7filters with fixedcamera; reducedmotion freezesnewmotion.
+- [ ] Wildfire mapped surface follows endpoints and selectedyear; Dhaka31.6to32.8 preserved; fixedriverreferenceexplicit.
+- [ ] Bottom-leftbeta notice visible, disclaimer/contactpresent, no controloverlap ondesktop/mobile.
+- [ ] Labels nearpointer/center visible, othersfade/noninteractive; pointer/camera updatesandcityselection work.
+- [ ] Temporal/layout/regressionchecks, independentreview and performance/resourcebudgets pass.

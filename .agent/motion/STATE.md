@@ -1,0 +1,1 @@
+ACTIVE. Softcheckpoint20min,max2agents,zeroaddedpaidspend,quotaUNKNOWN. Wildfireonlysparks made smallchangesinvisible;addingcontinuoussurface plusstrongerpointvisibility. ContactusesverifiedrepoGitHubissuesenabled, noemailsinvented. Dataunchanged.
