@@ -1,5 +1,16 @@
 CURRENT GOAL: lancement sans bug (voir GOAL.md)
 
+ACTIVE COMPLETION PASS 2026-09-07: fresh isolated clone of PR #1 at 3cf2b786.
+Historical PASS entries below describe September 2, not this revision.
+Baseline: i18n tests pass; assets tests cannot start until missing Pillow is installed.
+QA dependencies were undeclared and browser paths machine-specific; repair in scope.
+Physical device route: no Xcode application; xcrun devicectl reports unavailable.
+Next: run baseline WebKit/Chromium matrix, exercise new interactions and failure paths,
+fix findings, obtain independent review, integrate and verify deployment.
+Resource governor: strategy review after 30 minutes; at most 2 agents concurrently,
+4 total; no additional paid API/assets/compute spend. Account hard quota UNKNOWN.
+Review frozen final snapshot; repeat only for concrete findings or changed scope.
+
 WHAT WORKS (verifie 2026-09-02, Playwright, site public inclus)
 - Matrice de lancement 25/25 : desktop 1280x720 et 1440x900, iPhone 15 Pro portrait
   et paysage, iPad Pro 11, prefers-reduced-motion, panne de donnees (places.json 404),
@@ -21,8 +32,18 @@ WHAT DOES NOT / NON VERIFIE
 - Un seul modele climatique et un seul scenario : faiblesse de fond, assumee et
   affichee, pas corrigeable ici (voir PRODUCT-BENCHMARK.md, section WEAKNESSES).
 
-LAST VERIFIED STATE: aa7b283 pousse, deploye, identique bit a bit en ligne
-NEXT ACTION: aucune. Verdict READY a la 8e passe, ses deux dernieres remarques traitees (aa7b283).
+LAST VERIFIED STATE: aa7b283 pousse, deploye, identique bit a bit en ligne ; puis
+tools/ (verifieurs, matrice, check.py) sans effet sur le site.
+SESSION 2026-09-07 (branche claude/project-status-xgpc0t) : le curseur des
+annees ne changeait presque rien sur les terres (mesure : 0,2/255 de difference
+moyenne pour secheresse, mer, declin ; les grilles bougent peu et les rampes
+saturaient) — chaque calque montre desormais l ecart a 2026 ; le globe se lit au
+pointeur (pays via data/pays.png, ville proche, indice, clic pour ouvrir) ;
+grandes villes etiquetees selon le zoom ; bouton Comparer ; fiche rouverte en
+haut ; annee de la fiche sans donnees ; bornes chiffrees de la trajectoire ;
+mobile : rail masque pendant la recherche, croix hors de la feuille.
+NEXT ACTION: relancer la matrice QA (WebKit) sur un vrai poste avant de fusionner.
+Verdict READY a la 8e passe, ses deux dernieres remarques traitees (aa7b283).
 RELECTURES: 7 passes d un agent a contexte neuf + 2 passes Antigravity (autre
 modele). 14 + 3 + 9 + 7 + 6 + 8 + 6 + 5 defauts trouves, tous traites. Les
 deux plus instructifs : un differe de chargement annonce que le code ne

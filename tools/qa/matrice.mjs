@@ -22,12 +22,16 @@ const OUT = (process.env.QA_SORTIE || fs.mkdtempSync(os.tmpdir() + '/terra-qa-')
 fs.mkdirSync(OUT, { recursive: true });
 console.log('captures : ' + OUT);
 const URL0 = process.env.URL0 || 'http://localhost:8080/';
-const CH = process.env.QA_CHROMIUM || '/Users/robinmahieux/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing';
-const WK = process.env.QA_WEBKIT || '/Users/robinmahieux/Library/Caches/ms-playwright/webkit-2272/pw_run.sh';
+const CH = process.env.QA_CHROMIUM || chromium.executablePath();
+const WK = process.env.QA_WEBKIT || webkit.executablePath();
 for (const [nom, p] of [['QA_CHROMIUM', CH], ['QA_WEBKIT', WK]])
   if (!fs.existsSync(p)) { console.error(`Navigateur introuvable (${nom}) : ${p}`); process.exit(2); }
 const results = [];
-const ok = (name, cond, detail = '') => { results.push(`${cond ? 'PASS' : 'FAIL'} ${name}${detail ? ' — ' + detail : ''}`); };
+const ok = (name, cond, detail = '') => {
+  const line = `${cond ? 'PASS' : 'FAIL'} ${name}${detail ? ' — ' + detail : ''}`;
+  results.push(line); console.log(line);
+  fs.writeFileSync(OUT + 'results.txt', results.join('\n'));
+};
 
 async function open(bt, ctxOpts = {}, { init, route, hash = '' } = {}) {
   const browser = await bt.launch({ executablePath: bt === webkit ? WK : CH });
@@ -136,7 +140,13 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
 // ---------- D. reduced motion ----------
 {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
-  await page.waitForSelector('#voile.pret', { timeout: 30000 }); await page.click('#bouton-entree'); await page.waitForTimeout(1200);
+  await page.waitForSelector('#voile.pret', { timeout: 30000 }); await page.click('#bouton-entree');
+  // on attend l ETAT, pas une duree : sur un runner sans GPU les premieres
+  // images durent 200 ms et un fondu d une seconde n est pas fini a 1,2 s.
+  // L exigence ne bouge pas (tout le chrome a plus de 0,9), seul le delai
+  // maximal est large ; a l echeance, la mesure ci-dessous echoue comme avant.
+  await page.waitForFunction(() => ['recherche', 'calques', 'util', 'timeline', 'titre']
+    .every(id => +getComputedStyle(document.getElementById(id)).opacity > 0.9), null, { timeout: 15000 }).catch(() => {});
   const c = await chrome(page);
   ok('D reduced-motion chrome visible', c.every(x => x.op > 0.9), JSON.stringify(c.map(x => x.id + ':' + x.op)));
   await search(page, 'Paris');
@@ -152,7 +162,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await page.click('#bouton-entree'); await page.waitForTimeout(2000);
   await page.keyboard.press('Meta+k'); await page.keyboard.type('Bang'); await page.waitForTimeout(800);
   const li = await page.$$eval('#resultats li', l => l.map(x => x.textContent.trim()));
-  ok('E panne données : recherche ne plante pas', true, JSON.stringify(li));
+  ok('E panne données : recherche ne plante pas', li.length === 1 && /No city found|Aucune ville/.test(li[0]) && errs.every(e => !e.startsWith('pageerror')), JSON.stringify(li));
   ok('E panne données : erreurs = 404 + 1 message', errs.filter(e => e.startsWith('données')).length === 1 && errs.filter(e => e.startsWith('pageerror')).length === 0, errs.join(' | '));
   await page.screenshot({ path: OUT + 'E-panne.png' });
   await browser.close();
@@ -160,7 +170,9 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
 // ---------- F. WebGL absent ----------
 {
   const { browser, page } = await open(chromium, { viewport: { width: 1280, height: 800 } }, { init: () => { const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); }; } });
-  await page.waitForTimeout(2500);
+  // meme regle : le voile met 0,8 s a disparaitre une fois le module execute,
+  // et le module s execute tard sur une machine lente. On attend l etat.
+  await page.waitForFunction(() => getComputedStyle(document.getElementById('voile')).visibility === 'hidden', null, { timeout: 15000 }).catch(() => {});
   const sec = await page.$eval('#secours', s => ({ vis: getComputedStyle(s).display !== 'none' && getComputedStyle(s).opacity !== '0', txt: s.innerText.slice(0, 80) }));
   const voile = await page.$eval('#voile', v => getComputedStyle(v).visibility);
   ok('F WebGL absent : secours visible, voile retiré', sec.vis && voile === 'hidden', JSON.stringify({ sec, voile }));

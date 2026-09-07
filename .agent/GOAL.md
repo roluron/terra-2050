@@ -17,5 +17,13 @@ SURFACE (une ligne par écran/état) :
 - Formats : iPhone portrait + paysage, iPad, desktop 1280×720 → 1440×900, reduced-motion
 - Cartes de lien : OG/Twitter/favicon/apple-touch-icon/manifest servis en ligne
 
-WRITABLE SCOPE: index.html, terra-menus.css, assets/ (icônes uniquement), manifest.webmanifest, .agent/
-DO NOT TOUCH: data/, tools/pipeline.py (session Terra/2050), fonts/, assets/lib, assets/textures, assets/sounds
+COMPLETION 2026-09-07: finish and integrate PR #1, repair observed defects, verify
+every surface above and the new globe labels, pointer/touch picking and timeline
+changes. Every applicable acceptance item requires current snapshot-tied evidence.
+Physical iPhone Instagram sharing and home-screen launch remain required.
+
+WRITABLE SCOPE: index.html, terra-menus.css, assets/ (icônes uniquement), manifest.webmanifest,
+tools/qa/, tools/check.py, package.json, package-lock.json, requirements-qa.txt,
+.gitignore, README.md, .agent/, .github/workflows/.
+DO NOT TOUCH: existing climate datasets and tools/pipeline.py, fonts/, assets/lib,
+assets/textures, assets/sounds. Preserve PR #1 country lookup data and generator.
