@@ -3578,16 +3578,21 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   revelerChrome();
 });
 
-let earthSurface;
+let earthSurface, introOrbit;
+const introVueAccueil = !new URLSearchParams(location.hash.slice(1)).has('v');
 const originalRotationSpeed = controles.autoRotateSpeed;
 window.terraIntro = {
   ready: () => texturesPretes,
   enter() {
     if (!texturesPretes) return false;
     document.getElementById('bouton-entree').click();
-    if (!lieuDossier) {
-      controles.autoRotate = !MOINS_ANIM;
-      controles.autoRotateSpeed = 1.15;
+    if (!lieuDossier && introVueAccueil) {
+      gsap.killTweensOf(camera.position);
+      controles.autoRotate = false;
+      const orbit = { lon: MOINS_ANIM ? 15 : 46 };
+      const position = () => camera.position.copy(latLonVersVec3(22, orbit.lon, Math.hypot(...Object.values(CAMERA_ACCUEIL))));
+      position();
+      introOrbit = gsap.to(orbit, { lon: 15, duration: MOINS_ANIM ? 0 : 9, ease: 'none', onUpdate: position });
     }
     if (!earthSurface) {
       try { earthSurface = createEarthSurface(texMasque.image, camera, latLonVersVec3); }
@@ -3597,7 +3602,13 @@ window.terraIntro = {
   },
   points: () => earthSurface?.() || [],
   complete() {
+    if (!lieuDossier && introVueAccueil) {
+      introOrbit?.progress(1).kill();
+      controles.autoRotateSpeed = 31 / 9 / 6;
+      controles.autoRotate = !MOINS_ANIM;
+    }
     gsap.to(controles, { autoRotateSpeed: originalRotationSpeed, duration: MOINS_ANIM ? 0 : 2, ease: EASE });
+    setTimeout(() => { etiquettesPretes = true; revelerEtiquettes(); }, 1000);
   }
 };
 if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
@@ -3835,6 +3846,24 @@ function cacherSurvol(){
   });
 }
 const etiquettesEl = document.getElementById('etiquettes');
+etiquettesEl.style.opacity = '0';
+etiquettesEl.inert = true;
+let etiquettesPretes = false, globeSurvole = false, etiquettesRevelees = false;
+function revelerEtiquettes(){
+  if (!etiquettesPretes || !globeSurvole || etiquettesRevelees) return;
+  etiquettesRevelees = true;
+  etiquettesEl.inert = false;
+  gsap.to(etiquettesEl, { opacity: 1, duration: MOINS_ANIM ? 0 : 1.8, ease: 'power2.inOut' });
+}
+for (const type of ['pointermove', 'pointerdown']) toile.addEventListener(type, event => {
+  globeSurvole = !!pointSurGlobe(event.clientX, event.clientY);
+  revelerEtiquettes();
+});
+toile.addEventListener('pointerleave', () => { globeSurvole = false; });
+document.getElementById('recherche').addEventListener('focusin', () => {
+  globeSurvole = true;
+  revelerEtiquettes();
+});
 const ETIQUETTES_MAX = 36, etiquettes = [];
 for (let i = 0; i < ETIQUETTES_MAX; i++){
   const b = document.createElement('button');

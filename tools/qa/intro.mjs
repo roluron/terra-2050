@@ -34,6 +34,7 @@ for (const [name, engine, configuration] of [
     });
     assert.equal(await page.locator('iframe').count(), 0);
     assert.equal(await page.locator('#future').isVisible(), false);
+    assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
     await page.locator('#earth-shell .word').first().focus();
     await page.waitForSelector('#earth-shell .word.revealed');
     assert.equal(await page.locator('#future').isVisible(), false);
@@ -63,6 +64,22 @@ for (const [name, engine, configuration] of [
     await page.locator('#future').click();
     const result = await measurement;
     assert.equal(result.closed, true);
+    assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
+    const viewport = page.viewportSize();
+    await page.mouse.move(viewport.width / 2, viewport.height / 2);
+    await page.waitForTimeout(300);
+    assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0', 'The first second stays free of labels even on hover');
+    await page.mouse.move(5, 5);
+    await page.waitForTimeout(1200);
+    assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0', 'Labels wait for globe interaction');
+    if (name === 'desktop') await page.mouse.move(viewport.width / 2, viewport.height / 2);
+    else await page.touchscreen.tap(viewport.width / 2, viewport.height / 2);
+    if (name === 'desktop') {
+      await page.waitForTimeout(400);
+      const opacity = await page.locator('#etiquettes').evaluate(el => Number(getComputedStyle(el).opacity));
+      assert.ok(opacity > 0 && opacity < 1, 'Labels fade in gradually');
+    }
+    await page.waitForFunction(() => getComputedStyle(document.querySelector('#etiquettes')).opacity === '1');
     if (name === 'desktop') {
       const orbit = result.movement.filter(point => point.time > 3200);
       assert.ok(orbit.length > 4);
