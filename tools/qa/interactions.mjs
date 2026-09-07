@@ -123,7 +123,9 @@ for (const [name, type, options] of [
       const box = await label.boundingBox(); assert.ok(box);
       await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height + 5);
       assert.equal(await page.locator('#survol').evaluate(e => e.classList.contains('visible')), true);
-      await page.locator('#curseur').focus(); await page.keyboard.press('Home');
+      const initialYear = await page.locator('#curseur').inputValue();
+      await page.locator('#curseur').focus(); await page.keyboard.press(initialYear === '2026' ? 'End' : 'Home');
+      assert.notEqual(await page.locator('#curseur').inputValue(), initialYear);
       assert.equal(await page.locator('#survol').evaluate(e => e.classList.contains('visible')), false);
     });
     await check(`${name}: no browser errors`, async () => assert.deepEqual(errors, []));

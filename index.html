@@ -299,35 +299,54 @@
 </div>
 
 <div id="scrim-dossier"><div class="v-grain" aria-hidden="true"></div></div>
-<button id="dossier-croix" aria-label="Fermer / Close" inert>
-  <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1 L11 11 M11 1 L1 11"/></svg>
-</button>
 <aside id="dossier" role="region" aria-label="Diagnostic du lieu" inert>
   <p id="annonce" class="lecteur-seul" role="status" aria-live="polite"></p>
-  <div class="coords" id="dossier-coords"></div>
-  <div class="frappe" id="dossier-frappe"></div>
-  <div class="score">
-    <span class="valeur" id="dossier-score"></span>
-    <div>
-      <div class="legende"><span data-t="legendeIndice"></span> <span id="dossier-annee">2050</span></div>
-      <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
-    </div>
+  <header class="fiche-entete">
+    <div><p id="dossier-scope"></p><h2 id="dossier-nom"></h2></div>
+    <button id="dossier-croix" type="button" aria-label="Fermer / Close" inert>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18"/></svg>
+    </button>
+  </header>
+  <div id="dossier-temps"><span class="fiche-temps-label" data-t="panelYear"></span></div>
+  <div class="fiche-corps">
+    <section class="fiche-bilan">
+      <div class="verdict" id="dossier-verdict"><span class="point"></span><h3 id="dossier-verdict-txt"></h3></div>
+      <p class="conseil" id="dossier-conseil"></p>
+      <div class="fiche-indice">
+        <div class="score"><span class="valeur" id="dossier-score"></span><span class="score-sur">/100</span></div>
+        <div><p data-t="panelIndex"></p><p class="fiche-secondaire" data-t="panelDirection"></p></div>
+      </div>
+      <p id="dossier-evolution"></p>
+      <button class="duel" id="dossier-duel" hidden></button>
+    </section>
+    <section class="fiche-risques">
+      <div class="fiche-section-titre"><h3 data-t="panelRisks"></h3><span id="dossier-annee">2050</span></div>
+      <p class="frappe" id="dossier-frappe"></p>
+      <p class="fiche-secondaire" data-t="panelRiskHelp"></p>
+      <div id="dossier-risques"></div>
+    </section>
+    <section class="trajectoire">
+      <h3 data-t="trajectoire"></h3>
+      <p class="fiche-secondaire" data-t="panelGraph"></p>
+      <svg id="dossier-courbe" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
+    </section>
+    <div id="dossier-pop" class="risque-pop"></div>
+    <section id="dossier-ailleurs"></section>
+    <details class="fiche-methode">
+      <summary data-t="panelMethod"></summary>
+      <p data-t="panelMethodText"></p>
+      <p data-t="panelScenario"></p>
+      <p class="delta-score" id="dossier-delta"></p>
+      <p class="coords" id="dossier-coords"></p>
+      <p class="sources" id="dossier-sources"></p>
+    </details>
   </div>
-  <button class="duel" id="dossier-duel" hidden></button>
-  <button type="button" class="comparer" id="dossier-comparer"></button>
-  <p class="conseil" id="dossier-conseil"></p>
-  <div class="trajectoire">
-    <div class="titre-bloc"><span data-t="trajectoire"></span></div>
-    <svg id="dossier-courbe" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"></svg>
-    <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
-  </div>
-  <div id="dossier-risques"></div>
-  <div id="dossier-pop" class="risque risque-pop"></div>
-  <div class="delta-score" id="dossier-delta"></div>
-  <div id="dossier-detail"></div>
-  <div id="dossier-ailleurs"></div>
-  <div class="sources" id="dossier-sources"></div>
-  <div class="actions"><button type="button" class="fa-lien" id="dossier-partage"></button><button type="button" class="fa-lien" id="dossier-story"></button></div>
+  <footer class="actions">
+    <button type="button" class="comparer" id="dossier-comparer"></button>
+    <button type="button" id="dossier-partage"></button>
+    <button type="button" id="dossier-story"></button>
+  </footer>
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
@@ -420,6 +439,24 @@ function revelerChars(el, texte){
 const TEXTES = {
   fr: {
     lang: 'fr',
+    panelVerdict: {bon: 'Exposition globale plus faible', moyen: 'Exposition globale modérée', dur: 'Exposition globale plus forte'},
+    panelSummary: risque => `Principal point de vigilance : ${risque.toLowerCase()}.`,
+    panelMinimal: 'Les six risques évalués sont minimes dans ce modèle.',
+    panelYear: 'Année',
+    panelCity: 'Ville',
+    panelCountry: 'Vue du pays',
+    panelIndex: 'Indice d’habitabilité physique',
+    panelDirection: 'Plus le score est élevé, moins le lieu est exposé.',
+    panelRisks: 'Les risques à comprendre',
+    panelRiskHelp: 'Les plus exposés en premier. Ouvrez un risque pour voir les mesures.',
+    panelGraph: 'Indice sur 100 · 2026 à 2050',
+    panelMethod: 'Comprendre le score et les données',
+    panelMethodText: 'Cet indice combine six risques physiques. Il ne mesure ni le coût de la vie, ni la qualité des services, ni une probabilité de catastrophe. Les ouvrages de protection ne sont pas comptés.',
+    panelScenario: 'Projection sous un scénario de fortes émissions (SSP3-7.0), avec un seul modèle climatique. Les niveaux de risque restent des estimations.',
+    panelPopulation: 'Population du pays · 2026 à 2050',
+    panelCountryNote: n => `Moyenne de ${n} villes, pondérée par leur population. Les conditions varient d’une ville à l’autre.`,
+    panelEvolution: n => n === 0 ? 'Même indice qu’en 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points par rapport à 2026.`,
+
     sous1: 'Observatoire prospectif',
     sous2: 'Votre ville sera-t-elle encore vivable en 2050 ?',
     initialiser: 'Explorer',
@@ -481,11 +518,11 @@ const TEXTES = {
       dur: `En ${an}, ${faible.toLowerCase()} pèse assez pour poser la question du départ.`,
     })[n] + (delta <= -8 ? ` L’indice perd ${-delta} points d’ici 2050.` : delta >= 8 ? ` L’indice gagne ${delta} points d’ici 2050.` : ''),
     conseilSain: an => `En ${an}, aucun des six facteurs ne pèse vraiment ici.`,
-    trajectoire: 'Trajectoire de l’indice',
+    trajectoire: 'Ce qui change d’ici 2050',
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     partage: 'Partager le lien ↗', story: 'Image story ↗',
-    comparer: 'Comparer avec une autre ville →',
+    comparer: 'Comparer',
     accrocheChoisir: 'Cherchez la ville à comparer',
     partagerSite: 'Partager TERRA ↗',
     partageSite: 'Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité sur données scientifiques ouvertes.',
@@ -519,6 +556,24 @@ const TEXTES = {
   },
   en: {
     lang: 'en',
+    panelVerdict: {bon: 'Lower overall exposure', moyen: 'Moderate overall exposure', dur: 'Higher overall exposure'},
+    panelSummary: risk => `Main concern: ${risk.toLowerCase()}.`,
+    panelMinimal: 'All six assessed risks are minimal in this model.',
+    panelYear: 'Year',
+    panelCity: 'City',
+    panelCountry: 'Country overview',
+    panelIndex: 'Physical habitability index',
+    panelDirection: 'Higher scores mean less exposure.',
+    panelRisks: 'Understand the risks',
+    panelRiskHelp: 'Highest exposure first. Open a risk to see the measurements.',
+    panelGraph: 'Index out of 100 · 2026 to 2050',
+    panelMethod: 'About the score and data',
+    panelMethodText: 'This index combines six physical risks. It does not measure living costs, quality of services or the probability of a disaster. Protective infrastructure is not included.',
+    panelScenario: 'A projection under a high-emissions scenario (SSP3-7.0), using one climate model. Risk levels remain estimates.',
+    panelPopulation: 'Country population · 2026 to 2050',
+    panelCountryNote: n => `Average of ${n} cities, weighted by population. Conditions vary between cities.`,
+    panelEvolution: n => n === 0 ? 'Same index as in 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points compared with 2026.`,
+
     sous1: 'Prospective observatory',
     sous2: 'Will your city still be livable in 2050?',
     initialiser: 'Explore',
@@ -580,11 +635,11 @@ const TEXTES = {
       dur: `In ${an}, ${faible.toLowerCase()} weighs enough to raise the question of leaving.`,
     })[n] + (delta <= -8 ? ` The index loses ${-delta} points by 2050.` : delta >= 8 ? ` The index gains ${delta} points by 2050.` : ''),
     conseilSain: an => `In ${an}, none of the six factors carries real weight here.`,
-    trajectoire: 'Index trajectory',
+    trajectoire: 'How the outlook changes',
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     partage: 'Share link ↗', story: 'Story image ↗',
-    comparer: 'Compare with another city →',
+    comparer: 'Compare',
     accrocheChoisir: 'Search the city to compare with',
     partagerSite: 'Share TERRA ↗',
     partageSite: 'Will your city still be livable in 2050? 34,099 cities, one habitability index built only from open scientific data.',
@@ -2217,6 +2272,10 @@ champ.addEventListener('blur',  () => gsap.to(etatVerre, { force: 0.55, duration
 /* ---- dossier lieu : diagnostic par ville (valeurs illustratives, déterministes) ---- */
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
+const timelineEl = document.getElementById('timeline');
+timelineEl.before(document.getElementById('accroche'));
+const timelineRepere = document.createComment('timeline');
+timelineEl.before(timelineRepere);
 document.getElementById('dossier-score').setAttribute('aria-hidden', 'true');
 document.getElementById('an').setAttribute('aria-hidden', 'true');
 const odoIndice = new Odometre(document.getElementById('dossier-score'), 3);
@@ -2256,11 +2315,8 @@ function tracerTrajectoire(l, an){
   const svg = document.getElementById('dossier-courbe');
   const W = 100, H = 34, pas = [];
   for (let a = 2026; a <= 2050; a += 2) pas.push([a, indiceHabitabilite(l, a)]);
-  // échelle verticale resserrée autour de la trajectoire : sur 0-100 une perte
-  // de 4 points serait un trait plat, alors que c'est l'information du graphe
   const vals = pas.map(p => p[1]);
-  const lo = Math.max(0, Math.min(...vals) - 6), hi = Math.min(100, Math.max(...vals) + 6);
-  // l'échelle est resserrée, donc muette sur l'amplitude : les deux bornes disent les chiffres
+  const lo = 0, hi = 100;
   const bornes = svg.parentElement.querySelectorAll('.bornes-courbe span');
   if (bornes.length === 2){
     bornes[0].textContent = `2026 · ${vals[0]}`;
@@ -2293,33 +2349,26 @@ function tracerTrajectoire(l, an){
   }
 }
 
-/* État « en ce moment » : événements naturels réellement en cours autour du
-   lieu (NASA EONET + USGS). Aucune projection ici, que de l'observé. */
-
-{
-  /* un seul emplacement de detail pour les six criteres. Les ecouteurs vivent
-     sur le conteneur, pose une fois : ils survivent aux reconstructions et
-     valent pour les fiches ville COMME pays. Le clic et le focus doublent le
-     survol, sans quoi cinq details sur six sont inatteignables au doigt. */
-  const conteneur = document.getElementById('dossier-risques');
-  const versDetail = e => { const r = e.target.closest('.risque'); if (r) majDetail(r); };
-  conteneur.addEventListener('mouseover', versDetail);
-  conteneur.addEventListener('click', versDetail);
-  conteneur.addEventListener('focusin', versDetail);
-  conteneur.addEventListener('mouseleave', () => majDetail(null));
+const couleurRisquePanel = n => n >= 85 ? "#8cd0b0" : n >= 70 ? "#88b4ff" : n >= 50 ? "#ecd279" : n >= 30 ? "#ffb489" : "#ff9d94";
+function creerRisques(conteneur, cles, t, signature, nouveau){
+  if (!nouveau && conteneur.dataset.langue === signature) return;
+  const ouverts = nouveau ? [] : [...conteneur.querySelectorAll('details[open]')].map(el => el.dataset.cle);
+  conteneur.dataset.langue = signature;
+  conteneur.innerHTML = cles.map(cle => `<details class="risque" data-cle="${cle}" ${ouverts.includes(cle) ? 'open' : ''}>
+    <summary><span class="nom-crit">${t.critere[cle]}</span><span class="val"><b class="v-now"></b><span class="v-vers"></span></span><span class="risque-chevron" aria-hidden="true">+</span></summary>
+    <p class="detail"></p></details>`).join('');
 }
-/* la ligne survolée (ou au clavier) garde son détail pendant le balayage
-   des années : chaque cran de la fiche ramenait le pire axe sous le pointeur */
-const detailSousPointeur = () =>
-  document.querySelector('#dossier-risques .risque:hover, #dossier-risques .risque:focus-within, #dossier-pop:hover');
-function majDetail(rangee){
-  const slot = document.getElementById('dossier-detail');
-  const cible = rangee || document.querySelector('#dossier-risques .risque.pire')
-    || document.querySelector('#dossier-risques .risque');
-  if (!cible){ slot.textContent = ''; return; }
-  const d = (cible.dataset.detail || '').trim();
-  slot.innerHTML = `<b style="color:${cible.dataset.couleur}">${cible.dataset.nom}</b>`
-    + (d ? ` · ${d}` : '');   // sans detail, pas de separateur orphelin
+function finirRisques(nouveau){
+  const conteneur = document.getElementById('dossier-risques');
+  const rangees = [...conteneur.querySelectorAll('.risque')];
+  if (nouveau) {
+    rangees.sort((a, b) => Number(a.dataset.note) - Number(b.dataset.note));
+    conteneur.append(...rangees);
+  }
+  rangees.forEach((el, i) => {
+    el.querySelector('.detail').textContent = el.dataset.detail;
+    if (nouveau) el.open = i === 0;
+  });
 }
 
 /* Fiche PAYS : score pondéré, habitants 2026 -> 2050 (ONU), déclin, mêmes
@@ -2342,7 +2391,7 @@ function majDossierPays(l, an, t, dossierNeuf){
   odoIndice.set(indice, !dossierEl.classList.contains('ouvert'));
   const v = document.getElementById('dossier-verdict');
   v.className = 'verdict ' + niveau;
-  document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
+  document.getElementById('dossier-verdict-txt').textContent = t.panelVerdict[niveau];
 
   const ecart = indice2050 - indice;   // meme reference que le conseil : l'annee affichee
   document.getElementById('dossier-delta').textContent =
@@ -2354,42 +2403,28 @@ function majDossierPays(l, an, t, dossierNeuf){
     pop ? t.popAbsolue(pop[0], pop[1], Math.round((pop[1] / pop[0] - 1) * 100)) : '');
 
   document.getElementById('dossier-conseil').textContent =
-    t.conseilPays(t.verdict[niveau].toLowerCase(), an);
+    t.panelCountryNote(nVilles);
 
   // rangées : moyennes pondérées du pays, couleurs par note
   const tAn = Math.min(1, Math.max(0, (an - 2026) / 24));
   const notes = notesPays(iso, tAn), notes50 = notesPays(iso, 1);
   const conteneur = document.getElementById('dossier-risques');
-  if (dossierNeuf || conteneur.dataset.langue !== langue + ':pays'){
-    conteneur.dataset.langue = langue + ':pays';
-    conteneur.innerHTML = CRITERES.map(c => `
-    <div class="risque">
-      <div class="ligne"><span class="nom-crit">${t.critere[c.cle]}</span>
-        <span class="val"><b class="v-now"></b><span class="v-vers"></span></span></div>
-      <div class="rail"><i class="chemin"></i><i class="pt-fin"></i><i class="pt-now"></i></div>
-    </div>`).join('');
-  }
-  conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
+  creerRisques(conteneur, CRITERES.map(c => c.cle), t, langue + ':pays', dossierNeuf);
+  conteneur.querySelectorAll('.risque').forEach(rangee => {
+    const i = CRITERES.findIndex(c => c.cle === rangee.dataset.cle);
     const n = notes[i], fin = notes50[i], teinte = couleurNote(n);
     const vNow = rangee.querySelector('.v-now');
-    vNow.style.color = teinte; vNow.textContent = motRisque(t, n);
-    rangee.querySelector('.chemin').style.background = teinte;
-    rangee.querySelector('.pt-now').style.background = teinte;
-    rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
+    vNow.style.color = couleurRisquePanel(n); vNow.textContent = motRisque(t, n);
     rangee.querySelector('.v-vers').textContent =
-      an < 2050 && motRisque(t, fin) !== motRisque(t, n) ? `→ ${motRisque(t, fin)}` : '';
-    // barre pleine : plus elle est remplie, mieux la ville se porte
-    const chemin = rangee.querySelector('.chemin');
-    chemin.style.left = '0%'; chemin.style.width = n + '%';
-    rangee.querySelector('.pt-now').style.left = n + '%';
-    rangee.querySelector('.pt-fin').style.left = fin + '%';
+      an < 2050 && motRisque(t, fin) !== motRisque(t, n) ? `2050: ${motRisque(t, fin)}` : '';
+    rangee.dataset.note = n;
     rangee.dataset.nom = t.critere[CRITERES[i].cle];
     rangee.dataset.detail = langue === 'en'
       ? `population-weighted mean of ${nVilles} cities` : `moyenne pondérée des ${nVilles} villes`;
     rangee.dataset.couleur = teinte;
     rangee.classList.toggle('pire', n === Math.min(...notes));
   });
-  majDetail(detailSousPointeur());
+  finirRisques(dossierNeuf);
   tracerTrajectoire(l, an);
 
   // puces : les villes les plus habitables du pays
@@ -2449,24 +2484,17 @@ document.getElementById('dossier-comparer').addEventListener('click', () => {
 });
 function majRangeePop(pct, t, detail){
   const el = document.getElementById('dossier-pop');
-  if (pct === null || pct === undefined){ el.innerHTML = ''; el.dataset.detail = ''; return; }
-  const teinte = pct <= -15 ? '#E0452E' : pct <= -4 ? '#E06A3C'
-               : pct < 5 ? '#4D7CF2' : '#2E8F6A';
-  el.innerHTML = `<div class="ligne"><span class="nom-crit">${t.popLabel}</span>
-    <span class="val"><b class="v-now" style="color:${teinte}">${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b></span></div>`;
-  el.dataset.nom = t.popLabel;
-  el.dataset.detail = detail || t.popPays(pct);
-  el.dataset.couleur = teinte;
-}
-{
-  const rp = document.getElementById('dossier-pop');
-  rp.addEventListener('mouseenter', () => rp.dataset.detail && majDetail(rp));
-  rp.addEventListener('mouseleave', () => majDetail(null));
+  if (pct === null || pct === undefined){ el.innerHTML = ''; return; }
+  el.innerHTML = `<h3>${t.panelPopulation}</h3><p class="population-valeur">${pct > 0 ? '+' : pct < 0 ? '−' : ''}${Math.abs(pct)} %</p><p class="fiche-secondaire"></p>`;
+  el.querySelector('.fiche-secondaire').textContent = detail || t.popPays(pct);
 }
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
+  document.getElementById('dossier-nom').textContent = nomVille(l);
+  document.getElementById('dossier-scope').textContent = estPays(l) ? t.panelCountry : `${t.panelCity} · ${nomPays(l[1])}`;
+  document.getElementById('dossier-evolution').textContent = (estPays(l) || l[7]) ? t.panelEvolution(indiceHabitabilite(l, an) - indiceHabitabilite(l, 2026)) : '';
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (langue === 'en' ? 'W' : 'O')} · ${nomPays(l[1]).toUpperCase()}`;
   dossierEl.classList.toggle('sans-donnees', !estPays(l) && !l[7]);
@@ -2487,7 +2515,6 @@ function majDossier(){
     document.getElementById('dossier-conseil').textContent = t.sansDonneesLong;
     document.getElementById('dossier-pop').innerHTML = '';
     document.getElementById('dossier-risques').innerHTML = '';
-    document.getElementById('dossier-detail').textContent = '';
     document.getElementById('dossier-ailleurs').innerHTML = '';
     document.getElementById('dossier-courbe').innerHTML = '';
     return;
@@ -2510,7 +2537,7 @@ function majDossier(){
 
   const v = document.getElementById('dossier-verdict');
   v.className = 'verdict ' + niveau;
-  document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
+  document.getElementById('dossier-verdict-txt').textContent = t.panelVerdict[niveau];
 
   // le point faible est jugé sur la MÊME échelle que les rangées affichées
   // (le rang parmi les villes), sinon la phrase contredit les notes
@@ -2533,64 +2560,36 @@ function majDossier(){
       else if (pire.cle === 'stabilite') txt = t.frappeStab(Math.round(percentile('stabilite', penVille(l, 'stabilite', tAn)) * 100));
     }
     fr.textContent = txt;
-    fr.style.color = txt ? couleurNote(pire.note) : '';
+    fr.style.color = txt ? couleurRisquePanel(pire.note) : '';
   }
   majDuel(l, an);
   document.getElementById('dossier-conseil').textContent =
-    pire.note >= 85 ? t.conseilSain(an)
-      : t.conseil(niveau, t.critere[pire.cle], an, indice2050 - indice);
+    pire.note >= 85 ? t.panelMinimal : t.panelSummary(t.critere[pire.cle]);
 
 
-  /* Chaque rail raconte le trajet : un point plein à la note de l'année
-     affichée, un tiret creux à la note 2050, et le segment coloré entre les
-     deux. Les rangées sont construites une fois par ouverture, puis seules
-     les positions bougent — les transitions CSS portent l'animation, le
-     re-render à chaque cran du slider tuait toute continuité. */
   const criteres50 = CRITERES.map(c => Math.round(noteCritere(c, l, 1) * 100));
   const conteneur = document.getElementById('dossier-risques');
-  if (dossierNeuf || conteneur.dataset.langue !== langue){
-    conteneur.dataset.langue = langue;
-    conteneur.innerHTML = criteres.map(c => `
-    <div class="risque">
-      <div class="ligne"><span class="nom-crit">${t.critere[c.cle]}</span>
-        <span class="val"><b class="v-now"></b><span class="v-vers"></span></span></div>
-      <div class="rail">
-        <i class="chemin"></i>
-        <i class="pt-fin"></i>
-        <i class="pt-now"></i>
-      </div>
-    </div>`).join('');
-    /* un seul emplacement de détail pour les six critères : celui de la rangée
-       survolée, sinon celui du pire axe — six détails sur deux lignes chacun
-       forçaient le panneau à défiler sur un MacBook */
-  }
-  conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
+  creerRisques(conteneur, criteres.map(c => c.cle), t, langue, dossierNeuf);
+  conteneur.querySelectorAll('.risque').forEach(rangee => {
+    const i = CRITERES.findIndex(c => c.cle === rangee.dataset.cle);
     const c = criteres[i], fin = criteres50[i];
     const teinte = couleurNote(c.note);
     const vNow = rangee.querySelector('.v-now');
-    vNow.style.color = teinte;
-    rangee.querySelector('.chemin').style.background = teinte;
-    rangee.querySelector('.pt-now').style.background = teinte;
-    rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
+    vNow.style.color = couleurRisquePanel(c.note);
     const mot = motRisque(t, c.note), mot50 = motRisque(t, fin);
     if (vNow.textContent !== mot){
       vNow.textContent = mot;
       gsap.fromTo(vNow, { opacity: 0.35 }, { opacity: 1, duration: 0.4, ease: EASE });
     }
     rangee.querySelector('.v-vers').textContent =
-      an < 2050 && mot50 !== mot ? `→ ${mot50}` : '';
-    // barre pleine : plus elle est remplie, mieux la ville se porte
-    const chemin = rangee.querySelector('.chemin');
-    chemin.style.left = '0%';
-    chemin.style.width = c.note + '%';
-    rangee.querySelector('.pt-now').style.left = c.note + '%';
-    rangee.querySelector('.pt-fin').style.left = fin + '%';
+      an < 2050 && mot50 !== mot ? `2050: ${mot50}` : '';
+    rangee.dataset.note = c.note;
     rangee.dataset.nom = t.critere[c.cle];
     rangee.dataset.detail = c.detail;
     rangee.dataset.couleur = c.couleur;
     rangee.classList.toggle('pire', c.cle === pire.cle);
   });
-  majDetail(detailSousPointeur());
+  finirRisques(dossierNeuf);
   if (dossierNeuf){
     gsap.fromTo('#dossier-risques .risque', { opacity: 0, y: 10 },
       { opacity: 1, y: 0, duration: DUREE.fast, stagger: 0.06, ease: EASE, clearProps: 'opacity,transform' });
@@ -2662,8 +2661,10 @@ function ouvrirDossier(l){
   dossierEl.inert = !document.body.classList.contains('pret');
   document.getElementById('dossier-croix').inert = dossierEl.inert;
   lieuDossier = l;
+  document.getElementById('dossier-temps').append(timelineEl);
   tracerTrajectoire.animer = true;
-  dossierEl.scrollTop = 0;   // une fiche lue jusqu'en bas ouvrait la suivante déjà défilée
+  dossierEl.querySelector('.fiche-corps').scrollTop = 0;
+  dossierEl.querySelector('.fiche-methode').open = false;
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
@@ -2673,7 +2674,7 @@ function ouvrirDossier(l){
   poserMarqueur(l);
   majLien(true, empilerProchaine);
   empilerProchaine = false;
-  if (!sansBalayage) balayerVers2050();
+  if (balayageAnnee) balayageAnnee.kill();
   sansBalayage = false;
 }
 function majCentreDossier(){
@@ -2685,6 +2686,7 @@ function majCentreDossier(){
 addEventListener('resize', () => document.body.classList.contains('dossier-ouvert') && majCentreDossier());
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(depuisChamp){
+  timelineRepere.after(timelineEl);
   dossierEl.inert = true;
   document.getElementById('dossier-croix').inert = true;
   lieuDossier = null;

@@ -19,8 +19,19 @@ try{
  assert.ok((await page.locator('#dossier-sources').textContent()).length>50);
  assert.ok((await page.locator('#dossier-pop').textContent()).length>5);
  await page.locator('#curseur').focus();await page.keyboard.press('Home');
- const details=[];for(const row of await page.locator('#dossier-risques .risque').all()){const expected=await row.getAttribute('data-nom');if(name==='iphone')await row.tap();else await row.hover();await page.waitForFunction(name=>document.querySelector('#dossier-detail b')?.textContent===name,expected);details.push(await page.locator('#dossier-detail').textContent());} assert.equal(new Set(details).size,6);
- if(name==='desktop'){const row=page.locator('#dossier-risques .risque:not(.pire)').first();const expected=await row.getAttribute('data-nom');await page.locator('#curseur').focus();await row.hover();for(let i=0;i<3;i++){await page.keyboard.press('ArrowRight');assert.equal(await page.locator('#dossier-detail b').textContent(),expected);}}
+ const details=[];
+ for(const row of await page.locator('#dossier-risques .risque').all()){
+   if(!await row.evaluate(e=>e.open)) {
+     if(name==='iphone')await row.locator('summary').tap();else await row.locator('summary').click();
+   }
+   assert.equal(await row.locator('.detail').isVisible(),true);
+   assert.equal(await row.locator('.detail').textContent(),await row.getAttribute('data-detail'));
+   details.push(await row.locator('.detail').textContent());
+ }
+ assert.equal(new Set(details).size,6);
+ const preserved=await page.locator('#dossier-risques details[open]').count();
+ await page.locator('#curseur').focus();for(let i=0;i<3;i++)await page.keyboard.press('ArrowRight');
+ assert.equal(await page.locator('#dossier-risques details[open]').count(),preserved);
  const alt=page.locator('#dossier-ailleurs .alt').first();const city=await alt.locator('.nom').textContent();await alt.click();await page.waitForTimeout(4200);assert.equal(await page.locator('#champ-recherche').inputValue(),city);
  await page.keyboard.press('Meta+k');await page.fill('#champ-recherche','');assert.ok((await page.locator('#resultats').textContent()).includes(city));
  await page.fill('#champ-recherche','Valence');const homonyms=await page.getByRole('option').allTextContents();assert.ok(homonyms.length>=2);assert.equal(new Set(homonyms).size,homonyms.length);
