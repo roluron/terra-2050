@@ -489,19 +489,19 @@ const TEXTES = {
     chargementVilles: 'Chargement des 34 099 villes…',
     calquesHS: 'Cartes de calques indisponibles — rechargez la page',
     cartesPartielles: 'Certaines cartes n’ont pas pu être chargées : le globe sera incomplet.',
-    sousHeader: 'Habitabilité climatique · projection 2026→2050',
+    sousHeader: 'Indicateurs climatiques expérimentaux · 2026→2050',
     son: e => e ? 'Son · on' : 'Son · off',
     calque: { chaleur: 'Chaleur extrême', feux: 'Météo de feu · indicateur',
       secheresse: 'Aridité',
       mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Instabilité du climat',
       declin: 'Déclin de population' },
     info: {
-      chaleur: 'Des jours où il fait trop chaud pour vivre normalement dehors.',
+      chaleur: 'Estimation de jours de forte chaleur humide.',
       feux: 'Là où le temps chaud et sec peut faire partir des incendies.',
       secheresse: 'Aridité modélisée à partir de la température et des pluies.',
       mer: 'Là où la mer peut recouvrir la terre.',
-      fleuves: 'Là où les rivières peuvent déborder et tout inonder.',
-      stabilite: 'Là où le climat change le plus vite d’ici 2050.',
+      fleuves: 'Référence fixe d’exposition aux inondations fluviales.',
+      stabilite: 'Indicateur expérimental de changement climatique.',
       declin: 'Les pays qui perdent des habitants d’ici 2050.',
     },
     infoplus: {
@@ -517,7 +517,7 @@ const TEXTES = {
       chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de chaleur de Rothfusz',
       feux: 'WorldClim 2.1 · CMIP6 SSP3-7.0',
       secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de De Martonne',
-      mer: 'NOAA ETOPO 2022 · IPCC AR6 · COAST-RP (marées de tempête, CC BY 4.0) · Oelsmann 2025 (subsidence VLM)',
+      mer: 'Sources déclarées : ETOPO, AR6, COAST-RP, VLM · traçabilité des fichiers incomplète',
       fleuves: 'JRC Global River Flood Hazard · crue centennale',
       stabilite: 'WorldClim ＋ CMIP6 déclarés · méthode des fichiers actuels non reproductible',
       declin: 'ONU WPP 2024 (médiane) · Our World in Data · Natural Earth',
@@ -529,7 +529,7 @@ const TEXTES = {
     meilleuresVilles: 'Moins exposées dans ce modèle',
     critere: { thermique: 'Stress thermique', eau: 'Aridité', feux: 'Météo de feu · indicateur',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Bascule du climat' },
-    verdict: { bon: 'Habitabilité solide', moyen: 'Habitabilité sous tension', dur: 'Habitabilité dégradée' },
+    verdict: { bon: 'Exposition modélisée plus faible', moyen: 'Exposition modélisée modérée', dur: 'Exposition modélisée plus forte' },
     trajectoire: 'Ce qui change d’ici 2050',
     ailleurs: 'Moins exposées dans ce modèle, à proximité',
     rienDeMieux: 'Aucune ville proche n’a un indice nettement supérieur dans ce modèle.',
@@ -598,19 +598,19 @@ const TEXTES = {
     chargementVilles: 'Loading 34,099 cities…',
     calquesHS: 'Layer maps unavailable — reload the page',
     cartesPartielles: 'Some maps could not be loaded: the globe will be incomplete.',
-    sousHeader: 'Climate habitability · 2026→2050 projection',
+    sousHeader: 'Experimental climate indicators · 2026→2050',
     son: e => e ? 'Sound · on' : 'Sound · off',
     calque: { chaleur: 'Extreme heat', feux: 'Fire-weather proxy',
       secheresse: 'Aridity',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift',
       declin: 'Population decline' },
     info: {
-      chaleur: 'Days too hot to live normally outside.',
+      chaleur: 'Estimated days of high humid heat.',
       feux: 'Where hot, dry weather can start wildfires.',
       secheresse: 'Modelled aridity from temperature and rainfall.',
       mer: 'Where the sea can cover the land.',
-      fleuves: 'Where rivers can overflow and flood everything.',
-      stabilite: 'Where the climate is changing fastest by 2050.',
+      fleuves: 'Fixed reference for modelled river-flood exposure.',
+      stabilite: 'Experimental climate-change indicator.',
       declin: 'Countries losing people by 2050.',
     },
     infoplus: {
@@ -626,7 +626,7 @@ const TEXTES = {
       chaleur: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · Rothfusz heat index',
       feux: 'WorldClim 2.1 · CMIP6 SSP3-7.0',
       secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · De Martonne index',
-      mer: 'NOAA ETOPO 2022 · IPCC AR6 · COAST-RP (storm tides, CC BY 4.0) · Oelsmann 2025 (VLM subsidence)',
+      mer: 'Reported sources: ETOPO, AR6, COAST-RP, VLM · asset provenance incomplete',
       fleuves: 'JRC Global River Flood Hazard · 100-year flood',
       stabilite: 'Reported WorldClim + CMIP6 inputs · current output method not reproducible',
       declin: 'UN WPP 2024 (medium) · Our World in Data · Natural Earth',
@@ -638,7 +638,7 @@ const TEXTES = {
     meilleuresVilles: 'Lower exposure in this model',
     critere: { thermique: 'Thermal stress', eau: 'Aridity', feux: 'Fire-weather proxy',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
-    verdict: { bon: 'Solid habitability', moyen: 'Habitability under strain', dur: 'Degraded habitability' },
+    verdict: { bon: 'Lower modelled exposure', moyen: 'Moderate modelled exposure', dur: 'Higher modelled exposure' },
     trajectoire: 'How the outlook changes',
     ailleurs: 'Lower modelled exposure nearby',
     rienDeMieux: 'No nearby city has a meaningfully higher index in this model.',
@@ -801,7 +801,7 @@ const CRITERES = [
   { cle: 'mer', poids: 0.20, couleur: '#4D7CF2',
     detail: (l) => {
       const m = l[7] && l[7].mer;
-      return m ? (langue === 'en' ? 'Supporting snapshot · 2050 (fixed): ' : 'Donnée de contexte · 2050 (fixe) : ') + T().detMer(Math.round(m.f50 * 100), Math.round(m.f5 * 100), m.med, m.sub || 0, rayonVille(l),
+      return m ? (langue === 'en' ? 'Unverified stored snapshot · 2050 (fixed): ' : 'Estimation stockée non validée · 2050 (fixe) : ') + T().detMer(Math.round(m.f50 * 100), Math.round(m.f5 * 100), m.med, m.sub || 0, rayonVille(l),
         (mareeVille(LIEUX.indexOf(l)) ?? 2).toFixed(2)) : '';
     } },
   { cle: 'fleuves', poids: 0.16, couleur: '#6FA3FF',
@@ -2823,8 +2823,8 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
   const texte = indice === null
     ? `${nomVille(l)} — TERRA/2050`
     : (langue === 'en'
-      ? `${nomVille(l)}: ${indice}/100 habitability in ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. What about your city?`
-      : `${nomVille(l)} : ${indice}/100 d’habitabilité en ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. Et ta ville ?`);
+      ? `${nomVille(l)}: experimental climate index ${indice}/100 in ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. Not a local forecast.`
+      : `${nomVille(l)} : indice climatique expérimental ${indice}/100 en ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. Pas une prévision locale.`);
   const titre = `${nomVille(l)} — TERRA/2050`;
   await partagerTexte(titre, texte, location.href, document.getElementById('dossier-partage'));
 });
