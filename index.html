@@ -1853,14 +1853,21 @@ document.getElementById('accroche-x').addEventListener('click', e => {
 });
 let volEnCours = null, minuterieRepos = null;
 const contactsGlobe = new Set();
-toile.addEventListener('pointerdown', event => {
-  contactsGlobe.add(event.pointerId);
+toile.addEventListener('pointerdown', event => contactsGlobe.add(event.pointerId));
+for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, event => contactsGlobe.delete(event.pointerId));
+function reprendreRotation(){
+  controles.autoRotate = !MOINS_ANIM && !contactsGlobe.size && !minuterieRepos;
+}
+controles.addEventListener('start', () => {
   controles.autoRotate = false;
   clearTimeout(minuterieRepos);
 });
-for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, event => {
-  if (!contactsGlobe.delete(event.pointerId)) return;
-  if (!contactsGlobe.size && !volEnCours?.isActive()) controles.autoRotate = !MOINS_ANIM;
+controles.addEventListener('end', () => {
+  clearTimeout(minuterieRepos);
+  minuterieRepos = setTimeout(() => {
+    minuterieRepos = null;
+    if (!volEnCours?.isActive()) reprendreRotation();
+  }, 10000);
 });
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
@@ -2033,7 +2040,7 @@ function choisirLieu(l){
   volEnCours = gsap.to(camera.position, {
     x: cible.x, y: cible.y, z: cible.z, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
-    onComplete: () => { controles.autoRotate = !MOINS_ANIM && !contactsGlobe.size; },
+    onComplete: reprendreRotation,
   });
 }
 champ.addEventListener('input', afficherResultats);
@@ -2756,14 +2763,13 @@ function fermerDossier(depuisChamp){
   volEnCours = gsap.to(camera.position, {
     ...CAMERA_ACCUEIL, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
-    onComplete: () => { controles.autoRotate = !MOINS_ANIM; },
+    onComplete: reprendreRotation,
   });
   if (!depuisChamp){
     if (document.activeElement === champ) champ.blur();
     fermerListe();
     setTimeout(replierRecherche, 180);
   }
-  clearTimeout(minuterieRepos);
   retirerMarqueur();
   // l URL revient au globe, sans navigation : depiler ramenait l adresse
   // d une autre ville alors que rien n est ouvert, et l adresse doit toujours
@@ -3633,7 +3639,7 @@ window.terraIntro = {
     if (!lieuDossier && introVueAccueil) {
       introOrbit?.progress(1).kill();
       controles.autoRotateSpeed = 31 / 9 / 6;
-      controles.autoRotate = !MOINS_ANIM;
+      reprendreRotation();
     }
     gsap.to(controles, { autoRotateSpeed: originalRotationSpeed, duration: MOINS_ANIM ? 0 : 2, ease: EASE });
     revelerChrome();

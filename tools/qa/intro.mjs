@@ -104,7 +104,12 @@ for (const [name, engine, configuration] of [
       assert.equal(await page.evaluate(() => globalThis.__introProbe().rotating), false, 'Touch pauses rotation');
       await page.mouse.move(viewport.width / 2 + 15, viewport.height / 2);
       await page.mouse.up();
-      assert.equal(await page.evaluate(() => globalThis.__introProbe().rotating), true, 'Release resumes rotation');
+      assert.equal(await page.evaluate(() => globalThis.__introProbe().rotating), false, 'Release keeps rotation paused');
+      await page.waitForTimeout(6000);
+      await page.mouse.wheel(0, 1);
+      await page.waitForTimeout(4500);
+      assert.equal(await page.evaluate(() => globalThis.__introProbe().rotating), false, 'Further interaction resets the ten-second delay');
+      await page.waitForFunction(() => globalThis.__introProbe().rotating, null, {timeout:7000});
     }
     if (name === 'desktop') {
       const orbit = result.movement.filter(point => point.time > 3200);
