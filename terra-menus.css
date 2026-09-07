@@ -1005,6 +1005,7 @@ body.pret #dossier #timeline .an { display: block; width: 100%; font-family: var
 #dossier .fiche-methode p { margin-top: 12px; color: var(--fiche-secondaire); font-size: 13px; line-height: 1.6; }
 #dossier .sources { overflow-wrap: anywhere; text-transform: none; letter-spacing: 0; }
 #dossier .coords { text-transform: none; letter-spacing: 0; }
+#dossier .duel:not([hidden]) { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; }
 #dossier .duel { margin-top: 14px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--fiche-ligne); border-radius: 8px; }
 #dossier .actions { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 8px; flex: none; padding: 14px 18px; border-top: 1px solid var(--fiche-ligne); background: var(--fiche-fond); }
 #dossier .actions button { display: flex; align-items: center; justify-content: center; min-height: 46px; padding: 8px; border: 1px solid #536a85; border-radius: 8px; font-size: 13px; font-weight: 500; line-height: 1.25; text-align: center; }
