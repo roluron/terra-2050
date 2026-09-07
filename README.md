@@ -51,6 +51,7 @@ Tout le reste arrive **après** :
 | textures prêtes | l'annuaire des 34 099 villes (1,1 Mo), les marées, la calibration | la recherche affiche « chargement » si on va plus vite qu'elle |
 | textures prêtes | les 4 grilles de calques et `grille_d` (3 Mo) | aucun calque n'est allumé à l'arrivée ; un texel noir tient leur place |
 | grilles prêtes | `rivers.json` | sert au seul calque des fleuves |
+| grilles prêtes | `pays.png` + `pays_index.json` (50 Ko) | le nom du pays sous le pointeur ; sans elle, le survol ne dit que la ville |
 | clic Explorer | les sons, les foyers de feu | rien de tout cela ne sert avant le geste |
 
 Mesures (émulation réseau Chrome, deux tirages par ligne, navigateur relancé
@@ -98,6 +99,7 @@ Quatre pièges rencontrés, à ne pas réintroduire :
 | `index.html` | Tout l'applicatif : shaders GLSL, scène Three.js, interface, dictionnaires FR/EN, partage, story. ~3 200 lignes, un seul `<script type="module">`. |
 | `terra-menus.css` | Couche de design par-dessus les styles de base inline dans `index.html`. Les règles tardives gagnent : le fichier se lit du haut vers le bas comme une suite de passes. |
 | `tools/pipeline.py` | Pipeline hors-ligne : sources climatiques brutes → `data/`. Ne tourne jamais dans le navigateur. |
+| `tools/pays_raster.py` | Grille des pays (`data/pays.png`, `data/pays_index.json`) depuis Natural Earth 50 m, pour le survol du globe. Autonome, ~1 s. |
 | `data/` | Sorties du pipeline (voir formats ci-dessous). |
 | `assets/` | Librairies vendorées, textures, sons, polices, icônes. |
 | `.agent/` | Contrat de complétion : objectif, critères d'acceptation, état, preuves. |
@@ -108,6 +110,13 @@ Quatre pièges rencontrés, à ne pas réintroduire :
 Le pipeline produit des binaires à pas fixe, lus directement par `DataView`. Ce
 format est **porteur** : le modifier sans toucher au lecteur dans `index.html`
 corrompt silencieusement toutes les villes.
+
+**`data/pays.png` — 2160 × 1080 en niveaux de gris**, un octet par texel de 10′ :
+0 = mer ou sans pays, n = position dans la liste `iso` de `data/pays_index.json`
+(`{"w":2160,"h":1080,"iso":["","US","NZ",…]}`). Produit par `tools/pays_raster.py`
+depuis Natural Earth admin-0 50 m, du plus grand pays au plus petit pour que
+les enclaves gagnent. Sert uniquement à nommer le pays sous le pointeur : à 18 km
+le texel, c'est la précision d'une étiquette, pas d'un cadastre.
 
 **`data/places.bin` — 24 octets par ville**, dans l'ordre de `data/places.json` :
 

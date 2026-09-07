@@ -21,8 +21,18 @@ WHAT DOES NOT / NON VERIFIE
 - Un seul modele climatique et un seul scenario : faiblesse de fond, assumee et
   affichee, pas corrigeable ici (voir PRODUCT-BENCHMARK.md, section WEAKNESSES).
 
-LAST VERIFIED STATE: aa7b283 pousse, deploye, identique bit a bit en ligne
-NEXT ACTION: aucune. Verdict READY a la 8e passe, ses deux dernieres remarques traitees (aa7b283).
+LAST VERIFIED STATE: aa7b283 pousse, deploye, identique bit a bit en ligne ; puis
+tools/ (verifieurs, matrice, check.py) sans effet sur le site.
+SESSION 2026-09-07 (branche claude/project-status-xgpc0t) : le curseur des
+annees ne changeait presque rien sur les terres (mesure : 0,2/255 de difference
+moyenne pour secheresse, mer, declin ; les grilles bougent peu et les rampes
+saturaient) — chaque calque montre desormais l ecart a 2026 ; le globe se lit au
+pointeur (pays via data/pays.png, ville proche, indice, clic pour ouvrir) ;
+grandes villes etiquetees selon le zoom ; bouton Comparer ; fiche rouverte en
+haut ; annee de la fiche sans donnees ; bornes chiffrees de la trajectoire ;
+mobile : rail masque pendant la recherche, croix hors de la feuille.
+NEXT ACTION: relancer la matrice QA (WebKit) sur un vrai poste avant de fusionner.
+Verdict READY a la 8e passe, ses deux dernieres remarques traitees (aa7b283).
 RELECTURES: 7 passes d un agent a contexte neuf + 2 passes Antigravity (autre
 modele). 14 + 3 + 9 + 7 + 6 + 8 + 6 + 5 defauts trouves, tous traites. Les
 deux plus instructifs : un differe de chargement annonce que le code ne

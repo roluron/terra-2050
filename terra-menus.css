@@ -1328,3 +1328,51 @@ body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
    « 100 % » propre suivi d'un globe incomplet */
 .v-panne { margin-top: 18px; max-width: 320px; font-size: 11px; line-height: 1.6;
   color: rgba(255, 253, 226, 0.66); }
+
+/* =====================================================================
+   LIRE LE GLOBE AU POINTEUR — étiquette qui suit le curseur (pays, ville
+   proche, indice à l'année affichée) et noms des grandes villes posés sur
+   la planète. Sous le chrome, au-dessus de la toile.
+   ===================================================================== */
+#survol { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none;
+  padding: 7px 11px 8px; border-radius: 9px; white-space: nowrap;
+  background: rgba(2, 4, 10, 0.66); border: 1px solid rgba(255, 253, 226, 0.16);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  color: var(--texte); font-family: var(--police); font-size: 13px; line-height: 1.25;
+  opacity: 0; transition: opacity 0.18s var(--ease); will-change: transform; }
+#survol.visible { opacity: 1; }
+#survol.fige { pointer-events: auto; cursor: pointer; }
+#survol .s-nom { font-weight: 600; }
+#survol .s-indice { margin-left: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
+#survol .s-indice:empty { display: none; }
+#survol .s-sous { display: block; margin-top: 2px; font-size: 9.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muter); }
+body.sur-lieu #scene { cursor: pointer; }
+#etiquettes { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
+body:not(.pret) #etiquettes { display: none; }
+.etiquette { position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer;
+  background: none; border: 0; padding: 3px 6px 10px; margin: 0;
+  transform: translate(-50%, -100%); will-change: transform, opacity;
+  color: rgba(255, 253, 226, 0.74); font-family: var(--police); font-weight: 500;
+  font-size: 10.5px; line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
+  white-space: nowrap; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  transition: color 0.2s var(--ease); }
+.etiquette::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 4px; height: 4px;
+  margin-left: -2px; border-radius: 50%; background: rgba(255, 253, 226, 0.7);
+  box-shadow: 0 0 6px rgba(255, 253, 226, 0.45); }
+.etiquette:hover { color: var(--texte); }
+#dossier .comparer { align-self: flex-start; background: none; border: 0; padding: 2px 0;
+  margin: -2px 0 0; cursor: pointer; font-family: var(--police); font-size: 12.5px;
+  color: var(--muter); border-bottom: 1px solid var(--hairline);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease); }
+#dossier .comparer:hover, #dossier .comparer:focus-visible { color: var(--texte); border-color: var(--texte); }
+#dossier.sans-donnees .trajectoire, #dossier.sans-donnees .comparer { display: none; }
+#dossier .bornes-courbe span { font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) {
+  /* la liste de résultats passait par-dessus le rail des calques : deux textes mêlés */
+  body.recherche-active #calques { opacity: 0; pointer-events: none; }
+  /* la croix vivait dans le coin de la feuille et le contenu défilait sous elle :
+     elle se pose juste au-dessus du bord, sur le globe */
+  #dossier-croix { bottom: calc(62vh + 8px); bottom: calc(62dvh + 8px); }
+  #survol { font-size: 14px; }
+}

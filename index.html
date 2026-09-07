@@ -243,6 +243,9 @@
       <button class="calque" aria-pressed="false" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
     </nav>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
+<!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
+<div id="etiquettes" aria-hidden="true"></div>
+<div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span></div>
 
 <div id="util" class="panneau">
   <div class="menu-groupe">
@@ -312,6 +315,7 @@
     </div>
   </div>
   <button class="duel" id="dossier-duel" hidden></button>
+  <button type="button" class="comparer" id="dossier-comparer"></button>
   <p class="conseil" id="dossier-conseil"></p>
   <div class="trajectoire">
     <div class="titre-bloc"><span data-t="trajectoire"></span></div>
@@ -482,6 +486,8 @@ const TEXTES = {
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     partage: 'Partager le lien ↗', story: 'Image story ↗',
+    comparer: 'Comparer avec une autre ville →',
+    accrocheChoisir: 'Cherchez la ville à comparer',
     partagerSite: 'Partager TERRA ↗',
     partageSite: 'Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité sur données scientifiques ouvertes.',
     posIndispo: 'Position indisponible — cherchez votre ville',
@@ -578,6 +584,8 @@ const TEXTES = {
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     partage: 'Share link ↗', story: 'Story image ↗',
+    comparer: 'Compare with another city →',
+    accrocheChoisir: 'Search the city to compare with',
     partagerSite: 'Share TERRA ↗',
     partageSite: 'Will your city still be livable in 2050? 34,099 cities, one habitability index built only from open scientific data.',
     posIndispo: 'Location unavailable — search your city',
@@ -1199,6 +1207,12 @@ const matGlobe = new THREE.ShaderMaterial({
       vec3 b26 = texture2D(uB2026, vUv).rgb, b50 = texture2D(uB2050, vUv).rgb;
       vec3 ga = mix(a26, a50, P);                    // chaud / gel / sec
       vec3 gb = mix(b26, b50, P);                    // feu / mer / fleuves
+      /* Ce qui s'est AGGRAVÉ depuis 2026. Entre les deux horizons les grilles
+         bougent peu en valeur absolue (chaleur : +0,02 en moyenne sur les
+         terres, mesuré) et les rampes ci-dessous saturent : le curseur des
+         années ne changeait presque rien à l'écran. Chaque calque ajoute donc
+         l'écart à 2026, qui grandit avec P — c'est lui que la timeline raconte. */
+      vec3 da = max(ga - a26, 0.0), db = max(gb - b26, 0.0);
       vec3 gc = texture2D(uC, vUv).rgb;                                          // argiles / terre
       float submersion = gb.g;
       terre = max(terre, step(0.5, gc.g));
@@ -1212,6 +1226,9 @@ const matGlobe = new THREE.ShaderMaterial({
         float t2 = smoothstep(0.12, 0.85, chaud);
         vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(1.0, 0.16, 0.05), t2) * (0.80 + 0.55 * t2);
         col = mix(col, thermique, smoothstep(0.04, 0.55, chaud) * uChaleur * 0.85);
+        // jours de chaleur gagnés depuis 2026 : de +6 à +36 j/an, la zone flambe en blanc chaud
+        float gagne = smoothstep(0.02, 0.12, da.r) * terre;
+        col = mix(col, vec3(1.0, 0.80, 0.45), gagne * uChaleur * 0.7);
       }
 
 
@@ -1222,6 +1239,9 @@ const matGlobe = new THREE.ShaderMaterial({
         float sec = m * uSecheresse * 0.85;
         vec3 solSec = mix(vec3(0.16, 0.15, 0.12), vec3(0.34, 0.28, 0.14), bruit(vP * 30.0));
         col = mix(col, solSec, sec * 0.8);
+        // déficit creusé depuis 2026 : le sol qui s'assèche vire à l'ocre clair
+        float creuse = smoothstep(0.01, 0.07, da.b) * terre;
+        col = mix(col, vec3(0.70, 0.56, 0.26), creuse * uSecheresse * 0.65);
       }
 
       // R-05 SUBMERSION : eau bleu néon animée qui monte avec la projection
@@ -1235,6 +1255,9 @@ const matGlobe = new THREE.ShaderMaterial({
         vec3 neon = vec3(0.16, 0.48, 1.0);
         col = mix(col, neon * houle, eau * uMer * 0.70);
         col += neon * bord * terre * uMer * 0.85;             // liseré du trait de côte submersible
+        // terres passées sous la cote submersible depuis 2026 : elles s'allument
+        float gagneMer = smoothstep(0.004, 0.04, db.g) * terre;
+        col += neon * gagneMer * uMer * 0.9;
       }
 
       // R-07 INSTABILITÉ : où le climat de 2050 diffère le plus de celui de
@@ -1261,8 +1284,10 @@ const matGlobe = new THREE.ShaderMaterial({
         float gris = dot(col, vec3(0.299, 0.587, 0.114));
         // mauve froid net + liseré : un pays qui se vide doit se VOIR
         vec3 vide = mix(vec3(gris * 0.5), vec3(0.55, 0.47, 0.78), 0.75);
-        col = mix(col, vide, m * uDeclin);
-        col += vec3(0.42, 0.34, 0.66) * m * uDeclin * 0.35;
+        // la courbe ONU va de 2025 à 2050 : le territoire se vide au fil du curseur
+        float vidage = uDeclin * mix(0.22, 1.0, P);
+        col = mix(col, vide, m * vidage);
+        col += vec3(0.42, 0.34, 0.66) * m * vidage * 0.35;
       }
 
       /* R-06 INONDATION FLUVIALE : part des terres en zone de crue centennale,
@@ -1284,9 +1309,15 @@ const matGlobe = new THREE.ShaderMaterial({
       // teinte ambiante : la sévérité composite ombre la terre quand aucun
       // calque n'est actif — le globe raconte avant qu'on touche au rail
       if (uIndice > 0.001){
-        float sev = clamp(ga.r + ga.b * 0.45 + gb.r * 0.4 + gb.g * 1.1 + gb.b * 0.5, 0.0, 1.0) * terre;
+        float sev26 = clamp(a26.r + a26.b * 0.45 + b26.r * 0.4 + b26.g * 1.1 + b26.b * 0.5, 0.0, 1.0) * terre;
+        float sevP  = clamp(ga.r + ga.b * 0.45 + gb.r * 0.4 + gb.g * 1.1 + gb.b * 0.5, 0.0, 1.0) * terre;
         vec3 braise = vec3(0.95, 0.38, 0.14);
-        col = mix(col, braise, smoothstep(0.10, 0.75, sev) * uIndice * (0.16 + 0.14 * P));
+        col = mix(col, braise, smoothstep(0.10, 0.75, sev26) * uIndice * 0.18);
+        // l'aggravation depuis 2026, dérive du climat comprise : c'est elle
+        // que le curseur des années fait monter sur les terres
+        vec2 gd2 = texture2D(uD, vUv).rg;
+        float pire = (sevP - sev26) + 0.15 * max(gd2.g - gd2.r, 0.0) * P;
+        col = mix(col, vec3(1.0, 0.52, 0.20), smoothstep(0.01, 0.10, pire) * uIndice * 0.55);
       }
 
       // l'intro laisse la surface dans l'ombre, le halo bleu intact ; le
@@ -2226,6 +2257,12 @@ function tracerTrajectoire(l, an){
   // de 4 points serait un trait plat, alors que c'est l'information du graphe
   const vals = pas.map(p => p[1]);
   const lo = Math.max(0, Math.min(...vals) - 6), hi = Math.min(100, Math.max(...vals) + 6);
+  // l'échelle est resserrée, donc muette sur l'amplitude : les deux bornes disent les chiffres
+  const bornes = svg.parentElement.querySelectorAll('.bornes-courbe span');
+  if (bornes.length === 2){
+    bornes[0].textContent = `2026 · ${vals[0]}`;
+    bornes[1].textContent = `2050 · ${vals[vals.length - 1]}`;
+  }
   const ech = v => H - (v - lo) / Math.max(hi - lo, 1) * H;
   const pts = pas.map(([a, v]) => [(a - 2026) / 24 * W, ech(v)]);
   const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
@@ -2391,6 +2428,18 @@ document.getElementById('dossier-duel').addEventListener('click', () => {
   sansBalayage = true;               // l'échange garde l'année affichée
   choisirLieu(autre);
 });
+/* Le duel n'était accessible que par un lien reçu : personne ne pouvait
+   comparer deux villes de lui-même. Le bouton emprunte le même chemin que le
+   lien — la fiche ouverte devient le défi, la prochaine ville choisie ouvre
+   le duel — et renvoie au champ, qui est l'endroit où l'on choisit. */
+document.getElementById('dossier-comparer').addEventListener('click', () => {
+  if (!lieuDossier) return;
+  defiLien = lieuDossier;
+  SoundManager.play('ui_click');
+  deployerRecherche();
+  champ.focus(); champ.select();
+  montrerAccroche(T().accrocheChoisir, null, 250);
+});
 function majRangeePop(pct, t, detail){
   const el = document.getElementById('dossier-pop');
   if (pct === null || pct === undefined){ el.innerHTML = ''; el.dataset.detail = ''; return; }
@@ -2417,8 +2466,10 @@ function majDossier(){
     majDossierPays(l, an, t, dossierNeuf);
     return;
   }
+  dossierEl.classList.toggle('sans-donnees', !l[7]);
   if (!l[7]){
     // sentinelle : île ou atoll hors des grilles — pas de score inventé
+    document.getElementById('dossier-annee').textContent = an;   // sinon l'année de la fiche précédente restait
     document.getElementById('dossier-score').textContent = '——';
     document.getElementById('dossier-frappe').textContent = '';
     majDuel(l, an);
@@ -2603,6 +2654,7 @@ let empilerProchaine = false, interdirePile = false;
 function ouvrirDossier(l){
   lieuDossier = l;
   tracerTrajectoire.animer = true;
+  dossierEl.scrollTop = 0;   // une fiche lue jusqu'en bas ouvrait la suivante déjà défilée
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
@@ -3267,6 +3319,7 @@ function traduire(){
   document.getElementById('bouton-partager').textContent = t.partagerSite;
   if (lieuDossier) champ.value = nomVille(lieuDossier);
   document.getElementById('dossier-partage').textContent = t.partage;
+  document.getElementById('dossier-comparer').textContent = t.comparer;
   document.getElementById('dossier-story').textContent = t.story;
   document.getElementById('dossier-sources').textContent = t.sources;
   majDistanceAn(); cacherAccroche();
@@ -3362,6 +3415,8 @@ function chargerAnnuaire(){
       return [nomFr, iso, sla / Math.max(sp, 1), slo / Math.max(sp, 1),
               PAYS_POP[iso][0], 2, nomEn, null];
     });
+  indexerVilles();
+  calquesPrets.then(chargerPays);   // 50 Ko, après les grilles : jamais sur le chemin critique
   document.body.classList.add('donnees-pretes');
   document.body.classList.remove('villes-en-attente');
   donneesPretes = true; peutEntrer();
@@ -3552,6 +3607,200 @@ function revelerChrome(){
   return tl;
 }
 
+/* =====================================================================
+   LIRE LE GLOBE AU POINTEUR — pays sous le curseur, ville proche, indice à
+   l'année affichée ; un clic sans traînée ouvre la fiche. Les grandes
+   villes portent leur nom en permanence, plus nombreuses en approchant.
+   Aucun mesh ni raycast sur la géométrie : la sphère est unitaire,
+   l'intersection est analytique et chaque ville se projette à l'écran.
+   Le pays vient d'une grille Natural Earth (data/pays.png, 10') : la ville
+   la plus proche d'un point du Sahara peut être de l'autre côté d'une
+   frontière, la grille ne se trompe pas.
+   ===================================================================== */
+let PAYS_RASTER = null, PAYS_ISO = [];
+let VILLES_VEC = null, ORDRE_POP = null;
+function chargerPays(){
+  const image = new Promise(res => {
+    const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = './data/pays.png';
+  });
+  return Promise.all([charger('./data/pays_index.json', 'json'), image]).then(([idx, im]) => {
+    if (!im || !idx || !Array.isArray(idx.iso)) return;
+    const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(im, 0, 0);
+    const rgba = ctx.getImageData(0, 0, c.width, c.height).data;
+    const px = new Uint8Array(c.width * c.height);          // un octet par texel, pas quatre
+    for (let i = 0; i < px.length; i++) px[i] = rgba[i * 4];
+    PAYS_RASTER = { w: c.width, h: c.height, px }; PAYS_ISO = idx.iso;
+  }).catch(e => console.warn('grille des pays indisponible :', e && e.message));
+}
+function paysSous(lat, lon){
+  if (!PAYS_RASTER) return null;
+  const { w, h, px } = PAYS_RASTER;
+  const x = Math.min(w - 1, Math.max(0, Math.floor((lon + 180) / 360 * w)));
+  const y = Math.min(h - 1, Math.max(0, Math.floor((90 - lat) / 180 * h)));
+  return PAYS_ISO[px[y * w + x]] || null;
+}
+function indexerVilles(){
+  VILLES_VEC = new Float32Array(LIEUX.length * 3);
+  LIEUX.forEach((l, i) => {
+    const v = latLonVersVec3(l[2], l[3]);
+    VILLES_VEC[i * 3] = v.x; VILLES_VEC[i * 3 + 1] = v.y; VILLES_VEC[i * 3 + 2] = v.z;
+  });
+  ORDRE_POP = LIEUX.map((l, i) => i).sort((a, b) => (LIEUX[b][4] || 0) - (LIEUX[a][4] || 0));
+}
+const _ndc = new THREE.Vector2(), _rayon = new THREE.Raycaster(), _pt = new THREE.Vector3(), _cam = new THREE.Vector3();
+function pointSurGlobe(cx, cy){
+  _ndc.set(cx / innerWidth * 2 - 1, 1 - cy / innerHeight * 2);
+  _rayon.setFromCamera(_ndc, camera);
+  const o = _rayon.ray.origin, d = _rayon.ray.direction;
+  const b = o.dot(d), disc = b * b - (o.lengthSq() - 1);   // sphère unité centrée
+  if (disc < 0) return null;
+  const t = -b - Math.sqrt(disc);
+  return t > 0 ? _pt.copy(o).addScaledVector(d, t) : null;
+}
+function versLatLon(v){
+  let lon = Math.atan2(v.z, -v.x) * 180 / Math.PI - 180;
+  if (lon < -180) lon += 360;
+  return [Math.asin(Math.max(-1, Math.min(1, v.y))) * 180 / Math.PI, lon];
+}
+// population minimale d'une ville étiquetée, selon la distance caméra (1,45 → 6,4)
+const seuilPop = d => d > 3.6 ? 8e6 : d > 2.9 ? 4e6 : d > 2.3 ? 1.5e6 : d > 1.9 ? 6e5 : 2.5e5;
+// radians de surface (r = 1) par pixel d'écran, au centre de la vue
+const radParPixel = d => (d - 1) * 2 * Math.tan(camera.fov * Math.PI / 360) / innerHeight;
+function villeProche(v, rayon, popMin){
+  if (!VILLES_VEC) return null;
+  let meilleur = -1, meilleurDot = Math.cos(rayon);
+  for (let k = 0; k < ORDRE_POP.length; k++){
+    const i = ORDRE_POP[k];
+    if ((LIEUX[i][4] || 0) < popMin) break;
+    const dot = v.x * VILLES_VEC[i * 3] + v.y * VILLES_VEC[i * 3 + 1] + v.z * VILLES_VEC[i * 3 + 2];
+    if (dot > meilleurDot){ meilleurDot = dot; meilleur = i; }
+  }
+  return meilleur >= 0 ? LIEUX[meilleur] : null;
+}
+function sousPointeur(cx, cy){
+  const v = pointSurGlobe(cx, cy);
+  if (!v) return null;
+  const d = camera.position.length();
+  const [lat, lon] = versLatLon(v);
+  const ville = villeProche(v, 16 * radParPixel(d), seuilPop(d) / 5);
+  const iso = paysSous(lat, lon) || (ville ? ville[1] : null);
+  return { ville, iso };
+}
+const ligneDePays = iso => PAYS_LIGNES.find(p => p[1] === iso) || null;
+const survolEl = document.getElementById('survol');
+const survolNom = survolEl.querySelector('.s-nom'), survolIndice = survolEl.querySelector('.s-indice'),
+      survolSous = survolEl.querySelector('.s-sous');
+let survolLieu = null, survolFige = false;
+function montrerSurvol(s, cx, cy, fige){
+  const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
+  const iso = s && s.iso;
+  if (!l && !iso){ cacherSurvol(); return; }
+  survolLieu = l; survolFige = !!fige;
+  const an = etat.annee;
+  const indice = !l ? null : estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
+  survolNom.textContent = l ? nomVille(l) : nomPays(iso);
+  survolIndice.textContent = indice === null ? '' : indice;
+  survolIndice.style.color = indice === null ? '' : couleurNote(indice);
+  survolSous.textContent = l && !estPays(l) ? nomPays(l[1]) : (langue === 'en' ? 'COUNTRY' : 'PAYS');
+  survolEl.classList.toggle('fige', survolFige);
+  const w = survolEl.offsetWidth, h = survolEl.offsetHeight;
+  const x = cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16;
+  const y = cy + 18 + h > innerHeight - 8 ? cy - 12 - h : cy + 18;
+  survolEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+  survolEl.classList.add('visible');
+  document.body.classList.toggle('sur-lieu', !!l);
+}
+function cacherSurvol(){
+  survolLieu = null; survolFige = false;
+  survolEl.classList.remove('visible', 'fige');
+  document.body.classList.remove('sur-lieu');
+}
+{
+  let presse = null;   // { x, y, t } — pour distinguer le tap de la traînée
+  toile.addEventListener('pointerdown', e => {
+    presse = { x: e.clientX, y: e.clientY, t: performance.now() };
+    if (e.pointerType !== 'mouse') cacherSurvol();
+  });
+  toile.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;            // au doigt, c'est le tap qui lit
+    if (presse){ if (Math.hypot(e.clientX - presse.x, e.clientY - presse.y) > 6) cacherSurvol(); return; }
+    montrerSurvol(sousPointeur(e.clientX, e.clientY), e.clientX, e.clientY, false);
+  });
+  toile.addEventListener('pointerleave', () => { if (!survolFige) cacherSurvol(); });
+  toile.addEventListener('pointercancel', () => { presse = null; });
+  toile.addEventListener('pointerup', e => {
+    const p = presse; presse = null;
+    if (!p || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6 || performance.now() - p.t > 500) return;
+    const s = sousPointeur(e.clientX, e.clientY);
+    if (e.pointerType === 'mouse'){
+      const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
+      if (l){ cacherSurvol(); choisirLieu(l); }
+    } else {
+      // au doigt : un tap pose l'étiquette, un tap sur l'étiquette ouvre la fiche
+      montrerSurvol(s, e.clientX, e.clientY, true);
+    }
+  });
+  survolEl.addEventListener('click', () => {
+    if (!survolLieu) return;
+    const l = survolLieu; cacherSurvol(); choisirLieu(l);
+  });
+}
+const etiquettesEl = document.getElementById('etiquettes');
+const ETIQUETTES_MAX = 36, etiquettes = [];
+for (let i = 0; i < ETIQUETTES_MAX; i++){
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'etiquette'; b.tabIndex = -1; b.hidden = true;
+  b.addEventListener('click', () => { const l = LIEUX[parseInt(b.dataset.i, 10)]; if (l){ cacherSurvol(); choisirLieu(l); } });
+  etiquettesEl.appendChild(b); etiquettes.push(b);
+}
+let signatureEtiquettes = '';
+function majEtiquettes(){
+  if (!VILLES_VEC || !document.body.classList.contains('pret')) return;
+  const c = camera.position, d = c.length();
+  // rien à recalculer tant que ni la caméra, ni la fenêtre, ni la langue n'ont bougé
+  const sig = `${c.x.toFixed(4)},${c.y.toFixed(4)},${c.z.toFixed(4)},${innerWidth},${innerHeight},${langue}`;
+  if (sig === signatureEtiquettes) return;
+  signatureEtiquettes = sig;
+  _cam.copy(c).divideScalar(d);
+  const horizon = 1 / d;                                  // v·ĉ au-delà : face visible
+  const popMin = seuilPop(d);
+  // pas d'étiquette sous le chrome : la fiche est translucide, les noms
+  // transparaissaient derrière ses lignes
+  const caches = [dossierEl.classList.contains('ouvert') ? dossierEl : null,
+                  document.getElementById('calques'), document.getElementById('timeline'),
+                  document.getElementById('titre'), document.getElementById('recherche'), document.getElementById('util')]
+    .filter(Boolean).map(e => e.getBoundingClientRect()).filter(r => r.width > 0);
+  const sousChrome = (x, y) => caches.some(r => x > r.left - 8 && x < r.right + 8 && y > r.top - 8 && y < r.bottom + 8);
+  const places = [];                                      // [x, y, largeur, i, alpha]
+  for (let k = 0; k < ORDRE_POP.length && places.length < ETIQUETTES_MAX; k++){
+    const i = ORDRE_POP[k], l = LIEUX[i];
+    if ((l[4] || 0) < popMin) break;
+    const vx = VILLES_VEC[i * 3], vy = VILLES_VEC[i * 3 + 1], vz = VILLES_VEC[i * 3 + 2];
+    const face = vx * _cam.x + vy * _cam.y + vz * _cam.z;
+    if (face < horizon + 0.02) continue;
+    _pt.set(vx, vy, vz).project(camera);
+    const x = (_pt.x + 1) / 2 * innerWidth, y = (1 - _pt.y) / 2 * innerHeight;
+    if (x < 0 || x > innerWidth || y < 0 || y > innerHeight || sousChrome(x, y)) continue;
+    const w = nomVille(l).length * 8 + 16;
+    let libre = true;
+    for (const p of places){ if (Math.abs(p[0] - x) < (p[2] + w) / 2 && Math.abs(p[1] - y) < 20){ libre = false; break; } }
+    if (!libre) continue;   // la plus peuplée garde la place, l'autre attend qu'on s'approche
+    // fondu au limbe : l'étiquette s'éteint avant de passer derrière la terre
+    const alpha = Math.min(1, (face - horizon) / (1 - horizon) / 0.22);
+    places.push([x, y, w, i, alpha]);
+  }
+  places.forEach((p, k) => {
+    const b = etiquettes[k], cle = p[3] + ':' + langue;
+    if (b.dataset.i !== cle){ b.dataset.i = cle; b.textContent = nomVille(LIEUX[p[3]]); }
+    b.style.transform = `translate3d(${p[0].toFixed(1)}px, ${p[1].toFixed(1)}px, 0) translate(-50%, -100%)`;
+    b.style.opacity = p[4].toFixed(2);
+    if (b.hidden) b.hidden = false;
+  });
+  for (let k = places.length; k < ETIQUETTES_MAX; k++) if (!etiquettes[k].hidden) etiquettes[k].hidden = true;
+}
+
 /* ---- boucle unique ---- */
 const horloge = new THREE.Clock();
 let compteurImages = 0, fpsEMA = 60, dernierHUD = 0;
@@ -3575,6 +3824,7 @@ function boucle(){
   moteur.setRenderTarget(null);
   matPost.uniforms.tScene.value = cibles[indiceCible].texture;
   moteur.render(scenePost, cameraPost);
+  majEtiquettes();
   majVerre(); calerListe();
   if (document.body.classList.contains('recherche-active')) placerCaret();
 
