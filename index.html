@@ -466,7 +466,7 @@ const TEXTES = {
     panelCountry: 'Vue du pays',
     panelIndex: 'Indice climatique indicatif',
     betaShort: 'Bêta · Données potentiellement inexactes',
-    betaNotice: 'Bêta · Les données peuvent être inexactes. Animations illustratives, pas des événements observés.',
+    betaNotice: 'Les animations illustrent les indicateurs, pas des événements observés. Signalez-nous une donnée qui semble incorrecte.',
     betaContact: 'Votre lieu semble inexact ? Contactez-nous ↗',
     panelDataLimits: 'Traçabilité incomplète : générateurs actuels absents, certaines lacunes et marées de repli sans marqueur par ville. Zéro ne prouve pas l’absence de risque. Notes de villes non validées scientifiquement.',
     panelDirection: 'Plus haut = moins d’exposition modélisée.',
@@ -533,7 +533,7 @@ const TEXTES = {
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     partage: 'Partager le lien ↗', story: 'Image story ↗',
-    comparer: 'Comparer',
+    comparer: 'Comparer une ville',
     accrocheChoisir: 'Cherchez la ville à comparer',
     partagerSite: 'Partager TERRA ↗',
     partageSite: 'Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité sur données scientifiques ouvertes.',
@@ -550,7 +550,7 @@ const TEXTES = {
     frappeEau: p => `plus aride que ${p} % des villes du monde`,
     frappeFeux: p => `une météo de feu au-dessus de ${p} % des villes`,
     frappeStab: p => `un climat qui bascule plus vite que ${p} % des villes`,
-    accrocheDefi: 'Et ta ville ? Compare.',
+    accrocheDefi: 'Comparer cette ville à la vôtre',
     distanceAn: n => n <= 0 ? 'aujourd’hui' : n === 1 ? 'dans 1 an' : `dans ${n} ans`,
     optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
     optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
@@ -575,7 +575,7 @@ const TEXTES = {
     panelCountry: 'Country overview',
     panelIndex: 'Illustrative climate index',
     betaShort: 'Beta · Data may be inaccurate',
-    betaNotice: 'Beta · Data may be inaccurate. Animations illustrate indicators, not observed events.',
+    betaNotice: 'Animations illustrate indicators, not observed events. Let us know if a place’s data looks incorrect.',
     betaContact: 'Your place looks inaccurate? Contact us ↗',
     panelDataLimits: 'Provenance incomplete: current generators are missing; some source gaps and tide fallbacks have no per-city flag. Zero does not prove no risk. City ratings are not scientifically validated.',
     panelDirection: 'Higher = less modelled exposure.',
@@ -642,7 +642,7 @@ const TEXTES = {
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     partage: 'Share link ↗', story: 'Story image ↗',
-    comparer: 'Compare',
+    comparer: 'Compare cities',
     accrocheChoisir: 'Search the city to compare with',
     partagerSite: 'Share TERRA ↗',
     partageSite: 'Will your city still be livable in 2050? 34,099 cities, one habitability index built only from open scientific data.',
@@ -659,7 +659,7 @@ const TEXTES = {
     frappeEau: p => `drier than ${p}% of the world’s cities`,
     frappeFeux: p => `fire weather above ${p}% of cities`,
     frappeStab: p => `a climate shifting faster than ${p}% of cities`,
-    accrocheDefi: 'And your city? Compare.',
+    accrocheDefi: 'Compare this city with yours',
     distanceAn: n => n <= 0 ? 'today' : n === 1 ? 'in 1 year' : `in ${n} years`,
     optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
     optAxes: 'The hardest risks', optPop: 'Country population',
@@ -1080,7 +1080,7 @@ function chargerTextureImage(webp, repli, donnees){
 const texCouleur = chargerTextureImage('./assets/textures/earth_color_2048.webp',
                                        './assets/textures/earth_color_2048.jpg');   // NASA Blue Marble (domaine public)
 function affinerTerre(){
-  if (PETIT_ECRAN || affinerTerre.fait) return;
+  if (affinerTerre.fait || navigator.connection?.saveData || moteur.capabilities.maxTextureSize < 4096) return;
   affinerTerre.fait = true;
   const essayer = (url, suite) => {
     const im = new Image();
@@ -1246,6 +1246,7 @@ const matGlobe = new THREE.ShaderMaterial({
       float gris = dot(tex, vec3(0.299, 0.587, 0.114));
       vec3 ocean   = vec3(0.026, 0.058, 0.132);
       vec3 continent = mix(vec3(0.130, 0.168, 0.205), vec3(0.300, 0.325, 0.330), gris);
+      continent = mix(continent, tex * 0.72, 0.38);
       vec3 base = mix(ocean, continent, terre);
 
       
@@ -1386,20 +1387,27 @@ scene.add(globe);
 /* ---- atmosphère externe : halo fresnel, profondeur spatiale ---- */
 const matAtmo = new THREE.ShaderMaterial({
   side: THREE.BackSide, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  uniforms: { uIntensite: { value: 1 }, uProgression: { value: 0 } },
+  uniforms: { uIntensite: { value: 1 }, uProgression: { value: 0 }, uTemps: uniformsGlobe.uTemps },
   vertexShader: /* glsl */`
-    varying vec3 vN;
-    void main(){ vN = normalize(normalMatrix * normal);
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    varying vec3 vN; varying vec3 vP; varying vec3 vView;
+    void main(){ vN = normalize(normalMatrix * normal); vP = normalize(position);
+      vView = (modelViewMatrix * vec4(position, 1.0)).xyz;
+      gl_Position = projectionMatrix * vec4(vView, 1.0); }`,
   fragmentShader: /* glsl */`
-    uniform float uIntensite, uProgression; varying vec3 vN;
+    uniform float uIntensite, uProgression, uTemps; varying vec3 vN; varying vec3 vP; varying vec3 vView;
     void main(){
-      float halo = pow(0.62 - dot(vN, vec3(0.0, 0.0, 1.0)), 2.2);
+      float facing = max(0.0, -dot(normalize(vN), normalize(-vView)));
+      float halo = pow(facing, 1.8) * 2.8;
       // l'atmosphère vire du bleu 2026 à la braise 2050 avec la projection
       vec3 froid = vec3(0.090, 0.251, 0.663);
       vec3 chaud = vec3(0.760, 0.130, 0.045);
       vec3 teinte = mix(froid, chaud, smoothstep(0.12, 0.95, uProgression));
-      gl_FragColor = vec4(teinte * halo, 1.0) * uIntensite;
+      float chaleur = uProgression * uProgression;
+      float onde = sin(vP.y * 12.0 - uTemps * 1.3 + sin(vP.x * 5.0 + uTemps * 0.4) * 2.2);
+      float vagues = pow(0.5 + 0.5 * onde, 3.0);
+      halo *= 1.0 + chaleur * (vagues * 1.25 - 0.12);
+      vec3 emission = vec3(1.0) - exp(-teinte * halo);
+      gl_FragColor = vec4(emission, 1.0) * uIntensite;
     }`,
 });
 scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
@@ -1829,12 +1837,18 @@ function montrerAccroche(txt, action, delai){
 function cacherAccroche(){
   clearTimeout(minuterieAccroche);
   accroche.hidden = true; accrocheAction = null;
+  if (document.body.classList.contains('comparaison-active')) {
+    document.body.classList.remove('comparaison-active');
+    champ.placeholder = T().chercher.replace(/\s*—\s*⌘K$/, '');
+  }
 }
 document.getElementById('accroche-txt').addEventListener('click', () => {
+  if (document.body.classList.contains('comparaison-active')) { champ.focus(); return; }
   const a = accrocheAction; cacherAccroche(); if (a) a();
   SoundManager.play('ui_click');
 });
 document.getElementById('accroche-x').addEventListener('click', e => {
+  if (document.body.classList.contains('comparaison-active')) defiLien = null;
   e.stopPropagation(); cacherAccroche(); SoundManager.play('ui_click');
 });
 let volEnCours = null, minuterieRepos = null;
@@ -2366,7 +2380,7 @@ function creerRisques(conteneur, cles, t, signature, nouveau){
 function mesurerRisquePanel(rangee, note, note26, an){
   const exposition = Math.max(0, Math.min(100, 100 - note));
   const ecart = note26 - note;
-  rangee.querySelector('.risk-number').textContent = exposition.toLocaleString(langue, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+  rangee.querySelector('.risk-number').textContent = exposition.toLocaleString(langue, {minimumFractionDigits: exposition === 0 || exposition === 100 ? 0 : 1, maximumFractionDigits: 1});
   rangee.style.setProperty('--risk', exposition);
   const fixe = rangee.dataset.cle === 'fleuves';
   rangee.dataset.temporal = fixe ? 'reference' : 'projection';
@@ -2488,10 +2502,14 @@ document.getElementById('dossier-duel').addEventListener('click', () => {
 document.getElementById('dossier-comparer').addEventListener('click', () => {
   if (!lieuDossier) return;
   defiLien = lieuDossier;
+  const nom = nomVille(lieuDossier);
   SoundManager.play('ui_click');
   deployerRecherche();
-  champ.focus(); champ.select();
-  montrerAccroche(T().accrocheChoisir, null, 250);
+  champ.focus(); champ.value = '';
+  champ.placeholder = langue === 'en' ? `Compare ${nom} with…` : `Comparer ${nom} avec…`;
+  document.body.classList.add('comparaison-active');
+  afficherResultats();
+  montrerAccroche(langue === 'en' ? `${nom} selected · Choose a second city` : `${nom} sélectionnée · Choisissez une autre ville`, null, 0);
 });
 function majRangeePop(iso, an){
   const el = document.getElementById('dossier-pop'), pop = PAYS_POP[iso];
@@ -3119,7 +3137,7 @@ function ouvrirDepuisLien(sansDefi){
   if (!retourHistorique && !dejaPosee) history.replaceState(null, '', location.pathname + location.search);
   interdirePile = retourHistorique || dejaPosee;
   choisirLieu(l);
-  if (defiLien) montrerAccroche(T().accrocheDefi, () => champ.focus(), 3400);
+  if (defiLien) montrerAccroche(T().accrocheDefi, () => document.getElementById('dossier-comparer').click(), 3400);
 }
 
 /* ---- marqueur de la ville : anneau + point qui respire, un seul sprite ---- */

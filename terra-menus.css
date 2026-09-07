@@ -982,11 +982,11 @@ body.pret #dossier #timeline .an { display: block; width: 100%; font-family: var
 #dossier .risque summary { position: relative; display: grid; grid-template-columns: minmax(0,1fr) 18px; align-items: center; gap: 6px 10px; min-height: 152px; padding: 16px 0; list-style: none; }
 #dossier summary::-webkit-details-marker { display: none; }
 #dossier .risque .nom-crit { font: 12px/1.4 ui-monospace, 'SFMono-Regular', monospace; letter-spacing: .075em; text-transform: uppercase; }
-#dossier .risk-reading { font-size: 34px; letter-spacing: -.05em; line-height: 1.2; font-variant-numeric: tabular-nums; }
+#dossier .risk-reading { font-size: 34px; letter-spacing: -.05em; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; }
 #dossier .risk-number { font-weight: 400; }
 #dossier .risk-reading small { font-size: 12px; letter-spacing: 0; color: var(--fiche-secondaire); margin-left: 3px; }
 #dossier .risk-meter { position: relative; justify-self: center; width: 8px; height: 36px; border-radius: 8px; background: linear-gradient(#db7965, #efbc77 44%, #b5cbea 88%); }
-#dossier .risk-meter i { position: absolute; width: 20px; height: 2px; background: #ffffff; left: -6px; top: calc(100% - var(--risk,0) * 1%); transform: translateY(-50%); transition: top 350ms cubic-bezier(.2,.7,.2,1); }
+#dossier .risk-meter i { position: absolute; width: 14px; height: 2px; background: #ffffff; left: -3px; top: clamp(2px, calc(100% - var(--risk,0) * 1%), calc(100% - 2px)); transform: translateY(-50%); transition: top 350ms cubic-bezier(.2,.7,.2,1); }
 #dossier .risque .val { grid-column: 1 / -1; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
 #dossier .risque .v-now { font-size: 13px; font-weight: 500; }
 #dossier .risque .v-vers { display: none; }
@@ -1142,3 +1142,19 @@ body:not(.pret) #model-notice { display: none; }
 @media(max-width:720px), (max-height:500px) { #model-notice #layer-context { max-height: 1.4em; overflow: hidden; } #model-notice:has(details[open]) { max-width: min(300px,calc(100vw - 20px)); width: 300px; } #model-notice:has(details[open]) #layer-context { max-height: none; } #model-notice summary { min-height: 44px; } }
 
 @media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #loupe, #resultats { pointer-events: auto; } }
+body.comparaison-active #champ-recherche { caret-color: #b5cbea; }
+#model-notice details[open] { animation: beta-reveal 280ms ease-out; }
+@keyframes beta-reveal { from { opacity: .6; } to { opacity: 1; } }
+@media(max-width:720px) and (orientation:portrait) {
+  #calques, body.pret #calques { left: 12px; right: 12px; top: auto; bottom: max(116px,calc(env(safe-area-inset-bottom) + 100px)); transform: none; display: flex; flex-flow: row nowrap; gap: 8px; max-height: none; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; padding: 4px 0; }
+  #calques .calque { flex: 0 0 auto; min-height: 44px; padding: 10px 14px; border: 1px solid #ffffff25; border-radius: 24px; background: #080c12e8; white-space: nowrap; }
+  #calques .calque.actif { border-color: #b5cbea99; }
+  #dossier-risques { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  #dossier .risque summary { min-height: 118px; padding: 14px; row-gap: 5px; }
+  #dossier .risk-reading { font-size: 32px; }
+  body.dossier-ouvert #accroche { visibility: hidden; }
+  #dossier .risque .nom-crit { font-size: 12px; }
+  #dossier .actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  #dossier-comparer { grid-column: 1 / -1; min-height: 44px; }
+}
+@media(prefers-reduced-motion:reduce) { #model-notice details[open] { animation: none; } }
