@@ -18,8 +18,11 @@ Trois règles apprises en écrivant les contrôles qu'il lance :
     ressemble trait pour trait à un contrôle qui passe.
 """
 import os
+import json
+import hashlib
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
@@ -30,11 +33,15 @@ def lancer(nom, argv, env=None):
     r = subprocess.run(argv, cwd=RACINE, capture_output=True, text=True,
                        env={**os.environ, **(env or {})})
     etat = "OK   " if r.returncode == 0 else "ECHEC"
+    sortie = Path(os.environ["QA_SORTIE"])
+    (sortie / (nom.replace(" ", "_") + ".log")).write_text(
+        json.dumps({"command": argv, "exit_code": r.returncode}) + "\n" + r.stdout + r.stderr,
+        encoding="utf8")
     print(f"{etat}  {nom}  (code {r.returncode})")
     if r.returncode != 0:
         for ligne in (r.stdout + r.stderr).strip().splitlines()[-12:]:
             print("       | " + ligne)
-    return r.returncode
+    return int(r.returncode != 0)
 
 
 def trouver():
@@ -107,6 +114,17 @@ def autotest() -> int:
 
 
 if __name__ == "__main__":
+    sortie = Path(os.environ.setdefault("QA_SORTIE", tempfile.mkdtemp(prefix="terra-check-"))).resolve()
+    sortie.mkdir(parents=True, exist_ok=True)
+    os.environ["QA_SORTIE"] = str(sortie)
+    revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=RACINE, capture_output=True, text=True)
+    fichiers = ["index.html", "terra-menus.css", "package-lock.json"]
+    (sortie / "snapshot.json").write_text(json.dumps({
+        "revision": revision.stdout.strip(), "url": os.environ.get("URL0", "http://localhost:8080/"),
+        "sha256": {p: hashlib.sha256((RACINE / p).read_bytes()).hexdigest()
+                   for p in fichiers if (RACINE / p).exists()}
+    }, indent=2), encoding="utf8")
+    print("Preuves : " + str(sortie), flush=True)
     if "--autotest" in sys.argv:
         code = autotest()
         print("Le lanceur est porteur." if code == 0

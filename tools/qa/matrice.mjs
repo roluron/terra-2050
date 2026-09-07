@@ -22,12 +22,16 @@ const OUT = (process.env.QA_SORTIE || fs.mkdtempSync(os.tmpdir() + '/terra-qa-')
 fs.mkdirSync(OUT, { recursive: true });
 console.log('captures : ' + OUT);
 const URL0 = process.env.URL0 || 'http://localhost:8080/';
-const CH = process.env.QA_CHROMIUM || '/Users/robinmahieux/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing';
-const WK = process.env.QA_WEBKIT || '/Users/robinmahieux/Library/Caches/ms-playwright/webkit-2272/pw_run.sh';
+const CH = process.env.QA_CHROMIUM || chromium.executablePath();
+const WK = process.env.QA_WEBKIT || webkit.executablePath();
 for (const [nom, p] of [['QA_CHROMIUM', CH], ['QA_WEBKIT', WK]])
   if (!fs.existsSync(p)) { console.error(`Navigateur introuvable (${nom}) : ${p}`); process.exit(2); }
 const results = [];
-const ok = (name, cond, detail = '') => { results.push(`${cond ? 'PASS' : 'FAIL'} ${name}${detail ? ' — ' + detail : ''}`); };
+const ok = (name, cond, detail = '') => {
+  const line = `${cond ? 'PASS' : 'FAIL'} ${name}${detail ? ' — ' + detail : ''}`;
+  results.push(line); console.log(line);
+  fs.writeFileSync(OUT + 'results.txt', results.join('\n'));
+};
 
 async function open(bt, ctxOpts = {}, { init, route, hash = '' } = {}) {
   const browser = await bt.launch({ executablePath: bt === webkit ? WK : CH });
@@ -152,7 +156,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await page.click('#bouton-entree'); await page.waitForTimeout(2000);
   await page.keyboard.press('Meta+k'); await page.keyboard.type('Bang'); await page.waitForTimeout(800);
   const li = await page.$$eval('#resultats li', l => l.map(x => x.textContent.trim()));
-  ok('E panne données : recherche ne plante pas', true, JSON.stringify(li));
+  ok('E panne données : recherche ne plante pas', li.length === 1 && /No city found|Aucune ville/.test(li[0]) && errs.every(e => !e.startsWith('pageerror')), JSON.stringify(li));
   ok('E panne données : erreurs = 404 + 1 message', errs.filter(e => e.startsWith('données')).length === 1 && errs.filter(e => e.startsWith('pageerror')).length === 0, errs.join(' | '));
   await page.screenshot({ path: OUT + 'E-panne.png' });
   await browser.close();

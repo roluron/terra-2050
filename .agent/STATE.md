@@ -1,5 +1,16 @@
 CURRENT GOAL: lancement sans bug (voir GOAL.md)
 
+ACTIVE COMPLETION PASS 2026-09-07: fresh isolated clone of PR #1 at 3cf2b786.
+Historical PASS entries below describe September 2, not this revision.
+Baseline: i18n tests pass; assets tests cannot start until missing Pillow is installed.
+QA dependencies were undeclared and browser paths machine-specific; repair in scope.
+Physical device route: no Xcode application; xcrun devicectl reports unavailable.
+Next: run baseline WebKit/Chromium matrix, exercise new interactions and failure paths,
+fix findings, obtain independent review, integrate and verify deployment.
+Resource governor: strategy review after 30 minutes; at most 2 agents concurrently,
+4 total; no additional paid API/assets/compute spend. Account hard quota UNKNOWN.
+Review frozen final snapshot; repeat only for concrete findings or changed scope.
+
 WHAT WORKS (verifie 2026-09-02, Playwright, site public inclus)
 - Matrice de lancement 25/25 : desktop 1280x720 et 1440x900, iPhone 15 Pro portrait
   et paysage, iPad Pro 11, prefers-reduced-motion, panne de donnees (places.json 404),

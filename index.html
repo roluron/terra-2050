@@ -244,7 +244,7 @@
     </nav>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
-<div id="etiquettes" aria-hidden="true"></div>
+<div id="etiquettes"></div>
 <div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span></div>
 
 <div id="util" class="panneau">
@@ -1931,6 +1931,7 @@ function afficherResultats(){
   ouvrirListe();
 }
 function choisirLieu(l){
+  cacherSurvol();
   // arrivé par un lien partagé : la ville qu'on choisit ensuite ouvre le duel
   if (defiLien && l !== defiLien){ lieuVs = defiLien; defiLien = null; }
   else if (lieuVs === l) lieuVs = null;
@@ -2042,6 +2043,7 @@ curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 addEventListener('pointercancel', () => document.body.classList.remove('cale-annee'));
 curseur.addEventListener('input', () => {
+  cacherSurvol();
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
   odoAn.set(an); majDistanceAn();
@@ -2462,11 +2464,11 @@ function majDossier(){
   const dossierNeuf = tracerTrajectoire.animer;
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (langue === 'en' ? 'W' : 'O')} · ${nomPays(l[1]).toUpperCase()}`;
+  dossierEl.classList.toggle('sans-donnees', !estPays(l) && !l[7]);
   if (estPays(l)){
     majDossierPays(l, an, t, dossierNeuf);
     return;
   }
-  dossierEl.classList.toggle('sans-donnees', !l[7]);
   if (!l[7]){
     // sentinelle : île ou atoll hors des grilles — pas de score inventé
     document.getElementById('dossier-annee').textContent = an;   // sinon l'année de la fiche précédente restait
@@ -2955,6 +2957,8 @@ function piegerFocus(boite){
 }
 function ouvrirStory(){
   if (!lieuDossier) return;
+  stopperBalayage();
+  majLien(true);
   const t = T();
   document.getElementById('story-titre').textContent = t.storyTitre;
   const libelles = [t.optPlanete, t.optTrajectoire, t.optAxes, t.optPop];
@@ -3299,6 +3303,8 @@ boutonSon.addEventListener('click', () => {
    construits en JS. Le choix est mémorisé et pilote aussi Intl.DisplayNames.
    ===================================================================== */
 function traduire(){
+  document.getElementById('survol').classList.remove('visible', 'fige');
+  document.body.classList.remove('sur-lieu');
   document.documentElement.lang = langue;
   document.title = langue === 'en'
     ? 'TERRA／2050 — Will your city still be livable in 2050?'
@@ -3718,21 +3724,30 @@ function cacherSurvol(){
   document.body.classList.remove('sur-lieu');
 }
 {
-  let presse = null;   // { x, y, t } — pour distinguer le tap de la traînée
+  let presse = null;
+  const pointeurs = new Set();
   toile.addEventListener('pointerdown', e => {
-    presse = { x: e.clientX, y: e.clientY, t: performance.now() };
+    pointeurs.add(e.pointerId);
+    presse = pointeurs.size === 1
+      ? { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), bouge: false }
+      : null;
     if (e.pointerType !== 'mouse') cacherSurvol();
   });
   toile.addEventListener('pointermove', e => {
+    if (presse && e.pointerId === presse.id && Math.hypot(e.clientX - presse.x, e.clientY - presse.y) > 6){
+      presse.bouge = true;
+      cacherSurvol();
+    }
     if (e.pointerType !== 'mouse') return;            // au doigt, c'est le tap qui lit
-    if (presse){ if (Math.hypot(e.clientX - presse.x, e.clientY - presse.y) > 6) cacherSurvol(); return; }
+    if (pointeurs.size) return;
     montrerSurvol(sousPointeur(e.clientX, e.clientY), e.clientX, e.clientY, false);
   });
   toile.addEventListener('pointerleave', () => { if (!survolFige) cacherSurvol(); });
-  toile.addEventListener('pointercancel', () => { presse = null; });
+  toile.addEventListener('pointercancel', e => { pointeurs.delete(e.pointerId); presse = null; });
   toile.addEventListener('pointerup', e => {
+    pointeurs.delete(e.pointerId);
     const p = presse; presse = null;
-    if (!p || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6 || performance.now() - p.t > 500) return;
+    if (!p || p.id !== e.pointerId || pointeurs.size || p.bouge || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6 || performance.now() - p.t > 500) return;
     const s = sousPointeur(e.clientX, e.clientY);
     if (e.pointerType === 'mouse'){
       const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
@@ -3751,7 +3766,9 @@ const etiquettesEl = document.getElementById('etiquettes');
 const ETIQUETTES_MAX = 36, etiquettes = [];
 for (let i = 0; i < ETIQUETTES_MAX; i++){
   const b = document.createElement('button');
-  b.type = 'button'; b.className = 'etiquette'; b.tabIndex = -1; b.hidden = true;
+  b.type = 'button'; b.className = 'etiquette'; b.hidden = true;
+  b.addEventListener('pointerenter', () => { controles.autoRotate = false; });
+  b.addEventListener('focus', () => { controles.autoRotate = false; });
   b.addEventListener('click', () => { const l = LIEUX[parseInt(b.dataset.i, 10)]; if (l){ cacherSurvol(); choisirLieu(l); } });
   etiquettesEl.appendChild(b); etiquettes.push(b);
 }
@@ -3760,7 +3777,7 @@ function majEtiquettes(){
   if (!VILLES_VEC || !document.body.classList.contains('pret')) return;
   const c = camera.position, d = c.length();
   // rien à recalculer tant que ni la caméra, ni la fenêtre, ni la langue n'ont bougé
-  const sig = `${c.x.toFixed(4)},${c.y.toFixed(4)},${c.z.toFixed(4)},${innerWidth},${innerHeight},${langue}`;
+  const sig = `${c.x.toFixed(4)},${c.y.toFixed(4)},${c.z.toFixed(4)},${innerWidth},${innerHeight},${langue},${document.body.className}`;
   if (sig === signatureEtiquettes) return;
   signatureEtiquettes = sig;
   _cam.copy(c).divideScalar(d);
@@ -3772,7 +3789,7 @@ function majEtiquettes(){
                   document.getElementById('calques'), document.getElementById('timeline'),
                   document.getElementById('titre'), document.getElementById('recherche'), document.getElementById('util')]
     .filter(Boolean).map(e => e.getBoundingClientRect()).filter(r => r.width > 0);
-  const sousChrome = (x, y) => caches.some(r => x > r.left - 8 && x < r.right + 8 && y > r.top - 8 && y < r.bottom + 8);
+  const sousChrome = (x, y, w) => caches.some(r => x + w / 2 > r.left - 8 && x - w / 2 < r.right + 8 && y > r.top - 8 && y - 44 < r.bottom + 8);
   const places = [];                                      // [x, y, largeur, i, alpha]
   for (let k = 0; k < ORDRE_POP.length && places.length < ETIQUETTES_MAX; k++){
     const i = ORDRE_POP[k], l = LIEUX[i];
@@ -3782,10 +3799,10 @@ function majEtiquettes(){
     if (face < horizon + 0.02) continue;
     _pt.set(vx, vy, vz).project(camera);
     const x = (_pt.x + 1) / 2 * innerWidth, y = (1 - _pt.y) / 2 * innerHeight;
-    if (x < 0 || x > innerWidth || y < 0 || y > innerHeight || sousChrome(x, y)) continue;
-    const w = nomVille(l).length * 8 + 16;
+    const w = Math.max(44, nomVille(l).length * 8 + 16);
+    if (x - w / 2 < 0 || x + w / 2 > innerWidth || y < 44 || y > innerHeight || sousChrome(x, y, w)) continue;
     let libre = true;
-    for (const p of places){ if (Math.abs(p[0] - x) < (p[2] + w) / 2 && Math.abs(p[1] - y) < 20){ libre = false; break; } }
+    for (const p of places){ if (Math.abs(p[0] - x) < (p[2] + w) / 2 && Math.abs(p[1] - y) < 44){ libre = false; break; } }
     if (!libre) continue;   // la plus peuplée garde la place, l'autre attend qu'on s'approche
     // fondu au limbe : l'étiquette s'éteint avant de passer derrière la terre
     const alpha = Math.min(1, (face - horizon) / (1 - horizon) / 0.22);

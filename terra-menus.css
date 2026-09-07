@@ -1010,7 +1010,7 @@ body.dossier-ouvert #recherche {
   display: flex; align-items: center; justify-content: center;
   background: rgba(0, 0, 0, 0.35); }
 #story-popup[hidden] { display: none; }
-.story-carte { width: min(620px, 92vw); }
+.story-carte { width: min(620px, 92vw); background: #02040a; }
 .story-corps { display: flex; gap: 28px; margin-top: 20px; align-items: stretch; }
 /* hauteur fluide partout : une fenetre basse, de bureau comme de telephone,
    ne doit jamais pousser le bouton de partage sous la ligne de flottaison */
@@ -1185,7 +1185,7 @@ body:not(.pret) #scrim-dossier {
 @media (max-width: 720px) {
   #story-popup { align-items: flex-start; background: rgba(0, 0, 0, 0.72);
     padding: max(14px, env(safe-area-inset-top)) 0 max(14px, env(safe-area-inset-bottom)); }
-  .story-carte { background: rgba(2, 4, 10, 0.86); }
+  .story-carte { background: #02040a; }
   #story-partager { align-self: stretch; text-align: center; min-height: 48px; margin-top: 14px; }
   .story-opt { min-height: 44px; }
   #pedago { background: rgba(0, 0, 0, 0.55); }
@@ -1342,6 +1342,7 @@ body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
   opacity: 0; transition: opacity 0.18s var(--ease); will-change: transform; }
 #survol.visible { opacity: 1; }
 #survol.fige { pointer-events: auto; cursor: pointer; }
+#survol.fige { min-height: 44px; box-sizing: border-box; }
 #survol .s-nom { font-weight: 600; }
 #survol .s-indice { margin-left: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
 #survol .s-indice:empty { display: none; }
@@ -1351,6 +1352,7 @@ body.sur-lieu #scene { cursor: pointer; }
 #etiquettes { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
 body:not(.pret) #etiquettes { display: none; }
 .etiquette { position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer;
+  min-width: 44px; min-height: 44px;
   background: none; border: 0; padding: 3px 6px 10px; margin: 0;
   transform: translate(-50%, -100%); will-change: transform, opacity;
   color: rgba(255, 253, 226, 0.74); font-family: var(--police); font-weight: 500;
@@ -1361,7 +1363,9 @@ body:not(.pret) #etiquettes { display: none; }
   margin-left: -2px; border-radius: 50%; background: rgba(255, 253, 226, 0.7);
   box-shadow: 0 0 6px rgba(255, 253, 226, 0.45); }
 .etiquette:hover { color: var(--texte); }
+.etiquette:focus-visible { outline: 2px solid var(--texte); outline-offset: 2px; border-radius: 6px; }
 #dossier .comparer { align-self: flex-start; background: none; border: 0; padding: 2px 0;
+  min-width: 44px; min-height: 44px;
   margin: -2px 0 0; cursor: pointer; font-family: var(--police); font-size: 12.5px;
   color: var(--muter); border-bottom: 1px solid var(--hairline);
   transition: color 0.2s var(--ease), border-color 0.2s var(--ease); }

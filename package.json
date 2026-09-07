@@ -4,6 +4,11 @@
   "private": true,
   "description": "TERRA//2050 — globe tactique des risques climatiques (Three.js + GSAP 3 + Howler)",
   "scripts": {
-    "dev": "npx --yes serve --no-clipboard --listen 8080 ."
+    "dev": "serve --no-clipboard --listen 8080 .",
+    "qa:install": "playwright install chromium webkit"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2",
+    "serve": "14.2.6"
   }
 }

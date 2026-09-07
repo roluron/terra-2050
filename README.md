@@ -19,6 +19,7 @@ Le site est **entièrement statique** : pas de build, pas de bundler, pas de bac
 Les trois librairies (Three.js r160, GSAP 3, Howler) sont vendorées dans `assets/lib/`.
 
 ```bash
+npm ci
 npm run dev
 ```
 
@@ -242,9 +243,18 @@ volontairement. Un garde-fou qu'on n'a jamais vu refuser ne prouve rien.
 
 ## Vérification
 
+Prérequis : Node.js 20 ou supérieur, Python 3.9 ou supérieur.
+
 ```bash
-python3 tools/check.py                                            # rapide
-URL0=https://roluron.github.io/terra-2050/ python3 tools/check.py --qa   # tout
+npm ci
+npm run qa:install
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-qa.txt
+```
+
+```bash
+.venv/bin/python tools/check.py                                            # rapide
+URL0=https://roluron.github.io/terra-2050/ .venv/bin/python tools/check.py --qa # tout
 ```
 
 Un seul geste, un seul code de sortie. Le lanceur **découvre** les contrôles
