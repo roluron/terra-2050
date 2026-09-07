@@ -2738,7 +2738,6 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
   if (!lieuDossier) return;
   // le balayage d ouverture avance encore : sans cela le lien partageait une
   // annee de plus que celle lue a l ecran
-  stopperBalayage();
   majLien(true);
   const l = lieuDossier, an = etat.annee;
   const indice = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
@@ -2970,7 +2969,6 @@ function piegerFocus(boite){
 }
 function ouvrirStory(){
   if (!lieuDossier) return;
-  stopperBalayage();
   majLien(true);
   const t = T();
   document.getElementById('story-titre').textContent = t.storyTitre;
@@ -3006,7 +3004,6 @@ addEventListener('keydown', e => {
 });
 async function partagerStory(){
   if (!lieuDossier) return;
-  stopperBalayage();
   majLien(true);
   const fichier = storyFichier;
   if (!fichier){ await majApercuStory(); return; }

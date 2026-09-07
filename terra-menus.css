@@ -1015,6 +1015,7 @@ body.pret #dossier #timeline .an { display: block; width: 100%; font-family: var
 #scrim-dossier.ouvert { opacity: 1; }
 body:not(.pret) #dossier { visibility: hidden; }
 body.dossier-ouvert #recherche { padding-right: 78px; }
+#recherche { z-index: 31; }
 #accroche { position: fixed; bottom: 24px; left: 24px; max-width: min(360px, calc(100vw - 48px)); z-index: 21; margin: 0; }
 @media(max-width:720px) {
   #accroche { top: 72px; bottom: auto; left: 12px; max-width: calc(100vw - 24px); }
