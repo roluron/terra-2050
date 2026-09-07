@@ -141,7 +141,12 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
 {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
   await page.waitForSelector('#voile.pret', { timeout: 30000 }); await page.click('#bouton-entree');
-  await page.waitForFunction(() => ['recherche', 'calques', 'util', 'timeline', 'titre'].every(id => +getComputedStyle(document.getElementById(id)).opacity > 0.9), undefined, { timeout: 10000 });
+  // on attend l ETAT, pas une duree : sur un runner sans GPU les premieres
+  // images durent 200 ms et un fondu d une seconde n est pas fini a 1,2 s.
+  // L exigence ne bouge pas (tout le chrome a plus de 0,9), seul le delai
+  // maximal est large ; a l echeance, la mesure ci-dessous echoue comme avant.
+  await page.waitForFunction(() => ['recherche', 'calques', 'util', 'timeline', 'titre']
+    .every(id => +getComputedStyle(document.getElementById(id)).opacity > 0.9), null, { timeout: 15000 }).catch(() => {});
   const c = await chrome(page);
   ok('D reduced-motion chrome visible', c.every(x => x.op > 0.9), JSON.stringify(c.map(x => x.id + ':' + x.op)));
   await search(page, 'Paris');
@@ -165,7 +170,9 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
 // ---------- F. WebGL absent ----------
 {
   const { browser, page } = await open(chromium, { viewport: { width: 1280, height: 800 } }, { init: () => { const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); }; } });
-  await page.waitForFunction(() => getComputedStyle(document.getElementById('voile')).visibility === 'hidden', undefined, { timeout: 10000 });
+  // meme regle : le voile met 0,8 s a disparaitre une fois le module execute,
+  // et le module s execute tard sur une machine lente. On attend l etat.
+  await page.waitForFunction(() => getComputedStyle(document.getElementById('voile')).visibility === 'hidden', null, { timeout: 15000 }).catch(() => {});
   const sec = await page.$eval('#secours', s => ({ vis: getComputedStyle(s).display !== 'none' && getComputedStyle(s).opacity !== '0', txt: s.innerText.slice(0, 80) }));
   const voile = await page.$eval('#voile', v => getComputedStyle(v).visibility);
   ok('F WebGL absent : secours visible, voile retiré', sec.vis && voile === 'hidden', JSON.stringify({ sec, voile }));
