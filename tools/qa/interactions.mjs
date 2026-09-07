@@ -83,8 +83,12 @@ for (const [name, type, options] of [
       await page.goBack(); await page.waitForTimeout(1200);
       const back = await page.locator('#dossier').evaluate(e => e.classList.contains('ouvert'));
       assert.equal(back, false);
+      await page.locator('#dossier-story').evaluate(e => e.focus());
+      assert.equal(await page.locator('#dossier').evaluate(e => e.contains(document.activeElement)), false);
       await page.goForward(); await page.waitForTimeout(1800);
       assert.equal(await page.locator('#dossier').evaluate(e => e.classList.contains('ouvert')), true);
+      await page.locator('#dossier-story').focus();
+      assert.equal(await page.locator('#dossier-story').evaluate(e => e === document.activeElement), true);
     });
     await check(`${name}: city labels open a diagnosis`, async () => {
       await page.click('#dossier-croix'); await page.waitForTimeout(2500);

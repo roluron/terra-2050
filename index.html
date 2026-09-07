@@ -295,10 +295,10 @@
 </div>
 
 <div id="scrim-dossier"><div class="v-grain" aria-hidden="true"></div></div>
-<button id="dossier-croix" aria-label="Fermer / Close">
+<button id="dossier-croix" aria-label="Fermer / Close" inert>
   <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1 L11 11 M11 1 L1 11"/></svg>
 </button>
-<aside id="dossier" role="region" aria-label="Diagnostic du lieu">
+<aside id="dossier" role="region" aria-label="Diagnostic du lieu" inert>
   <p id="annonce" class="lecteur-seul" role="status" aria-live="polite"></p>
   <div class="coords" id="dossier-coords"></div>
   <div class="frappe" id="dossier-frappe"></div>
@@ -2651,6 +2651,8 @@ function annoncer(){
    permet de la reconnaitre apres un F5. */
 let empilerProchaine = false, interdirePile = false;
 function ouvrirDossier(l){
+  dossierEl.inert = false;
+  document.getElementById('dossier-croix').inert = false;
   lieuDossier = l;
   tracerTrajectoire.animer = true;
   dossierEl.scrollTop = 0;   // une fiche lue jusqu'en bas ouvrait la suivante déjà défilée
@@ -2675,6 +2677,8 @@ function majCentreDossier(){
 addEventListener('resize', () => document.body.classList.contains('dossier-ouvert') && majCentreDossier());
 const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
 function fermerDossier(depuisChamp){
+  dossierEl.inert = true;
+  document.getElementById('dossier-croix').inert = true;
   lieuDossier = null;
   derniereAnnonce = '';   // rouvrir la meme ville doit reparler au lecteur d ecran
   // fermeture douce (on repart chercher) : la camera reste ou elle est,
