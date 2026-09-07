@@ -1,3 +1,4 @@
+import { enter as enterEarth } from './entrance.cjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import assert from 'node:assert/strict';
@@ -26,10 +27,10 @@ for (const [name, type, options] of [
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
     await page.goto(url);
-    await page.waitForSelector('#voile.pret').catch(error => {
+    await page.waitForSelector('#voile.pret', { state: 'attached' }).catch(error => {
       console.error('Startup errors:', errors); throw error;
     });
-    await page.click('#bouton-entree');
+    await enterEarth(page);
     await page.waitForTimeout(2000);
     await check(`${name}: closed city controls stay outside keyboard navigation`, async () => {
       for (const id of ['dossier-story', 'dossier-croix']) {
@@ -84,7 +85,7 @@ for (const [name, type, options] of [
     });
     await check(`${name}: browser back closes dossier; forward reopens`, async () => {
       await page.goto(url);
-      await page.waitForSelector('#voile.pret'); await page.click('#bouton-entree');
+      await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
       await search('Paris');
       await page.goBack(); await page.waitForTimeout(1200);
       const back = await page.locator('#dossier').evaluate(e => e.classList.contains('ouvert'));
@@ -133,7 +134,7 @@ await check('iphone SE: search remains tappable after history and story', async 
   const browser = await webkit.launch({ executablePath: webkit.executablePath() });
   try {
     const page = await browser.newPage({ ...devices['iPhone SE'], locale: 'en-US' });
-    await page.goto(url); await page.waitForSelector('#voile.pret'); await page.click('#bouton-entree');
+    await page.goto(url); await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
     await page.click('#champ-recherche'); await page.fill('#champ-recherche', 'Paris');
     await page.getByRole('option').filter({ hasText: 'Paris' }).first().click();
     await page.waitForTimeout(4200);

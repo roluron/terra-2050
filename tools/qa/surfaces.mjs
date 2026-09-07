@@ -1,3 +1,4 @@
+import { enter as enterEarth } from './entrance.cjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -10,7 +11,7 @@ const browser=await engine.launch({executablePath:engine.executablePath()});
 try{
  const context=await browser.newContext({...options,locale:'en-US',geolocation:{latitude:48.8566,longitude:2.3522},permissions:['geolocation']});
  page=await context.newPage();const activate=selector=>name==='iphone'?page.locator(selector).tap():page.click(selector); const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(process.env.URL0||'http://localhost:8080/');await page.waitForSelector('#voile.pret');await page.click('#bouton-entree');await page.waitForTimeout(1800);
+ await page.goto(process.env.URL0||'http://localhost:8080/');await page.waitForSelector('#voile.pret', { state: 'attached' });await enterEarth(page);await page.waitForTimeout(1800);
  await page.keyboard.press('Meta+k');assert.equal(await page.locator('#champ-recherche').evaluate(e=>e===document.activeElement),true);
  await page.fill('#champ-recherche','Paris');await page.locator('#champ-recherche').dispatchEvent('keydown',{key:'Enter',code:'Enter',isComposing:true});
  assert.equal(await page.locator('#dossier').evaluate(e=>e.classList.contains('ouvert')),false);

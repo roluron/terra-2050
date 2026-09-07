@@ -183,6 +183,20 @@
 </style>
 </head>
 <body>
+<dialog id="earth-shell" lang="en" aria-label="A letter from Earth">
+  <canvas id="earth-orb" aria-hidden="true"></canvas>
+  <main id="earth-letter-main">
+    <h1 tabindex="-1">Hello human.</h1>
+    <div class="letter" id="letter">
+      <p>You leave a trace on everything you touch.<br>Including me. You can blame the corporations. The governments. Each other. You can leave it all until tomorrow. But tomorrow is already taking shape. I will be here for millions of years. I wish I could say the same for you.</p>
+      <p class="signature">Earth.</p>
+    </div>
+    <div class="invitation"><button id="future" type="button" tabindex="-1">See your future</button></div>
+  </main>
+  <div id="earth-recovery" role="status" hidden><p>The globe is taking longer to arrive.</p><button type="button" id="earth-retry">Try again</button></div>
+</dialog>
+<link rel="stylesheet" href="./earth-letter.css">
+<script type="module" src="./earth-letter.js"></script>
 <canvas id="scene"></canvas>
 
 <!-- voile d'entrée : sert aussi de geste utilisateur pour l'audio -->
@@ -336,6 +350,7 @@
 </script>
 <script type="module">
 import * as THREE from 'three';
+import { createEarthSurface } from './earth-surface.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* =====================================================================
@@ -925,6 +940,7 @@ try {
   // le message de secours EST la reponse : relancer l erreur la faisait
   // remonter en exception non capturee dans la console du visiteur
   document.getElementById('secours').style.display = 'flex';
+  document.getElementById('earth-shell').close();
   document.getElementById('voile').classList.add('cache');
   console.warn('WebGL indisponible :', e && e.message);
 }
@@ -3516,6 +3532,7 @@ function peutEntrer(){
   document.getElementById('jauge').textContent = '100%';
   document.getElementById('v-barre-fill').style.width = '100%';
   document.getElementById('voile').classList.add('pret');
+  window.dispatchEvent(new Event('terra-ready'));
   if (donneesPretes) document.body.classList.remove('villes-en-attente');
 }
 
@@ -3560,6 +3577,30 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
   revelerChrome();
 });
+
+let earthSurface;
+const originalRotationSpeed = controles.autoRotateSpeed;
+window.terraIntro = {
+  ready: () => texturesPretes,
+  enter() {
+    if (!texturesPretes) return false;
+    document.getElementById('bouton-entree').click();
+    if (!lieuDossier) {
+      controles.autoRotate = !MOINS_ANIM;
+      controles.autoRotateSpeed = 1.15;
+    }
+    if (!earthSurface) {
+      try { earthSurface = createEarthSurface(texMasque.image, camera, latLonVersVec3); }
+      catch { earthSurface = () => []; }
+    }
+    return true;
+  },
+  points: () => earthSurface?.() || [],
+  complete() {
+    gsap.to(controles, { autoRotateSpeed: originalRotationSpeed, duration: MOINS_ANIM ? 0 : 2, ease: EASE });
+  }
+};
+if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
 
 /* =====================================================================
    VOILE — champ de lignes génératif, tickers binaires, wordmark en

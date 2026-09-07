@@ -1,3 +1,4 @@
+import { enter as enterEarth } from './entrance.cjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import assert from 'node:assert/strict';
@@ -38,8 +39,8 @@ for (const [name, type, options, native, mode] of [
       } });
     }, { native, mode });
     const page = await context.newPage();
-    await page.goto(url); await page.waitForSelector('#voile.pret');
-    await page.click('#bouton-entree'); await page.waitForTimeout(1500);
+    await page.goto(url); await page.waitForSelector('#voile.pret', { state: 'attached' });
+    await enterEarth(page); await page.waitForTimeout(1500);
     await page.click('#champ-recherche'); await page.fill('#champ-recherche', 'Paris');
     await page.getByRole('option').filter({ hasText: 'Paris' }).first().click();
     await page.click('#dossier-story');

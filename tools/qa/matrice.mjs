@@ -1,3 +1,4 @@
+import { enter as enterEarth } from './entrance.cjs';
 /* Matrice de lancement TERRA/2050 — 25 controles sur 7 configurations.
  *
  *   URL0=https://roluron.github.io/terra-2050/ node tools/qa/matrice.mjs
@@ -46,7 +47,7 @@ async function open(bt, ctxOpts = {}, { init, route, hash = '' } = {}) {
   await page.goto(URL0 + hash, { waitUntil: 'load' });
   return { browser, page, errs };
 }
-const enter = async (page) => { await page.waitForSelector('#voile.pret', { timeout: 30000 }); await page.click('#bouton-entree'); await page.waitForTimeout(2500); };
+const enter = async (page) => { await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 }); await enterEarth(page); await page.waitForTimeout(2500); };
 const search = async (page, q, mobile) => {
   if (mobile) await page.tap('#champ-recherche'); else await page.keyboard.press('Meta+k');
   await page.waitForTimeout(500); await page.keyboard.type(q); await page.waitForTimeout(600); await page.keyboard.press('Enter'); await page.waitForTimeout(2200);
@@ -140,7 +141,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
 // ---------- D. reduced motion ----------
 {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
-  await page.waitForSelector('#voile.pret', { timeout: 30000 }); await page.click('#bouton-entree');
+  await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 }); await enterEarth(page);
   // on attend l ETAT, pas une duree : sur un runner sans GPU les premieres
   // images durent 200 ms et un fondu d une seconde n est pas fini a 1,2 s.
   // L exigence ne bouge pas (tout le chrome a plus de 0,9), seul le delai
@@ -157,9 +158,9 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
 // ---------- E. panne données ----------
 {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1280, height: 800 } }, { route: { url: '**/data/places.json' } });
-  const pret = await page.waitForSelector('#voile.pret', { timeout: 30000 }).then(() => true).catch(() => false);
+  const pret = await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 }).then(() => true).catch(() => false);
   ok('E panne données : voile prêt', pret);
-  await page.click('#bouton-entree'); await page.waitForTimeout(2000);
+  await enterEarth(page); await page.waitForTimeout(2000);
   await page.keyboard.press('Meta+k'); await page.keyboard.type('Bang'); await page.waitForTimeout(800);
   const li = await page.$$eval('#resultats li', l => l.map(x => x.textContent.trim()));
   ok('E panne données : recherche ne plante pas', li.length === 1 && /No city found|Aucune ville/.test(li[0]) && errs.every(e => !e.startsWith('pageerror')), JSON.stringify(li));
@@ -189,7 +190,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   const after = await page.evaluate(() => [document.getElementById('bouton-son').textContent, document.documentElement.lang]);
   ok('G son + langue mémorisés après rechargement', before[0] === after[0] && before[1] === after[1] && /off/i.test(after[0]), JSON.stringify({ before, after }));
   // double clic Explorer
-  await page.reload(); await page.waitForSelector('#voile.pret'); await page.$eval('#bouton-entree', b => { b.click(); b.click(); b.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })); b.click(); });
+  await page.reload(); await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page, true);
   await page.waitForTimeout(2500);
   const nAmb = await page.evaluate(() => Howler._howls.filter(h => h.playing()).length);
   ok('G triple clic Explorer : une seule boucle audio', nAmb <= 2, 'howls playing=' + nAmb);
