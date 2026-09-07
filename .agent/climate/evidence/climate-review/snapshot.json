@@ -1,0 +1,11 @@
+{
+  "revision": "cd4ae3d4c90c21b1ba11647f2671c38daac064b6",
+  "clean": true,
+  "sourceHashes": {
+    "index.html": "47b6f82f861894eaac93e652d19485a63944c3b9bd30b9281aed736fe1908051",
+    "terra-menus.css": "3c6604e2edb55438547b3dd05c2546d687fa888e74b3a84354e1565517203c90",
+    "data/places.bin": "b5ec2836fa6ad2c25892eaf4aed520cf438540ede98054f651d930608758159d",
+    "data/pays.json": "8898c69770ed3616569231038097917f959d40555c36b7d54aa2bf498c328bab"
+  },
+  "server": "http://localhost:8094"
+}

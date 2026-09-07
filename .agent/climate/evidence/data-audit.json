@@ -1,0 +1,191 @@
+{
+  "count": 34099,
+  "valid": 34082,
+  "nodata": 17,
+  "errors": [],
+  "sizes": {
+    "places": 818376,
+    "thermal": 204594,
+    "tide": 68198
+  },
+  "unchanged": {
+    "thermique": 1815,
+    "eau": 15928,
+    "feux": 7712,
+    "mer": 28836,
+    "fleuves": 34082,
+    "stabilite": 72
+  },
+  "scoreRange": {
+    "2026": [
+      12,
+      100
+    ],
+    "2050": [
+      10,
+      100
+    ]
+  },
+  "comparisons": [
+    {
+      "id": 7,
+      "name": "Hô Chi Minh Ville",
+      "country": "VN",
+      "population": 14002598,
+      "lat": 10.82,
+      "lon": 106.63,
+      "nodata": false,
+      "scores": {
+        "2026": 37,
+        "2050": 23
+      },
+      "detail": {
+        "2026": {
+          "penalties": {
+            "thermique": 0.72,
+            "eau": 0.0,
+            "feux": 0.456,
+            "mer": 0.76,
+            "fleuves": 0.732,
+            "stabilite": 0.228
+          },
+          "weightedPenalty": 0.5096,
+          "worstPenalty": 0.76,
+          "worstAxes": [
+            "mer"
+          ]
+        },
+        "2050": {
+          "penalties": {
+            "thermique": 0.82,
+            "eau": 0.0,
+            "feux": 0.456,
+            "mer": 0.944,
+            "fleuves": 0.732,
+            "stabilite": 0.404
+          },
+          "weightedPenalty": 0.5895199999999999,
+          "worstPenalty": 0.944,
+          "worstAxes": [
+            "mer"
+          ]
+        }
+      },
+      "raw": {
+        "f50": 0.216,
+        "f5": 0.548,
+        "medianElevation": 3.0,
+        "subsidence2050": 0.17,
+        "riverFraction": 0.588,
+        "riverP90": 4.1,
+        "countryPopDelta": 8,
+        "tide": 1.94,
+        "thermalDays": {
+          "heat32_2026": 300.0,
+          "heat32_2050": 300.0,
+          "frost2026": 0.0,
+          "frost2050": 0.0,
+          "heat40_2026": 76.08,
+          "heat40_2050": 120.0
+        }
+      }
+    },
+    {
+      "id": 191,
+      "name": "Paris",
+      "country": "FR",
+      "population": 2138551,
+      "lat": 48.85,
+      "lon": 2.35,
+      "nodata": false,
+      "scores": {
+        "2026": 66,
+        "2050": 63
+      },
+      "detail": {
+        "2026": {
+          "penalties": {
+            "thermique": 0.108,
+            "eau": 0.304,
+            "feux": 0.256,
+            "mer": 0.0,
+            "fleuves": 0.476,
+            "stabilite": 0.232
+          },
+          "weightedPenalty": 0.21319999999999997,
+          "worstPenalty": 0.476,
+          "worstAxes": [
+            "fleuves"
+          ]
+        },
+        "2050": {
+          "penalties": {
+            "thermique": 0.104,
+            "eau": 0.356,
+            "feux": 0.328,
+            "mer": 0.0,
+            "fleuves": 0.476,
+            "stabilite": 0.448
+          },
+          "weightedPenalty": 0.25624,
+          "worstPenalty": 0.476,
+          "worstAxes": [
+            "fleuves"
+          ]
+        }
+      },
+      "raw": {
+        "f50": 0.0,
+        "f5": 0.0,
+        "medianElevation": 87.6,
+        "subsidence2050": 0.0,
+        "riverFraction": 0.192,
+        "riverP90": 9.2,
+        "countryPopDelta": 2,
+        "tide": 0.0,
+        "thermalDays": {
+          "heat32_2026": 5.88,
+          "heat32_2050": 11.76,
+          "frost2026": 41.57,
+          "frost2050": 35.29,
+          "heat40_2026": 0.0,
+          "heat40_2050": 0.0
+        }
+      }
+    }
+  ],
+  "nodataCities": [
+    "Dededo Village",
+    "Moutsamoudou",
+    "Punaauia",
+    "Kingstown",
+    "Sainte-Anne",
+    "Yigo Village",
+    "Ponta Delgada",
+    "Tamuning-Tumon-Harmon Village",
+    "Tamuning",
+    "Mangilao Village",
+    "Funafuti",
+    "Yaren",
+    "Jamestown",
+    "Alofi",
+    "Flying Fish Cove",
+    "Adamstown",
+    "Plymouth"
+  ],
+  "hashes": {
+    "places.bin": "b5ec2836fa6ad2c25892eaf4aed520cf438540ede98054f651d930608758159d",
+    "places.json": "97a2ee63a8cb5986bbc90fe9d0fb7b1ff6a37605707d9ceba217da99d38c9c07",
+    "thermo.bin": "56a327e01a79eb16a2aec9dd2dcfa1f5acd5dfe9990791c31ec28cb7f132d8e7",
+    "maree.bin": "0887280bbdd523e8b2f0000b5d1d4374cf2d5717cf3b5e4319e99d945b49ccfd",
+    "pays.json": "8898c69770ed3616569231038097917f959d40555c36b7d54aa2bf498c328bab"
+  },
+  "validations": [
+    "record lengths",
+    "coordinates",
+    "penalty bounds",
+    "weights sum",
+    "monotonic calibration quantiles",
+    "all city endpoint score arithmetic"
+  ]
+}

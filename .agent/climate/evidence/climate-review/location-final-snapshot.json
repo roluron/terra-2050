@@ -1,0 +1,8 @@
+{
+  "revision": "75fc3ec22fb093ffb91bcc4d84857fe5b4b41eef",
+  "sourceHash": "7fd9684dbd7c02056a60222cabecddc627fdc0734da94766c5d7ce97c5bf5098",
+  "browser": "WebKit iPhone SE320x568",
+  "server": "existing localhost8087",
+  "verdict": "PASS immediate denial and deferred denial after changing Paris to Berlin",
+  "sourceReview": "Captured place guard skips stale error; unchanged selection closes panel before usable search toast."
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Paris",
+    "language": "en",
+    "year": "2026",
+    "heat": "Days too hot to live normally outside.\n\nEstimated 6 days/year above 32 °C heat index · 42 estimated freezing days/year",
+    "flood": "Where rivers can overflow and flood everything.\n\n100-year flood (1% annual exceedance): 19% of land within 12 km flooded, up to 9.2 m deep (p90) · JRC model map, held constant to 2050",
+    "method": "An app-defined model: half the weighted average exposure, half the strongest hazard; subtract from 100. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, climate shift12%. No living costs, services or explicit protection model. Not a disaster probability.",
+    "formula": "Weighted exposure 21.3 /100 · strongest hazard 47.6 /100. 100 − (21.3 + 47.6) ÷ 2 ≈ 66."
+  },
+  {
+    "name": "Paris",
+    "language": "en",
+    "year": "2050",
+    "heat": "Days too hot to live normally outside.\n\nEstimated 12 days/year above 32 °C heat index · +6 since 2026 · 35 estimated freezing days/year",
+    "flood": "Where rivers can overflow and flood everything.\n\n100-year flood (1% annual exceedance): 19% of land within 12 km flooded, up to 9.2 m deep (p90) · JRC model map, held constant to 2050",
+    "method": "An app-defined model: half the weighted average exposure, half the strongest hazard; subtract from 100. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, climate shift12%. No living costs, services or explicit protection model. Not a disaster probability.",
+    "formula": "Weighted exposure 25.6 /100 · strongest hazard 47.6 /100. 100 − (25.6 + 47.6) ÷ 2 ≈ 63."
+  },
+  {
+    "name": "Paris",
+    "language": "fr",
+    "year": "2026",
+    "heat": "Des jours où il fait trop chaud pour vivre normalement dehors.\n\nEstimation : 6 jours/an d’indice de chaleur >32 °C · 42 jours de gel estimés/an",
+    "flood": "Là où les rivières peuvent déborder et tout inonder.\n\ncrue centennale (1 % de dépassement annuel) : 19 % des terres à moins de 12 km inondées, jusqu’à 9.2 m d’eau (p90) · carte modèle JRC, constante à 2050",
+    "method": "Modèle propre à l’application : moitié moyenne pondérée des expositions, moitié aléa le plus fort, soustraites de 100. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, climat12%. Ni coût de la vie, ni services, ni modèle explicite de protection. Pas une probabilité de catastrophe.",
+    "formula": "Exposition pondérée 21.3 /100 · aléa le plus fort 47.6 /100. 100 − (21.3 + 47.6) ÷ 2 ≈ 66."
+  },
+  {
+    "name": "Paris",
+    "language": "fr",
+    "year": "2050",
+    "heat": "Des jours où il fait trop chaud pour vivre normalement dehors.\n\nEstimation : 12 jours/an d’indice de chaleur >32 °C · +6 depuis 2026 · 35 jours de gel estimés/an",
+    "flood": "Là où les rivières peuvent déborder et tout inonder.\n\ncrue centennale (1 % de dépassement annuel) : 19 % des terres à moins de 12 km inondées, jusqu’à 9.2 m d’eau (p90) · carte modèle JRC, constante à 2050",
+    "method": "Modèle propre à l’application : moitié moyenne pondérée des expositions, moitié aléa le plus fort, soustraites de 100. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, climat12%. Ni coût de la vie, ni services, ni modèle explicite de protection. Pas une probabilité de catastrophe.",
+    "formula": "Exposition pondérée 25.6 /100 · aléa le plus fort 47.6 /100. 100 − (25.6 + 47.6) ÷ 2 ≈ 63."
+  },
+  {
+    "name": "Hô Chi Minh Ville",
+    "language": "fr",
+    "year": "2026",
+    "heat": "Des jours où il fait trop chaud pour vivre normalement dehors.\n\nEstimation : ≥300 jours/an d’indice de chaleur >32 °C · dont 76 jours estimés au-dessus de 40 °C (seuil « danger » NWS) · 0 jours de gel estimés/an",
+    "flood": "Là où les rivières peuvent déborder et tout inonder.\n\ncrue centennale (1 % de dépassement annuel) : 59 % des terres à moins de 20 km inondées, jusqu’à 4.1 m d’eau (p90) · carte modèle JRC, constante à 2050",
+    "method": "Modèle propre à l’application : moitié moyenne pondérée des expositions, moitié aléa le plus fort, soustraites de 100. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, climat12%. Ni coût de la vie, ni services, ni modèle explicite de protection. Pas une probabilité de catastrophe.",
+    "formula": "Exposition pondérée 51.0 /100 · aléa le plus fort 76.0 /100. 100 − (51.0 + 76.0) ÷ 2 ≈ 37."
+  },
+  {
+    "name": "Hô Chi Minh Ville",
+    "language": "fr",
+    "year": "2050",
+    "heat": "Des jours où il fait trop chaud pour vivre normalement dehors.\n\nEstimation : ≥300 jours/an d’indice de chaleur >32 °C · dont 120 jours estimés au-dessus de 40 °C (seuil « danger » NWS) · 0 jours de gel estimés/an",
+    "flood": "Là où les rivières peuvent déborder et tout inonder.\n\ncrue centennale (1 % de dépassement annuel) : 59 % des terres à moins de 20 km inondées, jusqu’à 4.1 m d’eau (p90) · carte modèle JRC, constante à 2050",
+    "method": "Modèle propre à l’application : moitié moyenne pondérée des expositions, moitié aléa le plus fort, soustraites de 100. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, climat12%. Ni coût de la vie, ni services, ni modèle explicite de protection. Pas une probabilité de catastrophe.",
+    "formula": "Exposition pondérée 59.0 /100 · aléa le plus fort 94.4 /100. 100 − (59.0 + 94.4) ÷ 2 ≈ 23."
+  },
+  {
+    "name": "Ho Chi Minh City",
+    "language": "en",
+    "year": "2026",
+    "heat": "Days too hot to live normally outside.\n\nEstimated ≥300 days/year above 32 °C heat index · of which 76 estimated days above 40 °C (NWS “danger” threshold) · 0 estimated freezing days/year",
+    "flood": "Where rivers can overflow and flood everything.\n\n100-year flood (1% annual exceedance): 59% of land within 20 km flooded, up to 4.1 m deep (p90) · JRC model map, held constant to 2050",
+    "method": "An app-defined model: half the weighted average exposure, half the strongest hazard; subtract from 100. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, climate shift12%. No living costs, services or explicit protection model. Not a disaster probability.",
+    "formula": "Weighted exposure 51.0 /100 · strongest hazard 76.0 /100. 100 − (51.0 + 76.0) ÷ 2 ≈ 37."
+  },
+  {
+    "name": "Ho Chi Minh City",
+    "language": "en",
+    "year": "2050",
+    "heat": "Days too hot to live normally outside.\n\nEstimated ≥300 days/year above 32 °C heat index · of which 120 estimated days above 40 °C (NWS “danger” threshold) · 0 estimated freezing days/year",
+    "flood": "Where rivers can overflow and flood everything.\n\n100-year flood (1% annual exceedance): 59% of land within 20 km flooded, up to 4.1 m deep (p90) · JRC model map, held constant to 2050",
+    "method": "An app-defined model: half the weighted average exposure, half the strongest hazard; subtract from 100. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, climate shift12%. No living costs, services or explicit protection model. Not a disaster probability.",
+    "formula": "Weighted exposure 59.0 /100 · strongest hazard 94.4 /100. 100 − (59.0 + 94.4) ÷ 2 ≈ 23."
+  }
+]

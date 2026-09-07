@@ -1,3 +1,8 @@
+Current climate follow-up: local UI and structural audit VERIFIED on runtime75fc3ec.
+See climate/STATE.md and climate/EVIDENCE.md. Scientific accuracy remains UNVERIFIED
+because current generators/manifests and per-hazard provenance flags are unavailable.
+Local8087 updated; public deployment and physical gates below unchanged.
+
 Current local design follow-up: VERIFIED panel redesign on branch design/place-panel,
 runtime9129b5b. See panel/STATE.md and panel/EVIDENCE.md. Local preview8087;
 public deployment below remains the earlier release. Physical gates unchanged.

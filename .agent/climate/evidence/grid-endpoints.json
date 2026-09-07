@@ -1,0 +1,36 @@
+{
+  "heat": {
+    "pixels": 2332800,
+    "changed": 356901,
+    "meanAbsoluteByteDelta": 1.6717541152263375
+  },
+  "aridity": {
+    "pixels": 2332800,
+    "changed": 237003,
+    "meanAbsoluteByteDelta": 0.7469491598079561
+  },
+  "fire": {
+    "pixels": 2332800,
+    "changed": 373164,
+    "meanAbsoluteByteDelta": 0.6789429012345679
+  },
+  "coast": {
+    "pixels": 2332800,
+    "changed": 10482,
+    "meanAbsoluteByteDelta": 0.043559242112482854
+  },
+  "climateShift": {
+    "pixels": 2332800,
+    "changed": 755333,
+    "meanAbsoluteByteDelta": 9.34974365569273
+  },
+  "population": "Single 2050 decline texture scaled by elapsed fraction from 2025; country panel interpolates 2025/2050 endpoints.",
+  "legacyRiverProxyUnusedByRiverLayer": {
+    "pixels": 2332800,
+    "changed": 84952,
+    "meanAbsoluteByteDelta": 0.10635716735253772
+  },
+  "river": {
+    "temporal": "Fixed JRC reference sampled from grille_d.png blue channel; no year mixing. Legacy grille_b blue differs but is not the river layer."
+  }
+}

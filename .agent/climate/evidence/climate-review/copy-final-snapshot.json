@@ -1,0 +1,11 @@
+{
+  "revision": "65d46457c75a738ed4348131025ef6b38470f876",
+  "clean": true,
+  "sourceHashes": {
+    "index.html": "c55b40bd032c9c59ef69dbe4c36164c69359bf61ed6e051f55ac180e2850de79",
+    "terra-menus.css": "3c6604e2edb55438547b3dd05c2546d687fa888e74b3a84354e1565517203c90"
+  },
+  "browserCases": 8,
+  "verdict": "PASS bounded copy retest; all three findings resolved",
+  "scientificProvenance": "UNVERIFIED"
+}
