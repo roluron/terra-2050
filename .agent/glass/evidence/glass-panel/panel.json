@@ -1,0 +1,302 @@
+[
+  {
+    "name": "panel-desktop",
+    "pass": true,
+    "bounds": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "panel": {
+        "x": 906,
+        "y": 84,
+        "w": 510,
+        "h": 792,
+        "bottom": 876,
+        "right": 1416
+      },
+      "body": {
+        "x": 907,
+        "y": 266.6875,
+        "w": 508,
+        "h": 545.3125,
+        "bottom": 812,
+        "right": 1415
+      },
+      "close": {
+        "x": 1347,
+        "y": 99,
+        "w": 44,
+        "h": 44,
+        "bottom": 143,
+        "right": 1391
+      },
+      "range": {
+        "x": 931,
+        "y": 213.6875,
+        "w": 460,
+        "h": 44,
+        "bottom": 257.6875,
+        "right": 1391
+      },
+      "footer": {
+        "x": 907,
+        "y": 812,
+        "w": 508,
+        "h": 63,
+        "bottom": 875,
+        "right": 1415
+      },
+      "overflow": false
+    },
+    "sixLocalDetails": true,
+    "yearStable": true,
+    "yearAndURLUpdate": true,
+    "openDetailsPreserved": true,
+    "methodology": true,
+    "FR": true,
+    "story": true,
+    "closeRestoresTimeline": true,
+    "errors": []
+  },
+  {
+    "name": "panel-se",
+    "pass": true,
+    "bounds": {
+      "viewport": {
+        "w": 320,
+        "h": 568
+      },
+      "panel": {
+        "x": 0,
+        "y": 88,
+        "w": 320,
+        "h": 480,
+        "bottom": 568,
+        "right": 320
+      },
+      "body": {
+        "x": 1,
+        "y": 247,
+        "w": 318,
+        "h": 258,
+        "bottom": 505,
+        "right": 319
+      },
+      "close": {
+        "x": 259,
+        "y": 101,
+        "w": 44,
+        "h": 44,
+        "bottom": 145,
+        "right": 303
+      },
+      "range": {
+        "x": 17,
+        "y": 198,
+        "w": 286,
+        "h": 44,
+        "bottom": 242,
+        "right": 303
+      },
+      "footer": {
+        "x": 1,
+        "y": 505,
+        "w": 318,
+        "h": 63,
+        "bottom": 568,
+        "right": 319
+      },
+      "overflow": false
+    },
+    "sixLocalDetails": true,
+    "yearStable": true,
+    "yearAndURLUpdate": true,
+    "openDetailsPreserved": true,
+    "methodology": true,
+    "FR": true,
+    "story": true,
+    "closeRestoresTimeline": true,
+    "errors": []
+  },
+  {
+    "name": "panel-iphone",
+    "pass": true,
+    "bounds": {
+      "viewport": {
+        "w": 393,
+        "h": 659
+      },
+      "panel": {
+        "x": 0,
+        "y": 88,
+        "w": 393,
+        "h": 571,
+        "bottom": 659,
+        "right": 393
+      },
+      "body": {
+        "x": 1,
+        "y": 247,
+        "w": 391,
+        "h": 349,
+        "bottom": 596,
+        "right": 392
+      },
+      "close": {
+        "x": 332,
+        "y": 101,
+        "w": 44,
+        "h": 44,
+        "bottom": 145,
+        "right": 376
+      },
+      "range": {
+        "x": 17,
+        "y": 198,
+        "w": 359,
+        "h": 44,
+        "bottom": 242,
+        "right": 376
+      },
+      "footer": {
+        "x": 1,
+        "y": 596,
+        "w": 391,
+        "h": 63,
+        "bottom": 659,
+        "right": 392
+      },
+      "overflow": false
+    },
+    "sixLocalDetails": true,
+    "yearStable": true,
+    "yearAndURLUpdate": true,
+    "openDetailsPreserved": true,
+    "methodology": true,
+    "FR": true,
+    "story": true,
+    "closeRestoresTimeline": true,
+    "errors": []
+  },
+  {
+    "name": "panel-landscape",
+    "pass": true,
+    "bounds": {
+      "viewport": {
+        "w": 734,
+        "h": 343
+      },
+      "panel": {
+        "x": 151.484375,
+        "y": 58,
+        "w": 572.515625,
+        "h": 277,
+        "bottom": 335,
+        "right": 724
+      },
+      "body": {
+        "x": 152.484375,
+        "y": 132,
+        "w": 570.515625,
+        "h": 139,
+        "bottom": 271,
+        "right": 723
+      },
+      "close": {
+        "x": 671,
+        "y": 67,
+        "w": 44,
+        "h": 44,
+        "bottom": 111,
+        "right": 715
+      },
+      "range": {
+        "x": 449.734375,
+        "y": 87,
+        "w": 217.265625,
+        "h": 44,
+        "bottom": 131,
+        "right": 667
+      },
+      "footer": {
+        "x": 152.484375,
+        "y": 271,
+        "w": 570.515625,
+        "h": 63,
+        "bottom": 334,
+        "right": 723
+      },
+      "overflow": false
+    },
+    "sixLocalDetails": true,
+    "yearStable": true,
+    "yearAndURLUpdate": true,
+    "openDetailsPreserved": true,
+    "methodology": true,
+    "FR": true,
+    "story": true,
+    "closeRestoresTimeline": true,
+    "errors": []
+  },
+  {
+    "name": "panel-ipad",
+    "pass": true,
+    "bounds": {
+      "viewport": {
+        "w": 834,
+        "h": 1194
+      },
+      "panel": {
+        "x": 426.375,
+        "y": 84,
+        "w": 383.625,
+        "h": 1086,
+        "bottom": 1170,
+        "right": 810
+      },
+      "body": {
+        "x": 427.375,
+        "y": 252,
+        "w": 381.625,
+        "h": 854,
+        "bottom": 1106,
+        "right": 809
+      },
+      "close": {
+        "x": 741,
+        "y": 99,
+        "w": 44,
+        "h": 44,
+        "bottom": 143,
+        "right": 785
+      },
+      "range": {
+        "x": 451.375,
+        "y": 199,
+        "w": 333.625,
+        "h": 44,
+        "bottom": 243,
+        "right": 785
+      },
+      "footer": {
+        "x": 427.375,
+        "y": 1106,
+        "w": 381.625,
+        "h": 63,
+        "bottom": 1169,
+        "right": 809
+      },
+      "overflow": false
+    },
+    "sixLocalDetails": true,
+    "yearStable": true,
+    "yearAndURLUpdate": true,
+    "openDetailsPreserved": true,
+    "methodology": true,
+    "FR": true,
+    "story": true,
+    "closeRestoresTimeline": true,
+    "errors": []
+  }
+]

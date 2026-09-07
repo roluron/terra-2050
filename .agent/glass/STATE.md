@@ -1,1 +1,3 @@
-ACTIVE. Paper replaced at user request. Tokens: black080b0e, inkf2f3ef, secondaryb5bec8, iceb6d7ff, lineffffff20. ExistingLausanne typography retained. Compact paired risk cards, single transient glass reflection on opening, full-width native-backed animated rule. Dataunchanged. Softcheckpoint20min;max2agents;zeroadditionalpaidspend;accountquotaUNKNOWN.
+VERIFIED LOCAL on runtime d74b298. Not published. Paper replaced at user request. Tokens: black080b0e, inkf2f3ef, secondaryb5bec8, iceb6d7ff, lineffffff20. ExistingLausanne typography retained. Compact paired risk cards, single transient glass reflection on opening, full-width native-backed animated rule. Dataunchanged. Softcheckpoint20min;max2agents;zeroadditionalpaidspend;accountquotaUNKNOWN.
+
+Allsix acceptancecriteria observed; independentreviewpassed. Finalmatrix25/25, static4/4, panel5views,temporalpassed. Scientificvalidation/physicalproductiongates unchanged. Sourcefrozen; evidence-onlycommit.

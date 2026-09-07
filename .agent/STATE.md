@@ -1,3 +1,6 @@
+Latest UI follow-up: VERIFIED dark glass compact panel on runtimed74b298.
+See glass/STATE.md and glass/EVIDENCE.md. Local8087; publication and other gates unchanged.
+
 Current climate follow-up: local UI and structural audit VERIFIED on runtime75fc3ec.
 See climate/STATE.md and climate/EVIDENCE.md. Scientific accuracy remains UNVERIFIED
 because current generators/manifests and per-hazard provenance flags are unavailable.

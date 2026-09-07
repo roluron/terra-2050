@@ -1,0 +1,10 @@
+{
+  "revision": "d74b298c16feb11046a7723159f944fc3485df39",
+  "indexSha256": "4f33231e58f4fb5c130573a0acb397491c78b6383bdb36d5434f109b52428528",
+  "cssSha256": "ba07593873c23c33311dc81a4a55f2c3a98643f4befcb474af95cc99098ce9b3",
+  "appBytes": 109060,
+  "vendorBytes": 790736,
+  "total": 899796,
+  "limit": 900000,
+  "pass": true
+}
