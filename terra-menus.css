@@ -1010,6 +1010,7 @@ body.dossier-ouvert #recherche {
   display: flex; align-items: center; justify-content: center;
   background: rgba(0, 0, 0, 0.35); }
 #story-popup[hidden] { display: none; }
+#story-partager:disabled { opacity: 0.6; cursor: progress; }
 .story-carte { width: min(620px, 92vw); background: #02040a; }
 .story-corps { display: flex; gap: 28px; margin-top: 20px; align-items: stretch; }
 /* hauteur fluide partout : une fenetre basse, de bureau comme de telephone,

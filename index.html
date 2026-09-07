@@ -495,6 +495,7 @@ const TEXTES = {
       calques: 'Calques de risque', curseur: 'Année de projection', dossier: 'Diagnostic du lieu',
       'dossier-croix': 'Fermer', 'accroche-x': 'Fermer', 'story-fermer': 'Fermer', 'bouton-reglages': 'Réglages', 'bouton-langue': 'Langue' },
     storyTitre: 'Composer la story', storyPartager: 'Partager en story ↗',
+    storyPreparation: 'Préparation de l’image…', storyReessayer: 'Réessayer l’image ↻',
     storyEnregistrer: 'Enregistrer en JPEG ↓', storyEnregistree: 'Enregistré ✓',
     frappeChaud: (j, an) => `${j} jours d’indice de chaleur au-dessus de 32 °C par an en ${an}`,
     frappeMer: f => `${f} % des terres sous la ligne de submersion 2050`,
@@ -593,6 +594,7 @@ const TEXTES = {
       calques: 'Risk layers', curseur: 'Projection year', dossier: 'Place diagnosis',
       'dossier-croix': 'Close', 'accroche-x': 'Close', 'story-fermer': 'Close', 'bouton-reglages': 'Settings', 'bouton-langue': 'Language' },
     storyTitre: 'Compose your story', storyPartager: 'Share to Stories ↗',
+    storyPreparation: 'Preparing image…', storyReessayer: 'Retry image ↻',
     storyEnregistrer: 'Save as JPEG ↓', storyEnregistree: 'Saved ✓',
     frappeChaud: (j, an) => `${j} days a year above a 32 °C heat index in ${an}`,
     frappeMer: f => `${f}% of the land below the 2050 flood line`,
@@ -2928,20 +2930,36 @@ let storyFichier = null;
 function nomFichierStory(){ return `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.jpg`; }
 async function majApercuStory(){
   const jeton = ++storyGen; storyFichier = null;
-  const cv = await genererStory(optsStory);
-  if (!cv || jeton !== storyGen) return;
-  const g = storyApercu.getContext('2d');
-  g.clearRect(0, 0, 540, 960);
-  g.drawImage(cv, 0, 0, 540, 960);
-  const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
-  if (jeton === storyGen && blob) storyFichier = new File([blob], nomFichierStory(), { type: 'image/jpeg' });
+  const bouton = document.getElementById('story-partager'), nom = nomFichierStory();
+  bouton.disabled = true; bouton.setAttribute('aria-busy', 'true');
+  bouton.textContent = T().storyPreparation;
+  try {
+    const cv = await genererStory(optsStory);
+    if (jeton !== storyGen) return;
+    if (!cv) throw new Error('Story canvas unavailable');
+    const g = storyApercu.getContext('2d');
+    g.clearRect(0, 0, 540, 960); g.drawImage(cv, 0, 0, 540, 960);
+    const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
+    if (jeton !== storyGen) return;
+    if (!blob) throw new Error('Story image encoding failed');
+    storyFichier = new File([blob], nom, { type: 'image/jpeg' });
+    bouton.textContent = navigator.canShare && navigator.canShare({ files: [storyFichier] })
+      ? T().storyPartager : T().storyEnregistrer;
+  } catch (error) {
+    if (jeton === storyGen){
+      bouton.textContent = T().storyReessayer;
+      console.error('Story image unavailable:', error);
+    }
+  } finally {
+    if (jeton === storyGen){ bouton.disabled = false; bouton.setAttribute('aria-busy', 'false'); }
+  }
 }
 /* piege de focus : dans une modale, la tabulation tourne en boucle a
    l'interieur au lieu de filer derriere le pop-up */
 let rendreFocus = null;
 function piegerFocus(boite){
   const cibles = () => [...boite.querySelectorAll('button,input,[href],[tabindex]:not([tabindex="-1"])')]
-    .filter(e => e.offsetParent !== null);
+    .filter(e => e.offsetParent !== null && !e.disabled);
   const surTab = e => {
     if (e.key !== 'Tab') return;
     const f = cibles(); if (!f.length) return;
@@ -2992,12 +3010,8 @@ async function partagerStory(){
   if (!lieuDossier) return;
   stopperBalayage();
   majLien(true);
-  let fichier = storyFichier;
-  if (!fichier){
-    const cv = await genererStory(optsStory); if (!cv) return;
-    const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
-    fichier = new File([blob], nomFichierStory(), { type: 'image/jpeg' });
-  }
+  const fichier = storyFichier;
+  if (!fichier){ await majApercuStory(); return; }
   const t = T();
   // la feuille de partage native EST le chemin vers Instagram Stories : le
   // systeme y propose « Stories » des que l'app est installee. L'appel part
