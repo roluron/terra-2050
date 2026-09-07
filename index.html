@@ -2304,6 +2304,10 @@ function tracerTrajectoire(l, an){
   conteneur.addEventListener('focusin', versDetail);
   conteneur.addEventListener('mouseleave', () => majDetail(null));
 }
+/* la ligne survolée (ou au clavier) garde son détail pendant le balayage
+   des années : chaque cran de la fiche ramenait le pire axe sous le pointeur */
+const detailSousPointeur = () =>
+  document.querySelector('#dossier-risques .risque:hover, #dossier-risques .risque:focus-within, #dossier-pop:hover');
 function majDetail(rangee){
   const slot = document.getElementById('dossier-detail');
   const cible = rangee || document.querySelector('#dossier-risques .risque.pire')
@@ -2381,7 +2385,7 @@ function majDossierPays(l, an, t, dossierNeuf){
     rangee.dataset.couleur = teinte;
     rangee.classList.toggle('pire', n === Math.min(...notes));
   });
-  majDetail(null);
+  majDetail(detailSousPointeur());
   tracerTrajectoire(l, an);
 
   // puces : les villes les plus habitables du pays
@@ -2582,7 +2586,7 @@ function majDossier(){
     rangee.dataset.couleur = c.couleur;
     rangee.classList.toggle('pire', c.cle === pire.cle);
   });
-  majDetail(null);
+  majDetail(detailSousPointeur());
   if (dossierNeuf){
     gsap.fromTo('#dossier-risques .risque', { opacity: 0, y: 10 },
       { opacity: 1, y: 0, duration: DUREE.fast, stagger: 0.06, ease: EASE, clearProps: 'opacity,transform' });
