@@ -2634,7 +2634,7 @@ function annoncer(){
   const sc = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const txt = sc === null
     ? `${nomVille(l)} · ${t.sansDonnees}`
-    : `${nomVille(l)} · ${an} · ${sc}/100 · ${t.verdict[niveauDe(sc)]}`;
+    : `${nomVille(l)} · ${an} · ${sc}/100 · ${t.panelVerdict[niveauDe(sc)]}`;
   if (txt === derniereAnnonce) return;   // remis a zero a la fermeture (voir fermerDossier)
   derniereAnnonce = txt;
   document.getElementById('annonce').textContent = txt;
