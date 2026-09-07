@@ -1,8 +1,10 @@
 # TERRA／2050
 
-Un globe où l'on cherche sa ville et où l'on lit, pour n'importe quelle année entre
-2026 et 2050, un **indice d'habitabilité physique de 0 à 100** — bâti uniquement sur
-des données scientifiques ouvertes, avec le chiffre, la méthode et la source affichés.
+Un globe présentant un **indice climatique expérimental de 0 à 100** entre
+2026 et 2050. Les valeurs climatiques intermédiaires sont des interpolations,
+pas des prévisions annuelles. La provenance complète des fichiers actuels et
+leur validation scientifique locale restent incomplètes ; cet indice ne
+mesure pas l'habitabilité d'une ville.
 
 En ligne : **https://roluron.github.io/terra-2050/**
 
@@ -142,8 +144,27 @@ plutôt qu'un score inventé.
 `data/grille_*.png` encodent les grilles de risque en RGB, lues à la fois par les
 shaders du globe et par les fiches — même source pour l'image et pour le chiffre.
 
-Régénérer : `python3 tools/pipeline.py` (l'en-tête du fichier liste les sources et
-les téléchargements). Compter des dizaines de Go de rasters intermédiaires.
+La régénération par `tools/pipeline.py` est bloquée : ce générateur historique
+ne correspond pas au format actuel (altitudes, fractions côtières) et ne produit
+ni `thermo.bin`, ni `maree.bin`, ni `grille_d.png`. Récupérer les générateurs
+actuels, les fichiers sources et leur traçabilité avant toute régénération.
+
+La population utilise `data/population-annual.json` : 237 pays et territoires,
+26 valeurs annuelles 2025–2050 en personnes au 1er juillet, scénario médian
+ONU WPP 2024 et révision officielle Togo de janvier 2026. Le panneau, la carte
+et la story utilisent ces années directement. La carte code le déclin depuis
+2025, plafonné à 30 %, et les transitions visuelles interpolent entre deux
+années officielles. `data/population-provenance.json` conserve les URL, unités,
+versions et empreintes. Reproduction :
+
+```bash
+python3 tools/import_population.py WPP2024_Demographic_Indicators_Medium.csv.gz WPP2024_CSV_files_update.zip data/population-annual.json
+```
+
+L'import refuse des sources dont les empreintes diffèrent de la version auditée.
+`tools/verifier_temporal.py` contrôle les formats, les 25 années affichables,
+les références fluviales fixes et le fichier démographique. Ces contrôles ne
+valident pas scientifiquement les indices climatiques locaux.
 
 ## Limites assumées
 

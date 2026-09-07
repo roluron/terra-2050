@@ -22,6 +22,12 @@ Usage : python3 tools/pipeline.py <dossier_raw>
 """
 import json, pathlib, struct, sys, zipfile
 
+if __name__ == '__main__':
+    raise SystemExit('BLOCKED: this legacy pipeline cannot reproduce the current data schema. '
+                     'It would corrupt elevation offsets and coastal fractions, and omits '
+                     'thermo.bin, maree.bin and grille_d.png. Recover the current generators '
+                     'and source manifest before regenerating published data.')
+
 import numpy as np
 import tifffile
 from scipy.ndimage import distance_transform_edt, gaussian_filter

@@ -1014,6 +1014,7 @@ body.pret #dossier #timeline .an { display: block; width: 100%; font-family: var
 #dossier .fiche-methode summary { min-height: 44px; padding: 10px 0; font-weight: 500; }
 #dossier .fiche-methode p { margin-top: 12px; color: var(--fiche-secondaire); font-size: 13px; line-height: 1.6; }
 #dossier .sources { overflow-wrap: anywhere; text-transform: none; letter-spacing: 0; }
+#dossier .sources a { color: inherit; text-underline-offset: 3px; }
 #dossier .coords { text-transform: none; letter-spacing: 0; }
 #dossier .duel:not([hidden]) { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; }
 #dossier .duel { margin-top: 14px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--fiche-ligne); border-radius: 8px; }
