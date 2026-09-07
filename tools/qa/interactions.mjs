@@ -61,7 +61,7 @@ for (const [name, type, options] of [
     await check(`${name}: story preview, close and reopen`, async () => {
       await page.click('#dossier-story');
       await page.waitForSelector('#story-popup:not([hidden])');
-      await page.waitForTimeout(2000);
+      await page.waitForSelector('#story-partager:not([disabled]):not([aria-busy="true"])');
       assert.equal(await page.locator('#story-partager').isEnabled(), true);
       await page.screenshot({ path: `${out}/${name}-story.png` });
       await page.click('#story-fermer');
