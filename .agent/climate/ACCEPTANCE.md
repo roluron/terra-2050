@@ -1,0 +1,6 @@
+- [ ] Each layer and risk indicator has verified temporal behaviour; moving the slider updates available projections and clearly identifies fixed-reference/no-data indicators.
+- [ ] Whole-dataset checks cover city identities/coordinates, value bounds, endpoint consistency, score reproducibility, missing coverage and country aggregation. Source/model/scenario limitations are exposed; no claim of independently validating every real-world measurement.
+- [ ] Paris and Ho Chi Minh City have reproducible component/weight explanations; no arbitrary score adjustment.
+- [ ] Panel follows supplied reference: pale surface, expressive numerals, compact two-column indicators, restrained gradient gauges, responsive disclosure and meaningful reduced-motion-safe animation.
+- [ ] City/country/no-data/year/FR-EN/history/compare/share/alternative flows pass; keyboard/touch and desktop/SE/iPhone/landscape/iPad remain usable.
+- [ ] Direct visual/behaviour evidence, clean-source verification and adversarial review cover final changes; applicable resource budgets pass.
