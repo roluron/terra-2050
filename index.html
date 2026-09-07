@@ -2892,8 +2892,8 @@ async function genererStory(opts){
   g.textAlign = 'left';
   for (const [txt, col] of seg){ g.fillStyle = col; g.fillText(txt, x, 200); x += g.measureText(txt).width; }
   g.textAlign = 'center';
-  g.letterSpacing = '10px'; g.font = '500 28px "TWK Lausanne"'; g.fillStyle = MUTER;
-  g.fillText((langue === 'en' ? 'HABITABILITY ' : 'HABITABILITÉ ') + an, 540, 320);
+  g.letterSpacing = '3px'; g.font = '500 28px "TWK Lausanne"'; g.fillStyle = MUTER;
+  g.fillText((langue === 'en' ? 'EXPERIMENTAL CLIMATE INDEX ' : 'INDICE CLIMATIQUE EXPÉRIMENTAL ') + an, 540, 320, 840);
   g.letterSpacing = '0px';
 
   // le nom, ajusté à la largeur
@@ -2974,8 +2974,8 @@ async function genererStory(opts){
   {   // signature toujours presente : la question et le lien font l'image
     g.textAlign = 'center'; g.letterSpacing = '5px';
     g.fillStyle = MUTER; g.font = '500 26px "TWK Lausanne"';
-    g.fillText(langue === 'en' ? 'WILL YOUR CITY STILL BE LIVABLE IN 2050?'
-      : 'VOTRE VILLE SERA-T-ELLE ENCORE VIVABLE EN 2050 ?', 540, 1690);
+    g.fillText(langue === 'en' ? 'MODELLED INDICATORS · NOT A LOCAL FORECAST'
+      : 'INDICATEURS MODÉLISÉS · PAS UNE PRÉVISION LOCALE', 540, 1690, 840);
     g.letterSpacing = '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = '400 24px "TWK Lausanne"';
     g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}&cc=${l[1]}`, 540, 1746);
     g.letterSpacing = '0px';

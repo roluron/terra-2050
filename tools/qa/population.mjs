@@ -43,6 +43,8 @@ try {
     await page.waitForTimeout(600);
     const result=await page.evaluate(expected=>globalThis.__populationAudit(expected),annual);
     assert.equal(result.values,6162);
+    assert.ok(result.texts.includes(`EXPERIMENTAL CLIMATE INDEX ${year}`));
+    assert.ok(result.texts.includes('MODELLED INDICATORS · NOT A LOCAL FORECAST'));
     const label=`Country population · 2025 → ${year}`;
     const i=result.texts.indexOf(label);assert.ok(i>=0,label);
     const delta=Math.round((annual.FR[year-2025]/annual.FR[0]-1)*100);
