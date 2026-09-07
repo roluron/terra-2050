@@ -990,7 +990,7 @@ body.loupe #mesure-recherche { display: none; }
    ===================================================================== */
 #recherche { transition: padding-right 0.6s var(--ease); }
 body.dossier-ouvert #recherche {
-  padding-right: max(24px, calc(var(--centre-dossier, 204px) - 126px)); }
+  padding-right: max(78px, calc(var(--centre-dossier, 204px) - 126px)); }
 
 /* =====================================================================
    COMPOSEUR DE STORY — pop-up en verre : aperçu vivant à gauche, les

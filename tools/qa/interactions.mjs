@@ -129,4 +129,23 @@ for (const [name, type, options] of [
     await check(`${name}: no browser errors`, async () => assert.deepEqual(errors, []));
   } finally { await browser.close(); }
 }
+await check('iphone SE: search remains tappable after history and story', async () => {
+  const browser = await webkit.launch({ executablePath: webkit.executablePath() });
+  try {
+    const page = await browser.newPage({ ...devices['iPhone SE'], locale: 'en-US' });
+    await page.goto(url); await page.waitForSelector('#voile.pret'); await page.click('#bouton-entree');
+    await page.click('#champ-recherche'); await page.fill('#champ-recherche', 'Paris');
+    await page.getByRole('option').filter({ hasText: 'Paris' }).first().click();
+    await page.waitForTimeout(4200);
+    await page.goBack(); await page.waitForTimeout(1200);
+    await page.goForward(); await page.waitForTimeout(1800);
+    await page.click('#dossier-story'); await page.waitForSelector('#story-partager:not([disabled])');
+    await page.keyboard.press('Escape'); await page.waitForSelector('#story-popup', { state: 'hidden' });
+    await page.waitForTimeout(700);
+    await page.locator('#champ-recherche').tap();
+    assert.equal(await page.locator('#champ-recherche').evaluate(e => e === document.activeElement), true);
+    assert.equal(await page.locator('#bouton-reglages').getAttribute('aria-expanded'), 'false');
+    await page.screenshot({ path: `${out}/iphone-se-search.png` });
+  } finally { await browser.close(); }
+});
 process.exitCode = results.some(r => !r.pass) ? 1 : 0;
