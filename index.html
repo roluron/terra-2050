@@ -243,7 +243,7 @@
     </nav>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
-<aside id="model-notice"><p id="layer-context" aria-live="polite"></p><p data-t="betaNotice"></p><a href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a></aside>
+<aside id="model-notice"><p id="layer-context" aria-live="polite"></p><details><summary data-t="betaShort"></summary><p data-t="betaNotice"></p><a href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a></details></aside>
 <div id="etiquettes"></div>
 <div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span></div>
 
@@ -450,6 +450,7 @@ const TEXTES = {
     panelCity: 'Ville',
     panelCountry: 'Vue du pays',
     panelIndex: 'Indice climatique indicatif',
+    betaShort: 'Bêta · Données potentiellement inexactes',
     betaNotice: 'Bêta · Les données peuvent être inexactes. Animations illustratives, pas des événements observés.',
     betaContact: 'Votre lieu semble inexact ? Contactez-nous ↗',
     panelDataLimits: 'Traçabilité incomplète : générateurs actuels absents, certaines lacunes et marées de repli sans marqueur par ville. Zéro ne prouve pas l’absence de risque. Notes de villes non validées scientifiquement.',
@@ -558,6 +559,7 @@ const TEXTES = {
     panelCity: 'City',
     panelCountry: 'Country overview',
     panelIndex: 'Illustrative climate index',
+    betaShort: 'Beta · Data may be inaccurate',
     betaNotice: 'Beta · Data may be inaccurate. Animations illustrate indicators, not observed events.',
     betaContact: 'Your place looks inaccurate? Contact us ↗',
     panelDataLimits: 'Provenance incomplete: current generators are missing; some source gaps and tide fallbacks have no per-city flag. Zero does not prove no risk. City ratings are not scientifically validated.',

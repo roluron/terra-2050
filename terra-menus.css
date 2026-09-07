@@ -1132,4 +1132,9 @@ body:not(.pret) #model-notice { display: none; }
 @media(prefers-reduced-motion:reduce) { .etiquette { transition: none; } }
 
 @media(min-width:721px) and (min-height:501px) { #accroche { bottom: 190px; } }
-@media(max-width:720px) and (orientation:portrait) { #model-notice { max-width: calc(100vw - 20px); width: 260px; font-size: 10px; } body.pret:not(.dossier-ouvert) #timeline { bottom: 152px; } }
+#model-notice summary { cursor: pointer; color: #c7d0db; min-height: 32px; }
+#model-notice details[open] p { margin-top: 6px; }
+#model-notice:has(details[open]) { z-index: 40; }
+@media(max-width:720px) and (orientation:portrait) { #model-notice { max-width: calc(100vw - 158px); font-size: 9px; } body.pret:not(.dossier-ouvert) #timeline { left: auto; right: 12px; bottom: 16px; width: 130px; transform: none; } body.pret:not(.dossier-ouvert) #timeline .an { font-size: 46px; } }
+@media(max-height:500px) and (orientation:landscape) { #calques { top: 66px; transform: none; max-height: 176px; } #model-notice { bottom: 8px; } }
+
