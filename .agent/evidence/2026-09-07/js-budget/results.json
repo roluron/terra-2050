@@ -1,0 +1,36 @@
+{
+  "terser": "5.51.2",
+  "files": [
+    {
+      "name": "application.js",
+      "sourceBytes": 188445,
+      "minifiedBytes": 107138
+    },
+    {
+      "name": "three.module.min.js",
+      "sourceBytes": 670681,
+      "minifiedBytes": 672526
+    },
+    {
+      "name": "OrbitControls.js",
+      "sourceBytes": 29868,
+      "minifiedBytes": 12445
+    },
+    {
+      "name": "gsap.min.js",
+      "sourceBytes": 72214,
+      "minifiedBytes": 69759
+    },
+    {
+      "name": "howler.min.js",
+      "sourceBytes": 36173,
+      "minifiedBytes": 36006
+    }
+  ],
+  "totalBytes": 897874,
+  "totalKiB": 876.830078125,
+  "under900000": true,
+  "under900KiB": true,
+  "revision": "a9fb348039ce97ea2e398716c9136d5afb384674",
+  "htmlSha256": "363767dd83794f862291da7ebe4ea1ffc0685c3a71289d45526efab5565d27fe"
+}

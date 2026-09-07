@@ -1,0 +1,5 @@
+{"command": ["/Library/Frameworks/Python.framework/Versions/3.12/bin/python3", "/Users/runner/work/terra-2050/terra-2050/tools/verifier_assets.py"], "exit_code": 0}
+OK     earth_mask_4320.webp     sans perte, identique au pixel : True
+OK     earth_color_4096.webp    PSNR 40.3 dB (seuil 38)
+OK     earth_color_2048.webp    PSNR 39.3 dB (seuil 38)
+Toutes les textures sont fidèles.

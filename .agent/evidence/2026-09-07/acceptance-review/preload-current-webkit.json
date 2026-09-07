@@ -1,0 +1,75 @@
+[
+  {
+    "fallback": false,
+    "hints": [
+      {
+        "url": "http://localhost:8087/assets/textures/earth_color_2048.webp",
+        "crossorigin": null
+      },
+      {
+        "url": "http://localhost:8087/assets/textures/earth_mask_4320.webp",
+        "crossorigin": null
+      },
+      {
+        "url": "http://localhost:8087/data/grille_c.png",
+        "crossorigin": null
+      }
+    ],
+    "counts": {
+      "three.module.min.js": 1,
+      "earth_color_2048.webp": 1,
+      "earth_mask_4320.webp": 1,
+      "grille_c.png": 1
+    },
+    "pageErrors": [],
+    "consoleErrors": [],
+    "warnings": [],
+    "replacements": [],
+    "storyReady": true
+  },
+  {
+    "fallback": true,
+    "hints": [
+      {
+        "url": "http://localhost:8087/assets/textures/earth_color_2048.webp",
+        "crossorigin": null
+      },
+      {
+        "url": "http://localhost:8087/assets/textures/earth_mask_4320.webp",
+        "crossorigin": null
+      },
+      {
+        "url": "http://localhost:8087/data/grille_c.png",
+        "crossorigin": null
+      }
+    ],
+    "counts": {
+      "three.module.min.js": 1,
+      "earth_color_2048.webp": 2,
+      "earth_mask_4320.webp": 2,
+      "grille_c.png": 1
+    },
+    "pageErrors": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "warnings": [
+      "The resource http://localhost:8087/assets/textures/earth_color_2048.webp was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.",
+      "The resource http://localhost:8087/assets/textures/earth_mask_4320.webp was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing."
+    ],
+    "replacements": [
+      {
+        "url": "http://localhost:8087/assets/textures/earth_color_2048.jpg",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:8087/assets/textures/earth_mask_4320.png",
+        "status": 200
+      }
+    ],
+    "storyReady": true
+  }
+]

@@ -1,0 +1,31 @@
+import fs from 'node:fs';
+import {chromium,webkit,devices} from 'playwright';
+const OUT=new URL('.',import.meta.url).pathname, URL0=(process.env.URL0 || 'http://localhost:8080/');
+const result={}; const save=()=>fs.writeFileSync(OUT+'results.json',JSON.stringify(result,null,2));
+async function open(type,opts={}) {const b=await type.launch({executablePath:type.executablePath()});const p=await b.newPage({...opts,locale:'en-US'});return{b,p}}
+async function enter(p){await p.goto(URL0);await p.waitForSelector('#voile.pret',{timeout:60000});await p.click('#bouton-entree');await p.waitForTimeout(1500)}
+async function search(p){await p.click('#champ-recherche');await p.fill('#champ-recherche','Paris');await p.getByRole('option').filter({hasText:'Paris'}).first().click()}
+for(const [name,type,opts]of [['desktop-short',chromium,{viewport:{width:1440,height:500}}],['iphone-se',webkit,devices['iPhone SE']]]){
+ const {b,p}=await open(type,opts);try{await enter(p);await search(p);await p.click('#dossier-story');await p.waitForSelector('#story-partager:not([disabled])');await p.waitForTimeout(600);
+ const bounds=await p.evaluate(()=>{const q=[...document.querySelectorAll('.story-carte,#story-fermer,#story-partager,.story-opt')];return q.map(e=>{const r=e.getBoundingClientRect();return {label:e.id||e.className,x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,right:r.right,within:r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight}})});
+ const option=p.locator('#story-popup input[data-opt]').first(),before=await option.isChecked();await option.focus();await p.keyboard.press('Space');const toggled=before!==await option.isChecked();
+ const focus=[];for(let n=0;n<12;n++){await p.keyboard.press('Tab');focus.push(await p.evaluate(()=>({id:document.activeElement.id,inside:!!document.activeElement.closest('#story-popup')})))};
+ await p.screenshot({path:OUT+name+'-story.png'});await p.click('#story-fermer');const closed=await p.locator('#story-popup').isHidden();let doubleError=null;try{await p.locator('#dossier-story').dblclick({timeout:3000})}catch(e){doubleError=e.message;await p.screenshot({path:OUT+name+'-reopen-failure.png'});fs.writeFileSync(OUT+name+'-reopen-failure.json',JSON.stringify(await p.evaluate(()=>['dossier-story','timeline','dossier'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect();return{id,x:r.x,y:r.y,w:r.width,h:r.height,scroll:e.scrollTop}})),null,2))};await p.waitForTimeout(650);const doubleStayed=await p.locator('#story-popup').isVisible();
+ result[name]={bounds,toggled,focus,closed,doubleStayed,doubleError,pass:bounds.every(x=>x.within)&&toggled&&focus.every(x=>x.inside)&&closed&&doubleStayed};save();console.log(name,result[name].pass);
+ }finally{await b.close()}
+}
+{
+ const{b,p}=await open(chromium,{viewport:{width:1440,height:900}});try{
+ await p.goto(URL0);await p.waitForSelector('#voile.pret');const tabbed=[];for(let n=0;n<16;n++){await p.keyboard.press('Tab');tabbed.push(await p.evaluate(()=>({id:document.activeElement.id,chrome:!!document.activeElement.closest('#recherche,#calques,#util,#timeline,#etiquettes')})))}result.veil={tabbed,pass:tabbed.every(x=>!x.chrome)};
+ await p.click('#bouton-entree');await p.waitForTimeout(1500);await search(p);
+ const samples=[];for(let n=0;n<42;n++){samples.push(await p.evaluate(()=>{const shown=[...document.querySelectorAll('#an .odo')].map(c=>{const r=c.getBoundingClientRect();return [...c.children].sort((a,b)=>Math.abs(a.getBoundingClientRect().y-r.y)-Math.abs(b.getBoundingClientRect().y-r.y))[0].textContent}).join('');return{time:performance.now(),slider:document.querySelector('#curseur').value,shown,dossier:document.querySelector('#dossier-annee').textContent}}));await p.waitForTimeout(100)};
+ result.odometer={samples,mismatches:samples.filter(s=>s.shown!==s.slider||s.slider!==s.dossier)};
+ const before=await p.evaluate(()=>({length:history.length,hash:location.hash}));await p.reload();await p.waitForSelector('#voile.pret');await p.click('#bouton-entree');await p.waitForTimeout(2500);const after=await p.evaluate(()=>({length:history.length,hash:location.hash}));result.reloadHistory={before,after,pass:before.length===after.length&&before.hash===after.hash};
+ const selectors=['#dossier-coords','#dossier-sources',...Array.from({length:7},(_,i)=>`#calques .calque:nth-child(${i+1}) .nom`)];
+ const meta=await p.evaluate(selectors=>selectors.map(s=>{const e=document.querySelector(s),r=e.getBoundingClientRect(),cs=getComputedStyle(e);return{s,x:r.x,y:r.y,w:r.width,h:r.height,color:cs.color,font:cs.fontSize,opacity:cs.opacity,ancestors:(()=>{const arr=[];for(let x=e;x;x=x.parentElement){const c=getComputedStyle(x);arr.push({tag:x.id||x.tagName,opacity:c.opacity,background:c.backgroundColor})}return arr})()}}),selectors);fs.writeFileSync(OUT+'contrast-meta.json',JSON.stringify(meta,null,2));await p.screenshot({path:OUT+'contrast-original.png'});
+ await p.addStyleTag({content:selectors.join(',')+'{color:transparent !important;text-shadow:none !important;}'});await p.screenshot({path:OUT+'contrast-background.png'});save();console.log('odometer mismatches',result.odometer.mismatches.length,'history',result.reloadHistory.pass);
+ }finally{await b.close()}
+}
+{
+ const{b,p}=await open(chromium,{viewport:{width:1440,height:900}});try{const cdp=await p.context().newCDPSession(p);await cdp.send('Network.enable');await cdp.send('Network.setCacheDisabled',{cacheDisabled:true});await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:150,downloadThroughput:700000/8,uploadThroughput:350000/8});const start=Date.now();await p.goto(URL0,{waitUntil:'domcontentloaded'});await p.waitForSelector('#voile.pret',{timeout:60000});result.network700={wallMs:Date.now()-start,localUncompressed:true,resources:await p.evaluate(()=>performance.getEntriesByType('resource').map(e=>({name:e.name.split('/').pop(),transferSize:e.transferSize,encodedBodySize:e.encodedBodySize,duration:e.duration,responseEnd:e.responseEnd}))),navigation:await p.evaluate(()=>performance.getEntriesByType('navigation').map(e=>({transferSize:e.transferSize,encodedBodySize:e.encodedBodySize,responseEnd:e.responseEnd})))};save();console.log('network',result.network700.wallMs)}finally{await b.close()}
+}

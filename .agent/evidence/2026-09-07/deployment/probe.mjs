@@ -1,0 +1,7 @@
+import fs from 'node:fs';import crypto from 'node:crypto';import assert from 'node:assert/strict';
+const root=new URL('../../../../',import.meta.url),out=new URL('./',import.meta.url);fs.mkdirSync(out,{recursive:true});
+const base='https://roluron.github.io/terra-2050/';
+const files=['index.html','terra-menus.css','manifest.webmanifest','assets/icon.svg','assets/favicon-32.png','assets/apple-touch-icon.png','assets/og-globe.jpg','assets/lib/three.module.min.js','assets/lib/gsap.min.js','assets/lib/howler.min.js','assets/addons/OrbitControls.js','fonts/TWKLausanne-600.woff2','fonts/TWKLausanne-400.woff2','data/pays.png','data/places.json'];
+const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const rows=await Promise.all(files.map(async file=>{const response=await fetch(base+(file==='index.html'?'':file),{headers:{'Cache-Control':'no-cache'}});const bytes=Buffer.from(await response.arrayBuffer());return{file,status:response.status,type:response.headers.get('content-type'),sha256:hash(bytes),localSha256:hash(fs.readFileSync(new URL(file,root))),bytes:bytes.length};}));
+const html=await(await fetch(base)).text();const metadata=['og:title','og:image','twitter:card','apple-mobile-web-app-capable'].every(name=>html.includes(name));const result={at:new Date().toISOString(),base,metadata,files:rows};fs.writeFileSync(new URL('results.json',out),JSON.stringify(result,null,2));console.log(JSON.stringify(result));assert.ok(metadata);assert.ok(rows.every(r=>r.status===200&&r.sha256===r.localSha256));

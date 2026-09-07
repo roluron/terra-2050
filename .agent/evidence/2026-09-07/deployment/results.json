@@ -1,0 +1,127 @@
+{
+  "at": "2026-09-07T09:42:02.004Z",
+  "base": "https://roluron.github.io/terra-2050/",
+  "metadata": true,
+  "files": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "sha256": "363767dd83794f862291da7ebe4ea1ffc0685c3a71289d45526efab5565d27fe",
+      "localSha256": "363767dd83794f862291da7ebe4ea1ffc0685c3a71289d45526efab5565d27fe",
+      "bytes": 209094
+    },
+    {
+      "file": "terra-menus.css",
+      "status": 200,
+      "type": "text/css; charset=utf-8",
+      "sha256": "b057ec71d77b084d9dabf3def202105d51178dbc31b132f7a7c884d2f14ebd3b",
+      "localSha256": "b057ec71d77b084d9dabf3def202105d51178dbc31b132f7a7c884d2f14ebd3b",
+      "bytes": 77129
+    },
+    {
+      "file": "manifest.webmanifest",
+      "status": 200,
+      "type": "application/manifest+json; charset=utf-8",
+      "sha256": "7301ab9aaf6c911cc72c88e7132856acd5b59b43b02dd75310b0090fb7c04f0e",
+      "localSha256": "7301ab9aaf6c911cc72c88e7132856acd5b59b43b02dd75310b0090fb7c04f0e",
+      "bytes": 496
+    },
+    {
+      "file": "assets/icon.svg",
+      "status": 200,
+      "type": "image/svg+xml",
+      "sha256": "bb8d7e23cabf856d38947d499b622309e1a54f30a922e8a637a90156e22f0760",
+      "localSha256": "bb8d7e23cabf856d38947d499b622309e1a54f30a922e8a637a90156e22f0760",
+      "bytes": 426
+    },
+    {
+      "file": "assets/favicon-32.png",
+      "status": 200,
+      "type": "image/png",
+      "sha256": "8d6c341015beadeec652625c0411030635bdf987a06ba0e30f9636e2715f999f",
+      "localSha256": "8d6c341015beadeec652625c0411030635bdf987a06ba0e30f9636e2715f999f",
+      "bytes": 1201
+    },
+    {
+      "file": "assets/apple-touch-icon.png",
+      "status": 200,
+      "type": "image/png",
+      "sha256": "1d1c486f9c91f5c718d4f0dfe7b7e6284fde1264a7e1425dabe19530fdf392df",
+      "localSha256": "1d1c486f9c91f5c718d4f0dfe7b7e6284fde1264a7e1425dabe19530fdf392df",
+      "bytes": 15150
+    },
+    {
+      "file": "assets/og-globe.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "sha256": "186882f3a65b8b47adf412c5c3afd2a53561eac7df3d0087c6811a5657761e2f",
+      "localSha256": "186882f3a65b8b47adf412c5c3afd2a53561eac7df3d0087c6811a5657761e2f",
+      "bytes": 57862
+    },
+    {
+      "file": "assets/lib/three.module.min.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8",
+      "sha256": "3e690ac7d180b0aadf0891bea39eec643e29e2d3e75c99b18689518665f69ba6",
+      "localSha256": "3e690ac7d180b0aadf0891bea39eec643e29e2d3e75c99b18689518665f69ba6",
+      "bytes": 670681
+    },
+    {
+      "file": "assets/lib/gsap.min.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8",
+      "sha256": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
+      "localSha256": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
+      "bytes": 72214
+    },
+    {
+      "file": "assets/lib/howler.min.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8",
+      "sha256": "736c339444c88baad593e24afdf1d6e8f574019b4e37a110ecb453ff745ffd41",
+      "localSha256": "736c339444c88baad593e24afdf1d6e8f574019b4e37a110ecb453ff745ffd41",
+      "bytes": 36173
+    },
+    {
+      "file": "assets/addons/OrbitControls.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8",
+      "sha256": "5a44a9e86a2a0fb11933eed69bc2cd33c76a496854c1aed6ed776efa87d7b064",
+      "localSha256": "5a44a9e86a2a0fb11933eed69bc2cd33c76a496854c1aed6ed776efa87d7b064",
+      "bytes": 29868
+    },
+    {
+      "file": "fonts/TWKLausanne-600.woff2",
+      "status": 200,
+      "type": "font/woff2",
+      "sha256": "bb3d04419609e6fa08a420ce68756b9bb81fc4ccde283575fb42ffc443e2caf3",
+      "localSha256": "bb3d04419609e6fa08a420ce68756b9bb81fc4ccde283575fb42ffc443e2caf3",
+      "bytes": 30936
+    },
+    {
+      "file": "fonts/TWKLausanne-400.woff2",
+      "status": 200,
+      "type": "font/woff2",
+      "sha256": "3edff1ede4f95fec11b4ad510397682faac14c622267b92fe314f6860f6eba12",
+      "localSha256": "3edff1ede4f95fec11b4ad510397682faac14c622267b92fe314f6860f6eba12",
+      "bytes": 30952
+    },
+    {
+      "file": "data/pays.png",
+      "status": 200,
+      "type": "image/png",
+      "sha256": "d83c239711ea0cf3c1db9acf80138a972349aa438231e557e1a12a02054650ca",
+      "localSha256": "d83c239711ea0cf3c1db9acf80138a972349aa438231e557e1a12a02054650ca",
+      "bytes": 49982
+    },
+    {
+      "file": "data/places.json",
+      "status": 200,
+      "type": "application/json; charset=utf-8",
+      "sha256": "97a2ee63a8cb5986bbc90fe9d0fb7b1ff6a37605707d9ceba217da99d38c9c07",
+      "localSha256": "97a2ee63a8cb5986bbc90fe9d0fb7b1ff6a37605707d9ceba217da99d38c9c07",
+      "bytes": 1493989
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "name": "top",
+    "s": "#dossier-coords",
+    "x": 916,
+    "y": 89,
+    "w": 189.46875,
+    "h": 10,
+    "color": "rgba(255, 253, 226, 0.56)",
+    "alpha": 1
+  },
+  {
+    "name": "top",
+    "s": "#calques .calque:nth-child(1) .nom",
+    "x": 61,
+    "y": 353,
+    "w": 74.34375,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "alpha": 0.58
+  },
+  {
+    "name": "top",
+    "s": "#calques .calque:nth-child(2) .nom",
+    "x": 61,
+    "y": 383,
+    "w": 41.671875,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "alpha": 0.58
+  },
+  {
+    "name": "top",
+    "s": "#calques .calque:nth-child(3) .nom",
+    "x": 61,
+    "y": 413,
+    "w": 44.484375,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "alpha": 0.58
+  },
+  {
+    "name": "top",
+    "s": "#calques .calque:nth-child(4) .nom",
+    "x": 61,
+    "y": 443,
+    "w": 89.65625,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "alpha": 0.58
+  },
+  {
+    "name": "top",
+    "s": "#calques .calque:nth-child(5) .nom",
+    "x": 61,
+    "y": 473,
+    "w": 76.4375,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "alpha": 0.58
+  },
+  {
+    "name": "top",
+    "s": "#calques .calque:nth-child(6) .nom",
+    "x": 61,
+    "y": 503,
+    "w": 68.78125,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "alpha": 0.58
+  },
+  {
+    "name": "top",
+    "s": "#calques .calque:nth-child(7) .nom",
+    "x": 61,
+    "y": 533,
+    "w": 102.171875,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "alpha": 0.58
+  },
+  {
+    "name": "source",
+    "s": "#dossier-sources",
+    "x": 916,
+    "y": 668.8125,
+    "w": 454.9375,
+    "h": 47.390625,
+    "color": "rgba(255, 253, 226, 0.66)",
+    "alpha": 1
+  }
+]

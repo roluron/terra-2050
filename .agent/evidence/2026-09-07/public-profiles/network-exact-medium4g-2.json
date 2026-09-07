@@ -1,0 +1,146 @@
+{
+  "name": "medium4g-2",
+  "bps": 4000000,
+  "latency": 80,
+  "budgetMs": 2700,
+  "pass": true,
+  "revision": "a9fb348039ce97ea2e398716c9136d5afb384674",
+  "readyMs": 1982.4000000953674,
+  "criticalBytes": 832626,
+  "critical": [
+    {
+      "url": "https://roluron.github.io/terra-2050/",
+      "encodedDataLength": 67891,
+      "atMs": 537.2739997692406
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/assets/lib/howler.min.js",
+      "encodedDataLength": 10087,
+      "atMs": 615.4020000249147
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/terra-menus.css",
+      "encodedDataLength": 19780,
+      "atMs": 738.1659997627139
+    },
+    {
+      "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>",
+      "encodedDataLength": 0,
+      "atMs": 740.5159999616444
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/assets/lib/gsap.min.js",
+      "encodedDataLength": 28519,
+      "atMs": 832.1440001018345
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/assets/addons/OrbitControls.js",
+      "encodedDataLength": 6747,
+      "atMs": 1011.6139999590814
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/fonts/TWKLausanne-600.woff2",
+      "encodedDataLength": 31146,
+      "atMs": 1151.7849997617304
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/data/grille_c.png",
+      "encodedDataLength": 74809,
+      "atMs": 1284.442000091076
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/assets/lib/three.module.min.js",
+      "encodedDataLength": 169132,
+      "atMs": 1737.19900008291
+    },
+    {
+      "url": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA==",
+      "encodedDataLength": 0,
+      "atMs": 1753.8640000857413
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/assets/textures/earth_color_2048.webp",
+      "encodedDataLength": 207728,
+      "atMs": 1923.188999760896
+    },
+    {
+      "url": "https://roluron.github.io/terra-2050/assets/textures/earth_mask_4320.webp",
+      "encodedDataLength": 216787,
+      "atMs": 1965.4560000635684
+    }
+  ],
+  "allCompleteBeforeReady": [
+    {
+      "requestId": "16486ED01F5DC6FEB850AAD0BE8584CB",
+      "timestamp": 2316054.183194,
+      "encodedDataLength": 67891,
+      "url": "https://roluron.github.io/terra-2050/"
+    },
+    {
+      "requestId": "70228.14",
+      "timestamp": 2316054.261322,
+      "encodedDataLength": 10087,
+      "url": "https://roluron.github.io/terra-2050/assets/lib/howler.min.js"
+    },
+    {
+      "requestId": "70228.10",
+      "timestamp": 2316054.384086,
+      "encodedDataLength": 19780,
+      "url": "https://roluron.github.io/terra-2050/terra-menus.css"
+    },
+    {
+      "requestId": "70228.24",
+      "timestamp": 2316054.386436,
+      "encodedDataLength": 0,
+      "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>"
+    },
+    {
+      "requestId": "70228.11",
+      "timestamp": 2316054.478064,
+      "encodedDataLength": 28519,
+      "url": "https://roluron.github.io/terra-2050/assets/lib/gsap.min.js"
+    },
+    {
+      "requestId": "70228.26",
+      "timestamp": 2316054.657534,
+      "encodedDataLength": 6747,
+      "url": "https://roluron.github.io/terra-2050/assets/addons/OrbitControls.js"
+    },
+    {
+      "requestId": "70228.22",
+      "timestamp": 2316054.797705,
+      "encodedDataLength": 31146,
+      "url": "https://roluron.github.io/terra-2050/fonts/TWKLausanne-600.woff2"
+    },
+    {
+      "requestId": "70228.5",
+      "timestamp": 2316054.930362,
+      "encodedDataLength": 74809,
+      "url": "https://roluron.github.io/terra-2050/data/grille_c.png"
+    },
+    {
+      "requestId": "70228.2",
+      "timestamp": 2316055.383119,
+      "encodedDataLength": 169132,
+      "url": "https://roluron.github.io/terra-2050/assets/lib/three.module.min.js"
+    },
+    {
+      "requestId": "70228.27",
+      "timestamp": 2316055.399784,
+      "encodedDataLength": 0,
+      "url": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA=="
+    },
+    {
+      "requestId": "70228.3",
+      "timestamp": 2316055.569109,
+      "encodedDataLength": 207728,
+      "url": "https://roluron.github.io/terra-2050/assets/textures/earth_color_2048.webp"
+    },
+    {
+      "requestId": "70228.4",
+      "timestamp": 2316055.611376,
+      "encodedDataLength": 216787,
+      "url": "https://roluron.github.io/terra-2050/assets/textures/earth_mask_4320.webp"
+    }
+  ]
+}

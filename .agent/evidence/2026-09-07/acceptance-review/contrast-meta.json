@@ -1,0 +1,325 @@
+[
+  {
+    "s": "#dossier-coords",
+    "x": 916,
+    "y": 88,
+    "w": 460,
+    "h": 12.59375,
+    "color": "rgba(255, 253, 226, 0.56)",
+    "font": "9px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "dossier-coords",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "dossier",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#dossier-sources",
+    "x": 916,
+    "y": 849.625,
+    "w": 460,
+    "h": 51.1875,
+    "color": "rgba(255, 253, 226, 0.56)",
+    "font": "8px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "dossier-sources",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "dossier",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#calques .calque:nth-child(1) .nom",
+    "x": 61,
+    "y": 353,
+    "w": 74.34375,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "font": "12.5px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "SPAN",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BUTTON",
+        "opacity": "0.58",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "calques",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#calques .calque:nth-child(2) .nom",
+    "x": 61,
+    "y": 383,
+    "w": 41.671875,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "font": "12.5px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "SPAN",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BUTTON",
+        "opacity": "0.58",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "calques",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#calques .calque:nth-child(3) .nom",
+    "x": 61,
+    "y": 413,
+    "w": 44.484375,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "font": "12.5px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "SPAN",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BUTTON",
+        "opacity": "0.58",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "calques",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#calques .calque:nth-child(4) .nom",
+    "x": 61,
+    "y": 443,
+    "w": 89.65625,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "font": "12.5px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "SPAN",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BUTTON",
+        "opacity": "0.58",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "calques",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#calques .calque:nth-child(5) .nom",
+    "x": 61,
+    "y": 473,
+    "w": 76.4375,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "font": "12.5px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "SPAN",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BUTTON",
+        "opacity": "0.58",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "calques",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#calques .calque:nth-child(6) .nom",
+    "x": 61,
+    "y": 503,
+    "w": 68.78125,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "font": "12.5px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "SPAN",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BUTTON",
+        "opacity": "0.58",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "calques",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  },
+  {
+    "s": "#calques .calque:nth-child(7) .nom",
+    "x": 61,
+    "y": 533,
+    "w": 102.171875,
+    "h": 14,
+    "color": "rgb(255, 253, 226)",
+    "font": "12.5px",
+    "opacity": "1",
+    "ancestors": [
+      {
+        "tag": "SPAN",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BUTTON",
+        "opacity": "0.58",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "calques",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "BODY",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      },
+      {
+        "tag": "HTML",
+        "opacity": "1",
+        "background": "rgb(5, 18, 54)"
+      }
+    ]
+  }
+]

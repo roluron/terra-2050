@@ -1,0 +1,56 @@
+[
+  {
+    "selector": "#dossier-coords",
+    "minContrast": 1.614631484504609,
+    "maxContrast": 6.174895510794149,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#dossier-sources",
+    "minContrast": 4.155620237963475,
+    "maxContrast": 6.1377180109662435,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#calques .calque:nth-child(1) .nom",
+    "minContrast": 5.32918483482468,
+    "maxContrast": 6.648527085642121,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#calques .calque:nth-child(2) .nom",
+    "minContrast": 6.067576776867305,
+    "maxContrast": 6.620855843440002,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#calques .calque:nth-child(3) .nom",
+    "minContrast": 5.9678289582086075,
+    "maxContrast": 6.6031221475073165,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#calques .calque:nth-child(4) .nom",
+    "minContrast": 4.311599736209571,
+    "maxContrast": 6.603611865235395,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#calques .calque:nth-child(5) .nom",
+    "minContrast": 4.935575372095431,
+    "maxContrast": 6.603611865235395,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#calques .calque:nth-child(6) .nom",
+    "minContrast": 5.385435617607301,
+    "maxContrast": 6.632053712375091,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  },
+  {
+    "selector": "#calques .calque:nth-child(7) .nom",
+    "minContrast": 4.805924177523582,
+    "maxContrast": 6.638237409146131,
+    "method": "CSS foreground alpha composited against photographed background; conservative rectangle sampling; source visibility requires separate capture"
+  }
+]

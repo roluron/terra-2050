@@ -1,0 +1,64 @@
+[
+  {
+    "name": "desktop",
+    "pass": true,
+    "keyboardSearch": true,
+    "delight": "Atlantide notice and globe flight triggered",
+    "IMEEnterIgnored": true,
+    "sixRiskDetails": [
+      "Thermal stress · 6 days a year with a heat index above 32 °C · ＋6 by 2050 · 42 freezing days a year",
+      "Water stress · water reserve: deficit 30/100 · drier than 67% of cities · worsens by 5 by 2050",
+      "Wildfire · fire-prone weather 26/100 · more exposed than 52% of cities · ＋7 by 2050",
+      "Coastal flooding · 0% of land within 12 km below the 2050 flood line · 0% below the line + 1 m · median elevation 87.6 m · line = 2050 level + the 1-in-100-year storm tide (0.00 m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth",
+      "River flooding · 100-year flood (1%/yr · ≈22% by 2050): 19% of land within 12 km flooded, up to 9.2 m deep (p90) · JRC model map, held constant to 2050",
+      "Climate shift · the local climate has already drifted 0.9 °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6"
+    ],
+    "alternative": "Marne La Vallée",
+    "recents": true,
+    "homonyms": [
+      "ValenciaSpain",
+      "ValenceFrance",
+      "Bourg-lès-ValenceFrance"
+    ],
+    "geolocation": {
+      "nearest": "Paris 04 Hôtel-de-Ville",
+      "coordinates": [
+        48.8566,
+        2.3522
+      ]
+    },
+    "geolocationDenied": "Visible search fallback via injected permission error",
+    "errors": []
+  },
+  {
+    "name": "iphone",
+    "pass": true,
+    "keyboardSearch": true,
+    "delight": "Atlantide notice and globe flight triggered",
+    "IMEEnterIgnored": true,
+    "sixRiskDetails": [
+      "Thermal stress · 6 days a year with a heat index above 32 °C · ＋6 by 2050 · 42 freezing days a year",
+      "Water stress · water reserve: deficit 30/100 · drier than 67% of cities · worsens by 5 by 2050",
+      "Wildfire · fire-prone weather 26/100 · more exposed than 52% of cities · ＋7 by 2050",
+      "Coastal flooding · 0% of land within 12 km below the 2050 flood line · 0% below the line + 1 m · median elevation 87.6 m · line = 2050 level + the 1-in-100-year storm tide (0.00 m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth",
+      "River flooding · 100-year flood (1%/yr · ≈22% by 2050): 19% of land within 12 km flooded, up to 9.2 m deep (p90) · JRC model map, held constant to 2050",
+      "Climate shift · the local climate has already drifted 0.9 °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6"
+    ],
+    "alternative": "Marne La Vallée",
+    "recents": true,
+    "homonyms": [
+      "ValenciaSpain",
+      "ValenceFrance",
+      "Bourg-lès-ValenceFrance"
+    ],
+    "geolocation": {
+      "nearest": "Paris 04 Hôtel-de-Ville",
+      "coordinates": [
+        48.8566,
+        2.3522
+      ]
+    },
+    "geolocationDenied": "Visible search fallback via injected permission error",
+    "errors": []
+  }
+]

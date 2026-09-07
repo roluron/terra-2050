@@ -1,0 +1,3 @@
+{"command": ["/Library/Frameworks/Python.framework/Versions/3.12/bin/python3", "/Users/runner/work/terra-2050/terra-2050/tools/verifier_i18n.py"], "exit_code": 0}
+OK     69 cles, 7 sous-objets, symetrie FR/EN
+Dictionnaires FR/EN coherents.

@@ -1,0 +1,18 @@
+{
+  "device": "paired iPhone 15 Pro Max",
+  "route": "iPhone Mirroring native application via CUA",
+  "observations": [
+    "iPhone in Use \u2014 Lock your iPhone to connect",
+    "Timed Out \u2014 iPhone use while connecting",
+    "Error \u2014 An error occurred. Please try again.",
+    "Timed Out \u2014 iPhone Mirroring timed out connecting."
+  ],
+  "status": "UNVERIFIED",
+  "required": [
+    "Safari native share sheet to Instagram Stories",
+    "Home-screen icon installation and standalone launch"
+  ],
+  "userInput": "Lock phone requested; no reply received during this pass.",
+  "limitation": "No actual iPhone webpage or OS share flow was reached.",
+  "latestRetry": "2026-09-07: Error \u2014 An error occurred. Please try again."
+}

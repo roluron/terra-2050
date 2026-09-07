@@ -1,0 +1,36 @@
+[
+  {
+    "name": "actual clipboard city link round trip",
+    "pass": true,
+    "clipboard": "Seville: 38/100 habitability in 2050 — degraded habitability. What about your city?\nhttp://localhost:8087/#v=S%C3%A9ville&an=2050&cc=ES"
+  },
+  {
+    "name": "share Terra clipboard link",
+    "pass": true,
+    "clipboard": "Will your city still be livable in 2050? 34,099 cities, one habitability index built only from open scientific data.\nhttp://localhost:8087/"
+  },
+  {
+    "name": "invalid deep link #v=Paris&cc=FR&an=oops",
+    "pass": true,
+    "year": 2050
+  },
+  {
+    "name": "invalid deep link #v=Paris&cc=FR&an=9999",
+    "pass": true,
+    "year": 2050
+  },
+  {
+    "name": "invalid deep link #v=%E0%A4%A&an=2050",
+    "pass": true,
+    "year": 2026
+  },
+  {
+    "name": "invalid deep link #v=NeverExists&an=2040",
+    "pass": true,
+    "year": 2026
+  },
+  {
+    "name": "no page errors",
+    "pass": true
+  }
+]

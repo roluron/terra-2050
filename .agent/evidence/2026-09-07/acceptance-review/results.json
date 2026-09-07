@@ -1,0 +1,721 @@
+{
+  "desktop-short": {
+    "bounds": [
+      {
+        "label": "pedago-carte story-carte",
+        "x": 410,
+        "y": 61.5,
+        "w": 620,
+        "h": 377,
+        "bottom": 438.5,
+        "right": 1030,
+        "within": true
+      },
+      {
+        "label": "story-fermer",
+        "x": 971,
+        "y": 74.5,
+        "w": 44,
+        "h": 44,
+        "bottom": 118.5,
+        "right": 1015,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 113.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 151.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 151.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 189.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 189.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 227.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 227.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 265.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-partager",
+        "x": 625.375,
+        "y": 265.5,
+        "w": 170.734375,
+        "h": 25,
+        "bottom": 290.5,
+        "right": 796.109375,
+        "within": true
+      }
+    ],
+    "toggled": true,
+    "focus": [
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "story-fermer",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "story-fermer",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      }
+    ],
+    "closed": true,
+    "doubleStayed": true,
+    "doubleError": null,
+    "pass": true
+  },
+  "iphone-se": {
+    "bounds": [
+      {
+        "label": "pedago-carte story-carte",
+        "x": 12.796875,
+        "y": 14,
+        "w": 294.390625,
+        "h": 540,
+        "bottom": 554,
+        "right": 307.1875,
+        "within": true
+      },
+      {
+        "label": "story-fermer",
+        "x": 248.1875,
+        "y": 31,
+        "w": 44,
+        "h": 44,
+        "bottom": 75,
+        "right": 292.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 324.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 368.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 368.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 412.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 412.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 456.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 456.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 500.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-partager",
+        "x": 35.796875,
+        "y": 514.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 558.546875,
+        "right": 284.1875,
+        "within": true
+      }
+    ],
+    "toggled": true,
+    "focus": [
+      {
+        "id": "",
+        "inside": false
+      },
+      {
+        "id": "champ-recherche",
+        "inside": false
+      },
+      {
+        "id": "",
+        "inside": false
+      },
+      {
+        "id": "champ-recherche",
+        "inside": false
+      },
+      {
+        "id": "",
+        "inside": false
+      },
+      {
+        "id": "champ-recherche",
+        "inside": false
+      },
+      {
+        "id": "",
+        "inside": false
+      },
+      {
+        "id": "champ-recherche",
+        "inside": false
+      },
+      {
+        "id": "",
+        "inside": false
+      },
+      {
+        "id": "champ-recherche",
+        "inside": false
+      },
+      {
+        "id": "",
+        "inside": false
+      },
+      {
+        "id": "champ-recherche",
+        "inside": false
+      }
+    ],
+    "closed": true,
+    "doubleStayed": false,
+    "doubleError": "locator.dblclick: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#dossier-story')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"fa-lien\" id=\"dossier-story\">Story image ↗</button>\u001b[22m\n\u001b[2m  - attempting dblclick action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not stable\u001b[22m\n\u001b[2m    - retrying dblclick action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not stable\u001b[22m\n\u001b[2m    - retrying dblclick action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    5 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div id=\"timeline\" class=\"panneau\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying dblclick action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n",
+    "pass": false
+  },
+  "veil": {
+    "tabbed": [
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      },
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      },
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      },
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      },
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      },
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      },
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      },
+      {
+        "id": "bouton-entree",
+        "chrome": false
+      },
+      {
+        "id": "",
+        "chrome": false
+      }
+    ],
+    "pass": true
+  },
+  "odometer": {
+    "samples": [
+      {
+        "time": 4029.800000190735,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4132.099999904633,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4234.700000286102,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4336.599999904633,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4438.800000190735,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4543.599999904633,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4645.700000286102,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4748.099999904633,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4850.099999904633,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 4951.700000286102,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 5053.099999904633,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 5154.700000286102,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 5258.300000190735,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 5360.900000095367,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 5462.900000095367,
+        "slider": "2026",
+        "shown": "2026",
+        "dossier": "2026"
+      },
+      {
+        "time": 5565.200000286102,
+        "slider": "2027",
+        "shown": "2026",
+        "dossier": "2027"
+      },
+      {
+        "time": 5666.5,
+        "slider": "2027",
+        "shown": "2026",
+        "dossier": "2027"
+      },
+      {
+        "time": 5768,
+        "slider": "2028",
+        "shown": "2028",
+        "dossier": "2028"
+      },
+      {
+        "time": 5869.599999904633,
+        "slider": "2029",
+        "shown": "2029",
+        "dossier": "2029"
+      },
+      {
+        "time": 5973.200000286102,
+        "slider": "2030",
+        "shown": "2030",
+        "dossier": "2030"
+      },
+      {
+        "time": 6076.099999904633,
+        "slider": "2031",
+        "shown": "2031",
+        "dossier": "2031"
+      },
+      {
+        "time": 6178.5,
+        "slider": "2033",
+        "shown": "2033",
+        "dossier": "2033"
+      },
+      {
+        "time": 6281.099999904633,
+        "slider": "2035",
+        "shown": "2035",
+        "dossier": "2035"
+      },
+      {
+        "time": 6383.099999904633,
+        "slider": "2038",
+        "shown": "2038",
+        "dossier": "2038"
+      },
+      {
+        "time": 6487.300000190735,
+        "slider": "2041",
+        "shown": "2041",
+        "dossier": "2041"
+      },
+      {
+        "time": 6588.900000095367,
+        "slider": "2043",
+        "shown": "2043",
+        "dossier": "2043"
+      },
+      {
+        "time": 6693.5,
+        "slider": "2045",
+        "shown": "2045",
+        "dossier": "2045"
+      },
+      {
+        "time": 6795.400000095367,
+        "slider": "2046",
+        "shown": "2046",
+        "dossier": "2046"
+      },
+      {
+        "time": 6896.599999904633,
+        "slider": "2047",
+        "shown": "2047",
+        "dossier": "2047"
+      },
+      {
+        "time": 6999.099999904633,
+        "slider": "2048",
+        "shown": "2048",
+        "dossier": "2048"
+      },
+      {
+        "time": 7101,
+        "slider": "2049",
+        "shown": "2049",
+        "dossier": "2049"
+      },
+      {
+        "time": 7202.900000095367,
+        "slider": "2049",
+        "shown": "2049",
+        "dossier": "2049"
+      },
+      {
+        "time": 7304.900000095367,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 7406.599999904633,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 7508.700000286102,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 7628.900000095367,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 7732.5,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 7833.599999904633,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 7935.400000095367,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 8036.700000286102,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 8138.300000190735,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      },
+      {
+        "time": 8240.300000190735,
+        "slider": "2050",
+        "shown": "2050",
+        "dossier": "2050"
+      }
+    ],
+    "mismatches": [
+      {
+        "time": 5565.200000286102,
+        "slider": "2027",
+        "shown": "2026",
+        "dossier": "2027"
+      },
+      {
+        "time": 5666.5,
+        "slider": "2027",
+        "shown": "2026",
+        "dossier": "2027"
+      }
+    ]
+  },
+  "reloadHistory": {
+    "before": {
+      "length": 3,
+      "hash": "#v=Paris&an=2050&cc=FR"
+    },
+    "after": {
+      "length": 3,
+      "hash": "#v=Paris&an=2050&cc=FR"
+    },
+    "pass": true
+  },
+  "network700": {
+    "wallMs": 11516,
+    "localUncompressed": true,
+    "resources": [
+      {
+        "name": "terra-menus.css",
+        "transferSize": 20110,
+        "encodedBodySize": 19810,
+        "duration": 974.5,
+        "responseEnd": 1198.7999997138977
+      },
+      {
+        "name": "gsap.min.js",
+        "transferSize": 29391,
+        "encodedBodySize": 29091,
+        "duration": 1270.4000000953674,
+        "responseEnd": 1509
+      },
+      {
+        "name": "howler.min.js",
+        "transferSize": 10272,
+        "encodedBodySize": 9972,
+        "duration": 601.5999999046326,
+        "responseEnd": 840.3999996185303
+      },
+      {
+        "name": "TWKLausanne-400.woff2",
+        "transferSize": 31252,
+        "encodedBodySize": 30952,
+        "duration": 1984.1999998092651,
+        "responseEnd": 3188.199999809265
+      },
+      {
+        "name": "TWKLausanne-600.woff2",
+        "transferSize": 31236,
+        "encodedBodySize": 30936,
+        "duration": 1996.2000002861023,
+        "responseEnd": 3205
+      },
+      {
+        "name": "TWKLausanne-500.woff2",
+        "transferSize": 31200,
+        "encodedBodySize": 30900,
+        "duration": 2014.7000002861023,
+        "responseEnd": 3223.5999999046326
+      },
+      {
+        "name": "TWKLausanne-400Italic.woff2",
+        "transferSize": 32996,
+        "encodedBodySize": 32696,
+        "duration": 2064.5,
+        "responseEnd": 3273.5
+      },
+      {
+        "name": "OrbitControls.js",
+        "transferSize": 7147,
+        "encodedBodySize": 6847,
+        "duration": 633.1000003814697,
+        "responseEnd": 3155
+      },
+      {
+        "name": "three.module.min.js",
+        "transferSize": 166825,
+        "encodedBodySize": 166525,
+        "duration": 2568.4000000953674,
+        "responseEnd": 5090.299999713898
+      },
+      {
+        "name": "earth_color_2048.webp",
+        "transferSize": 207732,
+        "encodedBodySize": 207432,
+        "duration": 5753.799999713898,
+        "responseEnd": 10900.89999961853
+      },
+      {
+        "name": "earth_mask_4320.webp",
+        "transferSize": 216786,
+        "encodedBodySize": 216486,
+        "duration": 5874.699999809265,
+        "responseEnd": 11021.799999713898
+      },
+      {
+        "name": "grille_c.png",
+        "transferSize": 74920,
+        "encodedBodySize": 74620,
+        "duration": 2720.199999809265,
+        "responseEnd": 7867.39999961853
+      },
+      {
+        "name": "calibration.json",
+        "transferSize": 1037,
+        "encodedBodySize": 737,
+        "duration": 155.5,
+        "responseEnd": 11191.099999904633
+      },
+      {
+        "name": "pays.json",
+        "transferSize": 3000,
+        "encodedBodySize": 2700,
+        "duration": 345.40000009536743,
+        "responseEnd": 11381.099999904633
+      }
+    ],
+    "navigation": [
+      {
+        "transferSize": 66434,
+        "encodedBodySize": 66134,
+        "responseEnd": 2517.8999996185303
+      }
+    ]
+  }
+}

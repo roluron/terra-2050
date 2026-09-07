@@ -55,7 +55,9 @@ Tout le reste arrive **après** :
 | grilles prêtes | `pays.png` + `pays_index.json` (50 Ko) | le nom du pays sous le pointeur ; sans elle, le survol ne dit que la ville |
 | clic Explorer | les sons, les foyers de feu | rien de tout cela ne sert avant le geste |
 
-Mesures (émulation réseau Chrome, deux tirages par ligne, navigateur relancé
+Mesures historiques (avant la passe du 7 septembre 2026 ; les mesures de la
+version publiée et les limites de vérification sont dans
+[`.agent/EVIDENCE.md`](.agent/EVIDENCE.md)). Émulation réseau Chrome, deux tirages par ligne, navigateur relancé
 à chaque tirage, délai jusqu'à `#voile.pret`) :
 
 | Réseau | Bouton Explorer |

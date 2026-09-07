@@ -1,0 +1,9 @@
+{
+  "revision": "5c1e31f843db03e05917b64756ab59c516197e24",
+  "url": "http://localhost:8087",
+  "sha256": {
+    "index.html": "357eaf803b89cb6c41a8e71a999fa3fa98b5b7b8bcec415fa5a2958e7f6fd48a",
+    "terra-menus.css": "27ed82380edbc6e0cd57c43a76417388d850a05b723b31bf29254ad33f95c782",
+    "package-lock.json": "bcfb139e75308f79a0316ec51275a682fad1f69cc5ee071e787647f14ad6753a"
+  }
+}

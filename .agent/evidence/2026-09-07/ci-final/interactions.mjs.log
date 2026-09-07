@@ -1,0 +1,18 @@
+{"command": ["node", "/Users/runner/work/terra-2050/terra-2050/tools/qa/interactions.mjs"], "exit_code": 0}
+{"name":"desktop: closed city controls stay outside keyboard navigation","pass":true}
+{"name":"desktop: no-data city → country → city","pass":true}
+{"name":"desktop: compare button → second city → duel","pass":true}
+{"name":"desktop: story preview, close and reopen","pass":true}
+{"name":"desktop: browser back closes dossier; forward reopens","pass":true}
+{"name":"desktop: city labels open a diagnosis","pass":true}
+{"name":"desktop: returning drag does not open a diagnosis","pass":true}
+{"name":"desktop: no browser errors","pass":true}
+{"name":"iphone: closed city controls stay outside keyboard navigation","pass":true}
+{"name":"iphone: no-data city → country → city","pass":true}
+{"name":"iphone: compare button → second city → duel","pass":true}
+{"name":"iphone: story preview, close and reopen","pass":true}
+{"name":"iphone: browser back closes dossier; forward reopens","pass":true}
+{"name":"iphone: city labels open a diagnosis","pass":true}
+{"name":"iphone: pinned tooltip is dismissed when the year changes","pass":true}
+{"name":"iphone: no browser errors","pass":true}
+{"name":"iphone SE: search remains tappable after history and story","pass":true}

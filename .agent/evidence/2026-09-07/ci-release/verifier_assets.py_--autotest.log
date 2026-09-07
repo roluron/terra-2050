@@ -1,0 +1,8 @@
+{"command": ["/Library/Frameworks/Python.framework/Versions/3.12/bin/python3", "/Users/runner/work/terra-2050/terra-2050/tools/verifier_assets.py", "--autotest"], "exit_code": 0}
+OK     autotest : l image temoin est bien abimee par le lossy
+OK     autotest : un lossy indetectable au pixel est rattrape par l en-tete
+OK     autotest : un RGBA sans perte est accepte
+OK     autotest : un canal alpha perdu est refuse
+OK     autotest : une image sans perte est acceptee
+OK     autotest : une image lossy est refusee
+Le controle est porteur.

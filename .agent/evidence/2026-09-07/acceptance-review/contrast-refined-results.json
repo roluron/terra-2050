@@ -1,0 +1,56 @@
+[
+  {
+    "selector": "#dossier-coords",
+    "pixels": 328,
+    "minContrast": 5.5068270738067415,
+    "maxContrast": 6.169182389325423
+  },
+  {
+    "selector": "#calques .calque:nth-child(1) .nom",
+    "pixels": 284,
+    "minContrast": 6.046972101581982,
+    "maxContrast": 6.685619673371936
+  },
+  {
+    "selector": "#calques .calque:nth-child(2) .nom",
+    "pixels": 212,
+    "minContrast": 6.406279051399801,
+    "maxContrast": 6.667698013803371
+  },
+  {
+    "selector": "#calques .calque:nth-child(3) .nom",
+    "pixels": 180,
+    "minContrast": 6.345959487332087,
+    "maxContrast": 6.659509018397367
+  },
+  {
+    "selector": "#calques .calque:nth-child(4) .nom",
+    "pixels": 371,
+    "minContrast": 5.232714871557705,
+    "maxContrast": 6.658996525697282
+  },
+  {
+    "selector": "#calques .calque:nth-child(5) .nom",
+    "pixels": 321,
+    "minContrast": 5.908762299812879,
+    "maxContrast": 6.662642021133496
+  },
+  {
+    "selector": "#calques .calque:nth-child(6) .nom",
+    "pixels": 269,
+    "minContrast": 6.079619550123947,
+    "maxContrast": 6.670103789243415
+  },
+  {
+    "selector": "#calques .calque:nth-child(7) .nom",
+    "pixels": 399,
+    "minContrast": 4.813670966469045,
+    "maxContrast": 6.679553030697622
+  },
+  {
+    "selector": "#dossier-sources",
+    "pixels": 3763,
+    "minContrast": 5.203568969486775,
+    "maxContrast": 8.216196526818173
+  }
+]

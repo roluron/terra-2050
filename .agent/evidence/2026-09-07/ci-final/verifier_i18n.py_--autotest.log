@@ -1,0 +1,5 @@
+{"command": ["/Library/Frameworks/Python.framework/Versions/3.12/bin/python3", "/Users/runner/work/terra-2050/terra-2050/tools/verifier_i18n.py", "--autotest"], "exit_code": 0}
+OK     autotest : le fichier sain passe
+OK     autotest : une cle absente de EN est vue
+OK     autotest : une cle inventee dans le code est vue
+Le controle est porteur.

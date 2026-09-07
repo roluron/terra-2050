@@ -1,0 +1,260 @@
+{
+  "desktop-short": {
+    "bounds": [
+      {
+        "label": "pedago-carte story-carte",
+        "x": 410,
+        "y": 61.5,
+        "w": 620,
+        "h": 377,
+        "bottom": 438.5,
+        "right": 1030,
+        "within": true
+      },
+      {
+        "label": "story-fermer",
+        "x": 971,
+        "y": 74.5,
+        "w": 44,
+        "h": 44,
+        "bottom": 118.5,
+        "right": 1015,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 113.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 151.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 151.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 189.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 189.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 227.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 625.375,
+        "y": 227.5,
+        "w": 381.625,
+        "h": 38,
+        "bottom": 265.5,
+        "right": 1007,
+        "within": true
+      },
+      {
+        "label": "story-partager",
+        "x": 625.375,
+        "y": 265.5,
+        "w": 170.734375,
+        "h": 25,
+        "bottom": 290.5,
+        "right": 796.109375,
+        "within": true
+      }
+    ],
+    "toggled": true,
+    "focus": [
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "story-fermer",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "story-fermer",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      }
+    ],
+    "closed": true,
+    "doubleStayed": true,
+    "doubleError": null,
+    "pass": true
+  },
+  "iphone-se": {
+    "bounds": [
+      {
+        "label": "pedago-carte story-carte",
+        "x": 12.796875,
+        "y": 14,
+        "w": 294.390625,
+        "h": 540,
+        "bottom": 554,
+        "right": 307.1875,
+        "within": true
+      },
+      {
+        "label": "story-fermer",
+        "x": 248.1875,
+        "y": 31,
+        "w": 44,
+        "h": 44,
+        "bottom": 75,
+        "right": 292.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 324.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 368.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 368.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 412.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 412.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 456.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-opt",
+        "x": 35.796875,
+        "y": 456.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 500.546875,
+        "right": 284.1875,
+        "within": true
+      },
+      {
+        "label": "story-partager",
+        "x": 35.796875,
+        "y": 514.546875,
+        "w": 248.390625,
+        "h": 44,
+        "bottom": 558.546875,
+        "right": 284.1875,
+        "within": true
+      }
+    ],
+    "toggled": true,
+    "focus": [
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "story-partager",
+        "inside": true
+      },
+      {
+        "id": "story-fermer",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "story-fermer",
+        "inside": true
+      },
+      {
+        "id": "story-partager",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      },
+      {
+        "id": "",
+        "inside": true
+      }
+    ],
+    "closed": true,
+    "doubleStayed": true,
+    "doubleError": null,
+    "pass": true
+  }
+}

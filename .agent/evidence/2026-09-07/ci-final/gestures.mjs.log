@@ -1,0 +1,2 @@
+{"command": ["node", "/Users/runner/work/terra-2050/terra-2050/tools/qa/gestures.mjs"], "exit_code": 0}
+PASS actual pointer handlers: tap, returning drag, pinch, cancellation, mouse click, returning mouse drag

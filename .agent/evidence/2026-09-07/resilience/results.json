@@ -1,0 +1,21 @@
+[
+  {
+    "name": "webp-fallback",
+    "pass": true,
+    "loaded": [
+      "http://localhost:8087/assets/textures/earth_mask_4320.png",
+      "http://localhost:8087/assets/textures/earth_color_2048.jpg"
+    ],
+    "errors": [],
+    "focusTrap": true,
+    "story": true
+  },
+  {
+    "name": "blocked-storage",
+    "pass": true,
+    "loaded": [],
+    "errors": [],
+    "focusTrap": true,
+    "story": true
+  }
+]

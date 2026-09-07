@@ -1,0 +1,65 @@
+{
+  "search": {
+    "pass": true,
+    "samples": [
+      {
+        "search": {
+          "x": 196,
+          "y": 12,
+          "w": 46,
+          "h": 44
+        },
+        "settings": {
+          "x": 256,
+          "y": 12,
+          "w": 44,
+          "h": 44
+        },
+        "hit": "champ-recherche",
+        "body": "pret donnees-pretes loupe dossier-ouvert"
+      },
+      {
+        "search": {
+          "x": 196,
+          "y": 12,
+          "w": 46,
+          "h": 44
+        },
+        "settings": {
+          "x": 256,
+          "y": 12,
+          "w": 44,
+          "h": 44
+        },
+        "hit": "champ-recherche",
+        "body": "pret donnees-pretes loupe dossier-ouvert"
+      },
+      {
+        "search": {
+          "x": 196,
+          "y": 12,
+          "w": 46,
+          "h": 44
+        },
+        "settings": {
+          "x": 256,
+          "y": 12,
+          "w": 44,
+          "h": 44
+        },
+        "hit": "champ-recherche",
+        "body": "pret donnees-pretes loupe dossier-ouvert"
+      }
+    ]
+  },
+  "locationSuccess": {
+    "pass": true,
+    "city": "Paris",
+    "geolocation": "browser granted emulated Paris coordinates"
+  },
+  "locationDenied": {
+    "pass": true,
+    "text": "Location unavailable — search your city",
+    "geolocation": "explicit permission-denied provider fixture"
+  }
+}

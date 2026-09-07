@@ -1,0 +1,124 @@
+[
+  {
+    "name": "desktop",
+    "before": [
+      {
+        "id": "titre",
+        "cv": "hidden"
+      },
+      {
+        "id": "recherche",
+        "cv": "hidden"
+      },
+      {
+        "id": "timeline",
+        "cv": "hidden"
+      },
+      {
+        "id": "calques",
+        "cv": "hidden"
+      },
+      {
+        "id": "util",
+        "cv": "hidden"
+      },
+      {
+        "id": "dossier",
+        "cv": "hidden"
+      }
+    ],
+    "after": [
+      {
+        "id": "titre",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "recherche",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "timeline",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "calques",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "util",
+        "cv": "visible",
+        "opacity": 1
+      }
+    ],
+    "dossier": {
+      "open": true,
+      "cv": "visible"
+    },
+    "pass": true
+  },
+  {
+    "name": "iphone-se",
+    "before": [
+      {
+        "id": "titre",
+        "cv": "hidden"
+      },
+      {
+        "id": "recherche",
+        "cv": "hidden"
+      },
+      {
+        "id": "timeline",
+        "cv": "hidden"
+      },
+      {
+        "id": "calques",
+        "cv": "hidden"
+      },
+      {
+        "id": "util",
+        "cv": "hidden"
+      },
+      {
+        "id": "dossier",
+        "cv": "hidden"
+      }
+    ],
+    "after": [
+      {
+        "id": "titre",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "recherche",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "timeline",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "calques",
+        "cv": "visible",
+        "opacity": 1
+      },
+      {
+        "id": "util",
+        "cv": "visible",
+        "opacity": 1
+      }
+    ],
+    "dossier": {
+      "open": true,
+      "cv": "visible"
+    },
+    "pass": true
+  }
+]
