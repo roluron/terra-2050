@@ -2048,13 +2048,13 @@ function majRegle(){
     const dA = i - actif;
     let cible = i === actif ? 3.1 : 1 + 1.6 * Math.exp(-(dA * dA) / 7);
     let op = i === actif ? 1 : i < actif ? 0.55 : 0.25;
-    if (etatRegle.survol !== null){
+    if (!MOINS_ANIM && etatRegle.survol !== null){
       const dS = i - etatRegle.survol;
       cible += 0.9 * Math.exp(-(dS * dS) / 5);
       if (Math.abs(dS) < 1) op = Math.max(op, 0.85);
     }
-    const nh = etatRegle.h[i] + (cible - etatRegle.h[i]) * 0.22;
-    const no = etatRegle.o[i] + (op - etatRegle.o[i]) * 0.22;
+    const nh = MOINS_ANIM ? cible : etatRegle.h[i] + (cible - etatRegle.h[i]) * 0.22;
+    const no = MOINS_ANIM ? op : etatRegle.o[i] + (op - etatRegle.o[i]) * 0.22;
     // au repos, zéro écriture de style : le rAF ne paie que le mouvement
     if (Math.abs(nh - etatRegle.h[i]) > 0.0015){
       etatRegle.h[i] = nh;
