@@ -7,7 +7,7 @@ try{
  const page=await browser.newPage({viewport:{width:960,height:720},deviceScaleFactor:1});page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',async route=>{
   if(route.request().resourceType()!=='document')return route.continue();
-  const response=await route.fetch();let html=await response.text();html=html.replace('</script>\n</body>',`globalThis.__motionProbe=()=>{
+  const response=await route.fetch();let html=await response.text();html=html.replace('</script>\n</body>',`globalThis.__motionClock=()=>[uniformsGlobe.uTemps.value,feuxUniforms.uTemps.value];globalThis.__motionProbe=()=>{
  controles.autoRotate=false;gsap.killTweensOf(camera.position);camera.position.copy(latLonVersVec3(25,40,2.6));camera.lookAt(0,0,0);camera.updateMatrixWorld();
  const target=cibles[0],w=target.width,h=target.height;
  const shot=(key,t,p)=>{for(const c of Object.values(CALQUES))c.uniforme.value=0;CALQUES[key].uniforme.value=1;feux.visible=key==='feux';uniformsGlobe.uIndice.value=0;uniformsGlobe.uTemps.value=t;feuxUniforms.uTemps.value=t;uniformsGlobe.uProgression.value=p;feuxUniforms.uProgression.value=p;moteur.setRenderTarget(target);moteur.render(scene,camera);const pixels=new Uint8Array(w*h*4);moteur.readRenderTargetPixels(target,0,0,w,h,pixels);moteur.setRenderTarget(null);return pixels;};
@@ -18,5 +18,5 @@ try{
  await page.goto(process.env.URL0||'http://localhost:8087/');await page.waitForSelector('#voile.pret');await page.click('#bouton-entree');await page.waitForTimeout(4500);
  result.pixels=await page.evaluate(()=>globalThis.__motionProbe());
  for(const [k,v]of Object.entries(result.pixels.animation))assert.ok(v.changed>100,JSON.stringify({k,v}));
- assert.ok(result.pixels.fireYear.changed>100);assert.equal(result.pixels.riverYear.changed,0);assert.deepEqual(errors,[]);result.pass=true;
+ assert.ok(result.pixels.fireYear.changed>100);assert.equal(result.pixels.riverYear.changed,0);assert.deepEqual(errors,[]);await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await page.waitForSelector('#voile.pret');await page.click('#bouton-entree');await page.waitForTimeout(1200);result.reducedClock=await page.evaluate(()=>globalThis.__motionClock());assert.deepEqual(result.reducedClock,[0,0]);result.pass=true;
 }catch(e){result.pass=false;result.error=String(e);result.errors=errors;process.exitCode=1}finally{fs.writeFileSync(out+'/motion.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));await browser.close()}

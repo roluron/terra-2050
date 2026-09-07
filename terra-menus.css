@@ -1124,7 +1124,7 @@ body.pret #dossier #timeline .an { font-size: 28px; }
 #model-notice { position: fixed; left: 24px; bottom: 22px; z-index: 12; max-width: 248px; padding: 12px 14px; background: #080c12d9; border: 1px solid #ffffff16; border-radius: 12px; color: #aebbc9; font: 11px/1.5 var(--police); backdrop-filter: blur(14px); }
 #model-notice #layer-context { margin: 0 0 6px; padding: 0; border: 0; background: none; max-width: none; }
 #model-notice p { margin: 0; }
-#model-notice a { display: block; margin-top: 6px; color: #e7edf4; text-underline-offset: 3px; }
+#model-notice a { display: flex; align-items: center; min-height: 44px; margin-top: 6px; color: #e7edf4; text-underline-offset: 3px; }
 body:not(.pret) #model-notice { display: none; }
 
 .etiquette { transition: opacity 350ms ease, color 200ms ease; }
