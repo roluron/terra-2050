@@ -3132,7 +3132,9 @@ function retirerMarqueur(){
 document.getElementById('bouton-position').addEventListener('click', () => {
   if (document.getElementById('bouton-reglages').getAttribute('aria-expanded') === 'true')
     document.getElementById('bouton-reglages').click();
+  const lieuDemande = lieuDossier;
   const indisponible = () => {
+    if (lieuDossier !== lieuDemande) return;
     fermerDossier();
     montrerAccroche(T().posIndispo, () => champ.focus(), 0);
   };
