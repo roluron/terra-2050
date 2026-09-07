@@ -118,9 +118,13 @@ if __name__ == "__main__":
     sortie.mkdir(parents=True, exist_ok=True)
     os.environ["QA_SORTIE"] = str(sortie)
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=RACINE, capture_output=True, text=True)
+    etat = subprocess.run(["git", "status", "--porcelain"], cwd=RACINE, capture_output=True, text=True)
     fichiers = ["index.html", "terra-menus.css", "package-lock.json"]
+    fichiers += [str(p.relative_to(RACINE)) for p in sorted((RACINE / "tools").rglob("*"))
+                 if p.is_file() and p.suffix in (".py", ".mjs")]
     (sortie / "snapshot.json").write_text(json.dumps({
         "revision": revision.stdout.strip(), "url": os.environ.get("URL0", "http://localhost:8080/"),
+        "workingTree": etat.stdout.strip(),
         "sha256": {p: hashlib.sha256((RACINE / p).read_bytes()).hexdigest()
                    for p in fichiers if (RACINE / p).exists()}
     }, indent=2), encoding="utf8")

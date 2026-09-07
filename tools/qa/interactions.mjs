@@ -63,6 +63,12 @@ for (const [name, type, options] of [
       await page.waitForSelector('#story-popup:not([hidden])');
       await page.waitForSelector('#story-partager:not([disabled]):not([aria-busy="true"])');
       assert.equal(await page.locator('#story-partager').isEnabled(), true);
+      await page.locator('.story-opt input').first().focus();
+      for (const key of ['Tab', 'Shift+Tab']) for (let i = 0; i < 12; i++) {
+        await page.keyboard.press(key);
+        assert.equal(await page.locator('#story-popup').evaluate(e => e.contains(document.activeElement)), true);
+        assert.equal(await page.locator('#dossier').evaluate(e => e.classList.contains('ouvert')), true);
+      }
       await page.screenshot({ path: `${out}/${name}-story.png` });
       await page.click('#story-fermer');
       await page.click('#dossier-story');

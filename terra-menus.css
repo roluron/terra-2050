@@ -14,6 +14,7 @@
 @font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-400Italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
 @font-face { font-family: "TWK Lausanne"; src: url("./fonts/TWKLausanne-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Terra Entry"; src: url("./fonts/TWKLausanne-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
 
 /* ---- Tokens fromanother (src/styles/_root.scss du site).
    --cyan/--ambre/--alerte restent des couleurs de DONNÉES (shader). ---- */
@@ -660,16 +661,6 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
 #resultats .vide { pointer-events: none; }
 #resultats li.vide:hover { background: none; }
 
-/* bouton « ma position » : réticule hairline à droite de la pilule */
-#bouton-position { display: none; /* géolocalisation en retrait pour l'instant */ position: absolute; left: calc(50% + min(126px, 18.5vw) + 14px);
-  top: 50%; transform: translateY(-50%); width: 30px; height: 30px; padding: 7px;
-  background: none; border: none; cursor: pointer; opacity: 0.45;
-  transition: opacity 0.3s var(--ease); }
-#bouton-position:hover { opacity: 1; }
-#bouton-position svg { width: 100%; height: 100%; fill: none; stroke: var(--texte);
-  stroke-width: 1.1; }
-#bouton-position svg circle { fill: var(--texte); stroke: none; r: 1.6px; }
-
 /* pistes natives du range neutralisées partout (Firefox gardait la sienne) */
 #curseur::-moz-range-track { background: none; border: none; }
 #curseur::-webkit-slider-runnable-track { background: none; border: none; }
@@ -688,7 +679,6 @@ body.dossier-ouvert #dossier-croix:hover { opacity: 1; transform: rotate(90deg);
   /* en-tête : wordmark réduit, « Conditions » en chevron seul, pilule étroite */
   #titre h1 { font-size: 22px; }
   #champ-recherche { width: min(190px, 50vw); padding: 11px 16px; }
-  #bouton-position { display: none; }
   /* la timeline reste centrée : le recentrage dossier-ouvert (34vw) repliait
      l'odomètre de l'année sur deux lignes */
   #timeline, body.dossier-ouvert #timeline {
@@ -1284,7 +1274,12 @@ button, .calque, #curseur { touch-action: manipulation; }
    2,51:1 et les coordonnees a 4,39:1, sous le seuil AA de 4,5. Ce sont
    justement les deux lignes qui disent d'ou vient le chiffre.
    ===================================================================== */
-#dossier .sources { color: rgba(255, 253, 226, 0.56); }
+#dossier .sources { color: rgba(255, 253, 226, 0.66); }
+body:not(.pret) { --police: "Terra Entry", -apple-system, sans-serif; }
+body:not(.pret) #titre, body:not(.pret) #recherche, body:not(.pret) #util,
+body:not(.pret) #calques, body:not(.pret) #timeline, body:not(.pret) #dossier {
+  content-visibility: hidden;
+}
 #dossier .coords { color: rgba(255, 253, 226, 0.56); }
 
 /* les grilles des calques arrivent apres l entree : tant qu'elles ne sont pas

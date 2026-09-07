@@ -209,12 +209,6 @@
 <div id="recherche" class="panneau">
   <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
     autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu" role="combobox" aria-expanded="false" aria-controls="resultats" aria-autocomplete="list">
-  <button id="bouton-position" aria-label="Ma position / My location">
-    <svg viewBox="0 0 16 16" aria-hidden="true">
-      <circle cx="8" cy="8" r="2.6"/>
-      <path d="M8 0.5 V3.5 M8 12.5 V15.5 M0.5 8 H3.5 M12.5 8 H15.5" />
-    </svg>
-  </button>
   <svg id="loupe" viewBox="0 0 20 20" aria-hidden="true">
     <circle cx="8.6" cy="8.6" r="5.4"/><path d="M12.8 12.8 L17.2 17.2"/>
   </svg>
@@ -257,6 +251,7 @@
       </svg>
     </button>
     <div id="menu-reglages">
+      <button class="bouton-ico fa-lien" id="bouton-position"></button>
       <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language / Langue">FR · <em>en</em></button>
@@ -2963,9 +2958,9 @@ function piegerFocus(boite){
   const surTab = e => {
     if (e.key !== 'Tab') return;
     const f = cibles(); if (!f.length) return;
-    const premier = f[0], dernier = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === premier){ e.preventDefault(); dernier.focus(); }
-    else if (!e.shiftKey && document.activeElement === dernier){ e.preventDefault(); premier.focus(); }
+    e.preventDefault();
+    const i = f.indexOf(document.activeElement);
+    f[i < 0 ? (e.shiftKey ? f.length - 1 : 0) : (i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
   };
   boite.addEventListener('keydown', surTab);
   const avant = document.activeElement;
@@ -2998,6 +2993,9 @@ function fermerStory(){
   if (rendreFocus){ rendreFocus(); rendreFocus = null; }
 }
 document.getElementById('dossier-story').addEventListener('click', ouvrirStory);
+storyPopup.addEventListener('click', e => {
+  if (e.detail > 1){ e.preventDefault(); e.stopPropagation(); }
+}, true);
 storyPopup.addEventListener('click', e => {
   // le 2e coup d un double-tap sur « Image story » atterrissait sur le fond
   // qui venait d apparaitre sous le doigt, et refermait le composeur aussitot
@@ -3132,7 +3130,11 @@ function retirerMarqueur(){
 
 /* ---- « ma position » : la grande ville la plus proche, sur accord explicite ---- */
 document.getElementById('bouton-position').addEventListener('click', () => {
-  if (!navigator.geolocation || !LIEUX.length) return;
+  if (document.getElementById('bouton-reglages').getAttribute('aria-expanded') === 'true')
+    document.getElementById('bouton-reglages').click();
+  if (!navigator.geolocation || !LIEUX.length){
+    montrerAccroche(T().posIndispo, () => champ.focus(), 0); return;
+  }
   navigator.geolocation.getCurrentPosition(pos => {
     const { latitude, longitude } = pos.coords;
     let proche = null, dMin = Infinity;
@@ -3342,6 +3344,7 @@ function traduire(){
   document.getElementById('dossier-comparer').textContent = t.comparer;
   document.getElementById('dossier-story').textContent = t.story;
   document.getElementById('dossier-sources').textContent = t.sources;
+  document.getElementById('bouton-position').textContent = t.aria['bouton-position'];
   majDistanceAn(); cacherAccroche();
   boutonSon.textContent = t.son(!SoundManager.mute);
   document.getElementById('bouton-langue').innerHTML = langue === 'fr'
