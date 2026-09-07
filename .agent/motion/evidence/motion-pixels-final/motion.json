@@ -1,0 +1,45 @@
+{
+  "pixels": {
+    "animation": {
+      "chaleur": {
+        "changed": 271888,
+        "mean": 2.1123442322530863
+      },
+      "feux": {
+        "changed": 267397,
+        "mean": 3.7758367091049383
+      },
+      "secheresse": {
+        "changed": 282473,
+        "mean": 1.3385681905864197
+      },
+      "mer": {
+        "changed": 5189,
+        "mean": 0.014041280864197531
+      },
+      "fleuves": {
+        "changed": 60028,
+        "mean": 0.7605777391975309
+      },
+      "stabilite": {
+        "changed": 362399,
+        "mean": 4.585343846450617
+      },
+      "declin": {
+        "changed": 77485,
+        "mean": 1.2412794174382715
+      }
+    },
+    "fireYear": {
+      "changed": 238805,
+      "mean": 1.204005111882716
+    },
+    "riverYear": {
+      "changed": 0,
+      "mean": 0
+    },
+    "width": 960,
+    "height": 720
+  },
+  "pass": true
+}

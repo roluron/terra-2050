@@ -1,0 +1,667 @@
+{
+  "Paris": {
+    "a": {
+      "year": 2026,
+      "progress": 0,
+      "globe": 0,
+      "fire": 0,
+      "place": "Paris",
+      "score": 66,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 10.8
+        },
+        {
+          "key": "eau",
+          "risk": 30.4
+        },
+        {
+          "key": "feux",
+          "risk": 25.6
+        },
+        {
+          "key": "mer",
+          "risk": 0
+        },
+        {
+          "key": "fleuves",
+          "risk": 47.599999999999994
+        },
+        {
+          "key": "stabilite",
+          "risk": 23.200000000000003
+        }
+      ],
+      "cards": [
+        {
+          "key": "fleuves",
+          "value": 47.6,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "eau",
+          "value": 30.4,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "feux",
+          "value": 25.6,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "stabilite",
+          "value": 23.2,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "thermique",
+          "value": 10.8,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "mer",
+          "value": 0,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        }
+      ],
+      "population": "66713559.08"
+    },
+    "m": {
+      "year": 2038,
+      "progress": 0.5,
+      "globe": 0.5,
+      "fire": 0.5,
+      "place": "Paris",
+      "score": 64,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 10.6
+        },
+        {
+          "key": "eau",
+          "risk": 32.99999999999999
+        },
+        {
+          "key": "feux",
+          "risk": 29.200000000000003
+        },
+        {
+          "key": "mer",
+          "risk": 0
+        },
+        {
+          "key": "fleuves",
+          "risk": 47.599999999999994
+        },
+        {
+          "key": "stabilite",
+          "risk": 34
+        }
+      ],
+      "cards": [
+        {
+          "key": "fleuves",
+          "value": 47.6,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "eau",
+          "value": 33,
+          "delta": "+2.6 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "feux",
+          "value": 29.2,
+          "delta": "+3.6 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "stabilite",
+          "value": 34,
+          "delta": "+10.8 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "thermique",
+          "value": 10.6,
+          "delta": "-0.2 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "mer",
+          "value": 0,
+          "delta": "0.0 since 2026",
+          "mode": "projection"
+        }
+      ],
+      "population": "67466620.04"
+    },
+    "b": {
+      "year": 2050,
+      "progress": 1,
+      "globe": 1,
+      "fire": 1,
+      "place": "Paris",
+      "score": 63,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 10.4
+        },
+        {
+          "key": "eau",
+          "risk": 35.6
+        },
+        {
+          "key": "feux",
+          "risk": 32.800000000000004
+        },
+        {
+          "key": "mer",
+          "risk": 0
+        },
+        {
+          "key": "fleuves",
+          "risk": 47.599999999999994
+        },
+        {
+          "key": "stabilite",
+          "risk": 44.800000000000004
+        }
+      ],
+      "cards": [
+        {
+          "key": "fleuves",
+          "value": 47.6,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "eau",
+          "value": 35.6,
+          "delta": "+5.2 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "feux",
+          "value": 32.8,
+          "delta": "+7.2 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "stabilite",
+          "value": 44.8,
+          "delta": "+21.6 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "thermique",
+          "value": 10.4,
+          "delta": "-0.4 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "mer",
+          "value": 0,
+          "delta": "0.0 since 2026",
+          "mode": "projection"
+        }
+      ],
+      "population": "68219681"
+    }
+  },
+  "Ho Chi Minh City": {
+    "a": {
+      "year": 2026,
+      "progress": 0,
+      "globe": 0,
+      "fire": 0,
+      "place": "Ho Chi Minh City",
+      "score": 37,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 72
+        },
+        {
+          "key": "eau",
+          "risk": 0
+        },
+        {
+          "key": "feux",
+          "risk": 45.6
+        },
+        {
+          "key": "mer",
+          "risk": 76
+        },
+        {
+          "key": "fleuves",
+          "risk": 73.2
+        },
+        {
+          "key": "stabilite",
+          "risk": 22.8
+        }
+      ],
+      "cards": [
+        {
+          "key": "mer",
+          "value": 76,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "thermique",
+          "value": 72,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "fleuves",
+          "value": 73.2,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "feux",
+          "value": 45.6,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "stabilite",
+          "value": 22.8,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "eau",
+          "value": 0,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        }
+      ],
+      "population": "101934945.24"
+    },
+    "m": {
+      "year": 2038,
+      "progress": 0.5,
+      "globe": 0.5,
+      "fire": 0.5,
+      "place": "Ho Chi Minh City",
+      "score": 30,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 77
+        },
+        {
+          "key": "eau",
+          "risk": 0
+        },
+        {
+          "key": "feux",
+          "risk": 45.6
+        },
+        {
+          "key": "mer",
+          "risk": 85.2
+        },
+        {
+          "key": "fleuves",
+          "risk": 73.2
+        },
+        {
+          "key": "stabilite",
+          "risk": 31.6
+        }
+      ],
+      "cards": [
+        {
+          "key": "mer",
+          "value": 85.2,
+          "delta": "+9.2 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "thermique",
+          "value": 77,
+          "delta": "+5.0 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "fleuves",
+          "value": 73.2,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "feux",
+          "value": 45.6,
+          "delta": "0.0 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "stabilite",
+          "value": 31.6,
+          "delta": "+8.8 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "eau",
+          "value": 0,
+          "delta": "0.0 since 2026",
+          "mode": "projection"
+        }
+      ],
+      "population": "105971928.12"
+    },
+    "b": {
+      "year": 2050,
+      "progress": 1,
+      "globe": 1,
+      "fire": 1,
+      "place": "Ho Chi Minh City",
+      "score": 23,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 82
+        },
+        {
+          "key": "eau",
+          "risk": 0
+        },
+        {
+          "key": "feux",
+          "risk": 45.6
+        },
+        {
+          "key": "mer",
+          "risk": 94.39999999999999
+        },
+        {
+          "key": "fleuves",
+          "risk": 73.2
+        },
+        {
+          "key": "stabilite",
+          "risk": 40.400000000000006
+        }
+      ],
+      "cards": [
+        {
+          "key": "mer",
+          "value": 94.4,
+          "delta": "+18.4 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "thermique",
+          "value": 82,
+          "delta": "+10.0 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "fleuves",
+          "value": 73.2,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "feux",
+          "value": 45.6,
+          "delta": "0.0 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "stabilite",
+          "value": 40.4,
+          "delta": "+17.6 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "eau",
+          "value": 0,
+          "delta": "0.0 since 2026",
+          "mode": "projection"
+        }
+      ],
+      "population": "110008911"
+    }
+  },
+  "France": {
+    "a": {
+      "year": 2026,
+      "progress": 0,
+      "globe": 0,
+      "fire": 0,
+      "place": "France",
+      "score": 72,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 11.682305911613
+        },
+        {
+          "key": "eau",
+          "risk": 21.08316529242751
+        },
+        {
+          "key": "feux",
+          "risk": 23.86708845731262
+        },
+        {
+          "key": "mer",
+          "risk": 4.528320487080549
+        },
+        {
+          "key": "fleuves",
+          "risk": 25.67073895684534
+        },
+        {
+          "key": "stabilite",
+          "risk": 23.443786564787487
+        }
+      ],
+      "cards": [
+        {
+          "key": "stabilite",
+          "value": 23.4,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "feux",
+          "value": 23.9,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "eau",
+          "value": 21.1,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "fleuves",
+          "value": 25.7,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "thermique",
+          "value": 11.7,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        },
+        {
+          "key": "mer",
+          "value": 4.5,
+          "delta": "2026 baseline",
+          "mode": "projection"
+        }
+      ],
+      "population": "66713559.08"
+    },
+    "m": {
+      "year": 2038,
+      "progress": 0.5,
+      "globe": 0.5,
+      "fire": 0.5,
+      "place": "France",
+      "score": 69,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 11.628946486001908
+        },
+        {
+          "key": "eau",
+          "risk": 23.518351008482625
+        },
+        {
+          "key": "feux",
+          "risk": 26.80175556003222
+        },
+        {
+          "key": "mer",
+          "risk": 4.601363746779668
+        },
+        {
+          "key": "fleuves",
+          "risk": 25.67073895684534
+        },
+        {
+          "key": "stabilite",
+          "risk": 33.88647395781693
+        }
+      ],
+      "cards": [
+        {
+          "key": "stabilite",
+          "value": 33.9,
+          "delta": "+10.4 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "feux",
+          "value": 26.8,
+          "delta": "+2.9 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "eau",
+          "value": 23.5,
+          "delta": "+2.4 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "fleuves",
+          "value": 25.7,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "thermique",
+          "value": 11.6,
+          "delta": "-0.1 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "mer",
+          "value": 4.6,
+          "delta": "+0.1 since 2026",
+          "mode": "projection"
+        }
+      ],
+      "population": "67466620.04"
+    },
+    "b": {
+      "year": 2050,
+      "progress": 1,
+      "globe": 1,
+      "fire": 1,
+      "place": "France",
+      "score": 66,
+      "risks": [
+        {
+          "key": "thermique",
+          "risk": 11.575587060390419
+        },
+        {
+          "key": "eau",
+          "risk": 25.953536724537784
+        },
+        {
+          "key": "feux",
+          "risk": 29.736422662752332
+        },
+        {
+          "key": "mer",
+          "risk": 4.6744070064788446
+        },
+        {
+          "key": "fleuves",
+          "risk": 25.67073895684534
+        },
+        {
+          "key": "stabilite",
+          "risk": 44.329161350846455
+        }
+      ],
+      "cards": [
+        {
+          "key": "stabilite",
+          "value": 44.3,
+          "delta": "+20.9 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "feux",
+          "value": 29.7,
+          "delta": "+5.9 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "eau",
+          "value": 26,
+          "delta": "+4.9 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "fleuves",
+          "value": 25.7,
+          "delta": "Fixed reference map",
+          "mode": "reference"
+        },
+        {
+          "key": "thermique",
+          "value": 11.6,
+          "delta": "-0.1 since 2026",
+          "mode": "projection"
+        },
+        {
+          "key": "mer",
+          "value": 4.7,
+          "delta": "+0.1 since 2026",
+          "mode": "projection"
+        }
+      ],
+      "population": "68219681"
+    }
+  },
+  "pass": true,
+  "errors": []
+}

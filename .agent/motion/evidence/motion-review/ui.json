@@ -1,0 +1,279 @@
+[
+  {
+    "name": "desktop",
+    "center": {
+      "notice": "2050 · Model indicatorsBeta · Data may be inaccurate. Animations illustrate indicators, not observed events.Your place looks inaccurate? Contact us ↗",
+      "noticeRect": {
+        "x": 24,
+        "y": 771.3125,
+        "width": 248,
+        "height": 106.6875,
+        "top": 771.3125,
+        "right": 272,
+        "bottom": 878,
+        "left": 24
+      },
+      "linkRect": {
+        "x": 39,
+        "y": 848.5,
+        "width": 218,
+        "height": 16.5,
+        "top": 848.5,
+        "right": 257,
+        "bottom": 865,
+        "left": 39
+      },
+      "link": "https://github.com/roluron/terra-2050/issues/new",
+      "hit": true,
+      "hidden": "visible",
+      "labels": [
+        {
+          "name": "São Paulo",
+          "opacity": "0",
+          "pointer": "none",
+          "tab": -1,
+          "rect": {
+            "x": 869.1140747070312,
+            "y": 626.2999877929688,
+            "width": 82.171875,
+            "height": 44,
+            "top": 626.2999877929688,
+            "right": 951.2859497070312,
+            "bottom": 670.2999877929688,
+            "left": 869.1140747070312
+          }
+        },
+        {
+          "name": "Mexico City",
+          "opacity": "0.772111",
+          "pointer": "auto",
+          "tab": 0,
+          "rect": {
+            "x": 547.7718505859375,
+            "y": 372.1000061035156,
+            "width": 93.65625,
+            "height": 44,
+            "top": 372.1000061035156,
+            "right": 641.4281005859375,
+            "bottom": 416.1000061035156,
+            "left": 547.7718505859375
+          }
+        },
+        {
+          "name": "London",
+          "opacity": "0",
+          "pointer": "none",
+          "tab": -1,
+          "rect": {
+            "x": 897.9078369140625,
+            "y": 157,
+            "width": 64.984375,
+            "height": 44,
+            "top": 157,
+            "right": 962.8922119140625,
+            "bottom": 201,
+            "left": 897.9078369140625
+          }
+        },
+        {
+          "name": "New York",
+          "opacity": "0.0610747",
+          "pointer": "none",
+          "tab": -1,
+          "rect": {
+            "x": 715.3640747070312,
+            "y": 232.60000610351562,
+            "width": 76.671875,
+            "height": 44,
+            "top": 232.60000610351562,
+            "right": 792.0359497070312,
+            "bottom": 276.6000061035156,
+            "left": 715.3640747070312
+          }
+        }
+      ],
+      "width": 1440,
+      "scrollWidth": 1440
+    },
+    "moved": {
+      "notice": "2050 · Model indicatorsBeta · Data may be inaccurate. Animations illustrate indicators, not observed events.Your place looks inaccurate? Contact us ↗",
+      "noticeRect": {
+        "x": 24,
+        "y": 771.3125,
+        "width": 248,
+        "height": 106.6875,
+        "top": 771.3125,
+        "right": 272,
+        "bottom": 878,
+        "left": 24
+      },
+      "linkRect": {
+        "x": 39,
+        "y": 848.5,
+        "width": 218,
+        "height": 16.5,
+        "top": 848.5,
+        "right": 257,
+        "bottom": 865,
+        "left": 39
+      },
+      "link": "https://github.com/roluron/terra-2050/issues/new",
+      "hit": true,
+      "hidden": "visible",
+      "labels": [
+        {
+          "name": "São Paulo",
+          "opacity": "1",
+          "pointer": "auto",
+          "tab": 0,
+          "rect": {
+            "x": 875.1140747070312,
+            "y": 624.2999877929688,
+            "width": 82.171875,
+            "height": 44,
+            "top": 624.2999877929688,
+            "right": 957.2859497070312,
+            "bottom": 668.2999877929688,
+            "left": 875.1140747070312
+          }
+        },
+        {
+          "name": "Mexico City",
+          "opacity": "0",
+          "pointer": "none",
+          "tab": -1,
+          "rect": {
+            "x": 556.3718872070312,
+            "y": 372.79998779296875,
+            "width": 93.65625,
+            "height": 44,
+            "top": 372.79998779296875,
+            "right": 650.0281372070312,
+            "bottom": 416.79998779296875,
+            "left": 556.3718872070312
+          }
+        },
+        {
+          "name": "London",
+          "opacity": "0",
+          "pointer": "none",
+          "tab": -1,
+          "rect": {
+            "x": 897.9078369140625,
+            "y": 156.5,
+            "width": 64.984375,
+            "height": 44,
+            "top": 156.5,
+            "right": 962.8922119140625,
+            "bottom": 200.5,
+            "left": 897.9078369140625
+          }
+        },
+        {
+          "name": "New York",
+          "opacity": "0",
+          "pointer": "none",
+          "tab": -1,
+          "rect": {
+            "x": 722.6640625,
+            "y": 232.39999389648438,
+            "width": 76.671875,
+            "height": 44,
+            "top": 232.39999389648438,
+            "right": 799.3359375,
+            "bottom": 276.3999938964844,
+            "left": 722.6640625
+          }
+        }
+      ],
+      "width": 1440,
+      "scrollWidth": 1440
+    },
+    "navigation": "São Paulo"
+  },
+  {
+    "name": "se",
+    "center": {
+      "notice": "2050 · Model indicatorsBeta · Data may be inaccurate. Animations illustrate indicators, not observed events.Your place looks inaccurate? Contact us ↗",
+      "noticeRect": {
+        "x": 10,
+        "y": 467,
+        "width": 260,
+        "height": 91,
+        "top": 467,
+        "right": 270,
+        "bottom": 558,
+        "left": 10
+      },
+      "linkRect": {
+        "x": 21,
+        "y": 534,
+        "width": 238,
+        "height": 15,
+        "top": 534,
+        "right": 259,
+        "bottom": 549,
+        "left": 21
+      },
+      "link": "https://github.com/roluron/terra-2050/issues/new",
+      "hit": true,
+      "hidden": "visible",
+      "labels": [],
+      "width": 320,
+      "scrollWidth": 320
+    },
+    "moved": null,
+    "navigation": null
+  },
+  {
+    "name": "landscape",
+    "center": {
+      "notice": "2050 · Model indicatorsBeta · Data may be inaccurate. Animations illustrate indicators, not observed events.Your place looks inaccurate? Contact us ↗",
+      "noticeRect": {
+        "x": 10,
+        "y": 222,
+        "width": 155,
+        "height": 111,
+        "top": 222,
+        "right": 165,
+        "bottom": 333,
+        "left": 10
+      },
+      "linkRect": {
+        "x": 21,
+        "y": 298,
+        "width": 133,
+        "height": 26,
+        "top": 298,
+        "right": 154,
+        "bottom": 324,
+        "left": 21
+      },
+      "link": "https://github.com/roluron/terra-2050/issues/new",
+      "hit": true,
+      "hidden": "visible",
+      "labels": [
+        {
+          "name": "Mexico City",
+          "opacity": "0.276099",
+          "pointer": "auto",
+          "tab": 0,
+          "rect": {
+            "x": 271.76666259765625,
+            "y": 114.5,
+            "width": 93.65625,
+            "height": 44,
+            "top": 114.5,
+            "right": 365.42291259765625,
+            "bottom": 158.5,
+            "left": 271.76666259765625
+          }
+        }
+      ],
+      "width": 734,
+      "scrollWidth": 734
+    },
+    "moved": null,
+    "navigation": null
+  }
+]

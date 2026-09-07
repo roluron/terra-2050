@@ -1,0 +1,23 @@
+{
+  "revision": "7b2b4941dd04050a3bf582ff81b82276dbd98f44",
+  "url": "http://localhost:8080/",
+  "workingTree": "?? .agent/motion/EVIDENCE.md\n?? .agent/motion/evidence/",
+  "sha256": {
+    "index.html": "9dfba11def28e2fd1ebd7446d5f8b6766a582af5160b108ad1eb600c0518dce6",
+    "terra-menus.css": "a9a7b604f3356fd5849c5bccd806ecae63d3a3c86abd89f17f22b6bebf1953fb",
+    "package-lock.json": "bcfb139e75308f79a0316ec51275a682fad1f69cc5ee071e787647f14ad6753a",
+    "tools/check.py": "cd70dda507581e79aba27d9bcc0fb024fe7d922158e1d7ba4f4e08bdd9cc90e0",
+    "tools/pays_raster.py": "2ae43773655d59899429d2211279c4991e6b1969ffc71a298cff1599b1b88d1d",
+    "tools/pipeline.py": "26b84bb1cb62bfd90d4d699a3694d56127e687ff9b9861ea4321d8025132b9a2",
+    "tools/qa/gestures.mjs": "a83432b4ec8d3de41463b00c2a70d853c2ee0e60dca4db018dfa90d6f3cb1fc3",
+    "tools/qa/interactions.mjs": "9239ebae9fc2e3f56fa981b22c60fb5485a3ff43f20714ea29a4ba5bde2dd7be",
+    "tools/qa/matrice.mjs": "cd63e458a8f3bf5a44aaa3bf13efd60eb95dc134742ce70d8f9c3b7a9911533c",
+    "tools/qa/motion.mjs": "bcb4ee039961f413c2a4c8bf6e285b407bca5da3d39c40cf3511634746d38587",
+    "tools/qa/panel.mjs": "ee406a45ed79dbcd915a3db153a2a1db56f634827c60d5e95f7748eff77b3582",
+    "tools/qa/sharing.mjs": "91f7aa68f715ad9f91000594d1e010a36f5b1f9d16e411aa4574a66c6d30104e",
+    "tools/qa/surfaces.mjs": "4c7d9edbcc0fc58ab53b653fc0ae66722b300728a0551d2893b77009b8a83e6b",
+    "tools/qa/temporal.mjs": "9d2177ccf0d6432ce7e05668b6cca28d4ab61a9a9d1b1a785e6ea75e86cd5152",
+    "tools/verifier_assets.py": "f4078c74753049f428753deb1248b1d23d6fdcea396333479a9f23f9aca8944f",
+    "tools/verifier_i18n.py": "52051e522589da20d3e8b330366ebd0cc6541e49ce5c4e532560bf4e0f8ce789"
+  }
+}

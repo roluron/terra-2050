@@ -1,3 +1,5 @@
+Latest follow-up VERIFIED: animated risk overlays, pointer/center label focus and bottom-leftbeta/contactnotice onruntime7b2b494. See motion/EVIDENCE.md. Local8087; data/publicrelease/physicalgatesunchanged.
+
 Latest UI follow-up: VERIFIED dark glass compact panel on runtimed74b298.
 See glass/STATE.md and glass/EVIDENCE.md. Local8087; publication and other gates unchanged.
 

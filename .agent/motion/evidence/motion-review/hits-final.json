@@ -1,0 +1,14 @@
+{
+  "sourceHash": "9dfba11def28e2fd1ebd7446d5f8b6766a582af5160b108ad1eb600c0518dce6",
+  "taps": [
+    "chaleur",
+    "feux",
+    "secheresse",
+    "mer",
+    "fleuves",
+    "stabilite",
+    "declin"
+  ],
+  "disclosureClosed": true,
+  "searchNavigation": "Berlin"
+}
