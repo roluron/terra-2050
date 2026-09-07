@@ -8,7 +8,7 @@
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_mask_4320.webp">
 <link rel="preload" as="image" href="./data/grille_c.png">
 <meta property="og:title" content="TERRA／2050 — Will your city still be livable in 2050?">
-<meta property="og:description" content="34,099 cities · one habitability index built only from open scientific data (WorldClim, CMIP6, ETOPO, JRC, UN). Search yours.">
+<meta property="og:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
 <meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
 <meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
@@ -23,7 +23,7 @@
 <meta name="twitter:description" content="34,099 cities · one habitability index built only from open scientific data. Search yours.">
 <meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
 <meta name="twitter:image:alt" content="Le globe TERRA／2050 en 2050, chaleur extreme allumee, avec la question : votre ville sera-t-elle encore vivable ?">
-<meta name="description" content="Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité bâti uniquement sur des données scientifiques ouvertes (WorldClim, CMIP6, FABDEM, JRC, ONU).">
+<meta name="description" content="34 099 villes · un indice illustratif d’exposition climatique. Explorez les risques modélisés, hypothèses et limites des sources.">
 <meta name="theme-color" content="#070706">
 <meta name="color-scheme" content="dark">
 <meta name="mobile-web-app-capable" content="yes">
@@ -487,9 +487,9 @@ const TEXTES = {
     infoplus: {
       chaleur: 'Les zones colorées montrent où il fait très chaud et humide, de plus en plus souvent. Ces jours-là, le corps n’arrive plus à se rafraîchir : dur de travailler dehors, dur de dormir. Plus c’est rouge, plus il y a de jours comme ça.',
       feux: 'Quand il fait chaud et sec pendant des mois, les plantes deviennent comme du papier : une étincelle suffit. La carte montre où le temps rend les incendies faciles — pas où ça brûle aujourd’hui.',
-      secheresse: 'Un indicateur d’aridité température/pluie sous un scénario climatique. Il ne modélise ni la consommation, ni les réservoirs, ni l’accès à l’eau potable.',
-      mer: 'Ces terres sont si basses que la mer peut les recouvrir pendant une grosse tempête. La mer monte, et par endroits le sol s’enfonce en plus. Les digues ne sont pas comptées : on montre le terrain tel qu’il est.',
-      fleuves: 'Quand une très grosse pluie arrive, les rivières débordent. La carte montre jusqu’où l’eau peut aller. Une inondation comme ça a environ 1 chance sur 5 d’arriver d’ici 2050.',
+      secheresse: 'Indice d’aridité température/pluie ; hors consommation, réservoirs et accès à l’eau potable.',
+      mer: 'Terrains bas exposés aux marées de tempête et à la montée des eaux modélisées. Pas de modèle explicite des protections ; le terrain peut inclure des barrières.',
+      fleuves: 'Carte de référence fixe d’une crue centennale modélisée : probabilité annuelle de dépassement de 1 %. Aucune projection annuelle disponible.',
       stabilite: 'Un endroit où il fait bon vivre, c’est aussi un endroit qui ne change pas trop vite. En violet : là où le climat s’est le plus éloigné de celui des années 1970-2000 — c’est l’Arctique qui bouge le plus vite.',
       declin: 'Dans les pays en gris-mauve, il y aura moins d’habitants en 2050 qu’aujourd’hui. Moins de monde, c’est souvent moins de services, d’écoles, de travail — mais aussi plus de place. Les chiffres viennent des Nations unies.',
     },
@@ -593,9 +593,9 @@ const TEXTES = {
     infoplus: {
       chaleur: 'The colored areas show where it gets very hot and humid, more and more often. On those days the body can’t cool down anymore: hard to work outside, hard to sleep. The redder it is, the more days like that.',
       feux: 'After months of hot, dry weather, plants turn into paper: one spark is enough. The map shows where the weather makes fires easy — not where fires are burning today.',
-      secheresse: 'A temperature/rainfall aridity proxy under one climate scenario. It does not model water use, reservoirs or access to drinking water.',
-      mer: 'This land is so low that the sea can cover it during a big storm. The sea is rising, and in some places the ground is also sinking. Sea walls are not counted: we show the land as it is.',
-      fleuves: 'When a really big rain comes, rivers overflow. The map shows how far the water can reach. A flood like that has about a 1-in-5 chance of happening by 2050.',
+      secheresse: 'Temperature/rainfall aridity proxy; excludes water use, reservoirs and drinking-water access.',
+      mer: 'Low-lying terrain exposed to modelled storm tides and rising sea level. There is no explicit protection model; terrain can include some barriers.',
+      fleuves: 'Fixed reference map of a modelled 100-year river flood: 1% annual exceedance probability. No year-by-year projection is available.',
       stabilite: 'A good place to live is also a place that doesn’t change too fast. In violet: where the climate has drifted furthest from the 1970-2000 baseline — the Arctic moves fastest of all.',
       declin: 'In the grey-mauve countries, there will be fewer people in 2050 than today. Fewer people often means fewer services, schools, jobs — but also more room. The numbers come from the United Nations.',
     },
