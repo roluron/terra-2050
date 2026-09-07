@@ -61,10 +61,7 @@ for (const [name, type, options] of [
     await check(`${name}: story preview, close and reopen`, async () => {
       await page.click('#dossier-story');
       await page.waitForSelector('#story-popup:not([hidden])');
-      // the image is prepared off the main thread's spare time: on a runner
-      // without a GPU that takes longer than 2 s. Wait for the state, then
-      // require a real success (the retry label also re-enables the button).
-      await page.waitForFunction(() => !document.getElementById('story-partager').disabled, null, { timeout: 30000 }).catch(() => {});
+      await page.waitForSelector('#story-partager:not([disabled]):not([aria-busy="true"])');
       assert.equal(await page.locator('#story-partager').isEnabled(), true);
       assert.doesNotMatch(await page.locator('#story-partager').textContent(), /Retry|Réessayer/);
       await page.screenshot({ path: `${out}/${name}-story.png` });
