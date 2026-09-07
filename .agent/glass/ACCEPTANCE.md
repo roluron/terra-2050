@@ -1,0 +1,6 @@
+- [ ] Black translucent textured panel, retained fonts, compact cards verified in screenshots.
+- [ ] Stronger opening/disclosure/gauge motion; reduced-motion disables new effects.
+- [ ] Panel bar slider spans available width, touch/keyboard/year updates work.
+- [ ] Main distance text hidden; model indicator restyled and reference notes retained.
+- [ ] Desktop/SE/iPhone/iPad/landscape panel and temporal regressions pass.
+- [ ] Review, JS/transfer budgets and panel animation performance observed.

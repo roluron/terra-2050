@@ -1,0 +1,1 @@
+ACTIVE. Paper replaced at user request. Tokens: black080b0e, inkf2f3ef, secondaryb5bec8, iceb6d7ff, lineffffff20. ExistingLausanne typography retained. Compact paired risk cards, single transient glass reflection on opening, full-width native-backed animated rule. Dataunchanged. Softcheckpoint20min;max2agents;zeroadditionalpaidspend;accountquotaUNKNOWN.
