@@ -3132,9 +3132,11 @@ function retirerMarqueur(){
 document.getElementById('bouton-position').addEventListener('click', () => {
   if (document.getElementById('bouton-reglages').getAttribute('aria-expanded') === 'true')
     document.getElementById('bouton-reglages').click();
-  if (!navigator.geolocation || !LIEUX.length){
-    montrerAccroche(T().posIndispo, () => champ.focus(), 0); return;
-  }
+  const indisponible = () => {
+    fermerDossier();
+    montrerAccroche(T().posIndispo, () => champ.focus(), 0);
+  };
+  if (!navigator.geolocation || !LIEUX.length){ indisponible(); return; }
   navigator.geolocation.getCurrentPosition(pos => {
     const { latitude, longitude } = pos.coords;
     let proche = null, dMin = Infinity;
@@ -3143,7 +3145,7 @@ document.getElementById('bouton-position').addEventListener('click', () => {
       if (d < dMin){ dMin = d; proche = l; }
     }
     if (proche) choisirLieu(proche);
-  }, () => montrerAccroche(T().posIndispo, () => champ.focus(), 0), { maximumAge: 600000, timeout: 8000 });
+  }, indisponible, { maximumAge: 600000, timeout: 8000 });
 });
 
 document.getElementById('dossier-croix').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
