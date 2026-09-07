@@ -455,7 +455,7 @@ const TEXTES = {
     panelRiskHelp: 'Indice d’exposition · 0–100, plus haut signifie plus exposé. Pas une probabilité.',
     panelGraph: 'Indice sur 100 · 2026 à 2050',
     panelMethod: 'Comprendre le score et les données',
-    panelMethodText: 'Modèle propre à l’application : moitié moyenne pondérée des expositions, moitié aléa le plus fort, soustraites de 100. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, climat12%. Coût de la vie, services et protections sont exclus. Pas une probabilité de catastrophe.',
+    panelMethodText: 'Modèle propre à l’application : moitié moyenne pondérée des expositions, moitié aléa le plus fort, soustraites de 100. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, climat12%. Ni coût de la vie, ni services, ni modèle explicite de protection. Pas une probabilité de catastrophe.',
     panelScenario: 'Climat : moyennes interpolées d’un modèle CMIP6, SSP3-7.0. Fleuves : référence fixe. Surfaces côtières :2050. Résolutions globe/villes différentes. Pas une étude locale de danger.',
     panelCountryNote: n => `Moyenne de ${n} villes, pondérée par leur population. Les conditions varient d’une ville à l’autre.`,
     panelEvolution: n => n === 0 ? 'Même indice qu’en 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points par rapport à 2026.`,
@@ -536,13 +536,13 @@ const TEXTES = {
     optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
     optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
     paliers: ['risque minime', 'risque faible', 'risque modéré', 'risque élevé', 'risque sévère'],
-    detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
-    detFroid: j => `${j} jours de gel par an`,
-    detChaud40: j => `dont ${j} jours au-dessus de 40 °C (seuil « danger » NWS)`,
+    detChaud: (j, d) => `Estimation : ${j >= 300 ? "≥" : ""}${j} jours/an d’indice de chaleur >32 °C${d ? ` · ${d > 0 ? '+' : ''}${d} depuis 2026` : ''}`,
+    detFroid: j => `${j >= 200 ? "≥" : ""}${j} jours de gel estimés/an`,
+    detChaud40: j => `dont ${j >= 200 ? "≥" : ""}${j} jours estimés au-dessus de 40 °C (seuil « danger » NWS)`,
     detEau: (v, pct, d) => `${v}/100 sur une échelle d’aridité issue de la température et des précipitations (De Martonne). Ne mesure ni les réserves ni l’accès à l’eau potable.`,
     detFeux: (v, pct, d) => `${v}/100 pour un indicateur de temps chaud et sec. Ne prédit pas les incendies réels et ne tient pas compte de la végétation locale ni des départs de feu.`,
     detMer: (f, f5, med, sub, r, mt) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (estimation stockée d’affaissement : −${sub} m d’ici 2050)` : ''} · ${f5} % sous la ligne ＋ 1 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ marée de tempête centennale (${mt} m, dérivée de COAST-RP ; repli non identifié) · seule l’eau reliée à la mer compte · les digues en terre figurent dans le relief, les ouvrages mobiles non · relief FABDEM 30 m, sol nu`,
-    detFleuves: (f, d90, r) => `crue centennale (1 %/an · ≈22 % d’ici 2050) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
+    detFleuves: (f, d90, r) => `crue centennale (1 % de dépassement annuel) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
     detStab: v => `Indicateur de changement climatique : ${v}/100 · combine température et précipitations. Indice propre à l’application, pas une température en °C.`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (scénario émissions élevées, un seul modèle) · FABDEM 1″ (sol nu, CC BY-NC-SA) · COAST-RP (marées de tempête, CC BY 4.0) · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Bastin et al. 2019 (analogues climatiques) · Natural Earth · GeoNames',
   },
@@ -561,7 +561,7 @@ const TEXTES = {
     panelRiskHelp: 'Exposure index · 0–100, higher means more exposure. Not a probability.',
     panelGraph: 'Index out of 100 · 2026 to 2050',
     panelMethod: 'About the score and data',
-    panelMethodText: 'An app-defined model: half the weighted average exposure, half the strongest hazard; subtract from 100. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, climate shift12%. It excludes living costs, services and protective infrastructure. Not a disaster probability.',
+    panelMethodText: 'An app-defined model: half the weighted average exposure, half the strongest hazard; subtract from 100. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, climate shift12%. No living costs, services or explicit protection model. Not a disaster probability.',
     panelScenario: 'Climate: interpolated period averages from one CMIP6 model (SSP3-7.0). Rivers: fixed reference. Coastal areas:2050 snapshot. Globe/city resolutions differ. Not a local hazard assessment.',
     panelCountryNote: n => `Average of ${n} cities, weighted by population. Conditions vary between cities.`,
     panelEvolution: n => n === 0 ? 'Same index as in 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points compared with 2026.`,
@@ -642,13 +642,13 @@ const TEXTES = {
     optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
     optAxes: 'The hardest risks', optPop: 'Country population',
     paliers: ['minimal risk', 'low risk', 'moderate risk', 'high risk', 'severe risk'],
-    detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
-    detFroid: j => `${j} freezing days a year`,
-    detChaud40: j => `of which ${j} days above 40 °C (NWS “danger” threshold)`,
+    detChaud: (j, d) => `Estimated ${j >= 300 ? "≥" : ""}${j} days/year above 32 °C heat index${d ? ` · ${d > 0 ? '+' : ''}${d} since 2026` : ''}`,
+    detFroid: j => `${j >= 200 ? "≥" : ""}${j} estimated freezing days/year`,
+    detChaud40: j => `of which ${j >= 200 ? "≥" : ""}${j} estimated days above 40 °C (NWS “danger” threshold)`,
     detEau: (v, pct, d) => `${v}/100 on a custom aridity scale derived from temperature and rainfall (De Martonne). Not a measure of water reserves or drinking-water supply.`,
     detFeux: (v, pct, d) => `${v}/100 on a custom hot/dry-weather proxy. It does not predict actual fires or include local vegetation and ignition.`,
     detMer: (f, f5, med, sub, r, mt) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (stored subsidence estimate: −${sub} m by 2050)` : ''} · ${f5}% below the line + 1 m · median elevation ${med} m · line = 2050 level + the 1-in-100-year storm tide (${mt} m, COAST-RP-derived; fallback flags unavailable) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth`,
-    detFleuves: (f, d90, r) => `100-year flood (1%/yr · ≈22% by 2050): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
+    detFleuves: (f, d90, r) => `100-year flood (1% annual exceedance): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
     detStab: v => `Climate-shift proxy: ${v}/100 · combines temperature and precipitation changes. This is a custom index, not a temperature in °C.`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (high-emissions scenario, single model) · FABDEM 1″ (bare earth, CC BY-NC-SA) · COAST-RP (storm tides, CC BY 4.0) · NOAA ETOPO 2022 · JRC 100-yr flood · Oelsmann 2025 (VLM subsidence) · Bastin et al. 2019 (analogues climatiques) · Natural Earth · GeoNames',
   },
@@ -757,11 +757,10 @@ const CRITERES = [
       const i = LIEUX.indexOf(l);
       const ch = i >= 0 ? thermoVille(i, 0, t) : null;
       const j = ch !== null ? ch : lireT('a', 0, l[2], l[3], t);
-      const j50 = i >= 0 && THERMO ? thermoVille(i, 0, 1) : lireT('a', 0, l[2], l[3], 1);
       const j26 = i >= 0 && THERMO ? thermoVille(i, 0, 0) : lireT('a', 0, l[2], l[3], 0);
       const g = i >= 0 && THERMO ? thermoVille(i, 2, t) : lireT('a', 1, l[2], l[3], t);
       const j40 = i >= 0 && THERMO ? thermoVille(i, 4, t) : null;
-      return T().detChaud(Math.round(j * 300), Math.round((j50 - j26) * 300))
+      return T().detChaud(Math.round(j * 300), Math.round((j - j26) * 300))
         + (j40 !== null && j40 > 0.005 ? ' · ' + T().detChaud40(Math.round(j40 * 200)) : '')
         + ' · ' + T().detFroid(Math.round(g * 200));
     } },
