@@ -448,7 +448,7 @@ const TEXTES = {
     panelIndex: 'Indice d’habitabilité physique',
     panelDirection: 'Plus le score est élevé, moins le lieu est exposé.',
     panelRisks: 'Les risques à comprendre',
-    panelRiskHelp: 'Les plus exposés en premier. Ouvrez un risque pour voir les mesures.',
+    panelRiskHelp: 'Ouvrez un risque pour comprendre son sens et les mesures.',
     panelGraph: 'Indice sur 100 · 2026 à 2050',
     panelMethod: 'Comprendre le score et les données',
     panelMethodText: 'Cet indice combine six risques physiques. Il ne mesure ni le coût de la vie, ni la qualité des services, ni une probabilité de catastrophe. Les ouvrages de protection ne sont pas comptés.',
@@ -565,7 +565,7 @@ const TEXTES = {
     panelIndex: 'Physical habitability index',
     panelDirection: 'Higher scores mean less exposure.',
     panelRisks: 'Understand the risks',
-    panelRiskHelp: 'Highest exposure first. Open a risk to see the measurements.',
+    panelRiskHelp: 'Open a risk to see what it means and what is measured.',
     panelGraph: 'Index out of 100 · 2026 to 2050',
     panelMethod: 'About the score and data',
     panelMethodText: 'This index combines six physical risks. It does not measure living costs, quality of services or the probability of a disaster. Protective infrastructure is not included.',
@@ -2082,19 +2082,7 @@ curseur.addEventListener('pointermove', ev => {
   etatRegle.survol = Math.max(0, Math.min(24, Math.round((ev.clientX - r.left) / r.width * 24)));
 });
 curseur.addEventListener('pointerleave', () => (etatRegle.survol = null));
-let balayageAnnee = null, sansBalayage = false, minuterieAnnonce = null;
-function balayerVers2050(){
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (+curseur.value >= 2050) return;
-  const p = { v: +curseur.value };
-  if (balayageAnnee) balayageAnnee.kill();
-  balayageAnnee = gsap.to(p, { v: 2050, duration: 2.6, ease: 'power2.inOut', delay: 1.1,
-    onUpdate: () => { const an = Math.round(p.v);
-      if (+curseur.value !== an){ curseur.value = an; curseur.dispatchEvent(new Event('input')); } } });
-}
-const stopperBalayage = () => { if (balayageAnnee) balayageAnnee.kill(); };
-curseur.addEventListener('pointerdown', stopperBalayage);
-curseur.addEventListener('keydown', stopperBalayage);   // les fleches aussi rendent la main
+let minuterieAnnonce = null;
 curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-annee'));
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 addEventListener('pointercancel', () => document.body.classList.remove('cale-annee'));
@@ -2350,6 +2338,10 @@ function tracerTrajectoire(l, an){
 }
 
 const couleurRisquePanel = n => n >= 85 ? "#8cd0b0" : n >= 70 ? "#88b4ff" : n >= 50 ? "#ecd279" : n >= 30 ? "#ffb489" : "#ff9d94";
+const definitionRisque = (t, cle) => t.info[{
+  thermique: 'chaleur', eau: 'secheresse', feux: 'feux',
+  mer: 'mer', fleuves: 'fleuves', stabilite: 'stabilite'
+}[cle]];
 function creerRisques(conteneur, cles, t, signature, nouveau){
   if (!nouveau && conteneur.dataset.langue === signature) return;
   const ouverts = nouveau ? [] : [...conteneur.querySelectorAll('details[open]')].map(el => el.dataset.cle);
@@ -2412,16 +2404,14 @@ function majDossierPays(l, an, t, dossierNeuf){
   creerRisques(conteneur, CRITERES.map(c => c.cle), t, langue + ':pays', dossierNeuf);
   conteneur.querySelectorAll('.risque').forEach(rangee => {
     const i = CRITERES.findIndex(c => c.cle === rangee.dataset.cle);
-    const n = notes[i], fin = notes50[i], teinte = couleurNote(n);
+    const n = notes[i], fin = notes50[i];
     const vNow = rangee.querySelector('.v-now');
     vNow.style.color = couleurRisquePanel(n); vNow.textContent = motRisque(t, n);
     rangee.querySelector('.v-vers').textContent =
       an < 2050 && motRisque(t, fin) !== motRisque(t, n) ? `2050: ${motRisque(t, fin)}` : '';
     rangee.dataset.note = n;
     rangee.dataset.nom = t.critere[CRITERES[i].cle];
-    rangee.dataset.detail = langue === 'en'
-      ? `population-weighted mean of ${nVilles} cities` : `moyenne pondérée des ${nVilles} villes`;
-    rangee.dataset.couleur = teinte;
+    rangee.dataset.detail = definitionRisque(t, CRITERES[i].cle) + '\n\n' + t.panelCountryNote(nVilles);
     rangee.classList.toggle('pire', n === Math.min(...notes));
   });
   finirRisques(dossierNeuf);
@@ -2467,7 +2457,6 @@ function majDuel(l, an){
 document.getElementById('dossier-duel').addEventListener('click', () => {
   if (!lieuVs) return;
   const autre = lieuVs; lieuVs = lieuDossier;
-  sansBalayage = true;               // l'échange garde l'année affichée
   choisirLieu(autre);
 });
 /* Le duel n'était accessible que par un lien reçu : personne ne pouvait
@@ -2573,7 +2562,6 @@ function majDossier(){
   conteneur.querySelectorAll('.risque').forEach(rangee => {
     const i = CRITERES.findIndex(c => c.cle === rangee.dataset.cle);
     const c = criteres[i], fin = criteres50[i];
-    const teinte = couleurNote(c.note);
     const vNow = rangee.querySelector('.v-now');
     vNow.style.color = couleurRisquePanel(c.note);
     const mot = motRisque(t, c.note), mot50 = motRisque(t, fin);
@@ -2585,8 +2573,7 @@ function majDossier(){
       an < 2050 && mot50 !== mot ? `2050: ${mot50}` : '';
     rangee.dataset.note = c.note;
     rangee.dataset.nom = t.critere[c.cle];
-    rangee.dataset.detail = c.detail;
-    rangee.dataset.couleur = c.couleur;
+    rangee.dataset.detail = definitionRisque(t, c.cle) + '\n\n' + c.detail;
     rangee.classList.toggle('pire', c.cle === pire.cle);
   });
   finirRisques(dossierNeuf);
@@ -2674,8 +2661,7 @@ function ouvrirDossier(l){
   poserMarqueur(l);
   majLien(true, empilerProchaine);
   empilerProchaine = false;
-  if (balayageAnnee) balayageAnnee.kill();
-  sansBalayage = false;
+
 }
 function majCentreDossier(){
   const r = dossierEl.getBoundingClientRect();
@@ -2694,7 +2680,7 @@ function fermerDossier(depuisChamp){
   // fermeture douce (on repart chercher) : la camera reste ou elle est,
   // sinon elle s'eloigne pour rien avant de replonger sur la ville suivante
   if (depuisChamp){
-    if (balayageAnnee) balayageAnnee.kill();
+
     lieuVs = null;   // defiLien survit : l'invitation a comparer passe justement par le champ
     retirerMarqueur();
     // surtout pas de reecriture d historique ici : cette fermeture-la arrive
@@ -2707,7 +2693,7 @@ function fermerDossier(depuisChamp){
     return;
   }
   if (!depuisChamp){ lieuVs = null; defiLien = null; cacherAccroche(); }
-  if (balayageAnnee) balayageAnnee.kill();
+
   if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
   // la terre reprend son cadrage d'arrivée
   if (volEnCours) volEnCours.kill();
@@ -3088,8 +3074,7 @@ function ouvrirDepuisLien(sansDefi){
   } else if (!sansDefi){
     defiLien = l;    // le destinataire d'un lien simple sera invité à comparer
   }
-  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); sansBalayage = true; }
-  if (sansDefi) sansBalayage = true;
+  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); }
   // a l arrivee (pas au retour arriere) : le lien devient deux entrees,
   // le globe puis la ville, pour que le Precedent reste dans le site
   // Le lien devient deux entrees, le globe puis la ville : le Precedent

@@ -985,7 +985,7 @@ body.pret #dossier #timeline .an { display: block; width: 100%; font-family: var
 #dossier .risque .v-vers { font-size: 11px; color: var(--fiche-secondaire); }
 #dossier .risque-chevron { width: 16px; text-align: center; color: var(--fiche-secondaire); font-size: 22px; line-height: 1; }
 #dossier .risque[open] .risque-chevron { transform: rotate(45deg); }
-#dossier .risque .detail { color: #d8e0e9; font-size: 14px; line-height: 1.6; padding: 0 24px 16px 0; }
+#dossier .risque .detail { white-space: pre-line; color: #d8e0e9; font-size: 14px; line-height: 1.6; padding: 0 24px 16px 0; }
 #dossier .risque summary:hover { color: #fff; background: #1d2c4070; }
 #dossier .trajectoire > .fiche-secondaire { margin: 6px 0 18px; }
 #dossier-courbe { display: block; width: 100%; height: 58px; overflow: visible; }
@@ -1015,7 +1015,7 @@ body.pret #dossier #timeline .an { display: block; width: 100%; font-family: var
 #scrim-dossier.ouvert { opacity: 1; }
 body:not(.pret) #dossier { visibility: hidden; }
 body.dossier-ouvert #recherche { padding-right: 78px; }
-#accroche { position: fixed; bottom: 24px; left: 24px; max-width: min(360px, calc(100vw - 48px)); z-index: 45; margin: 0; }
+#accroche { position: fixed; bottom: 24px; left: 24px; max-width: min(360px, calc(100vw - 48px)); z-index: 21; margin: 0; }
 @media(max-width:720px) {
   #accroche { top: 72px; bottom: auto; left: 12px; max-width: calc(100vw - 24px); }
   #dossier { inset: max(118px, 24dvh) 0 0; width: 100%; border-radius: 22px 22px 0 0; border-bottom: 0; transform: translateY(24px); }
