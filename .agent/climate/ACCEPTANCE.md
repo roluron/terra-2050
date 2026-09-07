@@ -1,0 +1,8 @@
+- [x] Each layer and risk indicator has verified temporal behaviour; moving the slider updates available projections and clearly identifies fixed-reference/no-data indicators.
+- [x] Whole-dataset checks cover city identities/coordinates, value bounds, endpoint consistency, score reproducibility, missing coverage and country aggregation. Source/model/scenario limitations are exposed; no claim of independently validating every real-world measurement.
+- [x] Paris and Ho Chi Minh City have reproducible component/weight explanations; no arbitrary score adjustment.
+- [x] Panel follows supplied reference: pale surface, expressive numerals, compact two-column indicators, restrained gradient gauges, responsive disclosure and meaningful reduced-motion-safe animation.
+- [x] City/country/no-data/year/FR-EN/history/compare/share/alternative flows pass; keyboard/touch and desktop/SE/iPhone/landscape/iPad remain usable.
+- [x] Direct visual/behaviour evidence, clean-source verification and adversarial review cover final changes; applicable resource budgets pass.
+
+Evidence mapping: temporal criterion → climate-temporal-fixed/temporal.json and grid-endpoints.json; data/scoring → data-audit.json, city-model-scores.csv and data-audit.md; design/flows → climate-clean-full/panel.json and suite logs, climate-surfaces-fixed/surfaces.json, climate-review/copy-final.json and location-final.json; budgets → js-budget.json, climate-performance-final/sample.json and climate-network-final. Paths relative to evidence/. Scientific ground-truth certification is not claimed; see unresolved limitations in STATE.md.

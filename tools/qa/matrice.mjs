@@ -114,7 +114,14 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
     const hit = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
     const vis = id => { const cs = getComputedStyle(document.getElementById(id)); return cs.opacity !== '0' && cs.visibility !== 'hidden'; };
     const pairs = [];
-    if (vis('timeline') && vis('dossier') && hit(r('timeline'), r('dossier'))) pairs.push('timeline/dossier');
+    if (vis('timeline') && vis('dossier')) {
+      if (document.getElementById('dossier').contains(document.getElementById('timeline'))) {
+        const t = r('timeline'), d = r('dossier');
+        if (t.left < d.left || t.right > d.right || t.top < d.top || t.bottom > d.bottom) pairs.push('timeline outside dossier');
+        if (hit(t, document.querySelector('#dossier .fiche-corps').getBoundingClientRect())) pairs.push('timeline/body');
+        if (hit(t, document.querySelector('#dossier .actions').getBoundingClientRect())) pairs.push('timeline/actions');
+      } else if (hit(r('timeline'), r('dossier'))) pairs.push('timeline/dossier');
+    }
     if (vis('timeline') && vis('calques') && hit(r('timeline'), r('calques'))) pairs.push('timeline/calques');
     if (vis('calques') && vis('dossier') && hit(r('calques'), r('dossier'))) pairs.push('calques/dossier');
     return pairs;

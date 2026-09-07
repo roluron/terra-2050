@@ -1,0 +1,10 @@
+{
+  "visualRevision": "4dfd66f76cf06d8af80aab5ddc59d8764eca3400",
+  "finalRevision": "d74b298c16feb11046a7723159f944fc3485df39",
+  "hashes": {
+    "index.html": "4f33231e58f4fb5c130573a0acb397491c78b6383bdb36d5434f109b52428528",
+    "terra-menus.css": "ba07593873c23c33311dc81a4a55f2c3a98643f4befcb474af95cc99098ce9b3"
+  },
+  "visualReview": "Three screenshots inspected, dark glass/grain visible, no pale remnants, text readable; no formal all-pixel contrast audit. Rule and native input match exact width and left edge in all views. No horizontal clipping or browser errors.",
+  "reducedMotion": "Final browser probe stored reduced.json."
+}

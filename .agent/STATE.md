@@ -1,3 +1,17 @@
+Latest follow-up VERIFIED: animated risk overlays, pointer/center label focus and bottom-leftbeta/contactnotice onruntime7b2b494. See motion/EVIDENCE.md. Local8087; data/publicrelease/physicalgatesunchanged.
+
+Latest UI follow-up: VERIFIED dark glass compact panel on runtimed74b298.
+See glass/STATE.md and glass/EVIDENCE.md. Local8087; publication and other gates unchanged.
+
+Current climate follow-up: local UI and structural audit VERIFIED on runtime75fc3ec.
+See climate/STATE.md and climate/EVIDENCE.md. Scientific accuracy remains UNVERIFIED
+because current generators/manifests and per-hazard provenance flags are unavailable.
+Local8087 updated; public deployment and physical gates below unchanged.
+
+Current local design follow-up: VERIFIED panel redesign on branch design/place-panel,
+runtime9129b5b. See panel/STATE.md and panel/EVIDENCE.md. Local preview8087;
+public deployment below remains the earlier release. Physical gates unchanged.
+
 STATUS: ACTIVE — full completion not claimed.
 
 2026-09-07: PR #1 merged as 2058efc; startup preload follow-up deployed as

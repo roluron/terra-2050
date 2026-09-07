@@ -1,0 +1,365 @@
+[
+  {
+    "name": "desktop",
+    "errors": [],
+    "openText": "Paris · 2026 · 66/100 · Solid habitability\n\nCity · France\n\nParis\nYear\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n2026\n2050\nLower overall exposure\n\nMain concern: river flooding.\n\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n/100\n\nPhysical habitability index\n\nHigher scores mean less exposure.\n\nSame index as in 2026.\n\nUnderstand the risks\n2026\n\n19% of the area inside the 100-yr flood zone\n\nOpen a risk to see what it means and what is measured.\n\nRiver flooding\nmoderate risk\n+\n\nWhere rivers can overflow and flood everything.\n\n100-year flood (1%/yr · ≈22% by 2050): 19% of land within 12 km flooded, up to 9.2 m deep (p90) · JRC model map, held constant to 2050\n\nWater stress\nlow risk\n2050: moderate risk\n+\nWildfire\nlow risk\n2050: moderate risk\n+\nClimate shift\nlow risk\n2050: moderate risk\n+\nThermal stress\nminimal risk\n+\nCoastal flooding\nminimal risk\n+\nHow the outlook changes\n\nIndex out of 100 · 2026 to 2050\n\n2026 · 66\n2050 · 63\nCountry population · 2026 to 2050\n\n+2 %\n\ncountry population: +2% by 2050 (UN)\n\nMore habitable, nearby\nMarne La Vallée\n76\nLille\n85\nCharleroi\n86\nAbout the score and data\nCompare\nShare link ↗\nStory image ↗",
+    "year": "2026",
+    "geometry": {
+      "panel": {
+        "x": 936,
+        "y": 84,
+        "width": 480,
+        "height": 792,
+        "bottom": 876,
+        "scrollHeight": 790,
+        "clientHeight": 790
+      },
+      "body": {
+        "x": 937,
+        "y": 297.796875,
+        "width": 478,
+        "height": 502.203125,
+        "bottom": 800,
+        "scrollHeight": 1511,
+        "clientHeight": 502
+      },
+      "close": {
+        "x": 1347,
+        "y": 107,
+        "width": 44,
+        "height": 44,
+        "bottom": 151,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      "range": {
+        "x": 961,
+        "y": 225.796875,
+        "width": 430,
+        "height": 44,
+        "bottom": 269.796875,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      "footer": {
+        "x": 937,
+        "y": 800,
+        "width": 478,
+        "height": 75,
+        "bottom": 875,
+        "scrollHeight": 74,
+        "clientHeight": 74
+      }
+    },
+    "details": [
+      {
+        "open": false,
+        "text": "River flooding\nmoderate risk\n+"
+      },
+      {
+        "open": true,
+        "text": "Water stress\nlow risk\n2050: moderate risk\n+\n\nWhere it no longer rains enough for everyday water.\n\nwater reserve: deficit 30/100 · drier than 67% of cities · worsens by 5 by 2050"
+      },
+      {
+        "open": true,
+        "text": "Wildfire\nlow risk\n2050: moderate risk\n+\n\nWhere hot, dry weather can start wildfires.\n\nfire-prone weather 26/100 · more exposed than 52% of cities · ＋7 by 2050"
+      },
+      {
+        "open": true,
+        "text": "Climate shift\nlow risk\n2050: moderate risk\n+\n\nWhere the climate is changing fastest by 2050.\n\nthe local climate has already drifted 0.9 °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6"
+      },
+      {
+        "open": true,
+        "text": "Thermal stress\nminimal risk\n+\n\nDays too hot to live normally outside.\n\n6 days a year with a heat index above 32 °C · ＋6 by 2050 · 42 freezing days a year"
+      },
+      {
+        "open": true,
+        "text": "Coastal flooding\nminimal risk\n+\n\nWhere the sea can cover the land.\n\n0% of land within 12 km below the 2050 flood line · 0% below the line + 1 m · median elevation 87.6 m · line = 2050 level + the 1-in-100-year storm tide (0.00 m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth"
+      }
+    ],
+    "year2050": {
+      "year": "2050",
+      "hash": "#v=Paris&an=2050&cc=FR",
+      "risks": [
+        {
+          "note": "52",
+          "open": false
+        },
+        {
+          "note": "64",
+          "open": true
+        },
+        {
+          "note": "67",
+          "open": true
+        },
+        {
+          "note": "55",
+          "open": true
+        },
+        {
+          "note": "90",
+          "open": true
+        },
+        {
+          "note": "100",
+          "open": true
+        }
+      ],
+      "graph": "How the outlook changes\n\nIndex out of 100 · 2026 to 2050\n\n2026 · 66\n2050 · 63"
+    },
+    "compare": "Berlin 62vsParis 63",
+    "story": true,
+    "shareText": "Share link ↗",
+    "country": "France · 2050 · 66/100 · Solid habitability\n\nCountry overview\n\nFrance\nYear\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n2026\n2050\nLower overall exposure\n\nAverage of 692 cities, weighted by population. Conditions vary between cities.\n\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n/100\n\nPhysical habitability index\n\nHigher scores mean less exposure.\n\n−6 points compared with 2026.\n\nUnderstand the risks\n2050\n\nOpen a risk to see what it means and what is measured.\n\nClimate shift\nmoderate risk\n+\n\nWhere the climate is changing fastest by 2050.\n\nAverage of 692 cities, weighted by population. Conditions vary between cities.\n\nWildfire\nlow risk\n+\nWater stress\nlow risk\n+\nRiver flooding\nlow risk\n+\nThermal stress\nminimal risk\n+\nCoastal flooding\nminimal risk\n+\nHow the outlook changes\n\nIndex out of 100 · 2026 to 2050\n\n2026 · 72\n2050 · 66\nCountry population · 2026 to 2050\n\n+2 %\n\n66.7M people → 68.2M by 2050 (+2%, UN)\n\nMost habitable in the country\nBrest\n87\nDouarnenez\n86\nLanderneau\n86\nAbout the score and data\nCompare\nShare link ↗\nStory image ↗",
+    "noData": "Funafuti · Not enough data\n\nCity · Tuvalu\n\nFunafuti\nYear\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n2026\n2050\nNot enough data\n\nThis city sits outside the global climate grids (small island or atoll): rather than invent a score, we show none.\n\nAbout the score and data\nShare link ↗\nStory image ↗",
+    "longName": "San Francisco",
+    "back": "Funafuti",
+    "forward": "San Francisco",
+    "fr": "San Francisco · 2050 · 61/100 · Habitabilité sous tension\n\nVille · États-Unis\n\nSan Francisco\nAnnée\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n2026\n2050\nExposition globale modérée\n\nPrincipal point de vigilance : feux de forêt.\n\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n/100\n\nIndice d’habitabilité physique\n\nPlus le score est élevé, moins le lieu est exposé.\n\n−3 points par rapport à 2026.\n\nLes risques à comprendre\n2050\n\nune météo de feu au-dessus de 82 % des villes\n\nOuvrez un risque pour comprendre son sens et les mesures.\n\nStress thermique\nrisque minime\n+\nStress hydrique\nrisque modéré\n+\nFeux de forêt\nrisque élevé\n+\n\nLà où le temps chaud et sec peut faire partir des incendies.\n\nmétéo propice aux feux 57/100 · plus exposé que 82 % des villes\n\nSubmersion marine\nrisque minime\n+\nInondation fluviale\nrisque minime\n+\nBascule du climat\nrisque modéré\n+\nCe qui change d’ici 2050\n\nIndice sur 100 · 2026 à 2050\n\n2026 · 64\n2050 · 61\nPopulation du pays · 2026 à 2050\n\n+10 %\n\npopulation du pays : +10 % d’ici 2050 (ONU)\n\nPlus habitable, à proximité\nTacoma\n75\nSeattle\n72\nVictoria\n74\nComprendre le score et les données\nComparer\nPartager le lien ↗\nImage story ↗",
+    "closed": true,
+    "restoredRange": true
+  },
+  {
+    "name": "se",
+    "errors": [],
+    "openText": "Paris · 2026 · 66/100 · Solid habitability\nCity · France\nParis\n\nYear\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\n2026\n2050\nLower overall exposure\nMain concern: river flooding.\n123456789\n0\n123456789\n0\n123456789\n/100\nPhysical habitability index\nHigher scores mean less exposure.\nSame index as in 2026.\nUnderstand the risks\n2026\n19% of the area inside the 100-yr flood zone\nOpen a risk to see what it means and what is measured.\nRiver flooding\nmoderate risk\n+\nWhere rivers can overflow and flood everything.  100-year flood (1%/yr · ≈22% by 2050): 19% of land within 12 km flooded, up to 9.2 m deep (p90) · JRC model map, held constant to 2050\nWater stress\nlow risk\n2050: moderate risk\n+\nWildfire\nlow risk\n2050: moderate risk\n+\nClimate shift\nlow risk\n2050: moderate risk\n+\nThermal stress\nminimal risk\n+\nCoastal flooding\nminimal risk\n+\nHow the outlook changes\nIndex out of 100 · 2026 to 2050\n\n2026 · 66\n2050 · 63\nCountry population · 2026 to 2050\n+2 %\ncountry population: +2% by 2050 (UN)\nMore habitable, nearby\n\nMarne La Vallée\n76\n\nLille\n85\n\nCharleroi\n86\nAbout the score and data\nCompare\nShare link ↗\nStory image ↗",
+    "year": "2026",
+    "geometry": {
+      "panel": {
+        "x": 0,
+        "y": 136.3125,
+        "width": 320,
+        "height": 431.6875,
+        "bottom": 568,
+        "scrollHeight": 431,
+        "clientHeight": 431
+      },
+      "body": {
+        "x": 1,
+        "y": 311.3125,
+        "width": 318,
+        "height": 189.6875,
+        "bottom": 501,
+        "scrollHeight": 1586,
+        "clientHeight": 190
+      },
+      "close": {
+        "x": 259,
+        "y": 149.3125,
+        "width": 44,
+        "height": 44,
+        "bottom": 193.3125,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      "range": {
+        "x": 21,
+        "y": 243.3125,
+        "width": 278,
+        "height": 44,
+        "bottom": 287.3125,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      "footer": {
+        "x": 1,
+        "y": 501,
+        "width": 318,
+        "height": 67,
+        "bottom": 568,
+        "scrollHeight": 66,
+        "clientHeight": 66
+      }
+    },
+    "details": [
+      {
+        "open": false,
+        "text": "River flooding\nmoderate risk\n+\n"
+      },
+      {
+        "open": true,
+        "text": "Water stress\nlow risk\n2050: moderate risk\n+\nWhere it no longer rains enough for everyday water.  water reserve: deficit 30/100 · drier than 67% of cities · worsens by 5 by 2050\n"
+      },
+      {
+        "open": true,
+        "text": "Wildfire\nlow risk\n2050: moderate risk\n+\nWhere hot, dry weather can start wildfires.  fire-prone weather 26/100 · more exposed than 52% of cities · ＋7 by 2050\n"
+      },
+      {
+        "open": true,
+        "text": "Climate shift\nlow risk\n2050: moderate risk\n+\nWhere the climate is changing fastest by 2050.  the local climate has already drifted 0.9 °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6\n"
+      },
+      {
+        "open": true,
+        "text": "Thermal stress\nminimal risk\n+\nDays too hot to live normally outside.  6 days a year with a heat index above 32 °C · ＋6 by 2050 · 42 freezing days a year\n"
+      },
+      {
+        "open": true,
+        "text": "Coastal flooding\nminimal risk\n+\nWhere the sea can cover the land.  0% of land within 12 km below the 2050 flood line · 0% below the line + 1 m · median elevation 87.6 m · line = 2050 level + the 1-in-100-year storm tide (0.00 m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth\n"
+      }
+    ],
+    "year2050": {
+      "year": "2050",
+      "hash": "#v=Paris&an=2050&cc=FR",
+      "risks": [
+        {
+          "note": "52",
+          "open": false
+        },
+        {
+          "note": "64",
+          "open": true
+        },
+        {
+          "note": "67",
+          "open": true
+        },
+        {
+          "note": "55",
+          "open": true
+        },
+        {
+          "note": "90",
+          "open": true
+        },
+        {
+          "note": "100",
+          "open": true
+        }
+      ],
+      "graph": "How the outlook changes\nIndex out of 100 · 2026 to 2050\n\n2026 · 66\n2050 · 63\n"
+    },
+    "compare": "Berlin 62vsParis 63",
+    "story": true,
+    "shareText": "Share link ↗",
+    "country": "France · 2050 · 66/100 · Solid habitability\nCountry overview\nFrance\n\nYear\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\n2026\n2050\nLower overall exposure\nAverage of 692 cities, weighted by population. Conditions vary between cities.\n123456789\n0\n123456789\n0\n123456789\n/100\nPhysical habitability index\nHigher scores mean less exposure.\n−6 points compared with 2026.\nUnderstand the risks\n2050\nOpen a risk to see what it means and what is measured.\nClimate shift\nmoderate risk\n+\nWhere the climate is changing fastest by 2050.  Average of 692 cities, weighted by population. Conditions vary between cities.\nWildfire\nlow risk\n+\nWater stress\nlow risk\n+\nRiver flooding\nlow risk\n+\nThermal stress\nminimal risk\n+\nCoastal flooding\nminimal risk\n+\nHow the outlook changes\nIndex out of 100 · 2026 to 2050\n\n2026 · 72\n2050 · 66\nCountry population · 2026 to 2050\n+2 %\n66.7M people → 68.2M by 2050 (+2%, UN)\nMost habitable in the country\n\nBrest\n87\n\nDouarnenez\n86\n\nLanderneau\n86\nAbout the score and data\nCompare\nShare link ↗\nStory image ↗",
+    "noData": "Funafuti · Not enough data\nCity · Tuvalu\nFunafuti\n\nYear\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\n2026\n2050\nNot enough data\nThis city sits outside the global climate grids (small island or atoll): rather than invent a score, we show none.\nAbout the score and data\nShare link ↗\nStory image ↗",
+    "longName": "San Francisco",
+    "back": "Funafuti",
+    "forward": "San Francisco",
+    "fr": "San Francisco · 2050 · 61/100 · Habitabilité sous tension\nVille · États-Unis\nSan Francisco\n\nAnnée\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\n2026\n2050\nExposition globale modérée\nPrincipal point de vigilance : feux de forêt.\n123456789\n0\n123456789\n0\n123456789\n/100\nIndice d’habitabilité physique\nPlus le score est élevé, moins le lieu est exposé.\n−3 points par rapport à 2026.\nLes risques à comprendre\n2050\nune météo de feu au-dessus de 82 % des villes\nOuvrez un risque pour comprendre son sens et les mesures.\nStress thermique\nrisque minime\n+\nStress hydrique\nrisque modéré\n+\nFeux de forêt\nrisque élevé\n+\nLà où le temps chaud et sec peut faire partir des incendies.  météo propice aux feux 57/100 · plus exposé que 82 % des villes\nSubmersion marine\nrisque minime\n+\nInondation fluviale\nrisque minime\n+\nBascule du climat\nrisque modéré\n+\nCe qui change d’ici 2050\nIndice sur 100 · 2026 à 2050\n\n2026 · 64\n2050 · 61\nPopulation du pays · 2026 à 2050\n+10 %\npopulation du pays : +10 % d’ici 2050 (ONU)\nPlus habitable, à proximité\n\nTacoma\n75\n\nSeattle\n72\n\nVictoria\n74\nComprendre le score et les données\nComparer\nPartager le lien ↗\nImage story ↗",
+    "closed": true,
+    "restoredRange": true
+  },
+  {
+    "name": "landscape",
+    "errors": [],
+    "openText": "Paris · 2026 · 66/100 · Solid habitability\nCity · France\nParis\n\nYear\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\nLower overall exposure\nMain concern: river flooding.\n123456789\n0\n123456789\n0\n123456789\n/100\nPhysical habitability index\nHigher scores mean less exposure.\nSame index as in 2026.\nUnderstand the risks\n2026\n19% of the area inside the 100-yr flood zone\nOpen a risk to see what it means and what is measured.\nRiver flooding\nmoderate risk\n+\nWhere rivers can overflow and flood everything.  100-year flood (1%/yr · ≈22% by 2050): 19% of land within 12 km flooded, up to 9.2 m deep (p90) · JRC model map, held constant to 2050\nWater stress\nlow risk\n2050: moderate risk\n+\nWildfire\nlow risk\n2050: moderate risk\n+\nClimate shift\nlow risk\n2050: moderate risk\n+\nThermal stress\nminimal risk\n+\nCoastal flooding\nminimal risk\n+\nHow the outlook changes\nIndex out of 100 · 2026 to 2050\n\n2026 · 66\n2050 · 63\nCountry population · 2026 to 2050\n+2 %\ncountry population: +2% by 2050 (UN)\nMore habitable, nearby\n\nMarne La Vallée\n76\n\nLille\n85\n\nCharleroi\n86\nAbout the score and data\nCompare\nShare link ↗\nStory image ↗",
+    "year": "2026",
+    "geometry": {
+      "panel": {
+        "x": 151.484375,
+        "y": 58,
+        "width": 572.515625,
+        "height": 277,
+        "bottom": 335,
+        "scrollHeight": 275,
+        "clientHeight": 275
+      },
+      "body": {
+        "x": 152.484375,
+        "y": 139,
+        "width": 570.515625,
+        "height": 136,
+        "bottom": 275,
+        "scrollHeight": 1465,
+        "clientHeight": 136
+      },
+      "close": {
+        "x": 671,
+        "y": 67,
+        "width": 44,
+        "height": 44,
+        "bottom": 111,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      "range": {
+        "x": 449.734375,
+        "y": 94,
+        "width": 217.265625,
+        "height": 44,
+        "bottom": 138,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      "footer": {
+        "x": 152.484375,
+        "y": 275,
+        "width": 570.515625,
+        "height": 59,
+        "bottom": 334,
+        "scrollHeight": 58,
+        "clientHeight": 58
+      }
+    },
+    "details": [
+      {
+        "open": false,
+        "text": "River flooding\nmoderate risk\n+\n"
+      },
+      {
+        "open": true,
+        "text": "Water stress\nlow risk\n2050: moderate risk\n+\nWhere it no longer rains enough for everyday water.  water reserve: deficit 30/100 · drier than 67% of cities · worsens by 5 by 2050\n"
+      },
+      {
+        "open": true,
+        "text": "Wildfire\nlow risk\n2050: moderate risk\n+\nWhere hot, dry weather can start wildfires.  fire-prone weather 26/100 · more exposed than 52% of cities · ＋7 by 2050\n"
+      },
+      {
+        "open": true,
+        "text": "Climate shift\nlow risk\n2050: moderate risk\n+\nWhere the climate is changing fastest by 2050.  the local climate has already drifted 0.9 °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6\n"
+      },
+      {
+        "open": true,
+        "text": "Thermal stress\nminimal risk\n+\nDays too hot to live normally outside.  6 days a year with a heat index above 32 °C · ＋6 by 2050 · 42 freezing days a year\n"
+      },
+      {
+        "open": true,
+        "text": "Coastal flooding\nminimal risk\n+\nWhere the sea can cover the land.  0% of land within 12 km below the 2050 flood line · 0% below the line + 1 m · median elevation 87.6 m · line = 2050 level + the 1-in-100-year storm tide (0.00 m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth\n"
+      }
+    ],
+    "year2050": {
+      "year": "2050",
+      "hash": "#v=Paris&an=2050&cc=FR",
+      "risks": [
+        {
+          "note": "52",
+          "open": false
+        },
+        {
+          "note": "64",
+          "open": true
+        },
+        {
+          "note": "67",
+          "open": true
+        },
+        {
+          "note": "55",
+          "open": true
+        },
+        {
+          "note": "90",
+          "open": true
+        },
+        {
+          "note": "100",
+          "open": true
+        }
+      ],
+      "graph": "How the outlook changes\nIndex out of 100 · 2026 to 2050\n\n2026 · 66\n2050 · 63\n"
+    },
+    "compare": "Berlin 62vsParis 63",
+    "story": true,
+    "shareText": "Share link ↗",
+    "country": "France · 2050 · 66/100 · Solid habitability\nCountry overview\nFrance\n\nYear\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\nLower overall exposure\nAverage of 692 cities, weighted by population. Conditions vary between cities.\n123456789\n0\n123456789\n0\n123456789\n/100\nPhysical habitability index\nHigher scores mean less exposure.\n−6 points compared with 2026.\nUnderstand the risks\n2050\nOpen a risk to see what it means and what is measured.\nClimate shift\nmoderate risk\n+\nWhere the climate is changing fastest by 2050.  Average of 692 cities, weighted by population. Conditions vary between cities.\nWildfire\nlow risk\n+\nWater stress\nlow risk\n+\nRiver flooding\nlow risk\n+\nThermal stress\nminimal risk\n+\nCoastal flooding\nminimal risk\n+\nHow the outlook changes\nIndex out of 100 · 2026 to 2050\n\n2026 · 72\n2050 · 66\nCountry population · 2026 to 2050\n+2 %\n66.7M people → 68.2M by 2050 (+2%, UN)\nMost habitable in the country\n\nBrest\n87\n\nDouarnenez\n86\n\nLanderneau\n86\nAbout the score and data\nCompare\nShare link ↗\nStory image ↗",
+    "noData": "Funafuti · Not enough data\nCity · Tuvalu\nFunafuti\n\nYear\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\nNot enough data\nThis city sits outside the global climate grids (small island or atoll): rather than invent a score, we show none.\nAbout the score and data\nShare link ↗\nStory image ↗",
+    "longName": "San Francisco",
+    "back": "Funafuti",
+    "forward": "San Francisco",
+    "fr": "San Francisco · 2050 · 61/100 · Habitabilité sous tension\nVille · États-Unis\nSan Francisco\n\nAnnée\n0\n123456789\n0\n123456789\n0\n123456789\n0\n123456789\n\nExposition globale modérée\nPrincipal point de vigilance : feux de forêt.\n123456789\n0\n123456789\n0\n123456789\n/100\nIndice d’habitabilité physique\nPlus le score est élevé, moins le lieu est exposé.\n−3 points par rapport à 2026.\nLes risques à comprendre\n2050\nune météo de feu au-dessus de 82 % des villes\nOuvrez un risque pour comprendre son sens et les mesures.\nStress thermique\nrisque minime\n+\nStress hydrique\nrisque modéré\n+\nFeux de forêt\nrisque élevé\n+\nLà où le temps chaud et sec peut faire partir des incendies.  météo propice aux feux 57/100 · plus exposé que 82 % des villes\nSubmersion marine\nrisque minime\n+\nInondation fluviale\nrisque minime\n+\nBascule du climat\nrisque modéré\n+\nCe qui change d’ici 2050\nIndice sur 100 · 2026 à 2050\n\n2026 · 64\n2050 · 61\nPopulation du pays · 2026 à 2050\n+10 %\npopulation du pays : +10 % d’ici 2050 (ONU)\nPlus habitable, à proximité\n\nTacoma\n75\n\nSeattle\n72\n\nVictoria\n74\nComprendre le score et les données\nComparer\nPartager le lien ↗\nImage story ↗",
+    "closed": true,
+    "restoredRange": true
+  }
+]

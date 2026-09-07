@@ -1,0 +1,22 @@
+{
+  "css": {
+    "panelTransition": "0s",
+    "reflection": "none",
+    "backdrop": "blur(28px) saturate(1.4)",
+    "grainOpacity": "0.045",
+    "grainImage": "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E\")",
+    "detailAnimation": "none"
+  },
+  "frames": [
+    "matrix(1, 0, 0, 3.1, 0, 0)",
+    "matrix(1, 0, 0, 3.1, 0, 0)",
+    "matrix(1, 0, 0, 3.1, 0, 0)",
+    "matrix(1, 0, 0, 3.1, 0, 0)",
+    "matrix(1, 0, 0, 3.1, 0, 0)",
+    "matrix(1, 0, 0, 3.1, 0, 0)",
+    "matrix(1, 0, 0, 3.1, 0, 0)",
+    "matrix(1, 0, 0, 3.1, 0, 0)"
+  ],
+  "distinctTransforms": 1,
+  "sourceHash": "4f33231e58f4fb5c130573a0acb397491c78b6383bdb36d5434f109b52428528"
+}

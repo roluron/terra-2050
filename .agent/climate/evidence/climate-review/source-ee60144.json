@@ -1,0 +1,10 @@
+{
+  "revision": "ee60144dca3b7ae1a41d5929c6cf4547bc05df04",
+  "scope": "source diff only",
+  "functionalChanges": false,
+  "findings": [
+    "Qualify no annual projection as unavailable in this dataset, not globally.",
+    "Twitter description still uses old habitability/open scientific data wording while OG and description updated."
+  ],
+  "browserRun": false
+}

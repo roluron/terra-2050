@@ -1,0 +1,1 @@
+Priority: visible time-driven animations for all7filters and data-driven wildfireyearresponse; bottom-leftbeta/source caveat and contactlink; localized pointer/center labels with fade. Preserve scientificallyunchanged endpoints. No newdatafabrication. Scope index.html,terra-menus.css,QA.

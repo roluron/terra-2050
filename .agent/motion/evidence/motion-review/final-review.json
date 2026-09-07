@@ -1,0 +1,15 @@
+{
+  "verdict": "PASS bounded UI review",
+  "footer": "SE and landscape closed notice does not overlap any filter or timeline, normal or all-seven-active states. Expanded disclosure overlays intentionally and summary closes it. Contact actual tap reached GitHub login redirect for issues/new; no submission.",
+  "interaction": "All seven landscape filter taps toggle, disclosure opens/closes, actual search input tap and Berlin selection succeed.",
+  "labels": "Prior desktop test confirmed radius-based fade, pointer/tab disabling outside radius and Sao Paulo navigation.",
+  "hash": "9dfba11def28e2fd1ebd7446d5f8b6766a582af5160b108ad1eb600c0518dce6",
+  "artifacts": [
+    "notice-final.json",
+    "hits-final.json",
+    "se-notice-closed.png",
+    "landscape-notice-closed.png",
+    "se-notice-expanded.png",
+    "landscape-notice-expanded.png"
+  ]
+}

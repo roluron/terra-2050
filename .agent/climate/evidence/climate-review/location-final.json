@@ -1,0 +1,11 @@
+{
+  "immediate": {
+    "panelClosed": true,
+    "searchFocused": true
+  },
+  "deferred": {
+    "city": "Berlin",
+    "panelPreserved": true
+  },
+  "errors": []
+}

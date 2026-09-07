@@ -1,0 +1,5 @@
+{"command": ["/Users/robinmahieux/Documents/Codex/2026-09-07/can-you-launch-the-software-7/work/panel-clean/.venv/bin/python", "/Users/robinmahieux/Documents/Codex/2026-09-07/can-you-launch-the-software-7/work/panel-clean/tools/verifier_i18n.py", "--autotest"], "exit_code": 0}
+OK     autotest : le fichier sain passe
+OK     autotest : une cle absente de EN est vue
+OK     autotest : une cle inventee dans le code est vue
+Le controle est porteur.

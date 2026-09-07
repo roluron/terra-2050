@@ -8,7 +8,7 @@
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_mask_4320.webp">
 <link rel="preload" as="image" href="./data/grille_c.png">
 <meta property="og:title" content="TERRA／2050 — Will your city still be livable in 2050?">
-<meta property="og:description" content="34,099 cities · one habitability index built only from open scientific data (WorldClim, CMIP6, ETOPO, JRC, UN). Search yours.">
+<meta property="og:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
 <meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
 <meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
@@ -20,10 +20,10 @@
 <meta property="og:image:alt" content="Le globe TERRA／2050 en 2050, chaleur extreme allumee, avec la question : votre ville sera-t-elle encore vivable ?">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TERRA／2050 — Will your city still be livable in 2050?">
-<meta name="twitter:description" content="34,099 cities · one habitability index built only from open scientific data. Search yours.">
+<meta name="twitter:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
 <meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
 <meta name="twitter:image:alt" content="Le globe TERRA／2050 en 2050, chaleur extreme allumee, avec la question : votre ville sera-t-elle encore vivable ?">
-<meta name="description" content="Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité bâti uniquement sur des données scientifiques ouvertes (WorldClim, CMIP6, FABDEM, JRC, ONU).">
+<meta name="description" content="34 099 villes · un indice illustratif d’exposition climatique. Explorez les risques modélisés, hypothèses et limites des sources.">
 <meta name="theme-color" content="#070706">
 <meta name="color-scheme" content="dark">
 <meta name="mobile-web-app-capable" content="yes">
@@ -253,9 +253,11 @@
       <button class="calque" aria-pressed="false" data-cle="fleuves"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-06</span></button>
       <button class="calque" aria-pressed="false" data-cle="stabilite" data-couleur="violet"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-07</span></button>
       <button class="calque" aria-pressed="false" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
+      
     </nav>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
+<aside id="model-notice"><p id="layer-context" aria-live="polite"></p><details><summary data-t="betaShort"></summary><p data-t="betaNotice"></p><a href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a></details></aside>
 <div id="etiquettes"></div>
 <div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span></div>
 
@@ -313,35 +315,56 @@
 </div>
 
 <div id="scrim-dossier"><div class="v-grain" aria-hidden="true"></div></div>
-<button id="dossier-croix" aria-label="Fermer / Close" inert>
-  <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1 L11 11 M11 1 L1 11"/></svg>
-</button>
 <aside id="dossier" role="region" aria-label="Diagnostic du lieu" inert>
   <p id="annonce" class="lecteur-seul" role="status" aria-live="polite"></p>
-  <div class="coords" id="dossier-coords"></div>
-  <div class="frappe" id="dossier-frappe"></div>
-  <div class="score">
-    <span class="valeur" id="dossier-score"></span>
-    <div>
-      <div class="legende"><span data-t="legendeIndice"></span> <span id="dossier-annee">2050</span></div>
-      <div class="verdict" id="dossier-verdict"><span class="point"></span><span id="dossier-verdict-txt"></span></div>
-    </div>
+  <header class="fiche-entete">
+    <div><p id="dossier-scope"></p><h2 id="dossier-nom"></h2></div>
+    <button id="dossier-croix" type="button" aria-label="Fermer / Close" inert>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18"/></svg>
+    </button>
+  </header>
+  <div id="dossier-temps"><span class="fiche-temps-label" data-t="panelYear"></span></div>
+  <div class="fiche-corps">
+    <section class="fiche-bilan">
+      <div class="verdict" id="dossier-verdict"><span class="point"></span><h3 id="dossier-verdict-txt"></h3></div>
+      <p class="conseil" id="dossier-conseil"></p>
+      <div class="fiche-indice">
+        <div class="score"><span class="valeur" id="dossier-score"></span><span class="score-sur">/100</span></div>
+        <div><p data-t="panelIndex"></p><p class="fiche-secondaire" data-t="panelDirection"></p></div>
+      </div>
+      <p id="dossier-evolution"></p>
+      <button class="duel" id="dossier-duel" hidden></button>
+    </section>
+    <section class="fiche-risques">
+      <div class="fiche-section-titre"><h3 data-t="panelRisks"></h3><span id="dossier-annee">2050</span></div>
+      <p class="frappe" id="dossier-frappe"></p>
+      <p class="fiche-secondaire" data-t="panelRiskHelp"></p>
+      <div id="dossier-risques"></div>
+    </section>
+    <section class="trajectoire">
+      <h3 data-t="trajectoire"></h3>
+      <p class="fiche-secondaire" data-t="panelGraph"></p>
+      <svg id="dossier-courbe" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
+    </section>
+    <div id="dossier-pop" class="risque-pop"></div>
+    <section id="dossier-ailleurs"></section>
+    <details class="fiche-methode">
+      <summary data-t="panelMethod"></summary>
+      <p data-t="panelMethodText"></p>
+      <p data-t="panelScenario"></p>
+      <p id="score-formula"></p>
+      <p data-t="panelDataLimits"></p>
+      <p class="delta-score" id="dossier-delta"></p>
+      <p class="coords" id="dossier-coords"></p>
+      <p class="sources" id="dossier-sources"></p>
+    </details>
   </div>
-  <button class="duel" id="dossier-duel" hidden></button>
-  <button type="button" class="comparer" id="dossier-comparer"></button>
-  <p class="conseil" id="dossier-conseil"></p>
-  <div class="trajectoire">
-    <div class="titre-bloc"><span data-t="trajectoire"></span></div>
-    <svg id="dossier-courbe" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"></svg>
-    <div class="bornes-courbe"><span>2026</span><span>2050</span></div>
-  </div>
-  <div id="dossier-risques"></div>
-  <div id="dossier-pop" class="risque risque-pop"></div>
-  <div class="delta-score" id="dossier-delta"></div>
-  <div id="dossier-detail"></div>
-  <div id="dossier-ailleurs"></div>
-  <div class="sources" id="dossier-sources"></div>
-  <div class="actions"><button type="button" class="fa-lien" id="dossier-partage"></button><button type="button" class="fa-lien" id="dossier-story"></button></div>
+  <footer class="actions">
+    <button type="button" class="comparer" id="dossier-comparer"></button>
+    <button type="button" id="dossier-partage"></button>
+    <button type="button" id="dossier-story"></button>
+  </footer>
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
@@ -435,6 +458,27 @@ function revelerChars(el, texte){
 const TEXTES = {
   fr: {
     lang: 'fr',
+    panelVerdict: {bon: 'Exposition globale plus faible', moyen: 'Exposition globale modérée', dur: 'Exposition globale plus forte'},
+    panelSummary: risque => `Principal point de vigilance : ${risque.toLowerCase()}.`,
+    panelMinimal: 'Les six risques évalués sont minimes dans ce modèle.',
+    panelYear: 'Année · 2026–2050',
+    panelCity: 'Ville',
+    panelCountry: 'Vue du pays',
+    panelIndex: 'Indice climatique indicatif',
+    betaShort: 'Bêta · Données potentiellement inexactes',
+    betaNotice: 'Bêta · Les données peuvent être inexactes. Animations illustratives, pas des événements observés.',
+    betaContact: 'Votre lieu semble inexact ? Contactez-nous ↗',
+    panelDataLimits: 'Traçabilité incomplète : générateurs actuels absents, certaines lacunes et marées de repli sans marqueur par ville. Zéro ne prouve pas l’absence de risque. Notes de villes non validées scientifiquement.',
+    panelDirection: 'Plus haut = moins d’exposition modélisée.',
+    panelRisks: 'Les risques à comprendre',
+    panelRiskHelp: 'Indice d’exposition · 0–100, plus haut signifie plus exposé. Pas une probabilité.',
+    panelGraph: 'Indice sur 100 · 2026 à 2050',
+    panelMethod: 'Comprendre le score et les données',
+    panelMethodText: 'Modèle propre à l’application : moitié moyenne pondérée des expositions, moitié aléa le plus fort, soustraites de 100. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, climat12%. Ni coût de la vie, ni services, ni modèle explicite de protection. Pas une probabilité de catastrophe.',
+    panelScenario: 'Climat : moyennes interpolées d’un modèle CMIP6, SSP3-7.0. Fleuves : référence fixe. Surfaces côtières :2050. Résolutions globe/villes différentes. Pas une étude locale de danger.',
+    panelCountryNote: n => `Moyenne de ${n} villes, pondérée par leur population. Les conditions varient d’une ville à l’autre.`,
+    panelEvolution: n => n === 0 ? 'Même indice qu’en 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points par rapport à 2026.`,
+
     sous1: 'Observatoire prospectif',
     sous2: 'Votre ville sera-t-elle encore vivable en 2050 ?',
     initialiser: 'Explorer',
@@ -444,7 +488,6 @@ const TEXTES = {
     chargementVilles: 'Chargement des 34 099 villes…',
     calquesHS: 'Cartes de calques indisponibles — rechargez la page',
     cartesPartielles: 'Certaines cartes n’ont pas pu être chargées : le globe sera incomplet.',
-    detEnAttente: 'Mesure en cours de chargement…',
     sousHeader: 'Habitabilité climatique · projection 2026→2050',
     son: e => e ? 'Son · on' : 'Son · off',
     calque: { chaleur: 'Chaleur extrême', feux: 'Incendies de forêt',
@@ -454,7 +497,7 @@ const TEXTES = {
     info: {
       chaleur: 'Des jours où il fait trop chaud pour vivre normalement dehors.',
       feux: 'Là où le temps chaud et sec peut faire partir des incendies.',
-      secheresse: 'Là où il ne pleut plus assez pour l’eau de tous les jours.',
+      secheresse: 'Aridité modélisée à partir de la température et des pluies.',
       mer: 'Là où la mer peut recouvrir la terre.',
       fleuves: 'Là où les rivières peuvent déborder et tout inonder.',
       stabilite: 'Là où le climat change le plus vite d’ici 2050.',
@@ -463,9 +506,9 @@ const TEXTES = {
     infoplus: {
       chaleur: 'Les zones colorées montrent où il fait très chaud et humide, de plus en plus souvent. Ces jours-là, le corps n’arrive plus à se rafraîchir : dur de travailler dehors, dur de dormir. Plus c’est rouge, plus il y a de jours comme ça.',
       feux: 'Quand il fait chaud et sec pendant des mois, les plantes deviennent comme du papier : une étincelle suffit. La carte montre où le temps rend les incendies faciles — pas où ça brûle aujourd’hui.',
-      secheresse: 'Ici, il ne pleut plus assez par rapport à la chaleur. Les réserves d’eau baissent année après année : moins d’eau pour boire, arroser, cultiver.',
-      mer: 'Ces terres sont si basses que la mer peut les recouvrir pendant une grosse tempête. La mer monte, et par endroits le sol s’enfonce en plus. Les digues ne sont pas comptées : on montre le terrain tel qu’il est.',
-      fleuves: 'Quand une très grosse pluie arrive, les rivières débordent. La carte montre jusqu’où l’eau peut aller. Une inondation comme ça a environ 1 chance sur 5 d’arriver d’ici 2050.',
+      secheresse: 'Indice d’aridité température/pluie ; hors consommation, réservoirs et accès à l’eau potable.',
+      mer: 'Terrains bas exposés aux marées de tempête et à la montée des eaux modélisées. Pas de modèle explicite des protections ; le terrain peut inclure des barrières.',
+      fleuves: 'Carte de référence fixe d’une crue centennale modélisée : probabilité annuelle de dépassement de 1 %. Aucune projection annuelle dans ces données.',
       stabilite: 'Un endroit où il fait bon vivre, c’est aussi un endroit qui ne change pas trop vite. En violet : là où le climat s’est le plus éloigné de celui des années 1970-2000 — c’est l’Arctique qui bouge le plus vite.',
       declin: 'Dans les pays en gris-mauve, il y aura moins d’habitants en 2050 qu’aujourd’hui. Moins de monde, c’est souvent moins de services, d’écoles, de travail — mais aussi plus de place. Les chiffres viennent des Nations unies.',
     },
@@ -482,25 +525,15 @@ const TEXTES = {
     sansDonnees: 'Données insuffisantes',
     sansDonneesLong: 'Cette ville est hors des grilles climatiques mondiales (petite île ou atoll) : plutôt que d’inventer un score, on n’en affiche pas.',
     popLabel: 'Population du pays',
-    popPays: p => `population du pays : ${p > 0 ? '+' : '−'}${Math.abs(p)} % d’ici 2050 (ONU)`,
-    popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1).replace('.', ',')} M habitants → ${(p50 / 1e6).toFixed(1).replace('.', ',')} M en 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)} %, ONU)`,
-    conseilPays: (verdict, an) => `En ${an}, le pays dans son ensemble : ${verdict} — la moyenne cache les écarts entre villes, ouvrez-les.`,
     meilleuresVilles: 'Les plus habitables du pays',
-    critere: { thermique: 'Stress thermique', eau: 'Stress hydrique', feux: 'Feux de forêt',
+    critere: { thermique: 'Stress thermique', eau: 'Aridité', feux: 'Feux de forêt',
       mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Bascule du climat' },
-    legendeIndice: '／100 · indice d’habitabilité physique · ouvrages de défense non comptés',
     verdict: { bon: 'Habitabilité solide', moyen: 'Habitabilité sous tension', dur: 'Habitabilité dégradée' },
-    conseil: (n, faible, an, delta) => ({
-      bon: `En ${an}, rester tient : aucun facteur n’est critique. Le point faible reste ${faible.toLowerCase()}.`,
-      moyen: `En ${an}, rester demande de s’adapter sur ${faible.toLowerCase()}.`,
-      dur: `En ${an}, ${faible.toLowerCase()} pèse assez pour poser la question du départ.`,
-    })[n] + (delta <= -8 ? ` L’indice perd ${-delta} points d’ici 2050.` : delta >= 8 ? ` L’indice gagne ${delta} points d’ici 2050.` : ''),
-    conseilSain: an => `En ${an}, aucun des six facteurs ne pèse vraiment ici.`,
-    trajectoire: 'Trajectoire de l’indice',
+    trajectoire: 'Ce qui change d’ici 2050',
     ailleurs: 'Plus habitable, à proximité',
     rienDeMieux: 'Aucune ville du bassin n’est nettement plus habitable.',
     partage: 'Partager le lien ↗', story: 'Image story ↗',
-    comparer: 'Comparer avec une autre ville →',
+    comparer: 'Comparer',
     accrocheChoisir: 'Cherchez la ville à comparer',
     partagerSite: 'Partager TERRA ↗',
     partageSite: 'Votre ville sera-t-elle encore vivable en 2050 ? 34 099 villes, un indice d’habitabilité sur données scientifiques ouvertes.',
@@ -522,18 +555,39 @@ const TEXTES = {
     optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
     optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
     paliers: ['risque minime', 'risque faible', 'risque modéré', 'risque élevé', 'risque sévère'],
-    detChaud: (j, d) => `${j} jours par an d’indice de chaleur au-dessus de 32 °C${d > 0 ? ` · ＋${d} d’ici 2050` : ''}`,
-    detFroid: j => `${j} jours de gel par an`,
-    detChaud40: j => `dont ${j} jours au-dessus de 40 °C (seuil « danger » NWS)`,
-    detEau: (v, pct, d) => `réserve en eau : déficit ${v}/100${v ? ` · plus sec que ${pct} % des villes` : ''}${d > 2 ? ` · s’aggrave de ${d} d’ici 2050` : ''}`,
-    detFeux: (v, pct, d) => `météo propice aux feux ${v}/100${v ? ` · plus exposé que ${pct} % des villes` : ''}${d > 2 ? ` · ＋${d} d’ici 2050` : ''}`,
-    detMer: (f, f5, med, sub, r, mt) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (sol qui s’enfonce : −${sub} m d’ici 2050, mesures VLM)` : ''} · ${f5} % sous la ligne ＋ 1 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ marée de tempête centennale (${mt} m, COAST-RP) · seule l’eau reliée à la mer compte · les digues en terre figurent dans le relief, les ouvrages mobiles non · relief FABDEM 30 m, sol nu`,
-    detFleuves: (f, d90, r) => `crue centennale (1 %/an · ≈22 % d’ici 2050) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
-    detStab: v => `le climat local a déjà dérivé de ${v} °C par rapport à 1970-2000 · température moyenne et précipitations, WorldClim ＋ CMIP6`,
+    detChaud: (j, d) => `Estimation : ${j >= 300 ? "≥" : ""}${j} jours/an d’indice de chaleur >32 °C${d ? ` · ${d > 0 ? '+' : ''}${d} depuis 2026` : ''}`,
+    detFroid: j => `${j >= 200 ? "≥" : ""}${j} jours de gel estimés/an`,
+    detChaud40: j => `dont ${j >= 200 ? "≥" : ""}${j} jours estimés au-dessus de 40 °C (seuil « danger » NWS)`,
+    detEau: (v, pct, d) => `${v}/100 sur une échelle d’aridité issue de la température et des précipitations (De Martonne). Ne mesure ni les réserves ni l’accès à l’eau potable.`,
+    detFeux: (v, pct, d) => `${v}/100 pour un indicateur de temps chaud et sec. Ne prédit pas les incendies réels et ne tient pas compte de la végétation locale ni des départs de feu.`,
+    detMer: (f, f5, med, sub, r, mt) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (estimation stockée d’affaissement : −${sub} m d’ici 2050)` : ''} · ${f5} % sous la ligne ＋ 1 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ marée de tempête centennale (${mt} m, dérivée de COAST-RP ; repli non identifié) · seule l’eau reliée à la mer compte · les digues en terre figurent dans le relief, les ouvrages mobiles non · relief FABDEM 30 m, sol nu`,
+    detFleuves: (f, d90, r) => `crue centennale (1 % de dépassement annuel) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
+    detStab: v => `Indicateur de changement climatique : ${v}/100 · combine température et précipitations. Indice propre à l’application, pas une température en °C.`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (scénario émissions élevées, un seul modèle) · FABDEM 1″ (sol nu, CC BY-NC-SA) · COAST-RP (marées de tempête, CC BY 4.0) · NOAA ETOPO 2022 · JRC crue centennale · Oelsmann 2025 (subsidence VLM) · Bastin et al. 2019 (analogues climatiques) · Natural Earth · GeoNames',
   },
   en: {
     lang: 'en',
+    panelVerdict: {bon: 'Lower overall exposure', moyen: 'Moderate overall exposure', dur: 'Higher overall exposure'},
+    panelSummary: risk => `Main concern: ${risk.toLowerCase()}.`,
+    panelMinimal: 'All six assessed risks are minimal in this model.',
+    panelYear: 'Year · 2026–2050',
+    panelCity: 'City',
+    panelCountry: 'Country overview',
+    panelIndex: 'Illustrative climate index',
+    betaShort: 'Beta · Data may be inaccurate',
+    betaNotice: 'Beta · Data may be inaccurate. Animations illustrate indicators, not observed events.',
+    betaContact: 'Your place looks inaccurate? Contact us ↗',
+    panelDataLimits: 'Provenance incomplete: current generators are missing; some source gaps and tide fallbacks have no per-city flag. Zero does not prove no risk. City ratings are not scientifically validated.',
+    panelDirection: 'Higher = less modelled exposure.',
+    panelRisks: 'Understand the risks',
+    panelRiskHelp: 'Exposure index · 0–100, higher means more exposure. Not a probability.',
+    panelGraph: 'Index out of 100 · 2026 to 2050',
+    panelMethod: 'About the score and data',
+    panelMethodText: 'An app-defined model: half the weighted average exposure, half the strongest hazard; subtract from 100. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, climate shift12%. No living costs, services or explicit protection model. Not a disaster probability.',
+    panelScenario: 'Climate: interpolated period averages from one CMIP6 model (SSP3-7.0). Rivers: fixed reference. Coastal areas:2050 snapshot. Globe/city resolutions differ. Not a local hazard assessment.',
+    panelCountryNote: n => `Average of ${n} cities, weighted by population. Conditions vary between cities.`,
+    panelEvolution: n => n === 0 ? 'Same index as in 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points compared with 2026.`,
+
     sous1: 'Prospective observatory',
     sous2: 'Will your city still be livable in 2050?',
     initialiser: 'Explore',
@@ -543,7 +597,6 @@ const TEXTES = {
     chargementVilles: 'Loading 34,099 cities…',
     calquesHS: 'Layer maps unavailable — reload the page',
     cartesPartielles: 'Some maps could not be loaded: the globe will be incomplete.',
-    detEnAttente: 'Measurement still loading…',
     sousHeader: 'Climate habitability · 2026→2050 projection',
     son: e => e ? 'Sound · on' : 'Sound · off',
     calque: { chaleur: 'Extreme heat', feux: 'Wildfire',
@@ -553,7 +606,7 @@ const TEXTES = {
     info: {
       chaleur: 'Days too hot to live normally outside.',
       feux: 'Where hot, dry weather can start wildfires.',
-      secheresse: 'Where it no longer rains enough for everyday water.',
+      secheresse: 'Modelled aridity from temperature and rainfall.',
       mer: 'Where the sea can cover the land.',
       fleuves: 'Where rivers can overflow and flood everything.',
       stabilite: 'Where the climate is changing fastest by 2050.',
@@ -562,9 +615,9 @@ const TEXTES = {
     infoplus: {
       chaleur: 'The colored areas show where it gets very hot and humid, more and more often. On those days the body can’t cool down anymore: hard to work outside, hard to sleep. The redder it is, the more days like that.',
       feux: 'After months of hot, dry weather, plants turn into paper: one spark is enough. The map shows where the weather makes fires easy — not where fires are burning today.',
-      secheresse: 'Here, it no longer rains enough for how hot it is. Water reserves drop year after year: less water to drink, to water, to grow food.',
-      mer: 'This land is so low that the sea can cover it during a big storm. The sea is rising, and in some places the ground is also sinking. Sea walls are not counted: we show the land as it is.',
-      fleuves: 'When a really big rain comes, rivers overflow. The map shows how far the water can reach. A flood like that has about a 1-in-5 chance of happening by 2050.',
+      secheresse: 'Temperature/rainfall aridity proxy; excludes water use, reservoirs and drinking-water access.',
+      mer: 'Low-lying terrain exposed to modelled storm tides and rising sea level. There is no explicit protection model; terrain can include some barriers.',
+      fleuves: 'Fixed reference map of a modelled 100-year river flood: 1% annual exceedance probability. No annual projection in this dataset.',
       stabilite: 'A good place to live is also a place that doesn’t change too fast. In violet: where the climate has drifted furthest from the 1970-2000 baseline — the Arctic moves fastest of all.',
       declin: 'In the grey-mauve countries, there will be fewer people in 2050 than today. Fewer people often means fewer services, schools, jobs — but also more room. The numbers come from the United Nations.',
     },
@@ -581,25 +634,15 @@ const TEXTES = {
     sansDonnees: 'Not enough data',
     sansDonneesLong: 'This city sits outside the global climate grids (small island or atoll): rather than invent a score, we show none.',
     popLabel: 'Country population',
-    popPays: p => `country population: ${p > 0 ? '+' : '−'}${Math.abs(p)}% by 2050 (UN)`,
-    popAbsolue: (p25, p50, pct) => `${(p25 / 1e6).toFixed(1)}M people → ${(p50 / 1e6).toFixed(1)}M by 2050 (${pct > 0 ? '+' : '−'}${Math.abs(pct)}%, UN)`,
-    conseilPays: (verdict, an) => `In ${an}, the country as a whole: ${verdict} — the average hides gaps between cities, open them.`,
     meilleuresVilles: 'Most habitable in the country',
-    critere: { thermique: 'Thermal stress', eau: 'Water stress', feux: 'Wildfire',
+    critere: { thermique: 'Thermal stress', eau: 'Aridity', feux: 'Wildfire',
       mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Climate shift' },
-    legendeIndice: '／100 · physical habitability index · engineered defenses not counted',
     verdict: { bon: 'Solid habitability', moyen: 'Habitability under strain', dur: 'Degraded habitability' },
-    conseil: (n, faible, an, delta) => ({
-      bon: `In ${an}, staying holds: no factor is critical. The weak point is ${faible.toLowerCase()}.`,
-      moyen: `In ${an}, staying means adapting on ${faible.toLowerCase()}.`,
-      dur: `In ${an}, ${faible.toLowerCase()} weighs enough to raise the question of leaving.`,
-    })[n] + (delta <= -8 ? ` The index loses ${-delta} points by 2050.` : delta >= 8 ? ` The index gains ${delta} points by 2050.` : ''),
-    conseilSain: an => `In ${an}, none of the six factors carries real weight here.`,
-    trajectoire: 'Index trajectory',
+    trajectoire: 'How the outlook changes',
     ailleurs: 'More habitable, nearby',
     rienDeMieux: 'No city in the region is meaningfully more habitable.',
     partage: 'Share link ↗', story: 'Story image ↗',
-    comparer: 'Compare with another city →',
+    comparer: 'Compare',
     accrocheChoisir: 'Search the city to compare with',
     partagerSite: 'Share TERRA ↗',
     partageSite: 'Will your city still be livable in 2050? 34,099 cities, one habitability index built only from open scientific data.',
@@ -621,14 +664,14 @@ const TEXTES = {
     optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
     optAxes: 'The hardest risks', optPop: 'Country population',
     paliers: ['minimal risk', 'low risk', 'moderate risk', 'high risk', 'severe risk'],
-    detChaud: (j, d) => `${j} days a year with a heat index above 32 °C${d > 0 ? ` · ＋${d} by 2050` : ''}`,
-    detFroid: j => `${j} freezing days a year`,
-    detChaud40: j => `of which ${j} days above 40 °C (NWS “danger” threshold)`,
-    detEau: (v, pct, d) => `water reserve: deficit ${v}/100${v ? ` · drier than ${pct}% of cities` : ''}${d > 2 ? ` · worsens by ${d} by 2050` : ''}`,
-    detFeux: (v, pct, d) => `fire-prone weather ${v}/100${v ? ` · more exposed than ${pct}% of cities` : ''}${d > 2 ? ` · ＋${d} by 2050` : ''}`,
-    detMer: (f, f5, med, sub, r, mt) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (sinking ground: −${sub} m by 2050, VLM measurements)` : ''} · ${f5}% below the line + 1 m · median elevation ${med} m · line = 2050 level + the 1-in-100-year storm tide (${mt} m, COAST-RP) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth`,
-    detFleuves: (f, d90, r) => `100-year flood (1%/yr · ≈22% by 2050): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
-    detStab: v => `the local climate has already drifted ${v} °C from its 1970-2000 baseline · mean temperature and rainfall, WorldClim + CMIP6`,
+    detChaud: (j, d) => `Estimated ${j >= 300 ? "≥" : ""}${j} days/year above 32 °C heat index${d ? ` · ${d > 0 ? '+' : ''}${d} since 2026` : ''}`,
+    detFroid: j => `${j >= 200 ? "≥" : ""}${j} estimated freezing days/year`,
+    detChaud40: j => `of which ${j >= 200 ? "≥" : ""}${j} estimated days above 40 °C (NWS “danger” threshold)`,
+    detEau: (v, pct, d) => `${v}/100 on a custom aridity scale derived from temperature and rainfall (De Martonne). Not a measure of water reserves or drinking-water supply.`,
+    detFeux: (v, pct, d) => `${v}/100 on a custom hot/dry-weather proxy. It does not predict actual fires or include local vegetation and ignition.`,
+    detMer: (f, f5, med, sub, r, mt) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (stored subsidence estimate: −${sub} m by 2050)` : ''} · ${f5}% below the line + 1 m · median elevation ${med} m · line = 2050 level + the 1-in-100-year storm tide (${mt} m, COAST-RP-derived; fallback flags unavailable) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth`,
+    detFleuves: (f, d90, r) => `100-year flood (1% annual exceedance): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
+    detStab: v => `Climate-shift proxy: ${v}/100 · combines temperature and precipitation changes. This is a custom index, not a temperature in °C.`,
     sources: 'WorldClim 2.1 · CMIP6 MPI-ESM1-2-HR · SSP3-7.0 (high-emissions scenario, single model) · FABDEM 1″ (bare earth, CC BY-NC-SA) · COAST-RP (storm tides, CC BY 4.0) · NOAA ETOPO 2022 · JRC 100-yr flood · Oelsmann 2025 (VLM subsidence) · Bastin et al. 2019 (analogues climatiques) · Natural Earth · GeoNames',
   },
 };
@@ -736,11 +779,10 @@ const CRITERES = [
       const i = LIEUX.indexOf(l);
       const ch = i >= 0 ? thermoVille(i, 0, t) : null;
       const j = ch !== null ? ch : lireT('a', 0, l[2], l[3], t);
-      const j50 = i >= 0 && THERMO ? thermoVille(i, 0, 1) : lireT('a', 0, l[2], l[3], 1);
       const j26 = i >= 0 && THERMO ? thermoVille(i, 0, 0) : lireT('a', 0, l[2], l[3], 0);
       const g = i >= 0 && THERMO ? thermoVille(i, 2, t) : lireT('a', 1, l[2], l[3], t);
       const j40 = i >= 0 && THERMO ? thermoVille(i, 4, t) : null;
-      return T().detChaud(Math.round(j * 300), Math.round((j50 - j26) * 300))
+      return T().detChaud(Math.round(j * 300), Math.round((j - j26) * 300))
         + (j40 !== null && j40 > 0.005 ? ' · ' + T().detChaud40(Math.round(j40 * 200)) : '')
         + ' · ' + T().detFroid(Math.round(g * 200));
     } },
@@ -755,7 +797,7 @@ const CRITERES = [
   { cle: 'mer', poids: 0.20, couleur: '#4D7CF2',
     detail: (l) => {
       const m = l[7] && l[7].mer;
-      return m ? T().detMer(Math.round(m.f50 * 100), Math.round(m.f5 * 100), m.med, m.sub || 0, rayonVille(l),
+      return m ? (langue === 'en' ? 'Supporting snapshot · 2050 (fixed): ' : 'Donnée de contexte · 2050 (fixe) : ') + T().detMer(Math.round(m.f50 * 100), Math.round(m.f5 * 100), m.med, m.sub || 0, rayonVille(l),
         (mareeVille(LIEUX.indexOf(l)) ?? 2).toFixed(2)) : '';
     } },
   { cle: 'fleuves', poids: 0.16, couleur: '#6FA3FF',
@@ -764,9 +806,7 @@ const CRITERES = [
       return c ? T().detFleuves(Math.round(c.f * 100), c.d90, rayonVille(l)) : '';
     } },
   { cle: 'stabilite', poids: 0.12, couleur: '#2E8F6A',
-    detail: (l, t) => GRILLES.d ? T().detStab(
-      ((lire('d', 0, l[2], l[3]) * (1 - t) + lire('d', 1, l[2], l[3]) * t) * 8).toFixed(1))
-      : T().detEnAttente },
+    detail: (l, t) => T().detStab((penVille(l, 'stabilite', t) * 100).toFixed(1)) },
 ];
 for (const c of CRITERES) c.penalite = (l, t) => penVille(l, c.cle, t);
 /* La couleur dit la note, pas le critère : vert super, bleu bien, jaune
@@ -861,7 +901,7 @@ function notesPays(iso, t){
   return CRITERES.map(c => {
     let somme = 0, poids = 0;
     for (const v of vs){ somme += noteCritere(c, v, t) * v[4]; poids += v[4]; }
-    return Math.round((poids ? somme / poids : 0) * 100);
+    return (poids ? somme / poids : 0) * 100;
   });
 }
 
@@ -1163,6 +1203,7 @@ const uniformsGlobe = {
   uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
   uDeclin: { value: 0 },
   uEveil:  { value: 0 },     // 0 = intro sombre derrière le voile, 1 = éveillé
+  uFeu: { value: 0 },
   uCrue:   { value: 0 },     // calque « inondation fluviale » : carte JRC, la MEME que la fiche
   uIndice: { value: 1 },     // teinte ambiante de sévérité quand aucun calque
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
@@ -1183,12 +1224,12 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue;
+    uniform float uTemps, uProgression, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue, uFeu;
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC, uD;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
 
-    // hachage & bruit 3D (bruit de valeur, 2 octaves — suffisant à cette échelle)
+    
     float hachage(vec3 p){ return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
     float bruit(vec3 p){
       vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -1199,118 +1240,113 @@ const matGlobe = new THREE.ShaderMaterial({
     }
     void main(){
       vec3 tex = texture2D(uMap, vUv).rgb;
-      float terre = 1.0 - texture2D(uMasque, vUv).r;   // le masque NASA : eau = clair
-      // base « dashboard tactique » : désaturée et sombre, mais les continents
-      // doivent rester lisibles y compris sur la face nuit
+      float terre = 1.0 - texture2D(uMasque, vUv).r;   
+      
+      
       float gris = dot(tex, vec3(0.299, 0.587, 0.114));
       vec3 ocean   = vec3(0.026, 0.058, 0.132);
       vec3 continent = mix(vec3(0.130, 0.168, 0.205), vec3(0.300, 0.325, 0.330), gris);
       vec3 base = mix(ocean, continent, terre);
 
-      // éclairage très doux : le jour/nuit module, il ne masque jamais (pas de
-      // shadow maps). Plancher haut : une face nuit ne doit pas devenir noire.
+      
+      
       float lambert = max(dot(vN, uSoleil), 0.0);
       vec3 vue = normalize(cameraPosition - vPm);
       float fresnel = pow(1.0 - max(dot(vN, vue), 0.0), 3.0);
-      // plancher haut : la face nuit reste lisible sous n'importe quelle rotation
+      
       vec3 col = base * (1.05 + 0.24 * lambert) + vec3(0.09, 0.25, 0.66) * fresnel * 0.50;
 
       float P = uProgression;
 
-      /* Grilles de risques réelles (WorldClim/CMIP6 SSP3-7.0, ETOPO 2022,
-         Natural Earth). r = chaleur, g = sécheresse, b = feux, a = submersion ;
-         st = fleuves 2026 / fleuves 2050 / argiles / masque terre ETOPO. */
+      
       vec3 a26 = texture2D(uA2026, vUv).rgb, a50 = texture2D(uA2050, vUv).rgb;
       vec3 b26 = texture2D(uB2026, vUv).rgb, b50 = texture2D(uB2050, vUv).rgb;
-      vec3 ga = mix(a26, a50, P);                    // chaud / gel / sec
-      vec3 gb = mix(b26, b50, P);                    // feu / mer / fleuves
-      /* Ce qui s'est AGGRAVÉ depuis 2026. Entre les deux horizons les grilles
-         bougent peu en valeur absolue (chaleur : +0,02 en moyenne sur les
-         terres, mesuré) et les rampes ci-dessous saturent : le curseur des
-         années ne changeait presque rien à l'écran. Chaque calque ajoute donc
-         l'écart à 2026, qui grandit avec P — c'est lui que la timeline raconte. */
+      vec3 ga = mix(a26, a50, P);                    
+      vec3 gb = mix(b26, b50, P);                    
+      
       vec3 da = max(ga - a26, 0.0), db = max(gb - b26, 0.0);
-      vec3 gc = texture2D(uC, vUv).rgb;                                          // argiles / terre
+      vec3 gc = texture2D(uC, vUv).rgb;                                          
       float submersion = gb.g;
       terre = max(terre, step(0.5, gc.g));
 
-      // R-01 CHALEUR / ICU : gaussiennes thermiques sur les mégapoles, jaune → rouge vif
+      
       if (uChaleur > 0.001){
-        // ga.r = jours/an d'indice de chaleur au-dessus de 32 °C, normalisés sur 0-300.
-        // La rampe MONTE en luminosité avec la chaleur : jaune-orangé -> rouge
-        // vif qui flambe (x1.35) — jamais un rouge sombre au maximum.
+        
+        
+        
         float chaud = ga.r * terre;
+        float souffleChaud = 0.88 + 0.12 * sin(vUv.y * 100.0 + uTemps * 2.0);
         float t2 = smoothstep(0.12, 0.85, chaud);
         vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(1.0, 0.16, 0.05), t2) * (0.80 + 0.55 * t2);
-        col = mix(col, thermique, smoothstep(0.04, 0.55, chaud) * uChaleur * 0.85);
-        // jours de chaleur gagnés depuis 2026 : de +6 à +36 j/an, la zone flambe en blanc chaud
+        col = mix(col, thermique, smoothstep(0.04, 0.55, chaud) * uChaleur * 0.85 * souffleChaud);
+        
         float gagne = smoothstep(0.02, 0.12, da.r) * terre;
         col = mix(col, vec3(1.0, 0.80, 0.45), gagne * uChaleur * 0.7);
       }
 
 
-      // R-04 SÉCHERESSE HIVERNALE : le bleu s'éteint vers gris/jaune (ruissellement)
+      
       if (uSecheresse > 0.001){
-        // ga.b = déficit hydrique (De Martonne inversé), réel
-        float m = smoothstep(0.42, 0.95, ga.b) * terre;
-        float sec = m * uSecheresse * 0.85;
+        
+        float m = clamp(ga.b, 0.0, 1.0) * terre;
+        float sec = m * uSecheresse * (0.75 + 0.20 * sin(vUv.x * 120.0 + vUv.y * 60.0 - uTemps * 1.3));
         vec3 solSec = mix(vec3(0.16, 0.15, 0.12), vec3(0.34, 0.28, 0.14), bruit(vP * 30.0));
         col = mix(col, solSec, sec * 0.8);
-        // déficit creusé depuis 2026 : le sol qui s'assèche vire à l'ocre clair
+        
         float creuse = smoothstep(0.01, 0.07, da.b) * terre;
         col = mix(col, vec3(0.70, 0.56, 0.26), creuse * uSecheresse * 0.65);
       }
 
-      // R-05 SUBMERSION : eau bleu néon animée qui monte avec la projection
+      if (uFeu > 0.001){
+        float danger = gb.r * terre;
+        float pulse = 0.78 + 0.22 * sin(uTemps * 3.0 + vUv.x * 180.0 + vUv.y * 90.0);
+        vec3 braise = mix(vec3(0.8, 0.18, 0.035), vec3(1.0, 0.62, 0.15), clamp(db.r * 12.0, 0.0, 1.0));
+        col = mix(col, braise * pulse, danger * uFeu * 0.72);
+      }
+
+      
       if (uMer > 0.001){
-        /* gb.g = fraction du texel terrestre sous la cote submersible
-           (niveau marin SSP3-7.0 + 2 m de marée/surcote), depuis ETOPO 2022.
-           Le bruit ne sert plus qu'à animer la surface, jamais à la définir. */
+        
         float eau = smoothstep(0.06, 0.50, submersion) * terre;
         float bord = smoothstep(0.03, 0.11, submersion) - smoothstep(0.18, 0.44, submersion);
         float houle = 0.68 + 0.32 * bruit(vP * 90.0 + vec3(0.0, uTemps * 0.22, uTemps * 0.14));
         vec3 neon = vec3(0.16, 0.48, 1.0);
         col = mix(col, neon * houle, eau * uMer * 0.70);
-        col += neon * bord * terre * uMer * 0.85;             // liseré du trait de côte submersible
-        // terres passées sous la cote submersible depuis 2026 : elles s'allument
+        col += neon * bord * terre * uMer * 0.85;             
+        
         float gagneMer = smoothstep(0.004, 0.04, db.g) * terre;
         col += neon * gagneMer * uMer * 0.9;
       }
 
-      // R-07 INSTABILITÉ : où le climat de 2050 diffère le plus de celui de
-      // 2026, toutes grilles confondues — mêmes pondérations que le critère
-      // « stabilité » du dossier. Lueur violette qui respire lentement.
+      
+      
+      
       if (uStabilite > 0.001){
-        /* dérive du climat lui-même (température moyenne et précipitations)
-           depuis la période 1970-2000, et non plus la variation d'indicateurs
-           à seuil qui saturaient et rendaient l'Arctique muet. */
+        
         vec2 gd = texture2D(uD, vUv).rg;
-        float inst = mix(gd.r, gd.g, P) * 8.0;          // °C d'écart au climat 1970-2000
-        float m = smoothstep(1.0, 3.5, inst) * terre;
+        float inst = mix(gd.r, gd.g, P) * 8.0;          
+        float m = clamp(inst / 8.0, 0.0, 1.0) * terre;
         float souffle = 0.72 + 0.28 * sin(uTemps * 1.1 + inst * 8.0);
         vec3 violet = vec3(0.565, 0.365, 1.0);
-        col = mix(col, violet * souffle, m * uStabilite * (0.45 + 0.40 * P));
+        col = mix(col, violet * souffle, m * uStabilite * 0.85);
       }
 
-      // R-08 DÉCLIN DE POPULATION : pays dont la population baisse d'ici
-      // 2050 (ONU WPP 2024, médiane). Le territoire se vide : il se
-      // désature vers un gris mauve, saturé à -30 %.
+      
+      
+      
       if (uDeclin > 0.001){
-        float d = gc.b * terre;
+        float d = gc.b * terre * ((P * 24.0 + 1.0) / 25.0);
         float m = smoothstep(0.02, 0.55, d);
         float gris = dot(col, vec3(0.299, 0.587, 0.114));
-        // mauve froid net + liseré : un pays qui se vide doit se VOIR
+        
         vec3 vide = mix(vec3(gris * 0.5), vec3(0.55, 0.47, 0.78), 0.75);
-        // la courbe ONU va de 2025 à 2050 : le territoire se vide au fil du curseur
-        float vidage = uDeclin * mix(0.22, 1.0, P);
+        
+        float vidage = uDeclin * (0.83 + 0.17 * sin(uTemps * 1.4 + vUv.y * 30.0));
         col = mix(col, vide, m * vidage);
         col += vec3(0.42, 0.34, 0.66) * m * vidage * 0.35;
       }
 
-      /* R-06 INONDATION FLUVIALE : part des terres en zone de crue centennale,
-         carte JRC rasterisée (canal bleu de uD). 0 = HORS COUVERTURE, jamais
-         « aucun risque » : au-delà de 54°S et sous −167° la carte n'existe pas
-         et la couche reste éteinte plutôt que rassurante. */
+      
       if (uCrue > 0.001){
         float jrc = texture2D(uD, vUv).b;
         if (jrc > 0.002){
@@ -1323,22 +1359,22 @@ const matGlobe = new THREE.ShaderMaterial({
         }
       }
 
-      // teinte ambiante : la sévérité composite ombre la terre quand aucun
-      // calque n'est actif — le globe raconte avant qu'on touche au rail
+      
+      
       if (uIndice > 0.001){
         float sev26 = clamp(a26.r + a26.b * 0.45 + b26.r * 0.4 + b26.g * 1.1 + b26.b * 0.5, 0.0, 1.0) * terre;
         float sevP  = clamp(ga.r + ga.b * 0.45 + gb.r * 0.4 + gb.g * 1.1 + gb.b * 0.5, 0.0, 1.0) * terre;
         vec3 braise = vec3(0.95, 0.38, 0.14);
         col = mix(col, braise, smoothstep(0.10, 0.75, sev26) * uIndice * 0.18);
-        // l'aggravation depuis 2026, dérive du climat comprise : c'est elle
-        // que le curseur des années fait monter sur les terres
+        
+        
         vec2 gd2 = texture2D(uD, vUv).rg;
         float pire = (sevP - sev26) + 0.15 * max(gd2.g - gd2.r, 0.0) * P;
         col = mix(col, vec3(1.0, 0.52, 0.20), smoothstep(0.01, 0.10, pire) * uIndice * 0.55);
       }
 
-      // l'intro laisse la surface dans l'ombre, le halo bleu intact ; le
-      // clic Explorer éveille la terre
+      
+      
       col *= mix(0.24, 1.0, uEveil);
 
       gl_FragColor = vec4(col, 1.0);
@@ -1436,6 +1472,7 @@ let feux, feuxUniforms;
       }
       feux.geometry.attributes.position.needsUpdate = true;
       feux.geometry.attributes.aDanger.needsUpdate = true;
+      feux.geometry.computeBoundingSphere();
     });
   };
 
@@ -1444,7 +1481,7 @@ let feux, feuxUniforms;
   geo.setAttribute('aGraine', new THREE.BufferAttribute(graines, 1));
   geo.setAttribute('aDanger', new THREE.BufferAttribute(dangers, 2));
   feuxUniforms = {
-    uTemps: { value: 0 }, uIntensite: { value: 0 }, uProgression: { value: 0 },
+    uTemps: { value: 0 }, uIntensite: uniformsGlobe.uFeu, uProgression: { value: 0 },
     uPixelRatio: { value: moteur.getPixelRatio() },
   };
   feux = new THREE.Points(geo, new THREE.ShaderMaterial({
@@ -1459,11 +1496,11 @@ let feux, feuxUniforms;
            n'apparait qu'en 2050 s'allume en cours de route, un feu de 2026
            qui s'apaise s'eteint — la geographie bouge, pas seulement la densite */
         float d = mix(aDanger.x, aDanger.y, uProgression);
-        vVif = smoothstep(0.06, 0.30, d);
+        vVif = clamp(d, 0.0, 1.0);
         float scintille = 0.55 + 0.45 * sin(uTemps * (5.0 + aGraine * 5.0) + aGraine * 43.0);
         vFlamme = scintille;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = (2.2 + 3.2 * scintille) * uIntensite * vVif * uPixelRatio * (2.6 / -mv.z);
+        gl_PointSize = (3.0 + 5.0 * scintille) * uIntensite * sqrt(vVif) * uPixelRatio * (2.6 / -mv.z);
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: /* glsl */`
@@ -1722,6 +1759,17 @@ const CALQUES = {
   declin:     { uniforme: uniformsGlobe.uDeclin,     son: 'layer_on' },
 };
 const etat = { progression: 0, annee: 2026, feuxCible: 0, crise: false };
+function majContexteCalques(){
+  const el = document.getElementById('layer-context');
+  const actifs = [...document.querySelectorAll('.calque.actif')].map(b => b.dataset.cle);
+  const en = langue === 'en';
+  const notes = [`${etat.annee} · ${en ? 'Model indicators' : 'Indicateurs modélisés'}`];
+  if (actifs.includes('fleuves')) notes.push(en ? 'River: fixed reference, no annual forecast' : 'Fleuves : référence fixe, sans prévision annuelle');
+  if (actifs.includes('declin')) notes.push(en ? 'Population: interpolated from 2025' : 'Population : interpolée depuis 2025');
+  if (actifs.some(c => !['fleuves','declin'].includes(c))) notes.push(en ? 'Climate: interpolated 2026–2050' : 'Climat : interpolé entre 2026 et 2050');
+  el.textContent = notes.join('\n');
+}
+
 
 // le rail ne se declare pret que si les grilles sont VRAIMENT la : sur echec,
 // un calque allume afficherait « aucun risque » partout, indiscernable du vrai
@@ -1749,6 +1797,7 @@ for (const btn of document.querySelectorAll('.calque')){
     const c = CALQUES[btn.dataset.cle], actif = !btn.classList.contains('actif');
     btn.classList.toggle('actif', actif);
     btn.setAttribute('aria-pressed', actif ? 'true' : 'false');
+    majContexteCalques();
     if (actif) montrerPedago(btn.dataset.cle);
     if (c.objet && actif) c.objet.visible = true;
     SoundManager.play(actif ? 'layer_on' : 'layer_off');
@@ -1797,7 +1846,7 @@ toile.addEventListener('pointerdown', event => {
 });
 for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, event => {
   if (!contactsGlobe.delete(event.pointerId)) return;
-  if (!contactsGlobe.size) controles.autoRotate = !MOINS_ANIM;
+  if (!contactsGlobe.size && !volEnCours?.isActive()) controles.autoRotate = !MOINS_ANIM;
 });
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
@@ -2022,13 +2071,13 @@ function majRegle(){
     const dA = i - actif;
     let cible = i === actif ? 3.1 : 1 + 1.6 * Math.exp(-(dA * dA) / 7);
     let op = i === actif ? 1 : i < actif ? 0.55 : 0.25;
-    if (etatRegle.survol !== null){
+    if (!MOINS_ANIM && etatRegle.survol !== null){
       const dS = i - etatRegle.survol;
       cible += 0.9 * Math.exp(-(dS * dS) / 5);
       if (Math.abs(dS) < 1) op = Math.max(op, 0.85);
     }
-    const nh = etatRegle.h[i] + (cible - etatRegle.h[i]) * 0.22;
-    const no = etatRegle.o[i] + (op - etatRegle.o[i]) * 0.22;
+    const nh = MOINS_ANIM ? cible : etatRegle.h[i] + (cible - etatRegle.h[i]) * 0.22;
+    const no = MOINS_ANIM ? op : etatRegle.o[i] + (op - etatRegle.o[i]) * 0.22;
     // au repos, zéro écriture de style : le rAF ne paie que le mouvement
     if (Math.abs(nh - etatRegle.h[i]) > 0.0015){
       etatRegle.h[i] = nh;
@@ -2046,19 +2095,7 @@ curseur.addEventListener('pointermove', ev => {
   etatRegle.survol = Math.max(0, Math.min(24, Math.round((ev.clientX - r.left) / r.width * 24)));
 });
 curseur.addEventListener('pointerleave', () => (etatRegle.survol = null));
-let balayageAnnee = null, sansBalayage = false, minuterieAnnonce = null;
-function balayerVers2050(){
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (+curseur.value >= 2050) return;
-  const p = { v: +curseur.value };
-  if (balayageAnnee) balayageAnnee.kill();
-  balayageAnnee = gsap.to(p, { v: 2050, duration: 2.6, ease: 'power2.inOut', delay: 1.1,
-    onUpdate: () => { const an = Math.round(p.v);
-      if (+curseur.value !== an){ curseur.value = an; curseur.dispatchEvent(new Event('input')); } } });
-}
-const stopperBalayage = () => { if (balayageAnnee) balayageAnnee.kill(); };
-curseur.addEventListener('pointerdown', stopperBalayage);
-curseur.addEventListener('keydown', stopperBalayage);   // les fleches aussi rendent la main
+let minuterieAnnonce = null;
 curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-annee'));
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 addEventListener('pointercancel', () => document.body.classList.remove('cale-annee'));
@@ -2066,7 +2103,7 @@ curseur.addEventListener('input', () => {
   cacherSurvol();
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
-  odoAn.set(an); majDistanceAn();
+  odoAn.set(an); majDistanceAn(); majContexteCalques();
   curseur.setAttribute('aria-valuetext', `${an} — ${T().distanceAn(an - 2026)}`);
   if (lieuDossier){ majDossier(); majLien(); clearTimeout(minuterieAnnonce); minuterieAnnonce = setTimeout(annoncer, 400); }
   gsap.to(etat, {
@@ -2236,6 +2273,10 @@ champ.addEventListener('blur',  () => gsap.to(etatVerre, { force: 0.55, duration
 /* ---- dossier lieu : diagnostic par ville (valeurs illustratives, déterministes) ---- */
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
+const timelineEl = document.getElementById('timeline');
+timelineEl.before(document.getElementById('accroche'));
+const timelineRepere = document.createComment('timeline');
+timelineEl.before(timelineRepere);
 document.getElementById('dossier-score').setAttribute('aria-hidden', 'true');
 document.getElementById('an').setAttribute('aria-hidden', 'true');
 const odoIndice = new Odometre(document.getElementById('dossier-score'), 3);
@@ -2275,11 +2316,8 @@ function tracerTrajectoire(l, an){
   const svg = document.getElementById('dossier-courbe');
   const W = 100, H = 34, pas = [];
   for (let a = 2026; a <= 2050; a += 2) pas.push([a, indiceHabitabilite(l, a)]);
-  // échelle verticale resserrée autour de la trajectoire : sur 0-100 une perte
-  // de 4 points serait un trait plat, alors que c'est l'information du graphe
   const vals = pas.map(p => p[1]);
-  const lo = Math.max(0, Math.min(...vals) - 6), hi = Math.min(100, Math.max(...vals) + 6);
-  // l'échelle est resserrée, donc muette sur l'amplitude : les deux bornes disent les chiffres
+  const lo = 0, hi = 100;
   const bornes = svg.parentElement.querySelectorAll('.bornes-courbe span');
   if (bornes.length === 2){
     bornes[0].textContent = `2026 · ${vals[0]}`;
@@ -2312,33 +2350,42 @@ function tracerTrajectoire(l, an){
   }
 }
 
-/* État « en ce moment » : événements naturels réellement en cours autour du
-   lieu (NASA EONET + USGS). Aucune projection ici, que de l'observé. */
-
-{
-  /* un seul emplacement de detail pour les six criteres. Les ecouteurs vivent
-     sur le conteneur, pose une fois : ils survivent aux reconstructions et
-     valent pour les fiches ville COMME pays. Le clic et le focus doublent le
-     survol, sans quoi cinq details sur six sont inatteignables au doigt. */
-  const conteneur = document.getElementById('dossier-risques');
-  const versDetail = e => { const r = e.target.closest('.risque'); if (r) majDetail(r); };
-  conteneur.addEventListener('mouseover', versDetail);
-  conteneur.addEventListener('click', versDetail);
-  conteneur.addEventListener('focusin', versDetail);
-  conteneur.addEventListener('mouseleave', () => majDetail(null));
+const couleurRisquePanel = n => n >= 85 ? '#91d9b7' : n >= 70 ? '#9fc9f5' : n >= 50 ? '#ead28f' : n >= 30 ? '#efad83' : '#f3979d';
+const definitionRisque = (t, cle) => t.info[{
+  thermique: 'chaleur', eau: 'secheresse', feux: 'feux',
+  mer: 'mer', fleuves: 'fleuves', stabilite: 'stabilite'
+}[cle]];
+function creerRisques(conteneur, cles, t, signature, nouveau){
+  if (!nouveau && conteneur.dataset.langue === signature) return;
+  const ouverts = nouveau ? [] : [...conteneur.querySelectorAll('details[open]')].map(el => el.dataset.cle);
+  conteneur.dataset.langue = signature;
+  conteneur.innerHTML = cles.map(cle => `<details class="risque" data-cle="${cle}" ${ouverts.includes(cle) ? 'open' : ''}>
+    <summary><span class="nom-crit">${t.critere[cle]}</span><span class="risque-chevron" aria-hidden="true">+</span><span class="risk-reading"><b class="risk-number"></b><small>/100</small></span><span class="risk-meter" aria-hidden="true"><i></i></span><span class="val"><b class="v-now"></b></span><span class="risk-change"></span></summary>
+    <p class="detail"></p></details>`).join('');
 }
-/* la ligne survolée (ou au clavier) garde son détail pendant le balayage
-   des années : chaque cran de la fiche ramenait le pire axe sous le pointeur */
-const detailSousPointeur = () =>
-  document.querySelector('#dossier-risques .risque:hover, #dossier-risques .risque:focus-within, #dossier-pop:hover');
-function majDetail(rangee){
-  const slot = document.getElementById('dossier-detail');
-  const cible = rangee || document.querySelector('#dossier-risques .risque.pire')
-    || document.querySelector('#dossier-risques .risque');
-  if (!cible){ slot.textContent = ''; return; }
-  const d = (cible.dataset.detail || '').trim();
-  slot.innerHTML = `<b style="color:${cible.dataset.couleur}">${cible.dataset.nom}</b>`
-    + (d ? ` · ${d}` : '');   // sans detail, pas de separateur orphelin
+function mesurerRisquePanel(rangee, note, note26, an){
+  const exposition = Math.max(0, Math.min(100, 100 - note));
+  const ecart = note26 - note;
+  rangee.querySelector('.risk-number').textContent = exposition.toLocaleString(langue, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+  rangee.style.setProperty('--risk', exposition);
+  const fixe = rangee.dataset.cle === 'fleuves';
+  rangee.dataset.temporal = fixe ? 'reference' : 'projection';
+  rangee.querySelector('.risk-change').textContent = fixe
+    ? (langue === 'en' ? 'Fixed reference map' : 'Carte de référence fixe')
+    : an === 2026 ? (langue === 'en' ? '2026 baseline' : 'Référence 2026')
+    : `${ecart > 0 ? '+' : ''}${ecart.toLocaleString(langue, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${langue === 'en' ? 'since 2026' : 'depuis 2026'}`;
+}
+function finirRisques(nouveau){
+  const conteneur = document.getElementById('dossier-risques');
+  const rangees = [...conteneur.querySelectorAll('.risque')];
+  if (nouveau) {
+    rangees.sort((a, b) => Number(a.dataset.note) - Number(b.dataset.note));
+    conteneur.append(...rangees);
+  }
+  rangees.forEach((el, i) => {
+    el.querySelector('.detail').textContent = el.dataset.detail;
+    if (nouveau) el.open = false;
+  });
 }
 
 /* Fiche PAYS : score pondéré, habitants 2026 -> 2050 (ONU), déclin, mêmes
@@ -2361,54 +2408,35 @@ function majDossierPays(l, an, t, dossierNeuf){
   odoIndice.set(indice, !dossierEl.classList.contains('ouvert'));
   const v = document.getElementById('dossier-verdict');
   v.className = 'verdict ' + niveau;
-  document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
+  document.getElementById('dossier-verdict-txt').textContent = t.panelVerdict[niveau];
 
   const ecart = indice2050 - indice;   // meme reference que le conseil : l'annee affichee
   document.getElementById('dossier-delta').textContent =
     (ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'} · `) +
     (langue === 'en' ? `${nVilles} cities weighted by population` : `${nVilles} villes pondérées par population`);
 
-  const pop = PAYS_POP[iso];
-  majRangeePop(pop ? Math.round((pop[1] / pop[0] - 1) * 100) : null, t,
-    pop ? t.popAbsolue(pop[0], pop[1], Math.round((pop[1] / pop[0] - 1) * 100)) : '');
+  majRangeePop(iso, an);
 
   document.getElementById('dossier-conseil').textContent =
-    t.conseilPays(t.verdict[niveau].toLowerCase(), an);
+    t.panelCountryNote(nVilles);
 
   // rangées : moyennes pondérées du pays, couleurs par note
   const tAn = Math.min(1, Math.max(0, (an - 2026) / 24));
-  const notes = notesPays(iso, tAn), notes50 = notesPays(iso, 1);
+  const notes = notesPays(iso, tAn), notes26 = notesPays(iso, 0);
   const conteneur = document.getElementById('dossier-risques');
-  if (dossierNeuf || conteneur.dataset.langue !== langue + ':pays'){
-    conteneur.dataset.langue = langue + ':pays';
-    conteneur.innerHTML = CRITERES.map(c => `
-    <div class="risque">
-      <div class="ligne"><span class="nom-crit">${t.critere[c.cle]}</span>
-        <span class="val"><b class="v-now"></b><span class="v-vers"></span></span></div>
-      <div class="rail"><i class="chemin"></i><i class="pt-fin"></i><i class="pt-now"></i></div>
-    </div>`).join('');
-  }
-  conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
-    const n = notes[i], fin = notes50[i], teinte = couleurNote(n);
+  creerRisques(conteneur, CRITERES.map(c => c.cle), t, langue + ':pays', dossierNeuf);
+  conteneur.querySelectorAll('.risque').forEach(rangee => {
+    const i = CRITERES.findIndex(c => c.cle === rangee.dataset.cle);
+    const n = notes[i];
+    mesurerRisquePanel(rangee, n, notes26[i], an);
     const vNow = rangee.querySelector('.v-now');
-    vNow.style.color = teinte; vNow.textContent = motRisque(t, n);
-    rangee.querySelector('.chemin').style.background = teinte;
-    rangee.querySelector('.pt-now').style.background = teinte;
-    rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
-    rangee.querySelector('.v-vers').textContent =
-      an < 2050 && motRisque(t, fin) !== motRisque(t, n) ? `→ ${motRisque(t, fin)}` : '';
-    // barre pleine : plus elle est remplie, mieux la ville se porte
-    const chemin = rangee.querySelector('.chemin');
-    chemin.style.left = '0%'; chemin.style.width = n + '%';
-    rangee.querySelector('.pt-now').style.left = n + '%';
-    rangee.querySelector('.pt-fin').style.left = fin + '%';
+    vNow.style.color = couleurRisquePanel(n); vNow.textContent = motRisque(t, n);
+    rangee.dataset.note = n;
     rangee.dataset.nom = t.critere[CRITERES[i].cle];
-    rangee.dataset.detail = langue === 'en'
-      ? `population-weighted mean of ${nVilles} cities` : `moyenne pondérée des ${nVilles} villes`;
-    rangee.dataset.couleur = teinte;
+    rangee.dataset.detail = definitionRisque(t, CRITERES[i].cle) + '\n\n' + t.panelCountryNote(nVilles);
     rangee.classList.toggle('pire', n === Math.min(...notes));
   });
-  majDetail(detailSousPointeur());
+  finirRisques(dossierNeuf);
   tracerTrajectoire(l, an);
 
   // puces : les villes les plus habitables du pays
@@ -2451,7 +2479,6 @@ function majDuel(l, an){
 document.getElementById('dossier-duel').addEventListener('click', () => {
   if (!lieuVs) return;
   const autre = lieuVs; lieuVs = lieuDossier;
-  sansBalayage = true;               // l'échange garde l'année affichée
   choisirLieu(autre);
 });
 /* Le duel n'était accessible que par un lien reçu : personne ne pouvait
@@ -2466,29 +2493,33 @@ document.getElementById('dossier-comparer').addEventListener('click', () => {
   champ.focus(); champ.select();
   montrerAccroche(T().accrocheChoisir, null, 250);
 });
-function majRangeePop(pct, t, detail){
-  const el = document.getElementById('dossier-pop');
-  if (pct === null || pct === undefined){ el.innerHTML = ''; el.dataset.detail = ''; return; }
-  const teinte = pct <= -15 ? '#E0452E' : pct <= -4 ? '#E06A3C'
-               : pct < 5 ? '#4D7CF2' : '#2E8F6A';
-  el.innerHTML = `<div class="ligne"><span class="nom-crit">${t.popLabel}</span>
-    <span class="val"><b class="v-now" style="color:${teinte}">${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b></span></div>`;
-  el.dataset.nom = t.popLabel;
-  el.dataset.detail = detail || t.popPays(pct);
-  el.dataset.couleur = teinte;
-}
-{
-  const rp = document.getElementById('dossier-pop');
-  rp.addEventListener('mouseenter', () => rp.dataset.detail && majDetail(rp));
-  rp.addEventListener('mouseleave', () => majDetail(null));
+function majRangeePop(iso, an){
+  const el = document.getElementById('dossier-pop'), pop = PAYS_POP[iso];
+  if (!pop){ el.innerHTML = ''; return; }
+  const value = pop[0] + (pop[1] - pop[0]) * Math.max(0, Math.min(1, (an - 2025) / 25));
+  const pct = (value / pop[0] - 1) * 100;
+  const format = new Intl.NumberFormat(langue, {notation: 'compact', maximumFractionDigits: 2});
+  el.dataset.year = an; el.dataset.population = value;
+  el.innerHTML = `<h3>${langue === 'en' ? 'Country population' : 'Population du pays'} · ${an}</h3><p class="population-valeur">${format.format(value)}</p><p class="fiche-secondaire">${pct > 0 ? '+' : ''}${pct.toLocaleString(langue, {maximumFractionDigits: 1})}% ${langue === 'en' ? 'since 2025' : 'depuis 2025'}</p><p class="fiche-secondaire">${langue === 'en' ? 'Linear interpolation of UN WPP 2024 medium-scenario endpoints, 2025–2050; not an observed annual count.' : 'Interpolation linéaire des horizons 2025–2050, scénario médian ONU WPP 2024 ; pas un décompte annuel observé.'}</p>`;
 }
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
   const dossierNeuf = tracerTrajectoire.animer;
+  document.getElementById('dossier-nom').textContent = nomVille(l);
+  document.getElementById('dossier-scope').textContent = estPays(l) ? t.panelCountry : `${t.panelCity} · ${nomPays(l[1])}`;
+  document.getElementById('dossier-evolution').textContent = (estPays(l) || l[7]) ? t.panelEvolution(indiceHabitabilite(l, an) - indiceHabitabilite(l, 2026)) : '';
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (langue === 'en' ? 'W' : 'O')} · ${nomPays(l[1]).toUpperCase()}`;
   dossierEl.classList.toggle('sans-donnees', !estPays(l) && !l[7]);
+  const formule = document.getElementById('score-formula');
+  if (estPays(l)) formule.textContent = langue === 'en' ? 'Country score: population-weighted mean of the listed city records. These records can overlap; this is not a representative national assessment.' : 'Note du pays : moyenne des villes listées pondérée par population. Des périmètres peuvent se chevaucher ; ce n’est pas une évaluation nationale représentative.';
+  else if (l[7]) {
+    const penalties = CRITERES.map(c => c.penalite(l, (an - 2026) / 24));
+    const average = penalties.reduce((sum,p,i) => sum + p * CRITERES[i].poids, 0) * 100;
+    formule.textContent = `${langue === 'en' ? 'Weighted exposure' : 'Exposition pondérée'} ${average.toFixed(1)} /100 · ${langue === 'en' ? 'strongest hazard' : 'aléa le plus fort'} ${(Math.max(...penalties) * 100).toFixed(1)} /100. ${100} − (${average.toFixed(1)} + ${(Math.max(...penalties) * 100).toFixed(1)}) ÷ 2 ≈ ${indiceHabitabilite(l, an)}.`;
+  } else formule.textContent = '';
+
   if (estPays(l)){
     majDossierPays(l, an, t, dossierNeuf);
     return;
@@ -2506,7 +2537,6 @@ function majDossier(){
     document.getElementById('dossier-conseil').textContent = t.sansDonneesLong;
     document.getElementById('dossier-pop').innerHTML = '';
     document.getElementById('dossier-risques').innerHTML = '';
-    document.getElementById('dossier-detail').textContent = '';
     document.getElementById('dossier-ailleurs').innerHTML = '';
     document.getElementById('dossier-courbe').innerHTML = '';
     return;
@@ -2529,7 +2559,7 @@ function majDossier(){
 
   const v = document.getElementById('dossier-verdict');
   v.className = 'verdict ' + niveau;
-  document.getElementById('dossier-verdict-txt').textContent = t.verdict[niveau];
+  document.getElementById('dossier-verdict-txt').textContent = t.panelVerdict[niveau];
 
   // le point faible est jugé sur la MÊME échelle que les rangées affichées
   // (le rang parmi les villes), sinon la phrase contredit les notes
@@ -2552,64 +2582,33 @@ function majDossier(){
       else if (pire.cle === 'stabilite') txt = t.frappeStab(Math.round(percentile('stabilite', penVille(l, 'stabilite', tAn)) * 100));
     }
     fr.textContent = txt;
-    fr.style.color = txt ? couleurNote(pire.note) : '';
+    fr.style.color = txt ? couleurRisquePanel(pire.note) : '';
   }
   majDuel(l, an);
   document.getElementById('dossier-conseil').textContent =
-    pire.note >= 85 ? t.conseilSain(an)
-      : t.conseil(niveau, t.critere[pire.cle], an, indice2050 - indice);
+    pire.note >= 85 ? t.panelMinimal : t.panelSummary(t.critere[pire.cle]);
 
 
-  /* Chaque rail raconte le trajet : un point plein à la note de l'année
-     affichée, un tiret creux à la note 2050, et le segment coloré entre les
-     deux. Les rangées sont construites une fois par ouverture, puis seules
-     les positions bougent — les transitions CSS portent l'animation, le
-     re-render à chaque cran du slider tuait toute continuité. */
-  const criteres50 = CRITERES.map(c => Math.round(noteCritere(c, l, 1) * 100));
+  const tAn = Math.min(1, Math.max(0, (an - 2026) / 24));
   const conteneur = document.getElementById('dossier-risques');
-  if (dossierNeuf || conteneur.dataset.langue !== langue){
-    conteneur.dataset.langue = langue;
-    conteneur.innerHTML = criteres.map(c => `
-    <div class="risque">
-      <div class="ligne"><span class="nom-crit">${t.critere[c.cle]}</span>
-        <span class="val"><b class="v-now"></b><span class="v-vers"></span></span></div>
-      <div class="rail">
-        <i class="chemin"></i>
-        <i class="pt-fin"></i>
-        <i class="pt-now"></i>
-      </div>
-    </div>`).join('');
-    /* un seul emplacement de détail pour les six critères : celui de la rangée
-       survolée, sinon celui du pire axe — six détails sur deux lignes chacun
-       forçaient le panneau à défiler sur un MacBook */
-  }
-  conteneur.querySelectorAll('.risque').forEach((rangee, i) => {
-    const c = criteres[i], fin = criteres50[i];
-    const teinte = couleurNote(c.note);
+  creerRisques(conteneur, criteres.map(c => c.cle), t, langue, dossierNeuf);
+  conteneur.querySelectorAll('.risque').forEach(rangee => {
+    const i = CRITERES.findIndex(c => c.cle === rangee.dataset.cle);
+    const c = criteres[i];
+    mesurerRisquePanel(rangee, noteCritere(CRITERES[i], l, tAn) * 100, noteCritere(CRITERES[i], l, 0) * 100, an);
     const vNow = rangee.querySelector('.v-now');
-    vNow.style.color = teinte;
-    rangee.querySelector('.chemin').style.background = teinte;
-    rangee.querySelector('.pt-now').style.background = teinte;
-    rangee.querySelector('.pt-fin').style.borderColor = couleurNote(fin);
-    const mot = motRisque(t, c.note), mot50 = motRisque(t, fin);
+    vNow.style.color = couleurRisquePanel(c.note);
+    const mot = motRisque(t, c.note);
     if (vNow.textContent !== mot){
       vNow.textContent = mot;
       gsap.fromTo(vNow, { opacity: 0.35 }, { opacity: 1, duration: 0.4, ease: EASE });
     }
-    rangee.querySelector('.v-vers').textContent =
-      an < 2050 && mot50 !== mot ? `→ ${mot50}` : '';
-    // barre pleine : plus elle est remplie, mieux la ville se porte
-    const chemin = rangee.querySelector('.chemin');
-    chemin.style.left = '0%';
-    chemin.style.width = c.note + '%';
-    rangee.querySelector('.pt-now').style.left = c.note + '%';
-    rangee.querySelector('.pt-fin').style.left = fin + '%';
+    rangee.dataset.note = c.note;
     rangee.dataset.nom = t.critere[c.cle];
-    rangee.dataset.detail = c.detail;
-    rangee.dataset.couleur = c.couleur;
+    rangee.dataset.detail = definitionRisque(t, c.cle) + '\n\n' + c.detail;
     rangee.classList.toggle('pire', c.cle === pire.cle);
   });
-  majDetail(detailSousPointeur());
+  finirRisques(dossierNeuf);
   if (dossierNeuf){
     gsap.fromTo('#dossier-risques .risque', { opacity: 0, y: 10 },
       { opacity: 1, y: 0, duration: DUREE.fast, stagger: 0.06, ease: EASE, clearProps: 'opacity,transform' });
@@ -2618,14 +2617,9 @@ function majDossier(){
   tracerTrajectoire(l, an);
   const ecart = indice2050 - indice;   // meme reference que le conseil : l'annee affichee
   const texteEcart = ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'}`;
-  const rg = rangScore(indice);
-  const texteRang = rg === null ? '' :
-    (langue === 'en'
-      ? ` · above ${rg}% of ${LIEUX.length.toLocaleString('en')} cities (2026 baseline)`
-      : ` · devant ${rg} % des ${LIEUX.length.toLocaleString('fr-FR')} villes (référence 2026)`);
   const elDelta = document.getElementById('dossier-delta');
-  elDelta.textContent = texteEcart + texteRang;
-  majRangeePop(l[7].pop50, t);
+  elDelta.textContent = texteEcart;
+  majRangeePop(l[1], an);
   elDelta.dataset.sens = ecart < 0 ? 'bas' : 'haut';
 
   const alt = alternatives(l, an);
@@ -2667,7 +2661,7 @@ function annoncer(){
   const sc = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const txt = sc === null
     ? `${nomVille(l)} · ${t.sansDonnees}`
-    : `${nomVille(l)} · ${an} · ${sc}/100 · ${t.verdict[niveauDe(sc)]}`;
+    : `${nomVille(l)} · ${an} · ${sc}/100 · ${t.panelVerdict[niveauDe(sc)]}`;
   if (txt === derniereAnnonce) return;   // remis a zero a la fermeture (voir fermerDossier)
   derniereAnnonce = txt;
   document.getElementById('annonce').textContent = txt;
@@ -2681,8 +2675,10 @@ function ouvrirDossier(l){
   dossierEl.inert = !document.body.classList.contains('pret');
   document.getElementById('dossier-croix').inert = dossierEl.inert;
   lieuDossier = l;
+  document.getElementById('dossier-temps').append(timelineEl);
   tracerTrajectoire.animer = true;
-  dossierEl.scrollTop = 0;   // une fiche lue jusqu'en bas ouvrait la suivante déjà défilée
+  dossierEl.querySelector('.fiche-corps').scrollTop = 0;
+  dossierEl.querySelector('.fiche-methode').open = false;
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
@@ -2692,8 +2688,7 @@ function ouvrirDossier(l){
   poserMarqueur(l);
   majLien(true, empilerProchaine);
   empilerProchaine = false;
-  if (!sansBalayage) balayerVers2050();
-  sansBalayage = false;
+
 }
 function majCentreDossier(){
   const r = dossierEl.getBoundingClientRect();
@@ -2704,12 +2699,13 @@ function majCentreDossier(){
 addEventListener('resize', () => document.body.classList.contains('dossier-ouvert') && majCentreDossier());
 function distanceAccueil(){
   const top = document.getElementById('an').getBoundingClientRect().top;
-  const rayon = Math.max(60, Math.min(innerHeight * .35, innerWidth * .42, top > innerHeight / 2 ? top - innerHeight / 2 - 28 : Infinity));
+  const rayon = Math.max(60, Math.min(innerHeight * .30, innerWidth * .42, top > innerHeight / 2 ? top - innerHeight / 2 - 28 : Infinity));
   return Math.max(4.8, Math.hypot(1.16, 1.16 * innerHeight / (2 * Math.tan(camera.fov * Math.PI / 360) * rayon)));
 }
 const CAMERA_ACCUEIL = latLonVersVec3(22, 15, distanceAccueil());
 controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
 function fermerDossier(depuisChamp){
+  timelineRepere.after(timelineEl);
   dossierEl.inert = true;
   document.getElementById('dossier-croix').inert = true;
   lieuDossier = null;
@@ -2717,7 +2713,7 @@ function fermerDossier(depuisChamp){
   // fermeture douce (on repart chercher) : la camera reste ou elle est,
   // sinon elle s'eloigne pour rien avant de replonger sur la ville suivante
   if (depuisChamp){
-    if (balayageAnnee) balayageAnnee.kill();
+
     lieuVs = null;   // defiLien survit : l'invitation a comparer passe justement par le champ
     retirerMarqueur();
     // surtout pas de reecriture d historique ici : cette fermeture-la arrive
@@ -2730,7 +2726,7 @@ function fermerDossier(depuisChamp){
     return;
   }
   if (!depuisChamp){ lieuVs = null; defiLien = null; cacherAccroche(); }
-  if (balayageAnnee) balayageAnnee.kill();
+
   if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
   // la terre reprend son cadrage d'arrivée
   if (volEnCours) volEnCours.kill();
@@ -2775,7 +2771,6 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
   if (!lieuDossier) return;
   // le balayage d ouverture avance encore : sans cela le lien partageait une
   // annee de plus que celle lue a l ecran
-  stopperBalayage();
   majLien(true);
   const l = lieuDossier, an = etat.annee;
   const indice = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
@@ -3007,7 +3002,6 @@ function piegerFocus(boite){
 }
 function ouvrirStory(){
   if (!lieuDossier) return;
-  stopperBalayage();
   majLien(true);
   const t = T();
   document.getElementById('story-titre').textContent = t.storyTitre;
@@ -3043,7 +3037,6 @@ addEventListener('keydown', e => {
 });
 async function partagerStory(){
   if (!lieuDossier) return;
-  stopperBalayage();
   majLien(true);
   const fichier = storyFichier;
   if (!fichier){ await majApercuStory(); return; }
@@ -3111,8 +3104,7 @@ function ouvrirDepuisLien(sansDefi){
   } else if (!sansDefi){
     defiLien = l;    // le destinataire d'un lien simple sera invité à comparer
   }
-  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); sansBalayage = true; }
-  if (sansDefi) sansBalayage = true;
+  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); }
   // a l arrivee (pas au retour arriere) : le lien devient deux entrees,
   // le globe puis la ville, pour que le Precedent reste dans le site
   // Le lien devient deux entrees, le globe puis la ville : le Precedent
@@ -3169,9 +3161,13 @@ function retirerMarqueur(){
 document.getElementById('bouton-position').addEventListener('click', () => {
   if (document.getElementById('bouton-reglages').getAttribute('aria-expanded') === 'true')
     document.getElementById('bouton-reglages').click();
-  if (!navigator.geolocation || !LIEUX.length){
-    montrerAccroche(T().posIndispo, () => champ.focus(), 0); return;
-  }
+  const lieuDemande = lieuDossier;
+  const indisponible = () => {
+    if (lieuDossier !== lieuDemande) return;
+    fermerDossier();
+    montrerAccroche(T().posIndispo, () => champ.focus(), 0);
+  };
+  if (!navigator.geolocation || !LIEUX.length){ indisponible(); return; }
   navigator.geolocation.getCurrentPosition(pos => {
     const { latitude, longitude } = pos.coords;
     let proche = null, dMin = Infinity;
@@ -3180,7 +3176,7 @@ document.getElementById('bouton-position').addEventListener('click', () => {
       if (d < dMin){ dMin = d; proche = l; }
     }
     if (proche) choisirLieu(proche);
-  }, () => montrerAccroche(T().posIndispo, () => champ.focus(), 0), { maximumAge: 600000, timeout: 8000 });
+  }, indisponible, { maximumAge: 600000, timeout: 8000 });
 });
 
 document.getElementById('dossier-croix').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
@@ -3382,7 +3378,7 @@ function traduire(){
   document.getElementById('dossier-story').textContent = t.story;
   document.getElementById('dossier-sources').textContent = t.sources;
   document.getElementById('bouton-position').textContent = t.aria['bouton-position'];
-  majDistanceAn(); cacherAccroche();
+  majDistanceAn(); majContexteCalques(); cacherAccroche();
   boutonSon.textContent = t.son(!SoundManager.mute);
   document.getElementById('bouton-langue').innerHTML = langue === 'fr'
     ? 'FR · <em>en</em>' : '<em>fr</em> · EN';
@@ -3595,6 +3591,8 @@ window.terraIntro = {
     if (!texturesPretes) return false;
     document.getElementById('bouton-entree').click();
     if (!lieuDossier && introVueAccueil) {
+      CAMERA_ACCUEIL.setLength(distanceAccueil());
+      controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
       gsap.killTweensOf(camera.position);
       controles.autoRotate = false;
       const orbit = { lon: MOINS_ANIM ? 15 : 46 };
@@ -3881,22 +3879,29 @@ for (let i = 0; i < ETIQUETTES_MAX; i++){
   b.addEventListener('click', () => { const l = LIEUX[parseInt(b.dataset.i, 10)]; if (l){ cacherSurvol(); choisirLieu(l); } });
   etiquettesEl.appendChild(b); etiquettes.push(b);
 }
+let foyerEtiquettes = null;
+addEventListener('pointermove', e => {
+  foyerEtiquettes = e.pointerType === 'mouse' && (e.target === toile || e.target.closest('.etiquette')) ? [e.clientX, e.clientY] : null;
+});
+addEventListener('blur', () => { foyerEtiquettes = null; });
 let signatureEtiquettes = '';
 function majEtiquettes(){
   if (!VILLES_VEC || !document.body.classList.contains('pret')) return;
   const c = camera.position, d = c.length();
   // rien à recalculer tant que ni la caméra, ni la fenêtre, ni la langue n'ont bougé
-  const sig = `${c.x.toFixed(4)},${c.y.toFixed(4)},${c.z.toFixed(4)},${innerWidth},${innerHeight},${langue},${document.body.className}`;
+  const sig = `${c.x.toFixed(4)},${c.y.toFixed(4)},${c.z.toFixed(4)},${innerWidth},${innerHeight},${langue},${document.body.className},${foyerEtiquettes}`;
   if (sig === signatureEtiquettes) return;
   signatureEtiquettes = sig;
   _cam.copy(c).divideScalar(d);
   const horizon = 1 / d;                                  // v·ĉ au-delà : face visible
   const popMin = seuilPop(d);
+  const [fx, fy] = foyerEtiquettes || [innerWidth / 2, innerHeight / 2];
+  const rayon = Math.min(180, innerWidth * .3);
   // pas d'étiquette sous le chrome : la fiche est translucide, les noms
   // transparaissaient derrière ses lignes
   const caches = [dossierEl.classList.contains('ouvert') ? dossierEl : null,
                   document.getElementById('calques'), document.getElementById('timeline'),
-                  document.getElementById('titre'), document.getElementById('recherche'), document.getElementById('util')]
+                  document.getElementById('titre'), document.getElementById('recherche'), document.getElementById('util'), document.getElementById('model-notice')]
     .filter(Boolean).map(e => e.getBoundingClientRect()).filter(r => r.width > 0);
   const sousChrome = (x, y, w) => caches.some(r => x + w / 2 > r.left - 8 && x - w / 2 < r.right + 8 && y > r.top - 8 && y - 44 < r.bottom + 8);
   const places = [];                                      // [x, y, largeur, i, alpha]
@@ -3921,7 +3926,10 @@ function majEtiquettes(){
     const b = etiquettes[k], cle = p[3] + ':' + langue;
     if (b.dataset.i !== cle){ b.dataset.i = cle; b.textContent = nomVille(LIEUX[p[3]]); }
     b.style.transform = `translate3d(${p[0].toFixed(1)}px, ${p[1].toFixed(1)}px, 0) translate(-50%, -100%)`;
-    b.style.opacity = p[4].toFixed(2);
+    const proximite = Math.max(0, Math.min(1, (rayon - Math.hypot(p[0] - fx, p[1] - fy)) / 60));
+    b.style.opacity = (p[4] * proximite).toFixed(2);
+    b.style.pointerEvents = proximite > .2 ? 'auto' : 'none';
+    b.tabIndex = proximite > .2 ? 0 : -1;
     if (b.hidden) b.hidden = false;
   });
   for (let k = places.length; k < ETIQUETTES_MAX; k++) if (!etiquettes[k].hidden) etiquettes[k].hidden = true;
@@ -3935,8 +3943,8 @@ function boucle(){
   const dt = horloge.getDelta(), t = horloge.elapsedTime;
   if (dt > 0) fpsEMA += ((1 / dt) - fpsEMA) * 0.04;
 
-  uniformsGlobe.uTemps.value = t;
-  feuxUniforms.uTemps.value = t;
+  uniformsGlobe.uTemps.value = MOINS_ANIM ? 0 : t;
+  feuxUniforms.uTemps.value = MOINS_ANIM ? 0 : t;
   marqueurUniforms.uTemps.value = t;
   fleuvesUniforms.uTemps.value = t;
 

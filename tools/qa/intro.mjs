@@ -24,6 +24,12 @@ for (const [name, engine, configuration] of [
   try {
     const context = await browser.newContext(configuration);
     const page = await context.newPage();
+    await page.route('**/*', async route => {
+      if (route.request().resourceType() !== 'document') return route.continue();
+      const response = await route.fetch();
+      const html = (await response.text()).replace('</script>\n</body>', `globalThis.__introProbe=()=>({rotating:controles.autoRotate,position:camera.position.toArray(),location:versLatLon(camera.position.clone().normalize()),auraBottom:innerHeight/2+1.16*innerHeight/(2*Math.tan(camera.fov*Math.PI/360)*Math.sqrt(camera.position.lengthSq()-1.16**2)),yearTop:document.getElementById('an').getBoundingClientRect().top});\n</script>\n</body>`);
+      await route.fulfill({ response, body: html });
+    });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(process.env.URL0 || 'http://localhost:8080/');
@@ -64,6 +70,8 @@ for (const [name, engine, configuration] of [
     await page.locator('#future').click();
     const result = await measurement;
     assert.equal(result.closed, true);
+    const opening = await page.evaluate(() => globalThis.__introProbe());
+    assert.ok(Math.abs(opening.location[0] - 22) < 1 && Math.abs(opening.location[1] - 15) < 2, 'Open over Europe and Africa');
     assert.equal(await page.locator('#an-distance').isVisible(), false);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
     const viewport = page.viewportSize();
@@ -85,6 +93,19 @@ for (const [name, engine, configuration] of [
       assert.ok(opacity > 0 && opacity < 1, 'Labels fade in gradually');
     }
     await page.waitForFunction(() => getComputedStyle(document.querySelector('#etiquettes')).opacity === '1');
+    const settled = await page.evaluate(() => globalThis.__introProbe());
+    assert.ok(settled.auraBottom + 16 < settled.yearTop, JSON.stringify(settled));
+    if (name === 'desktop') {
+      const label = page.locator('.etiquette').filter({visible:true}).first();
+      await label.dispatchEvent('pointerenter');
+      assert.equal(await page.evaluate(() => globalThis.__introProbe().rotating), true, 'Label hover keeps rotation');
+      await page.mouse.move(viewport.width / 2, viewport.height / 2);
+      await page.mouse.down();
+      assert.equal(await page.evaluate(() => globalThis.__introProbe().rotating), false, 'Touch pauses rotation');
+      await page.mouse.move(viewport.width / 2 + 15, viewport.height / 2);
+      await page.mouse.up();
+      assert.equal(await page.evaluate(() => globalThis.__introProbe().rotating), true, 'Release resumes rotation');
+    }
     if (name === 'desktop') {
       const orbit = result.movement.filter(point => point.time > 3200);
       assert.ok(orbit.length > 4);

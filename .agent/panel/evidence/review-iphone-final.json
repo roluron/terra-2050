@@ -1,0 +1,62 @@
+[
+  {
+    "name": "panel-iphone",
+    "pass": true,
+    "bounds": {
+      "viewport": {
+        "w": 393,
+        "h": 659
+      },
+      "panel": {
+        "x": 0,
+        "y": 158.15625,
+        "w": 393,
+        "h": 500.84375,
+        "bottom": 659,
+        "right": 393
+      },
+      "body": {
+        "x": 1,
+        "y": 343.15625,
+        "w": 391,
+        "h": 248.84375,
+        "bottom": 592,
+        "right": 392
+      },
+      "close": {
+        "x": 328,
+        "y": 175.15625,
+        "w": 44,
+        "h": 44,
+        "bottom": 219.15625,
+        "right": 372
+      },
+      "range": {
+        "x": 21,
+        "y": 275.15625,
+        "w": 351,
+        "h": 44,
+        "bottom": 319.15625,
+        "right": 372
+      },
+      "footer": {
+        "x": 1,
+        "y": 592,
+        "w": 391,
+        "h": 67,
+        "bottom": 659,
+        "right": 392
+      },
+      "overflow": false
+    },
+    "sixLocalDetails": true,
+    "yearStable": true,
+    "yearAndURLUpdate": true,
+    "openDetailsPreserved": true,
+    "methodology": true,
+    "FR": true,
+    "story": true,
+    "closeRestoresTimeline": true,
+    "errors": []
+  }
+]

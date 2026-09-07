@@ -1,0 +1,9 @@
+{
+  "revision": "ea48a73ed1f91cd99d652328d7669f0fdb043659",
+  "method": "terser5.51.2 module compress+mangle application; unchanged vendor totals from prior measured baseline",
+  "applicationMinifiedBytes": 108082,
+  "vendorMinifiedBytes": 790736,
+  "total": 898818,
+  "budget": 900000,
+  "pass": true
+}

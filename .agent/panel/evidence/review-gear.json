@@ -1,0 +1,112 @@
+{
+  "commit": "9129b5b",
+  "mouseOpen": true,
+  "nativeTapCloseOpenClose": true,
+  "events": [
+    {
+      "type": "pointerdown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mousedown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "pointerup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mouseup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "click",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "pointerdown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "touchstart",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "pointerup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "touchend",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mousedown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mouseup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "click",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "pointerdown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "touchstart",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "pointerup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "touchend",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mousedown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mouseup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "click",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "pointerdown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "touchstart",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "pointerup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "touchend",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mousedown",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "mouseup",
+      "target": "bouton-reglages"
+    },
+    {
+      "type": "click",
+      "target": "bouton-reglages"
+    }
+  ],
+  "errors": []
+}
