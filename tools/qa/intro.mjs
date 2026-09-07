@@ -64,6 +64,7 @@ for (const [name, engine, configuration] of [
     await page.locator('#future').click();
     const result = await measurement;
     assert.equal(result.closed, true);
+    assert.equal(await page.locator('#an-distance').isVisible(), false);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
     const viewport = page.viewportSize();
     await page.mouse.move(viewport.width / 2, viewport.height / 2);
@@ -72,6 +73,10 @@ for (const [name, engine, configuration] of [
     await page.mouse.move(5, 5);
     await page.waitForTimeout(1200);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0', 'Labels wait for globe interaction');
+    if (name === 'desktop') {
+      const opacity = await page.locator('.calque').evaluateAll(elements => elements.map(el => Number(getComputedStyle(el).opacity)));
+      assert.ok(opacity[0] > opacity.at(-1), 'Filters enter one by one after the transition');
+    }
     if (name === 'desktop') await page.mouse.move(viewport.width / 2, viewport.height / 2);
     else await page.touchscreen.tap(viewport.width / 2, viewport.height / 2);
     if (name === 'desktop') {

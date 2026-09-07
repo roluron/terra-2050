@@ -1789,13 +1789,15 @@ document.getElementById('accroche-x').addEventListener('click', e => {
   e.stopPropagation(); cacherAccroche(); SoundManager.play('ui_click');
 });
 let volEnCours = null, minuterieRepos = null;
-// rotation auto reprise après 4 s sans interaction
-toile.addEventListener('pointerdown', () => {
+const contactsGlobe = new Set();
+toile.addEventListener('pointerdown', event => {
+  contactsGlobe.add(event.pointerId);
   controles.autoRotate = false;
   clearTimeout(minuterieRepos);
-});toile.addEventListener('pointerup', () => {
-  clearTimeout(minuterieRepos);
-  minuterieRepos = setTimeout(() => { if (!lieuDossier && !MOINS_ANIM) controles.autoRotate = true; }, 4000);
+});
+for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, event => {
+  if (!contactsGlobe.delete(event.pointerId)) return;
+  if (!contactsGlobe.size) controles.autoRotate = !MOINS_ANIM;
 });
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
@@ -1968,6 +1970,7 @@ function choisirLieu(l){
   volEnCours = gsap.to(camera.position, {
     x: cible.x, y: cible.y, z: cible.z, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
+    onComplete: () => { controles.autoRotate = !MOINS_ANIM && !contactsGlobe.size; },
   });
 }
 champ.addEventListener('input', afficherResultats);
@@ -2007,7 +2010,7 @@ const odoAn = new Odometre(affichageAn, 4); odoAn.set(2026, true);
    soulève autour de l'année active et anticipe le survol ; l'année
    courante est une aiguille pleine. Ressort par trait, rien d'instantané. */
 const anDistance = document.getElementById('an-distance');
-function majDistanceAn(){ anDistance.textContent = T().distanceAn(+curseur.value - 2026); }
+function majDistanceAn(){ anDistance.hidden = +curseur.value === 2026; anDistance.textContent = T().distanceAn(+curseur.value - 2026); }
 majDistanceAn();
 const regle = document.querySelector('#timeline .regle');
 regle.innerHTML = Array.from({ length: 25 }, () => '<i></i>').join('');
@@ -2699,7 +2702,13 @@ function majCentreDossier(){
   document.documentElement.style.setProperty('--h-fiche', r.height + 'px');
 }
 addEventListener('resize', () => document.body.classList.contains('dossier-ouvert') && majCentreDossier());
-const CAMERA_ACCUEIL = { x: 0.75, y: 1.1, z: 3.9 };
+function distanceAccueil(){
+  const top = document.getElementById('an').getBoundingClientRect().top;
+  const rayon = Math.max(60, Math.min(innerHeight * .35, innerWidth * .42, top > innerHeight / 2 ? top - innerHeight / 2 - 28 : Infinity));
+  return Math.max(4.8, Math.hypot(1.16, 1.16 * innerHeight / (2 * Math.tan(camera.fov * Math.PI / 360) * rayon)));
+}
+const CAMERA_ACCUEIL = latLonVersVec3(22, 15, distanceAccueil());
+controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
 function fermerDossier(depuisChamp){
   dossierEl.inert = true;
   document.getElementById('dossier-croix').inert = true;
@@ -3575,7 +3584,6 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   // la terre s'éveille : la surface s'éclaircit pendant le recul caméra
   gsap.to(uniformsGlobe.uEveil, { value: 1, duration: 2.8, ease: EASE });
   gsap.to(etatVerre, { force: 0.55, duration: DUREE.slow, delay: 0.6, ease: EASE, onUpdate: majVerre });
-  revelerChrome();
 });
 
 let earthSurface, introOrbit;
@@ -3608,6 +3616,7 @@ window.terraIntro = {
       controles.autoRotate = !MOINS_ANIM;
     }
     gsap.to(controles, { autoRotateSpeed: originalRotationSpeed, duration: MOINS_ANIM ? 0 : 2, ease: EASE });
+    revelerChrome();
     setTimeout(() => { etiquettesPretes = true; revelerEtiquettes(); }, 1000);
   }
 };
@@ -3679,6 +3688,7 @@ if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
    calculée, donc `from` lirait 0 comme valeur d'arrivée et figerait le
    chrome invisible. clearProps rend la main au CSS une fois l'entrée jouée
    (l'opacité au repos d'un calque dépend de son état actif/inactif). ---- */
+gsap.set('.calque', { opacity: 0, x: -12 });
 function revelerChrome(){
   const tl = gsap.timeline({ delay: 0.55 });
   const entree = (cible, depart, position, extra = {}) =>
@@ -3690,7 +3700,7 @@ function revelerChrome(){
     { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
   entree('#recherche', { opacity: 0, y: -10 }, 0.15);
   entree('#bouton-reglages', { opacity: 0, y: -8 }, 0.4);
-  entree('.calque', { opacity: 0, x: -14 }, 0.35, { stagger: 0.05 });
+  entree('.calque', { opacity: 0, x: -12 }, 0.15, { stagger: MOINS_ANIM ? 0 : 0.16, duration: MOINS_ANIM ? 0 : 0.9 });
   entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
   entree('#curseur, #timeline .bornes', { opacity: 0 }, 0.6);
   return tl;
@@ -3868,8 +3878,6 @@ const ETIQUETTES_MAX = 36, etiquettes = [];
 for (let i = 0; i < ETIQUETTES_MAX; i++){
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'etiquette'; b.hidden = true;
-  b.addEventListener('pointerenter', () => { controles.autoRotate = false; });
-  b.addEventListener('focus', () => { controles.autoRotate = false; });
   b.addEventListener('click', () => { const l = LIEUX[parseInt(b.dataset.i, 10)]; if (l){ cacherSurvol(); choisirLieu(l); } });
   etiquettesEl.appendChild(b); etiquettes.push(b);
 }
@@ -3961,6 +3969,9 @@ compteurImages = requestAnimationFrame(boucle);
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
+  CAMERA_ACCUEIL.setLength(distanceAccueil());
+  controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
+  if (!lieuDossier) camera.position.setLength(CAMERA_ACCUEIL.length());
   moteur.setSize(innerWidth, innerHeight);
   const pr = moteur.getPixelRatio();
   cibles.forEach(c => c.setSize(innerWidth * pr, innerHeight * pr));
