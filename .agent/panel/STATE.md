@@ -1,12 +1,18 @@
-ACTIVE. Baseline0d96904, clean checkout. Existing panel has no visible place heading,
-an inverted unexplained risk rail, remote hover detail and small overlaid text.
-Design: a contained observatory sheet, left aligned, one reading column; named
-place and plain verdict first, score meaning explicit, expandable risk details.
-Palette: abyss#101b2c, surface#17263b, paper#f3f5f7, secondary#bac7d5,
-blue#88b4ff, line#33465e. Retain Lausanne;32-40px place,22px verdict,14-16px body.
-Avoid a dashboard card grid: a single sheet with meaningful sections and disclosure.
-Remove ambiguous rails and auto-year sweeping on opening. Keep the one existing
-timeline, move it into the sheet on open and restore on close.
-Strategy checkpoint:30min; at most2 concurrent agents; zero added paid spend.
-External model quota/cost UNKNOWN; no paid routing unless verified within zero cap.
-Physical-device gates remain separate and blocked; this design can be verified in browsers.
+VERIFIED LOCAL PANEL — 2026-09-07
+Runtime9129b5b58e98e9047cd72a339536714f22405a93, branch design/place-panel.
+All eight scoped acceptance criteria have observed evidence. Final clean panel
+suite5/5, corrected matrix25/25, retained regression suites pass, final static
+checks4/4. Fresh-context reviewer passes final mouse/touch and announcement
+changes. See EVIDENCE.md for exact revisions and superseded diagnostic failures.
+
+Delivered: opaque readable sheet; place/scope/year first; explicit score meaning;
+six local risk disclosures; visible year slider with no automatic year change;
+fixed header/footer and internally scrolling content; country weighting and
+methodology; comparison, link and story controls. No new assets or dependencies.
+Local preview8087; outputs/terra-panel contains inspected screenshots.
+Public Pages remains the earlier release. Full-product physical-iPhone release
+criteria remain separately blocked and are not waived by this panel verification.
+
+Strategy checkpoint closed: two agents maximum, zero added paid spend, no added
+scope. Account hard quota UNKNOWN. Runtime frozen; remaining commit is evidence
+only. Preserve dataset/scoring/globe shaders and existing user-owned checkout.

@@ -1,0 +1,146 @@
+{
+  "name": "700kbps",
+  "revision": "15a0137e03dc36b238b351bcefca7d1380bebcf2",
+  "speed": 700000,
+  "latency": 200,
+  "limit": 11200,
+  "readyMs": 9753.300000190735,
+  "criticalBytes": 828240,
+  "critical": [
+    {
+      "url": "http://localhost:8089/terra-menus.css",
+      "encodedDataLength": 16717,
+      "atMs": 1693.7409997917712
+    },
+    {
+      "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>",
+      "encodedDataLength": 0,
+      "atMs": 1696.4709996245801
+    },
+    {
+      "url": "http://localhost:8089/",
+      "encodedDataLength": 66905,
+      "atMs": 3545.464999973774
+    },
+    {
+      "url": "http://localhost:8089/assets/lib/gsap.min.js",
+      "encodedDataLength": 29466,
+      "atMs": 3904.826999641955
+    },
+    {
+      "url": "http://localhost:8089/assets/lib/howler.min.js",
+      "encodedDataLength": 10341,
+      "atMs": 4813.815999776125
+    },
+    {
+      "url": "http://localhost:8089/data/grille_c.png",
+      "encodedDataLength": 74897,
+      "atMs": 5448.237000033259
+    },
+    {
+      "url": "http://localhost:8089/assets/addons/OrbitControls.js",
+      "encodedDataLength": 7219,
+      "atMs": 5533.737999852747
+    },
+    {
+      "url": "http://localhost:8089/fonts/TWKLausanne-600.woff2",
+      "encodedDataLength": 31223,
+      "atMs": 5722.466999664903
+    },
+    {
+      "url": "http://localhost:8089/assets/lib/three.module.min.js",
+      "encodedDataLength": 166979,
+      "atMs": 8688.821999821812
+    },
+    {
+      "url": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA==",
+      "encodedDataLength": 0,
+      "atMs": 8713.399999774992
+    },
+    {
+      "url": "http://localhost:8089/assets/textures/earth_color_2048.webp",
+      "encodedDataLength": 207720,
+      "atMs": 9596.476999577135
+    },
+    {
+      "url": "http://localhost:8089/assets/textures/earth_mask_4320.webp",
+      "encodedDataLength": 216773,
+      "atMs": 9733.114999718964
+    }
+  ],
+  "allCompleteBeforeReady": [
+    {
+      "requestId": "94245.10",
+      "timestamp": 2318040.860444,
+      "encodedDataLength": 16717,
+      "url": "http://localhost:8089/terra-menus.css"
+    },
+    {
+      "requestId": "94245.24",
+      "timestamp": 2318040.863174,
+      "encodedDataLength": 0,
+      "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>"
+    },
+    {
+      "requestId": "B65E49D81131CD4547FB827B5E3DE18B",
+      "timestamp": 2318042.712168,
+      "encodedDataLength": 66905,
+      "url": "http://localhost:8089/"
+    },
+    {
+      "requestId": "94245.11",
+      "timestamp": 2318043.07153,
+      "encodedDataLength": 29466,
+      "url": "http://localhost:8089/assets/lib/gsap.min.js"
+    },
+    {
+      "requestId": "94245.14",
+      "timestamp": 2318043.980519,
+      "encodedDataLength": 10341,
+      "url": "http://localhost:8089/assets/lib/howler.min.js"
+    },
+    {
+      "requestId": "94245.5",
+      "timestamp": 2318044.61494,
+      "encodedDataLength": 74897,
+      "url": "http://localhost:8089/data/grille_c.png"
+    },
+    {
+      "requestId": "94245.26",
+      "timestamp": 2318044.700441,
+      "encodedDataLength": 7219,
+      "url": "http://localhost:8089/assets/addons/OrbitControls.js"
+    },
+    {
+      "requestId": "94245.22",
+      "timestamp": 2318044.88917,
+      "encodedDataLength": 31223,
+      "url": "http://localhost:8089/fonts/TWKLausanne-600.woff2"
+    },
+    {
+      "requestId": "94245.2",
+      "timestamp": 2318047.855525,
+      "encodedDataLength": 166979,
+      "url": "http://localhost:8089/assets/lib/three.module.min.js"
+    },
+    {
+      "requestId": "94245.27",
+      "timestamp": 2318047.880103,
+      "encodedDataLength": 0,
+      "url": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA=="
+    },
+    {
+      "requestId": "94245.3",
+      "timestamp": 2318048.76318,
+      "encodedDataLength": 207720,
+      "url": "http://localhost:8089/assets/textures/earth_color_2048.webp"
+    },
+    {
+      "requestId": "94245.4",
+      "timestamp": 2318048.899818,
+      "encodedDataLength": 216773,
+      "url": "http://localhost:8089/assets/textures/earth_mask_4320.webp"
+    }
+  ],
+  "pass": true
+}

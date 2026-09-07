@@ -1,0 +1,60 @@
+{
+  "commit": "ea48a73",
+  "checks": [
+    {
+      "label": "Paris EN2026",
+      "announcement": "Paris · 2026 · 66/100 · Lower overall exposure",
+      "verdict": "Lower overall exposure",
+      "year": "2026",
+      "name": "Paris",
+      "role": "status",
+      "live": "polite"
+    },
+    {
+      "label": "Paris EN2050",
+      "announcement": "Paris · 2050 · 63/100 · Moderate overall exposure",
+      "verdict": "Moderate overall exposure",
+      "year": "2050",
+      "name": "Paris",
+      "role": "status",
+      "live": "polite"
+    },
+    {
+      "label": "Paris FR2050",
+      "announcement": "Paris · 2050 · 63/100 · Exposition globale modérée",
+      "verdict": "Exposition globale modérée",
+      "year": "2050",
+      "name": "Paris",
+      "role": "status",
+      "live": "polite"
+    },
+    {
+      "label": "France FR2050",
+      "announcement": "France · 2050 · 66/100 · Exposition globale plus faible",
+      "verdict": "Exposition globale plus faible",
+      "year": "2050",
+      "name": "France",
+      "role": "status",
+      "live": "polite"
+    },
+    {
+      "label": "France FR2026",
+      "announcement": "France · 2026 · 72/100 · Exposition globale plus faible",
+      "verdict": "Exposition globale plus faible",
+      "year": "2026",
+      "name": "France",
+      "role": "status",
+      "live": "polite"
+    },
+    {
+      "label": "France EN2026",
+      "announcement": "France · 2026 · 72/100 · Lower overall exposure",
+      "verdict": "Lower overall exposure",
+      "year": "2026",
+      "name": "France",
+      "role": "status",
+      "live": "polite"
+    }
+  ],
+  "errors": []
+}

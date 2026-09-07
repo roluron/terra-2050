@@ -1,3 +1,7 @@
+Current local design follow-up: VERIFIED panel redesign on branch design/place-panel,
+runtime9129b5b. See panel/STATE.md and panel/EVIDENCE.md. Local preview8087;
+public deployment below remains the earlier release. Physical gates unchanged.
+
 STATUS: ACTIVE — full completion not claimed.
 
 2026-09-07: PR #1 merged as 2058efc; startup preload follow-up deployed as

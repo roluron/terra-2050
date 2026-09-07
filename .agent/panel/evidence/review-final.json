@@ -1,0 +1,30 @@
+{
+  "commit": "15a0137e03dc36b238b351bcefca7d1380bebcf2",
+  "results": [
+    {
+      "name": "desktop",
+      "errors": [],
+      "duel": {
+        "text": "Berlin 68vsParis 66",
+        "display": "flex",
+        "gap": "10px"
+      },
+      "story": true,
+      "clipboard": "Berlin: 68/100 habitability in 2026 — solid habitability. What about your city?\nhttp://127.0.0.1:8093/#v=Berlin&an=2026&cc=DE&vs=Paris&vc=FR",
+      "hash": "#v=Berlin&an=2026&cc=DE&vs=Paris&vc=FR",
+      "closed": true
+    },
+    {
+      "name": "se",
+      "errors": [],
+      "duel": {
+        "text": "Berlin 68vsParis 66",
+        "display": "flex",
+        "gap": "10px"
+      },
+      "story": true,
+      "hash": "#v=Berlin&an=2026&cc=DE&vs=Paris&vc=FR",
+      "closed": true
+    }
+  ]
+}

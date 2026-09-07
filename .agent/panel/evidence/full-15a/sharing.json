@@ -1,0 +1,46 @@
+[
+  {
+    "name": "download",
+    "pass": true,
+    "year": "2026",
+    "file": "/Users/robinmahieux/Documents/Codex/2026-09-07/can-you-launch-the-software-7/work/evidence/panel-clean-15a-full/terra-2050-paris.jpg",
+    "size": 162856
+  },
+  {
+    "name": "native-contract",
+    "pass": true,
+    "year": "2026",
+    "share": {
+      "name": "terra-2050-paris.jpg",
+      "type": "image/jpeg",
+      "size": 246966,
+      "width": 1080,
+      "height": 1920,
+      "text": "Paris — http://localhost:8089/#v=Paris&an=2026&cc=FR",
+      "activeAtCall": true
+    },
+    "limitation": "Native OS and Instagram are not exercised by this adapter test."
+  },
+  {
+    "name": "native-delayed",
+    "pass": true,
+    "year": "2026",
+    "share": {
+      "name": "terra-2050-paris.jpg",
+      "type": "image/jpeg",
+      "size": 246472,
+      "width": 1080,
+      "height": 1920,
+      "text": "Paris — http://localhost:8089/#v=Paris&an=2026&cc=FR",
+      "activeAtCall": true
+    },
+    "limitation": "Native OS and Instagram are not exercised by this adapter test."
+  },
+  {
+    "name": "encoding-retry",
+    "pass": true,
+    "year": "2026",
+    "file": "/Users/robinmahieux/Documents/Codex/2026-09-07/can-you-launch-the-software-7/work/evidence/panel-clean-15a-full/terra-2050-paris.jpg",
+    "size": 176951
+  }
+]
