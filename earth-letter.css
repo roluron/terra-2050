@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&text=%F0%92%80%80%F0%92%86%A0%F0%92%87%BD%F0%92%88%97%F0%92%8C%93&display=swap');
 @font-face{font-family:EarthLausanne;src:url('./fonts/TWKLausanne-400Italic.woff2') format('woff2');font-style:italic;font-display:swap}
 @font-face{font-family:EarthHerbik;src:url('./fonts/Herbik-MediumItalic.woff2') format('woff2');font-style:italic;font-display:swap}
 #earth-shell{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:none;color:#c9cdc9;overflow:auto;--earth-ease:cubic-bezier(.19,1,.22,1)}
@@ -16,7 +17,7 @@ body:has(#earth-shell[open]) #voile{visibility:hidden}
 #earth-shell .latin{opacity:0;transition:opacity .55s}
 #earth-shell .glyphs{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;font:14px/1.5 Georgia,serif;letter-spacing:2px;color:#b6bfb5;animation:earth-wave 7s ease-in-out infinite;animation-delay:var(--phase);pointer-events:none;white-space:nowrap}
 #earth-shell .revealing .glyphs{animation:earth-decode .55s ease-in-out infinite;color:#dce2d8}
-#earth-shell .revealing .glyphs.roman{font-family:EarthLausanne,Arial,sans-serif;font-style:italic;font-size:1em;letter-spacing:-.015em}
+#earth-shell .revealing .glyphs.roman{font-family:EarthLausanne,'Noto Sans Cuneiform',Arial,sans-serif;font-style:italic;font-size:1em;letter-spacing:-.015em}
 #earth-shell .revealed .glyphs{display:none}
 #earth-shell .revealed .latin{opacity:1;animation:earth-settle 1s var(--earth-ease) both}
 #earth-shell .word:focus-visible{outline:1px solid #929c90}

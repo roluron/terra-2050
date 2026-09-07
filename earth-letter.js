@@ -9,6 +9,7 @@ const letter = document.querySelector('#letter');
 const future = document.querySelector('#future');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const signs = Array.from('·✳+⋮✶⋅⊹✧');
+const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
 let finished = 0;
 
@@ -65,7 +66,7 @@ function reveal(item) {
     if (step < 4) glyphs.textContent = signsFor(index + step, text.length);
     else {
       glyphs.classList.add('roman');
-      glyphs.textContent = Array.from(text, (character, position) => position < (step - 3) / 4 * text.length ? character : String.fromCharCode(65 + (position + step * 7 + index) % 26)).join('');
+      glyphs.textContent = Array.from(text, (character, position) => position < (step - 3) / 4 * text.length ? character : cuneiform[(position + step * 7 + index) % cuneiform.length]).join('');
     }
   }, 75);
 }
