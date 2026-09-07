@@ -2651,8 +2651,8 @@ function annoncer(){
    permet de la reconnaitre apres un F5. */
 let empilerProchaine = false, interdirePile = false;
 function ouvrirDossier(l){
-  dossierEl.inert = false;
-  document.getElementById('dossier-croix').inert = false;
+  dossierEl.inert = !document.body.classList.contains('pret');
+  document.getElementById('dossier-croix').inert = dossierEl.inert;
   lieuDossier = l;
   tracerTrajectoire.animer = true;
   dossierEl.scrollTop = 0;   // une fiche lue jusqu'en bas ouvrait la suivante déjà défilée
@@ -3525,7 +3525,9 @@ for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert 
 document.getElementById('bouton-entree').addEventListener('click', () => {
   const voile = document.getElementById('voile');
   if (document.body.classList.contains('pret')) return;   // Entree clavier apres le clic : une seule entree
-  for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert = false; }
+  for (const id of CHROME){ const e = document.getElementById(id);
+    if (e) e.inert = (id === 'dossier' || id === 'dossier-croix') && !lieuDossier;
+  }
   chargerGrillesCalques();
   voile.style.pointerEvents = 'none';
   gsap.to('#voile .v-centre > *', { opacity: 0, y: -16, duration: 0.7,

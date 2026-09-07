@@ -31,6 +31,12 @@ for (const [name, type, options] of [
     });
     await page.click('#bouton-entree');
     await page.waitForTimeout(2000);
+    await check(`${name}: closed city controls stay outside keyboard navigation`, async () => {
+      for (const id of ['dossier-story', 'dossier-croix']) {
+        await page.locator('#' + id).evaluate(e => e.focus());
+        assert.equal(await page.locator('#' + id).evaluate(e => e === document.activeElement), false);
+      }
+    });
     const search = async (query, country) => {
       await page.click('#champ-recherche');
       await page.fill('#champ-recherche', query);
