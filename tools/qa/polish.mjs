@@ -10,7 +10,7 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
     await page.route('**/*', async route => {
       if (route.request().resourceType() !== 'document') return route.continue();
       const response = await route.fetch();
-      const body = (await response.text()).replace('</script>\n</body>', `globalThis.__polish=()=>({texture:texCouleur.image.width,heat:matAtmo.uniforms.uProgression.value,time:matAtmo.uniforms.uTemps.value,draws:moteur.info.render.calls});\n</script>\n</body>`);
+      const body = (await response.text()).replace('</script>\n</body>', `globalThis.__polish=()=>({texture:texCouleur.image.width,heat:matAtmo.uniforms.uProgression.value,time:matAtmo.uniforms.uTemps.value,draws:moteur.info.render.calls,coast:mesuresLieu(lieuDossier,etat.annee)?.mer});\n</script>\n</body>`);
       await route.fulfill({response,body});
     });
     await page.goto((process.env.URL0 || 'http://localhost:8087/') + '#v=Dacca&an=2050&cc=BD');
@@ -21,7 +21,19 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
       return marker.top >= track.top && marker.bottom <= track.bottom;
     }));
     assert.ok(meters.every(Boolean), 'Gauge endpoints remain inside their tracks');
-    assert.equal(await page.locator('.risque[data-cle="mer"] .risk-number').innerText(), '100');
+    await page.waitForFunction(() => globalThis.__polish().coast?.available);
+    const coast = await page.evaluate(() => globalThis.__polish().coast);
+    assert.equal(await page.locator('.risque[data-cle="mer"] .risk-number').innerText(), coast.value.toLocaleString('en', {maximumFractionDigits:2}));
+    assert.equal(await page.locator('.risque[data-cle="mer"] .risk-reading small').innerText(), 'm');
+    for (const endpoint of [0,100]) {
+      const inside = await page.locator('.risque[data-cle="mer"]').evaluate((el, value) => {
+        const previous = el.style.getPropertyValue('--risk'); el.style.setProperty('--risk', value);
+        const track = el.querySelector('.risk-meter').getBoundingClientRect(), marker = el.querySelector('.risk-meter i').getBoundingClientRect();
+        el.style.setProperty('--risk', previous);
+        return marker.top >= track.top && marker.bottom <= track.bottom;
+      }, endpoint);
+      assert.ok(inside, 'Gauge endpoint ' + endpoint + ' stays inside its track');
+    }
     await page.locator('.risque[data-cle="mer"]').scrollIntoViewIfNeeded();
     await page.screenshot({path:`/tmp/terra-polish-${name}-risk.png`});
     assert.equal(await page.locator('[data-t="betaNotice"]').evaluate(el => /beta|bêta/i.test(el.textContent)), false);
