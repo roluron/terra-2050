@@ -1,0 +1,307 @@
+{
+  "abi": "terra-flood-cities/1",
+  "file": "flood-cities.bin",
+  "fields": [
+    "river_historical_depth_m",
+    "river_historical_available",
+    "coast_historical_depth_m",
+    "coast_historical_available",
+    "coast_future_depth_m",
+    "coast_future_available",
+    "river_future_NorESM1-M_depth_m",
+    "river_future_NorESM1-M_available",
+    "river_future_GFDL-ESM2M_depth_m",
+    "river_future_GFDL-ESM2M_available",
+    "river_future_HadGEM2-ES_depth_m",
+    "river_future_HadGEM2-ES_available",
+    "river_future_IPSL-CM5A-LR_depth_m",
+    "river_future_IPSL-CM5A-LR_available",
+    "river_future_MIROC-ESM-CHEM_depth_m",
+    "river_future_MIROC-ESM-CHEM_available",
+    "coast_near_depth_m",
+    "coast_near_available",
+    "river_near_NorESM1-M_depth_m",
+    "river_near_NorESM1-M_available",
+    "river_near_GFDL-ESM2M_depth_m",
+    "river_near_GFDL-ESM2M_available",
+    "river_near_HadGEM2-ES_depth_m",
+    "river_near_HadGEM2-ES_available",
+    "river_near_IPSL-CM5A-LR_depth_m",
+    "river_near_IPSL-CM5A-LR_available",
+    "river_near_MIROC-ESM-CHEM_depth_m",
+    "river_near_MIROC-ESM-CHEM_available"
+  ],
+  "count": 34099,
+  "encoding": "gzip",
+  "layout": "places.json order, field-interleaved float32 little-endian",
+  "index": "placeIndex*fields.length+fieldIndex",
+  "nodata": "NaN depth with availability 0; valid zero depth has availability 1",
+  "places_file": "places.json",
+  "places_sha256": "97a2ee63a8cb5986bbc90fe9d0fb7b1ff6a37605707d9ceba217da99d38c9c07",
+  "coordinates_file": "places.bin",
+  "coordinates_sha256": "b5ec2836fa6ad2c25892eaf4aed520cf438540ede98054f651d930608758159d",
+  "coordinates_encoding": "24-byte records, latitude int16LE at offset 0 and longitude int16LE at offset 2, divided by 100",
+  "coordinate_precision_degrees": 0.01,
+  "native_resolution_arcseconds": 30,
+  "sampling": "Native grid cell at the stored city coordinate. No interpolation, neighbourhood search or borrowed zero. Stored coordinates have 0.01-degree precision.",
+  "interpretation": "Not property-level risk, citywide exposure or population exposure. No flood protection, annual forecast or observed 2026 value.",
+  "return_period_years": 100,
+  "sha256": "33185a7dec2ee28db2f9a653c1f8e39345411b6cd067841929954c5eece0ad7e",
+  "decoded_sha256": "4b750acc84b631a4dc9cfe7f4a4ebd5616c9110ec65965a57cbe9f137a0ba95f",
+  "compressed_bytes": 237551,
+  "decoded_bytes": 3819088,
+  "sources": [
+    {
+      "filename": "inunriver_historical_000000000WATCH_1980_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_historical_000000000WATCH_1980_rp00100.tif",
+      "sha256": "a63c94a3c7787f937d923e93465571c53cc4b2765678336c3ece78a491f2a5d7",
+      "hazard": "river",
+      "epoch": "historical",
+      "model": "WATCH",
+      "scenario": "historical",
+      "climate_period": [
+        1960,
+        1999
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_historical_depth_m",
+      "availability_field": "river_historical_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inuncoast_historical_nosub_hist_rp0100_0.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inuncoast_historical_nosub_hist_rp0100_0.tif",
+      "sha256": "03886accac54b4a6f7ebaff05e657aea115f05714d2376029edc3629ac871cb1",
+      "hazard": "coast",
+      "epoch": "historical",
+      "model": null,
+      "scenario": "historical",
+      "climate_period": [
+        1979,
+        2014
+      ],
+      "sea_level_percentile": null,
+      "subsidence": false,
+      "depth_field": "coast_historical_depth_m",
+      "availability_field": "coast_historical_available",
+      "available_count": 34057
+    },
+    {
+      "filename": "inuncoast_rcp8p5_nosub_2050_rp0100_0_perc_50.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inuncoast_rcp8p5_nosub_2050_rp0100_0_perc_50.tif",
+      "sha256": "6e2df75fd4878314cddc9974ba3386091be65554536684d7516c82268a494bf5",
+      "hazard": "coast",
+      "epoch": 2050,
+      "model": null,
+      "scenario": "rcp8p5",
+      "climate_period": null,
+      "sea_level_percentile": 50,
+      "subsidence": false,
+      "depth_field": "coast_future_depth_m",
+      "availability_field": "coast_future_available",
+      "available_count": 34057
+    },
+    {
+      "filename": "inunriver_rcp8p5_00000NorESM1-M_2050_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00000NorESM1-M_2050_rp00100.tif",
+      "sha256": "b4fb2446e0af6025485a5fcbbac1378157b8cc8ea1446e396743df16956e6356",
+      "hazard": "river",
+      "epoch": 2050,
+      "model": "NorESM1-M",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_future_NorESM1-M_depth_m",
+      "availability_field": "river_future_NorESM1-M_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_0000GFDL-ESM2M_2050_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000GFDL-ESM2M_2050_rp00100.tif",
+      "sha256": "44678062c26ff1d2e3d66af3d45dcbca2ac764ca99ee56daf978a6fe754c0f36",
+      "hazard": "river",
+      "epoch": 2050,
+      "model": "GFDL-ESM2M",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_future_GFDL-ESM2M_depth_m",
+      "availability_field": "river_future_GFDL-ESM2M_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_0000HadGEM2-ES_2050_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000HadGEM2-ES_2050_rp00100.tif",
+      "sha256": "1d9a71eeec1e754249fbe79bf2c370f42d5a9020ba6e00cd3d13841f299b1d75",
+      "hazard": "river",
+      "epoch": 2050,
+      "model": "HadGEM2-ES",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_future_HadGEM2-ES_depth_m",
+      "availability_field": "river_future_HadGEM2-ES_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_00IPSL-CM5A-LR_2050_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00IPSL-CM5A-LR_2050_rp00100.tif",
+      "sha256": "dd6bf67c0a2fcab48a7dcff1c8c8648f0da17953596a80f90b6ee108c07dbeeb",
+      "hazard": "river",
+      "epoch": 2050,
+      "model": "IPSL-CM5A-LR",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_future_IPSL-CM5A-LR_depth_m",
+      "availability_field": "river_future_IPSL-CM5A-LR_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_MIROC-ESM-CHEM_2050_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_MIROC-ESM-CHEM_2050_rp00100.tif",
+      "sha256": "a92545aef351f876afa99f9c8230d77b5a63def3af6988d1fd91d5d5b77311cb",
+      "hazard": "river",
+      "epoch": 2050,
+      "model": "MIROC-ESM-CHEM",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_future_MIROC-ESM-CHEM_depth_m",
+      "availability_field": "river_future_MIROC-ESM-CHEM_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inuncoast_rcp8p5_nosub_2030_rp0100_0_perc_50.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inuncoast_rcp8p5_nosub_2030_rp0100_0_perc_50.tif",
+      "sha256": "555ccdfcbb81c3c927bc1da35929b76445db6490be28de338fe126ea3778a509",
+      "hazard": "coast",
+      "epoch": 2030,
+      "model": null,
+      "scenario": "rcp8p5",
+      "climate_period": null,
+      "sea_level_percentile": 50,
+      "subsidence": false,
+      "depth_field": "coast_near_depth_m",
+      "availability_field": "coast_near_available",
+      "available_count": 34057
+    },
+    {
+      "filename": "inunriver_rcp8p5_00000NorESM1-M_2030_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00000NorESM1-M_2030_rp00100.tif",
+      "sha256": "0a5fcd52e5b2f30f7490571b875358373406072fb3bc6149b8a06c8f385d4465",
+      "hazard": "river",
+      "epoch": 2030,
+      "model": "NorESM1-M",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_near_NorESM1-M_depth_m",
+      "availability_field": "river_near_NorESM1-M_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_0000GFDL-ESM2M_2030_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000GFDL-ESM2M_2030_rp00100.tif",
+      "sha256": "8d656e8efae8b7180627d9f3b7e316dfe8a75a98101b328cd79d21ef4dbf7d86",
+      "hazard": "river",
+      "epoch": 2030,
+      "model": "GFDL-ESM2M",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_near_GFDL-ESM2M_depth_m",
+      "availability_field": "river_near_GFDL-ESM2M_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_0000HadGEM2-ES_2030_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000HadGEM2-ES_2030_rp00100.tif",
+      "sha256": "52bbdd379aeaa0b20ae54c079583b590bfcf5a92a824e189aa478d48bb467629",
+      "hazard": "river",
+      "epoch": 2030,
+      "model": "HadGEM2-ES",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_near_HadGEM2-ES_depth_m",
+      "availability_field": "river_near_HadGEM2-ES_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_00IPSL-CM5A-LR_2030_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00IPSL-CM5A-LR_2030_rp00100.tif",
+      "sha256": "182e35baa5820c3c6e015a3cae39148eed9f888e50458ee2b6a5e33169baddd2",
+      "hazard": "river",
+      "epoch": 2030,
+      "model": "IPSL-CM5A-LR",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_near_IPSL-CM5A-LR_depth_m",
+      "availability_field": "river_near_IPSL-CM5A-LR_available",
+      "available_count": 32184
+    },
+    {
+      "filename": "inunriver_rcp8p5_MIROC-ESM-CHEM_2030_rp00100.tif",
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_MIROC-ESM-CHEM_2030_rp00100.tif",
+      "sha256": "a51580072ac9fb2bbda15be855c538370cc3f5966d60b3efd5d49f0b8dc3d511",
+      "hazard": "river",
+      "epoch": 2030,
+      "model": "MIROC-ESM-CHEM",
+      "scenario": "rcp8p5",
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "depth_field": "river_near_MIROC-ESM-CHEM_depth_m",
+      "availability_field": "river_near_MIROC-ESM-CHEM_available",
+      "available_count": 32184
+    }
+  ],
+  "methodology": "https://files.wri.org/d8/s3fs-public/aqueduct-floods-methodology.pdf",
+  "license": {
+    "name": "Creative Commons Attribution",
+    "url": "http://www.opendefinition.org/licenses/cc-by",
+    "version": "not specified by catalog"
+  }
+}

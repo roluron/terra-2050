@@ -18,6 +18,7 @@ Trois règles apprises en écrivant les contrôles qu'il lance :
     ressemble trait pour trait à un contrôle qui passe.
 """
 import os
+import argparse
 import json
 import hashlib
 import subprocess
@@ -37,7 +38,7 @@ def lancer(nom, argv, env=None):
     (sortie / (nom.replace(" ", "_") + ".log")).write_text(
         json.dumps({"command": argv, "exit_code": r.returncode}) + "\n" + r.stdout + r.stderr,
         encoding="utf8")
-    print(f"{etat}  {nom}  (code {r.returncode})")
+    print(f"{etat}  {nom}  (code {r.returncode})", flush=True)
     if r.returncode != 0:
         for ligne in (r.stdout + r.stderr).strip().splitlines()[-12:]:
             print("       | " + ligne)
@@ -51,7 +52,7 @@ def trouver():
     return py, qa
 
 
-def executer(avec_qa: bool) -> int:
+def executer(avec_qa: bool, shard=None) -> int:
     py, qa = trouver()
     if not py and not qa:
         print("ECHEC  aucun controle decouvert — le lanceur est casse, "
@@ -63,12 +64,25 @@ def executer(avec_qa: bool) -> int:
         fautes += lancer(f.name, [sys.executable, str(f)])
         fautes += lancer(f.name + " --autotest", [sys.executable, str(f), "--autotest"])
 
+    if shard:
+        index, count = shard
+        selected = qa[index - 1::count]
+        if not selected:
+            print('ECHEC  empty QA shard')
+            return 1
+        for f in qa:
+            if f not in selected:
+                print(f'DELEGUE  {f.name}  (another shard; requires all {count} shards)')
+        qa = selected
+
     for f in qa:
         if not avec_qa:
             print(f"SAUTE  {f.name}  (lance avec --qa ; demande un navigateur "
                   f"Playwright et environ 3 minutes)")
             continue
-        fautes += lancer(f.name, ["node", str(f)])
+        suite_out = Path(os.environ['QA_SORTIE']) / f.stem
+        suite_out.mkdir(parents=True, exist_ok=True)
+        fautes += lancer(f.name, ["node", str(f)], {'QA_SORTIE': str(suite_out)})
 
     total = len(py) * 2 + (len(qa) if avec_qa else 0)
     print(f"\n{total - fautes} sur {total} controles passent"
@@ -77,40 +91,40 @@ def executer(avec_qa: bool) -> int:
 
 
 def autotest() -> int:
-    """Prouve que le lanceur voit un contrôle qu'il ne connaissait pas, et
-    qu'il échoue quand ce contrôle échoue."""
-    faux = TOOLS / "verifier_zzz_autotest.py"
-    echecs = 0
+    global TOOLS
+    original = TOOLS
     try:
-        avant_py, _ = trouver()
-        faux.write_text("import sys\nsys.exit(1)\n", encoding="utf8")
-        apres_py, _ = trouver()
-        if len(apres_py) != len(avant_py) + 1:
-            print("ECHEC  autotest : le lanceur n a pas decouvert le nouveau controle")
-            echecs += 1
-        else:
-            print("OK     autotest : un controle ajoute est decouvert")
-
-        r = subprocess.run([sys.executable, __file__], cwd=RACINE,
-                           capture_output=True, text=True)
-        if r.returncode == 0:
-            print("ECHEC  autotest : un controle en echec n a pas fait echouer le lanceur")
-            echecs += 1
-        else:
-            print("OK     autotest : un controle en echec fait echouer le lanceur")
+        with tempfile.TemporaryDirectory(prefix='terra-runner-mutation-') as folder:
+            TOOLS = Path(folder)
+            assert executer(False) == 1, 'Empty discovery accepted'
+            control = TOOLS / 'verifier_new.py'
+            control.write_text('import sys\nsys.exit(0)\n', encoding='utf8')
+            assert trouver()[0] == [control], 'New control not discovered'
+            assert executer(False) == 0, 'Healthy control rejected'
+            control.write_text('import sys\nsys.exit(1)\n', encoding='utf8')
+            assert executer(False) == 1, 'Failed control accepted'
+            control.write_text("import sys\nsys.exit(int('--autotest' in sys.argv))\n", encoding='utf8')
+            assert executer(False) == 1, 'Failed mutation test accepted'
+            from unittest.mock import patch
+            qa = TOOLS / 'qa'
+            qa.mkdir()
+            for i in range(7):
+                (qa / f'case-{i}.mjs').touch()
+            seen = []
+            def record(name, argv, env=None):
+                if name.endswith('.mjs'):
+                    seen.append(name)
+                return 0
+            with patch(__name__ + '.lancer', side_effect=record):
+                for count in (3, 4):
+                    seen.clear()
+                    for index in range(1, count + 1):
+                        assert executer(True, (index, count)) == 0
+                    assert sorted(seen) == [p.name for p in sorted(qa.glob('*.mjs'))]
+        print('OK     discovery, empty suite, failure, failed mutation-test propagation and complete disjoint shards')
+        return 0
     finally:
-        faux.unlink(missing_ok=True)
-
-    r = subprocess.run([sys.executable, __file__], cwd=RACINE,
-                       capture_output=True, text=True)
-    if r.returncode != 0:
-        print("ECHEC  autotest : le projet sain est refuse")
-        print(r.stdout[-800:])
-        echecs += 1
-    else:
-        print("OK     autotest : le projet sain passe")
-
-    return 1 if echecs else 0
+        TOOLS = original
 
 
 if __name__ == "__main__":
@@ -123,7 +137,7 @@ if __name__ == "__main__":
     fichiers += [str(p.relative_to(RACINE)) for p in sorted((RACINE / "tools").rglob("*"))
                  if p.is_file() and p.suffix in (".py", ".mjs")]
     (sortie / "snapshot.json").write_text(json.dumps({
-        "revision": revision.stdout.strip(), "url": os.environ.get("URL0", "http://localhost:8080/"),
+        "revision": revision.stdout.strip(), "url": os.environ.get("URL0", "http://localhost:8087/"),
         "workingTree": etat.stdout.strip(),
         "sha256": {p: hashlib.sha256((RACINE / p).read_bytes()).hexdigest()
                    for p in fichiers if (RACINE / p).exists()}
@@ -135,6 +149,17 @@ if __name__ == "__main__":
               else "Le lanceur ne prouve rien : A REPARER.")
         sys.exit(code)
 
-    code = executer("--qa" in sys.argv)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--qa', action='store_true')
+    parser.add_argument('--qa-shard', '--shard', dest='qa_shard', help='1-based INDEX/TOTAL; every shard is required for full browser coverage')
+    args = parser.parse_args()
+    shard = None
+    if args.qa_shard:
+        try:
+            shard = tuple(map(int, args.qa_shard.split('/')))
+            assert len(shard) == 2 and 1 <= shard[0] <= shard[1] and args.qa
+        except (ValueError, AssertionError):
+            parser.error('--qa-shard requires --qa and INDEX/TOTAL with 1 <= INDEX <= TOTAL')
+    code = executer(args.qa, shard)
     print("Tout est vert." if code == 0 else "AU MOINS UN CONTROLE ECHOUE.")
     sys.exit(code)

@@ -1,55 +1,74 @@
 import fs from 'node:fs';
-import { enter } from './entrance.cjs';
 import assert from 'node:assert/strict';
-import {chromium} from 'playwright';
-const out=process.env.QA_SORTIE || '/tmp/terra-temporal';fs.mkdirSync(out,{recursive:true});
-const base=process.env.URL0 || 'http://localhost:8080/';
-const browser=await chromium.launch({executablePath:chromium.executablePath()});
-const evidence={};
-const annual=JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json',import.meta.url)));
+import { chromium } from 'playwright';
+import { enter } from './entrance.cjs';
+
+const base = process.env.URL0 || 'http://localhost:8087/';
+const annual = JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json', import.meta.url)));
+const browser = await chromium.launch({ headless: process.env.QA_HEADED !== '1',
+  args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const errors = [];
+let cases = 0;
 try {
- const page=await browser.newPage({viewport:{width:1440,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.route(url=>url.pathname==='/',async route=>{
-  const response=await route.fetch();let body=await response.text();
-  body=body.replace('</script>\n</body>',`globalThis.__temporalRead=()=>({year:etat.annee,progress:etat.progression,globe:uniformsGlobe.uProgression.value,place:lieuDossier?nomVille(lieuDossier):null,score:lieuDossier?indiceHabitabilite(lieuDossier,etat.annee):null,risks:lieuDossier&&!estPays(lieuDossier)?CRITERES.map(c=>({key:c.cle,risk:c.penalite(lieuDossier,(etat.annee-2026)/24)*100})):notesPays(lieuDossier[1],(etat.annee-2026)/24).map((n,i)=>({key:CRITERES[i].cle,risk:100-n}))});\n</script>\n</body>`);
-  await route.fulfill({response,body});
- });
- await page.goto(base+'#v=Paris&an=2026&cc=FR');await enter(page);
- await page.waitForFunction(()=>!document.querySelector('#dossier').inert);await page.waitForTimeout(2000);
- const read=async()=>{
-  const state=await page.evaluate(()=>globalThis.__temporalRead());
-  state.cards=await page.locator('#dossier-risques .risque').evaluateAll(es=>es.map(e=>({key:e.dataset.cle,value:Number(e.querySelector('.risk-number').textContent.replace(',','.')),delta:e.querySelector('.risk-change').textContent,mode:e.dataset.temporal})));
-  state.population=await page.locator('#dossier-pop').getAttribute('data-population');
-  for(const card of state.cards)assert.ok(Math.abs(card.value-state.risks.find(r=>r.key===card.key).risk)<=.051,JSON.stringify({state,card}));
-  return state;
- };
- const setYear=async year=>{await page.locator('#curseur').focus();await page.keyboard.press('Home');if(year===2050)await page.keyboard.press('End');else for(let i=2026;i<year;i++)await page.keyboard.press('ArrowRight');await page.waitForTimeout(700);const r=await read();assert.equal(r.year,year);assert.ok(Math.abs(r.globe-(year-2026)/24)<.001);assert.ok((await page.locator('#layer-context').textContent()).includes(String(year)));return r;};
- for(const place of ['Paris','Ho Chi Minh City','France','Ouagadougou']){
-  if(place!=='Paris'){
-   await page.click('#champ-recherche');await page.fill('#champ-recherche',place);
-   await page.getByRole('option',{name:place==='France'?/France (COUNTRY|PAYS)/:new RegExp(place==='Ho Chi Minh City'?'Ho Chi Minh':place)}).first().click();
-   await page.waitForFunction(()=>!document.querySelector('#dossier').inert);await page.waitForTimeout(1000);
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, locale: 'en-US' });
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  await page.route(url => url.pathname === '/', async route => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace('</script>\n</body>',
+      `globalThis.__temporalRead=()=>({year:etat.annee,globe:uniformsGlobe.uProgression.value,readings:mesuresLieu(lieuDossier,etat.annee)});\n</script>\n</body>`);
+    assert.ok(body.includes('globalThis.__temporalRead='));
+    await route.fulfill({ response, body });
+  });
+  await page.goto(base);
+  await enter(page);
+  await page.waitForFunction(() => document.body.classList.contains('donnees-pretes'));
+  for (const [name, iso] of [['Paris', 'FR'], ['Ho Chi Minh City', 'VN'], ['France', 'FR'], ['Ouagadougou', 'BF']]) {
+    if (await page.locator('#dossier').evaluate(el => el.classList.contains('ouvert'))) await page.locator('#dossier-croix').click();
+    await page.locator('#champ-recherche').fill(name);
+    await page.getByRole('option', { name: name === 'France' ? /France (COUNTRY|PAYS)/ : new RegExp(name === 'Ho Chi Minh City' ? 'Ho Chi Minh' : name) }).first().click();
+    await page.waitForFunction(() => !document.querySelector('#dossier').inert);
+    await page.waitForTimeout(700);
+    for (const year of [2026, 2030, 2038, 2050]) {
+      console.log(`${name}/${year}`);
+      await page.locator('#curseur').scrollIntoViewIfNeeded();
+      await page.locator('#curseur').focus();
+      await page.keyboard.press('Home');
+      for (let y = 2026; y < year; y++) await page.keyboard.press('ArrowRight');
+      await page.waitForFunction(year => document.querySelector('#dossier-annee').textContent === String(year), year);
+      await page.waitForFunction(year => Math.abs(globalThis.__temporalRead().globe - (year - 2026) / 24) < .001, year);
+      const state = await page.evaluate(() => ({ ...globalThis.__temporalRead(),
+        population: document.querySelector('#dossier-pop').dataset.population,
+        cards: [...document.querySelectorAll('#dossier-risques .risque')].map(el => ({ key: el.dataset.cle,
+          value: el.dataset.value, change: el.dataset.change, unit: el.querySelector('.risk-reading small').textContent,
+          number: el.querySelector('.risk-number').textContent, detail: el.querySelector('.detail').textContent })) }));
+      assert.equal(state.year, year);
+      assert.ok(Math.abs(state.globe - (year - 2026) / 24) < .001);
+      assert.equal(Number(state.population), annual[iso][year - 2025]);
+      assert.equal(state.cards.length, 6);
+      for (const card of state.cards) {
+        const source = state.readings[card.key];
+        const label = `${name}/${year}/${card.key}`;
+        if (!source?.available) {
+          assert.equal(card.value, '', label);
+          assert.equal(card.change, '', label);
+          continue;
+        }
+        assert.notEqual(card.value, '', label);
+        assert.notEqual(card.change, '', label);
+        assert.ok(Math.abs(Number(card.value) - source.value) < 1e-6, label);
+        assert.ok(Math.abs(Number(card.change) - source.change) < 1e-6, label);
+        assert.ok(Math.abs(source.change - (source.value - source.baseline)) < 1e-6, label);
+        if (year === 2050) assert.ok(Math.abs(source.value - source.future) < 1e-6, label);
+        assert.equal(card.unit, card.key === 'eau' ? 'De Martonne' : source.unit, label);
+        assert.equal(card.number, source.value.toLocaleString('en', { maximumFractionDigits: 2 }), label);
+        assert.doesNotMatch(card.detail, /unvalidated proxy|fixed river|FABDEM|COAST-RP/i, label);
+      }
+      cases++;
+    }
   }
-  const a=await setYear(2026),m=await setYear(2038),b=await setYear(2050);evidence[place]={a,m,b};
-  assert.notEqual(a.population,b.population);
-  assert.equal(a.cards.find(c=>c.key==='fleuves').value,b.cards.find(c=>c.key==='fleuves').value);
-  assert.equal(b.cards.find(c=>c.key==='fleuves').mode,'reference');
-  for(const key of ['feux','eau','stabilite'])if(a.risks.find(r=>r.key===key).risk!==b.risks.find(r=>r.key===key).risk)assert.notEqual(a.cards.find(c=>c.key===key).value,b.cards.find(c=>c.key===key).value);
-  if(place==='Ho Chi Minh City'){assert.equal(a.score,37);assert.equal(b.score,23);assert.notEqual(a.cards.find(c=>c.key==='mer').value,b.cards.find(c=>c.key==='mer').value);}
-  if(place==='Paris'){assert.equal(a.score,66);assert.equal(b.score,63);}
-  const iso=place==='Ho Chi Minh City'?'VN':place==='Ouagadougou'?'BF':'FR';
-  for(const state of [a,m,b])assert.equal(Number(state.population),annual[iso][state.year-2025]);
-  const fireA=a.cards.find(c=>c.key==='feux'),fireB=b.cards.find(c=>c.key==='feux');
-  assert.equal(fireB.mode,'estimate');
-  if(place==='Paris'){assert.ok(fireB.value>fireA.value);assert.match(fireB.delta,/2026: 25.6.*\+7.2 pts/);}
-  if(place==='Ho Chi Minh City'){assert.equal(fireB.value,fireA.value);assert.match(fireB.delta,/unchanged estimate/);}
-  if(place==='Ouagadougou'){assert.ok(fireB.value<fireA.value);assert.match(fireB.delta,/-0.4 pts/);}
-  await page.screenshot({path:out+'/'+place.replaceAll(' ','-')+'.png'});
- }
- await page.click('#dossier-croix');await page.click('.calque[data-cle=fleuves]');
- if(await page.locator('#pedago').isVisible())await page.click('#pedago-fermer');
- assert.match(await page.locator('#layer-context').textContent(),/fixed reference/);
- assert.deepEqual(errors,[]);evidence.pass=true;evidence.errors=errors;
-} catch(e){evidence.pass=false;evidence.error=e.stack;process.exitCode=1;}
-finally{fs.writeFileSync(out+'/temporal.json',JSON.stringify(evidence,null,2));await browser.close();}
-console.log(JSON.stringify({pass:evidence.pass,error:evidence.error}));
+  assert.deepEqual(errors, []);
+  console.log(JSON.stringify({ pass: true, cases, scope: 'Physical cards and annual population, four cities/country selections, 2026/2030/2038/2050', errors }));
+} finally {
+  await browser.close();
+}

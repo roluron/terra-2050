@@ -9,6 +9,10 @@ jobs:
   verify:
     runs-on: macos-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,12 +26,12 @@ jobs:
       - run: pip install -r requirements-qa.txt
       - run: npm run qa:install
       - run: npm run dev > "$RUNNER_TEMP/terra-server.log" 2>&1 &
-      - run: python3 tools/check.py --qa
+      - run: python3 tools/check.py --qa --qa-shard ${{ matrix.shard }}/4
         env:
           URL0: http://localhost:8080/
           QA_SORTIE: qa-evidence
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: browser-evidence
+          name: browser-evidence-${{ matrix.shard }}
           path: qa-evidence

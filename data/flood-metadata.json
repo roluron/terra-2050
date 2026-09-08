@@ -1,0 +1,1074 @@
+{
+  "abi": "terra-floods/2",
+  "width": 720,
+  "height": 360,
+  "crs": "EPSG:4326",
+  "bounds": [
+    -180,
+    -90,
+    180,
+    90
+  ],
+  "row_order": "north_to_south",
+  "column_order": "west_to_east",
+  "pixel_center": {
+    "lon": "-180+(x+0.5)/2",
+    "lat": "90-(y+0.5)/2"
+  },
+  "transform": [
+    0.5,
+    0,
+    -180,
+    0,
+    -0.5,
+    90
+  ],
+  "encoding": "gzip",
+  "decoded_dtype": "float32",
+  "byte_order": "little",
+  "layout": "north-first, west-first, cell-interleaved float32 little-endian",
+  "index": "(y*width+x)*fields.length+fieldIndex",
+  "nodata": "NaN",
+  "sampling": "Containing cell: x=floor((lon+180)*2), y=floor((90-lat)*2); wrap longitude, clamp latitude at poles. Nearest sampling; no neighbouring-cell fallback or interpolation across NoData.",
+  "missing": "coverage == 0; all other fields are NaN. Never interpret missing as zero hazard.",
+  "coverage": "Fraction of 3600 native 30-arcsecond cells that are valid, including valid zero depths.",
+  "aggregation": "60x60 native cells: mean depth including valid zeros; fraction strictly deeper than 0.5 m over valid cells. Unweighted cell counts, not population exposure or exact area fractions. Coarse cell summaries, not city-point depths.",
+  "return_period_years": 100,
+  "scenario": "rcp8p5",
+  "quantiles": "Linear empirical quantiles of five equally weighted climate-model grid metrics after spatial aggregation; descriptive model spread, not probabilistic confidence intervals or a simulated ensemble flood event.",
+  "sign_agreement": "Fraction of five models agreeing with the median change sign relative to historical. Existing fields use 2050-minus-historical; near_ fields use 2030-minus-historical. Exact float32 comparisons; zero is its own sign. Neither describes 2030-to-2050 agreement.",
+  "paired_epoch_change": "For 2030-to-2050 change, subtract near_model from matching model_ values before computing model quantiles or sign agreement. Do not subtract independently computed percentile bounds.",
+  "time_interpolation": "No annual data. Interpolation, if shown by a consumer, is illustrative only. Never label historical or 2030 as observed 2026.",
+  "dataset": "WRI Aqueduct Floods Hazard Maps v2, corrected 2020-10-20",
+  "methodology": "https://files.wri.org/d8/s3fs-public/aqueduct-floods-methodology.pdf",
+  "catalog": "https://datasets.wri.org/datasets/aqueduct-floods-hazard-maps",
+  "license": {
+    "name": "Creative Commons Attribution",
+    "url": "http://www.opendefinition.org/licenses/cc-by",
+    "version": "not specified by catalog"
+  },
+  "limitations": [
+    "No flood protection; not residual risk or flood probability at a property.",
+    "River baseline 1960-1999 differs from coastal GTSR 1979-2014; no common observed baseline year.",
+    "2050 river epoch is 2030-2069; no annual forecasts, no fabricated 2026 observation.",
+    "RCP scenarios are not interchangeable with SSP3-7.0.",
+    "Coastal median sea-level scenario excludes subsidence; not AR6 sea-level projections.",
+    "Coastal and river floods are separate hazards; compound flooding is not modelled.",
+    "Five river climate models kept separate; no invented ensemble flood event.",
+    "Raster spatial extent is global; NoData and small-basin/local-process limitations remain.",
+    "Remote object modification date is not the climate period or scientific release date.",
+    "SHA-256 records downloaded bytes, not independent scientific validation."
+  ],
+  "hazards": {
+    "coast": {
+      "file": "flood-coast.bin",
+      "fields": [
+        "coverage",
+        "historical_mean_depth_m",
+        "historical_fraction_gt_0_5m",
+        "future_mean_depth_m",
+        "future_fraction_gt_0_5m",
+        "near_mean_depth_m",
+        "near_fraction_gt_0_5m"
+      ],
+      "bands": [
+        {
+          "index": 0,
+          "name": "coverage",
+          "unit": "1"
+        },
+        {
+          "index": 1,
+          "name": "historical_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 2,
+          "name": "historical_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 3,
+          "name": "future_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 4,
+          "name": "future_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 5,
+          "name": "near_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 6,
+          "name": "near_fraction_gt_0_5m",
+          "unit": "1"
+        }
+      ],
+      "band_count": 7,
+      "compressed_bytes": 337050,
+      "decoded_bytes": 7257600,
+      "sha256": "b83ad216414da4d6578ff3c79154f10f64f4efbed907b170e41a06476842bb3e",
+      "decoded_sha256": "cbbcf6ec34dce0c6706afa71f91c07dba918973a0f78e5b2472cf154d7624739",
+      "historical_period": [
+        1979,
+        2014
+      ],
+      "future_epoch": 2050,
+      "near_epoch": 2030,
+      "near_climate_period": null,
+      "near_reference": "2030 climate epoch, not an annual 2026 observation",
+      "period_source": "2030/2050 coastal sea-level projection epochs; historical GTSR 1979-2014.",
+      "future_climate_period": null,
+      "sea_level_percentile": 50,
+      "subsidence": false,
+      "models": [],
+      "native_valid_mask_sha256": "23db834d68ffbc0f6f64fc6d31d0b71b70126af37f77ac5b4dc212d598af1a60",
+      "native_masks_identical": true
+    },
+    "river": {
+      "file": "flood-river.bin",
+      "fields": [
+        "coverage",
+        "historical_mean_depth_m",
+        "historical_fraction_gt_0_5m",
+        "model_NorESM1-M_mean_depth_m",
+        "model_NorESM1-M_fraction_gt_0_5m",
+        "model_GFDL-ESM2M_mean_depth_m",
+        "model_GFDL-ESM2M_fraction_gt_0_5m",
+        "model_HadGEM2-ES_mean_depth_m",
+        "model_HadGEM2-ES_fraction_gt_0_5m",
+        "model_IPSL-CM5A-LR_mean_depth_m",
+        "model_IPSL-CM5A-LR_fraction_gt_0_5m",
+        "model_MIROC-ESM-CHEM_mean_depth_m",
+        "model_MIROC-ESM-CHEM_fraction_gt_0_5m",
+        "future_mean_depth_m_p10",
+        "future_mean_depth_m_p50",
+        "future_mean_depth_m_p90",
+        "mean_depth_m_change_sign_agreement",
+        "future_fraction_gt_0_5m_p10",
+        "future_fraction_gt_0_5m_p50",
+        "future_fraction_gt_0_5m_p90",
+        "fraction_gt_0_5m_change_sign_agreement",
+        "near_model_NorESM1-M_mean_depth_m",
+        "near_model_NorESM1-M_fraction_gt_0_5m",
+        "near_model_GFDL-ESM2M_mean_depth_m",
+        "near_model_GFDL-ESM2M_fraction_gt_0_5m",
+        "near_model_HadGEM2-ES_mean_depth_m",
+        "near_model_HadGEM2-ES_fraction_gt_0_5m",
+        "near_model_IPSL-CM5A-LR_mean_depth_m",
+        "near_model_IPSL-CM5A-LR_fraction_gt_0_5m",
+        "near_model_MIROC-ESM-CHEM_mean_depth_m",
+        "near_model_MIROC-ESM-CHEM_fraction_gt_0_5m",
+        "near_mean_depth_m_p10",
+        "near_mean_depth_m_p50",
+        "near_mean_depth_m_p90",
+        "near_mean_depth_m_change_sign_agreement",
+        "near_fraction_gt_0_5m_p10",
+        "near_fraction_gt_0_5m_p50",
+        "near_fraction_gt_0_5m_p90",
+        "near_fraction_gt_0_5m_change_sign_agreement"
+      ],
+      "bands": [
+        {
+          "index": 0,
+          "name": "coverage",
+          "unit": "1"
+        },
+        {
+          "index": 1,
+          "name": "historical_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 2,
+          "name": "historical_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 3,
+          "name": "model_NorESM1-M_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 4,
+          "name": "model_NorESM1-M_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 5,
+          "name": "model_GFDL-ESM2M_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 6,
+          "name": "model_GFDL-ESM2M_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 7,
+          "name": "model_HadGEM2-ES_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 8,
+          "name": "model_HadGEM2-ES_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 9,
+          "name": "model_IPSL-CM5A-LR_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 10,
+          "name": "model_IPSL-CM5A-LR_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 11,
+          "name": "model_MIROC-ESM-CHEM_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 12,
+          "name": "model_MIROC-ESM-CHEM_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 13,
+          "name": "future_mean_depth_m_p10",
+          "unit": "m"
+        },
+        {
+          "index": 14,
+          "name": "future_mean_depth_m_p50",
+          "unit": "m"
+        },
+        {
+          "index": 15,
+          "name": "future_mean_depth_m_p90",
+          "unit": "m"
+        },
+        {
+          "index": 16,
+          "name": "mean_depth_m_change_sign_agreement",
+          "unit": "1"
+        },
+        {
+          "index": 17,
+          "name": "future_fraction_gt_0_5m_p10",
+          "unit": "1"
+        },
+        {
+          "index": 18,
+          "name": "future_fraction_gt_0_5m_p50",
+          "unit": "1"
+        },
+        {
+          "index": 19,
+          "name": "future_fraction_gt_0_5m_p90",
+          "unit": "1"
+        },
+        {
+          "index": 20,
+          "name": "fraction_gt_0_5m_change_sign_agreement",
+          "unit": "1"
+        },
+        {
+          "index": 21,
+          "name": "near_model_NorESM1-M_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 22,
+          "name": "near_model_NorESM1-M_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 23,
+          "name": "near_model_GFDL-ESM2M_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 24,
+          "name": "near_model_GFDL-ESM2M_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 25,
+          "name": "near_model_HadGEM2-ES_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 26,
+          "name": "near_model_HadGEM2-ES_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 27,
+          "name": "near_model_IPSL-CM5A-LR_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 28,
+          "name": "near_model_IPSL-CM5A-LR_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 29,
+          "name": "near_model_MIROC-ESM-CHEM_mean_depth_m",
+          "unit": "m"
+        },
+        {
+          "index": 30,
+          "name": "near_model_MIROC-ESM-CHEM_fraction_gt_0_5m",
+          "unit": "1"
+        },
+        {
+          "index": 31,
+          "name": "near_mean_depth_m_p10",
+          "unit": "m"
+        },
+        {
+          "index": 32,
+          "name": "near_mean_depth_m_p50",
+          "unit": "m"
+        },
+        {
+          "index": 33,
+          "name": "near_mean_depth_m_p90",
+          "unit": "m"
+        },
+        {
+          "index": 34,
+          "name": "near_mean_depth_m_change_sign_agreement",
+          "unit": "1"
+        },
+        {
+          "index": 35,
+          "name": "near_fraction_gt_0_5m_p10",
+          "unit": "1"
+        },
+        {
+          "index": 36,
+          "name": "near_fraction_gt_0_5m_p50",
+          "unit": "1"
+        },
+        {
+          "index": 37,
+          "name": "near_fraction_gt_0_5m_p90",
+          "unit": "1"
+        },
+        {
+          "index": 38,
+          "name": "near_fraction_gt_0_5m_change_sign_agreement",
+          "unit": "1"
+        }
+      ],
+      "band_count": 39,
+      "compressed_bytes": 5444186,
+      "decoded_bytes": 40435200,
+      "sha256": "988f3d3e4a72275d1f5481a750ebd92321bae04760b9ba4f839153745b865f2e",
+      "decoded_sha256": "63e6da0b4193c8273841e047c08b04378eafc3bf14a5b0ad007bcce6e5d52f0e",
+      "historical_period": [
+        1960,
+        1999
+      ],
+      "future_epoch": 2050,
+      "near_epoch": 2030,
+      "near_climate_period": [
+        2010,
+        2049
+      ],
+      "near_reference": "2030 climate epoch, not an annual 2026 observation",
+      "period_source": "Ward et al. 2020, Appendix A.1.1, page 10: 2030 uses 2010-49; 2050 uses 2030-69.",
+      "future_climate_period": [
+        2030,
+        2069
+      ],
+      "sea_level_percentile": null,
+      "subsidence": null,
+      "models": [
+        "NorESM1-M",
+        "GFDL-ESM2M",
+        "HadGEM2-ES",
+        "IPSL-CM5A-LR",
+        "MIROC-ESM-CHEM"
+      ],
+      "native_valid_mask_sha256": "b3659fb3b8fc0e34bba6b1456539c2c64bd1167b2fbf5f5b5c874eb9d3830853",
+      "native_masks_identical": true
+    }
+  },
+  "sources": [
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_historical_000000000WATCH_1980_rp00100.tif",
+      "hazard": "river",
+      "scenario": "historical",
+      "model": "WATCH",
+      "epoch": "historical",
+      "climate_period": [
+        1960,
+        1999
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_historical_000000000WATCH_1980_rp00100.tif",
+      "bytes": 92162308,
+      "sha256": "a63c94a3c7787f937d923e93465571c53cc4b2765678336c3ece78a491f2a5d7",
+      "http": {
+        "ETag": "\"fcb9a2e7b44b9969db7ee7a7102ef5ce-11\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:38:50 GMT",
+        "x-amz-version-id": "u3qCYgF48ksDngBZgwuXinOXWk0_oXib"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:21.613803+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inuncoast_historical_nosub_hist_rp0100_0.tif",
+      "hazard": "coast",
+      "scenario": "historical",
+      "epoch": "historical",
+      "climate_period": [
+        1979,
+        2014
+      ],
+      "subsidence": false,
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inuncoast_historical_nosub_hist_rp0100_0.tif",
+      "bytes": 46382660,
+      "sha256": "03886accac54b4a6f7ebaff05e657aea115f05714d2376029edc3629ac871cb1",
+      "http": {
+        "ETag": "\"a02cd775dfa60a40f9c78cb2fe9c10d8-6\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:36:30 GMT",
+        "x-amz-version-id": "kDBnPbUGGS620EZY.gYSCd5sd8iMCBUK"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:21.780486+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inuncoast_rcp8p5_nosub_2050_rp0100_0_perc_50.tif",
+      "hazard": "coast",
+      "scenario": "rcp8p5",
+      "epoch": 2050,
+      "sea_level_percentile": 50,
+      "subsidence": false,
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inuncoast_rcp8p5_nosub_2050_rp0100_0_perc_50.tif",
+      "bytes": 47204440,
+      "sha256": "6e2df75fd4878314cddc9974ba3386091be65554536684d7516c82268a494bf5",
+      "http": {
+        "ETag": "\"7f75ec497aa7cb735681d16c41ea0859-6\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:38:06 GMT",
+        "x-amz-version-id": ".pWsast_4ErIOO0u1VJAmHmnh3zRrwBZ"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:21.473196+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_00000NorESM1-M_2050_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "NorESM1-M",
+      "epoch": 2050,
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00000NorESM1-M_2050_rp00100.tif",
+      "bytes": 92460904,
+      "sha256": "b4fb2446e0af6025485a5fcbbac1378157b8cc8ea1446e396743df16956e6356",
+      "http": {
+        "ETag": "\"342f82604b1caa2d0df9e54efdc8327c-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:15 GMT",
+        "x-amz-version-id": "9a8x3FS7G_LZQctRIXYcFv5eWcDFSiFb"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:21.505745+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_0000GFDL-ESM2M_2050_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "GFDL-ESM2M",
+      "epoch": 2050,
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000GFDL-ESM2M_2050_rp00100.tif",
+      "bytes": 93772042,
+      "sha256": "44678062c26ff1d2e3d66af3d45dcbca2ac764ca99ee56daf978a6fe754c0f36",
+      "http": {
+        "ETag": "\"79f0c94b425c25f103e4161131ff34a7-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:29 GMT",
+        "x-amz-version-id": "DRyOnk8Z5.8C1R0JFCpcSAQLKJVT6R4K"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:22.027711+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_0000HadGEM2-ES_2050_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "HadGEM2-ES",
+      "epoch": 2050,
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000HadGEM2-ES_2050_rp00100.tif",
+      "bytes": 93290058,
+      "sha256": "1d9a71eeec1e754249fbe79bf2c370f42d5a9020ba6e00cd3d13841f299b1d75",
+      "http": {
+        "ETag": "\"dfed1a7391204d23938d36a3cf916076-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:44 GMT",
+        "x-amz-version-id": "rUqX1EJWQHfEsNkTtqnFPVKkm5ooK81K"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:22.046744+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_00IPSL-CM5A-LR_2050_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "IPSL-CM5A-LR",
+      "epoch": 2050,
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00IPSL-CM5A-LR_2050_rp00100.tif",
+      "bytes": 93524676,
+      "sha256": "dd6bf67c0a2fcab48a7dcff1c8c8648f0da17953596a80f90b6ee108c07dbeeb",
+      "http": {
+        "ETag": "\"f13316078ce9174856097c718fbdc6b4-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:59 GMT",
+        "x-amz-version-id": "Ce.9SsRU9NufKY1mwI_6T07vc4w1tCz9"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:22.213880+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_MIROC-ESM-CHEM_2050_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "MIROC-ESM-CHEM",
+      "epoch": 2050,
+      "climate_period": [
+        2030,
+        2069
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_MIROC-ESM-CHEM_2050_rp00100.tif",
+      "bytes": 93079836,
+      "sha256": "a92545aef351f876afa99f9c8230d77b5a63def3af6988d1fd91d5d5b77311cb",
+      "http": {
+        "ETag": "\"9c8325a5bb13efaa316410cd558b7487-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:41:13 GMT",
+        "x-amz-version-id": "QPaVaE3Lkaj5BmroN1TqTVCZyV8kKMQX"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:40:23.296777+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inuncoast_rcp8p5_nosub_2030_rp0100_0_perc_50.tif",
+      "hazard": "coast",
+      "scenario": "rcp8p5",
+      "epoch": 2030,
+      "sea_level_percentile": 50,
+      "subsidence": false,
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inuncoast_rcp8p5_nosub_2030_rp0100_0_perc_50.tif",
+      "bytes": 46804614,
+      "sha256": "555ccdfcbb81c3c927bc1da35929b76445db6490be28de338fe126ea3778a509",
+      "http": {
+        "ETag": "\"8f8832111a2fcefd94fb341067d11d02-6\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:37:55 GMT",
+        "x-amz-version-id": "3eGgUKZGam6QJODXIWgPP2PugL8xNLAY"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:55:56.474273+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_00000NorESM1-M_2030_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "NorESM1-M",
+      "epoch": 2030,
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00000NorESM1-M_2030_rp00100.tif",
+      "bytes": 92006424,
+      "sha256": "0a5fcd52e5b2f30f7490571b875358373406072fb3bc6149b8a06c8f385d4465",
+      "http": {
+        "ETag": "\"99f91974248f0e7d4b2a065bf5cdcc35-11\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:09 GMT",
+        "x-amz-version-id": "Uy4i2LwdMcPbM1rD1ErZoDDU5RoVT7ry"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:56:24.146220+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_0000GFDL-ESM2M_2030_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "GFDL-ESM2M",
+      "epoch": 2030,
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000GFDL-ESM2M_2030_rp00100.tif",
+      "bytes": 92886020,
+      "sha256": "8d656e8efae8b7180627d9f3b7e316dfe8a75a98101b328cd79d21ef4dbf7d86",
+      "http": {
+        "ETag": "\"cbb9c1cf6c33cc7e664be491a0c9ca34-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:24 GMT",
+        "x-amz-version-id": "PadxdP6Dh0QqWMcO8SRUDhT87yD.oQGK"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:56:24.425377+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_0000HadGEM2-ES_2030_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "HadGEM2-ES",
+      "epoch": 2030,
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_0000HadGEM2-ES_2030_rp00100.tif",
+      "bytes": 93114616,
+      "sha256": "52bbdd379aeaa0b20ae54c079583b590bfcf5a92a824e189aa478d48bb467629",
+      "http": {
+        "ETag": "\"9e66981b8db434d6f234f64acba245f6-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:39 GMT",
+        "x-amz-version-id": "ANYySsSEU4x7dj4fQR6Ith2vO70jbN1E"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:56:23.052870+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_00IPSL-CM5A-LR_2030_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "IPSL-CM5A-LR",
+      "epoch": 2030,
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_00IPSL-CM5A-LR_2030_rp00100.tif",
+      "bytes": 93117726,
+      "sha256": "182e35baa5820c3c6e015a3cae39148eed9f888e50458ee2b6a5e33169baddd2",
+      "http": {
+        "ETag": "\"59b6c127be8c60ef73a8d9e2e450b73d-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:40:54 GMT",
+        "x-amz-version-id": "VXs0jhKiEwk_nncFB_kI9xrUnuLi2kLF"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:56:55.534875+00:00"
+    },
+    {
+      "return_period_years": 100,
+      "unit": "m",
+      "flood_protection": "not modelled",
+      "filename": "inunriver_rcp8p5_MIROC-ESM-CHEM_2030_rp00100.tif",
+      "hazard": "river",
+      "scenario": "rcp8p5",
+      "model": "MIROC-ESM-CHEM",
+      "epoch": 2030,
+      "climate_period": [
+        2010,
+        2049
+      ],
+      "url": "https://aqueduct.wridata.org/AqueductFloods20/inunriver_rcp8p5_MIROC-ESM-CHEM_2030_rp00100.tif",
+      "bytes": 92477880,
+      "sha256": "a51580072ac9fb2bbda15be855c538370cc3f5966d60b3efd5d49f0b8dc3d511",
+      "http": {
+        "ETag": "\"81fe66771c9468ee8a189eeb98f2e6d2-12\"",
+        "Last-Modified": "Fri, 27 Mar 2026 18:41:09 GMT",
+        "x-amz-version-id": "hx47Wj2TNeH.zKfK3Y.dEyElaSyZLLbi"
+      },
+      "http_range_verified": true,
+      "raster": {
+        "width": 43200,
+        "height": 21600,
+        "crs": "EPSG:4326",
+        "transform": [
+          0.008333333333333333,
+          0.0,
+          -180.0,
+          0.0,
+          -0.008333333333333333,
+          90.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "nodata": -9999.0,
+        "block_shapes": [
+          [
+            1,
+            43200
+          ]
+        ],
+        "overviews": []
+      },
+      "retrieved_utc": "2026-09-08T05:57:19.976893+00:00"
+    }
+  ]
+}

@@ -1,0 +1,843 @@
+{
+  "sources": [
+    {
+      "period": "1970-2000",
+      "variable": "tmin",
+      "filename": "wc2.1_10m_tmin.zip",
+      "url": "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tmin.zip",
+      "resolved_url": "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tmin.zip",
+      "sha256": "918edb6cc60786ec3335c544237074fe2ce50c1d83f0fa7bfd47921b26f3df9b",
+      "bytes": 37605037,
+      "retrieved_utc": "2026-09-08T05:51:31.509617+00:00",
+      "last_modified": "Tue, 19 Feb 2019 06:04:47 GMT"
+    },
+    {
+      "period": "1970-2000",
+      "variable": "tmax",
+      "filename": "wc2.1_10m_tmax.zip",
+      "url": "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tmax.zip",
+      "resolved_url": "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tmax.zip",
+      "sha256": "599d56a7745a2cd0a50dbe77e15fcb19d06a2c57e5c6922a18155388a58f4f20",
+      "bytes": 37446442,
+      "retrieved_utc": "2026-09-08T05:52:02.893152+00:00",
+      "last_modified": "Tue, 19 Feb 2019 06:04:47 GMT"
+    },
+    {
+      "period": "1970-2000",
+      "variable": "prec",
+      "filename": "wc2.1_10m_prec.zip",
+      "url": "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_prec.zip",
+      "resolved_url": "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_prec.zip",
+      "sha256": "1090f578f6402672a2b6438e252156f6cf867a25002a8ad6ffcbfa19e516ddc6",
+      "bytes": 7258539,
+      "retrieved_utc": "2026-09-08T05:52:00.433057+00:00",
+      "last_modified": "Tue, 10 Mar 2020 03:25:13 GMT"
+    },
+    {
+      "period": "2021-2040",
+      "variable": "tmin",
+      "filename": "wc2.1_10m_tmin_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmin_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "resolved_url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmin_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "sha256": "443fb7fdb5305ec279b7227f0b0927146048fa730f415dd305e3513f3f6734c2",
+      "bytes": 17871538,
+      "retrieved_utc": "2026-09-08T05:52:54.885498+00:00",
+      "last_modified": "Mon, 30 May 2022 01:34:14 GMT"
+    },
+    {
+      "period": "2021-2040",
+      "variable": "tmax",
+      "filename": "wc2.1_10m_tmax_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmax_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "resolved_url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmax_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "sha256": "5c87c4298357645e546a5967101be7cd160bf3bcb1ddc17f8e7567f659234172",
+      "bytes": 17872762,
+      "retrieved_utc": "2026-09-08T05:52:14.782479+00:00",
+      "last_modified": "Mon, 06 Dec 2021 06:17:56 GMT"
+    },
+    {
+      "period": "2021-2040",
+      "variable": "prec",
+      "filename": "wc2.1_10m_prec_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_prec_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "resolved_url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_prec_MPI-ESM1-2-HR_ssp370_2021-2040.tif",
+      "sha256": "ac83e035cef238e9ea837067009a95da9b858d290712e5824884355eb4f5aeff",
+      "bytes": 18369669,
+      "retrieved_utc": "2026-09-08T05:53:00.455376+00:00",
+      "last_modified": "Tue, 30 Nov 2021 06:59:01 GMT"
+    },
+    {
+      "period": "2041-2060",
+      "variable": "tmin",
+      "filename": "wc2.1_10m_tmin_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmin_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "resolved_url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmin_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "sha256": "9f452c08ab33aa3960f65582d38cdb2c419c4f755b11d686d433f04347c18e33",
+      "bytes": 17884678,
+      "retrieved_utc": "2026-09-08T05:53:16.673195+00:00",
+      "last_modified": "Mon, 30 May 2022 01:34:56 GMT"
+    },
+    {
+      "period": "2041-2060",
+      "variable": "tmax",
+      "filename": "wc2.1_10m_tmax_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmax_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "resolved_url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_tmax_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "sha256": "2bd814258f632d38cc96c47c7366484d1db20b42e6a436ba242ee006297a7ead",
+      "bytes": 17899946,
+      "retrieved_utc": "2026-09-08T05:53:34.522518+00:00",
+      "last_modified": "Mon, 06 Dec 2021 06:18:42 GMT"
+    },
+    {
+      "period": "2041-2060",
+      "variable": "prec",
+      "filename": "wc2.1_10m_prec_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_prec_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "resolved_url": "https://geodata.ucdavis.edu/cmip6/10m/MPI-ESM1-2-HR/ssp370/wc2.1_10m_prec_MPI-ESM1-2-HR_ssp370_2041-2060.tif",
+      "sha256": "9a912c64c89edb04c5a9f715931f11a10a291775512a3d0e3874ca07f7371b0f",
+      "bytes": 18380904,
+      "retrieved_utc": "2026-09-08T05:53:21.031939+00:00",
+      "last_modified": "Tue, 30 Nov 2021 06:59:27 GMT"
+    }
+  ],
+  "citations": [
+    "https://www.worldclim.org/data/worldclim21.html",
+    "https://www.worldclim.org/data/cmip6/cmip6climate.html",
+    "https://www.worldclim.org/data/cmip6/cmip6_clim10m.html",
+    "https://doi.org/10.1002/joc.5086",
+    "https://statistics.cepal.org/portal/cepalstat/technical-sheet.html?indicator_id=4567&lang=en"
+  ],
+  "disclosures": [
+    "Historical data are interpolated climatology for 1970-2000, not present-day observations.",
+    "Future data are bias-corrected downscaled climatological period means from one model under SSP3-7.0 (ssp370), not annual forecasts.",
+    "No hot-day counts or monthly-distribution estimates of observed extremes are produced.",
+    "Source cells with any monthly tmin > tmax or negative precipitation are masked, never silently corrected.",
+    "Separate flood projections use 8.5 forcing; do not present the layers as a shared-scenario forecast."
+  ],
+  "verification_samples": [
+    {
+      "period": "1970-2000",
+      "name": "Dhaka",
+      "latitude": 23.81,
+      "longitude": 90.41,
+      "row": 397,
+      "column": 1622,
+      "mask": 3,
+      "values": [
+        25.901426315307617,
+        2145.0,
+        33.742000579833984,
+        59.74692916870117
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "Paris",
+      "latitude": 48.86,
+      "longitude": 2.35,
+      "row": 246,
+      "column": 1094,
+      "mask": 3,
+      "values": [
+        11.448124885559082,
+        641.0,
+        24.82925033569336,
+        29.886062622070312
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "Phoenix",
+      "latitude": 33.45,
+      "longitude": -112.07,
+      "row": 339,
+      "column": 407,
+      "mask": 3,
+      "values": [
+        22.371843338012695,
+        202.0,
+        41.22224807739258,
+        6.239990711212158
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "Singapore",
+      "latitude": 1.35,
+      "longitude": 103.82,
+      "row": 531,
+      "column": 1702,
+      "mask": 3,
+      "values": [
+        26.654298782348633,
+        2304.0,
+        30.818389892578125,
+        62.857566833496094
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "Sydney",
+      "latitude": -33.87,
+      "longitude": 151.21,
+      "row": 743,
+      "column": 1987,
+      "mask": 3,
+      "values": [
+        17.820810317993164,
+        1239.0,
+        26.35965919494629,
+        44.53500747680664
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "Yakutsk",
+      "latitude": 62.03,
+      "longitude": 129.73,
+      "row": 167,
+      "column": 1858,
+      "mask": 3,
+      "values": [
+        -9.64523983001709,
+        246.0,
+        25.3487491607666,
+        693.4258422851562
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "Pacific",
+      "latitude": 0,
+      "longitude": -140,
+      "row": 540,
+      "column": 240,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "northwest",
+      "latitude": 90,
+      "longitude": -180,
+      "row": 0,
+      "column": 0,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "southeast",
+      "latitude": -90,
+      "longitude": 180,
+      "row": 1079,
+      "column": 2159,
+      "mask": 1,
+      "values": [
+        -31.620332717895508,
+        7.0,
+        -15.701000213623047,
+        null
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "equator",
+      "latitude": 0,
+      "longitude": 0,
+      "row": 540,
+      "column": 1080,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "name": "source_temperature_inversion",
+      "latitude": 80.75,
+      "longitude": 62.08333333333334,
+      "row": 55,
+      "column": 1452,
+      "mask": 3,
+      "values": [
+        0.0,
+        199.0,
+        0.5,
+        19.899999618530273
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "Dhaka",
+      "latitude": 23.81,
+      "longitude": 90.41,
+      "row": 397,
+      "column": 1622,
+      "mask": 3,
+      "values": [
+        26.112499237060547,
+        2093.900146484375,
+        33.599998474121094,
+        57.98269271850586
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "Paris",
+      "latitude": 48.86,
+      "longitude": 2.35,
+      "row": 246,
+      "column": 1094,
+      "mask": 3,
+      "values": [
+        12.441666603088379,
+        642.4000244140625,
+        26.899999618530273,
+        28.625324249267578
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "Phoenix",
+      "latitude": 33.45,
+      "longitude": -112.07,
+      "row": 339,
+      "column": 407,
+      "mask": 3,
+      "values": [
+        23.733333587646484,
+        188.8000030517578,
+        42.29999923706055,
+        5.596837997436523
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "Singapore",
+      "latitude": 1.35,
+      "longitude": 103.82,
+      "row": 531,
+      "column": 1702,
+      "mask": 3,
+      "values": [
+        27.204166412353516,
+        2468.39990234375,
+        31.200000762939453,
+        66.34740447998047
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "Sydney",
+      "latitude": -33.87,
+      "longitude": 151.21,
+      "row": 743,
+      "column": 1987,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "Yakutsk",
+      "latitude": 62.03,
+      "longitude": 129.73,
+      "row": 167,
+      "column": 1858,
+      "mask": 3,
+      "values": [
+        -7.5916666984558105,
+        256.29998779296875,
+        26.700000762939453,
+        106.4221420288086
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "Pacific",
+      "latitude": 0,
+      "longitude": -140,
+      "row": 540,
+      "column": 240,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "northwest",
+      "latitude": 90,
+      "longitude": -180,
+      "row": 0,
+      "column": 0,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "southeast",
+      "latitude": -90,
+      "longitude": 180,
+      "row": 1079,
+      "column": 2159,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "equator",
+      "latitude": 0,
+      "longitude": 0,
+      "row": 540,
+      "column": 1080,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "name": "source_temperature_inversion",
+      "latitude": 80.75,
+      "longitude": 62.08333333333334,
+      "row": 55,
+      "column": 1452,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "Dhaka",
+      "latitude": 23.81,
+      "longitude": 90.41,
+      "row": 397,
+      "column": 1622,
+      "mask": 3,
+      "values": [
+        26.641666412353516,
+        2089.699951171875,
+        34.0,
+        57.03070068359375
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "Paris",
+      "latitude": 48.86,
+      "longitude": 2.35,
+      "row": 246,
+      "column": 1094,
+      "mask": 3,
+      "values": [
+        13.129166603088379,
+        623.9000244140625,
+        28.399999618530273,
+        26.974599838256836
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "Phoenix",
+      "latitude": 33.45,
+      "longitude": -112.07,
+      "row": 339,
+      "column": 407,
+      "mask": 3,
+      "values": [
+        24.387500762939453,
+        188.89999389648438,
+        42.79999923706055,
+        5.493275165557861
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "Singapore",
+      "latitude": 1.35,
+      "longitude": 103.82,
+      "row": 531,
+      "column": 1702,
+      "mask": 3,
+      "values": [
+        27.741666793823242,
+        2483.699951171875,
+        31.799999237060547,
+        65.80790710449219
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "Sydney",
+      "latitude": -33.87,
+      "longitude": 151.21,
+      "row": 743,
+      "column": 1987,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "Yakutsk",
+      "latitude": 62.03,
+      "longitude": 129.73,
+      "row": 167,
+      "column": 1858,
+      "mask": 3,
+      "values": [
+        -6.587499618530273,
+        255.8000030517578,
+        27.0,
+        74.95970153808594
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "Pacific",
+      "latitude": 0,
+      "longitude": -140,
+      "row": 540,
+      "column": 240,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "northwest",
+      "latitude": 90,
+      "longitude": -180,
+      "row": 0,
+      "column": 0,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "southeast",
+      "latitude": -90,
+      "longitude": 180,
+      "row": 1079,
+      "column": 2159,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "equator",
+      "latitude": 0,
+      "longitude": 0,
+      "row": 540,
+      "column": 1080,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "name": "source_temperature_inversion",
+      "latitude": 80.75,
+      "longitude": 62.08333333333334,
+      "row": 55,
+      "column": 1452,
+      "mask": 0,
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  ],
+  "abi": "terra-climate-v2",
+  "shape": [
+    360,
+    720,
+    12
+  ],
+  "width": 720,
+  "height": 360,
+  "dtype": "little-endian float32",
+  "compression": "gzip",
+  "nodata": "IEEE NaN",
+  "layout": "row-major, cell-interleaved fields; north to south, west to east; no header",
+  "byte_offset": "4 * ((row * 720 + column) * 12 + field)",
+  "fields": [
+    {
+      "id": "annual_mean_temperature",
+      "unit": "degC",
+      "formula": "mean_months((tmin+tmax)/2)",
+      "note": "Derived midpoint estimate, equal month weights; not separately supplied tavg.",
+      "period": "1970-2000",
+      "index": 0
+    },
+    {
+      "id": "annual_precipitation",
+      "unit": "mm/year",
+      "formula": "sum_months(prec)",
+      "period": "1970-2000",
+      "index": 1
+    },
+    {
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "unit": "degC",
+      "formula": "max_months(tmax)",
+      "note": "Monthly mean of daily maxima; not an extreme daily observation.",
+      "period": "1970-2000",
+      "index": 2
+    },
+    {
+      "id": "de_martonne_aridity",
+      "unit": "index",
+      "formula": "annual_precipitation/(annual_mean_temperature+10)",
+      "note": "Defined only for T > -10 C; larger means wetter relative to temperature. Not water availability.",
+      "period": "1970-2000",
+      "index": 3
+    },
+    {
+      "id": "annual_mean_temperature",
+      "unit": "degC",
+      "formula": "mean_months((tmin+tmax)/2)",
+      "note": "Derived midpoint estimate, equal month weights; not separately supplied tavg.",
+      "period": "2021-2040",
+      "index": 4
+    },
+    {
+      "id": "annual_precipitation",
+      "unit": "mm/year",
+      "formula": "sum_months(prec)",
+      "period": "2021-2040",
+      "index": 5
+    },
+    {
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "unit": "degC",
+      "formula": "max_months(tmax)",
+      "note": "Monthly mean of daily maxima; not an extreme daily observation.",
+      "period": "2021-2040",
+      "index": 6
+    },
+    {
+      "id": "de_martonne_aridity",
+      "unit": "index",
+      "formula": "annual_precipitation/(annual_mean_temperature+10)",
+      "note": "Defined only for T > -10 C; larger means wetter relative to temperature. Not water availability.",
+      "period": "2021-2040",
+      "index": 7
+    },
+    {
+      "id": "annual_mean_temperature",
+      "unit": "degC",
+      "formula": "mean_months((tmin+tmax)/2)",
+      "note": "Derived midpoint estimate, equal month weights; not separately supplied tavg.",
+      "period": "2041-2060",
+      "index": 8
+    },
+    {
+      "id": "annual_precipitation",
+      "unit": "mm/year",
+      "formula": "sum_months(prec)",
+      "period": "2041-2060",
+      "index": 9
+    },
+    {
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "unit": "degC",
+      "formula": "max_months(tmax)",
+      "note": "Monthly mean of daily maxima; not an extreme daily observation.",
+      "period": "2041-2060",
+      "index": 10
+    },
+    {
+      "id": "de_martonne_aridity",
+      "unit": "index",
+      "formula": "annual_precipitation/(annual_mean_temperature+10)",
+      "note": "Defined only for T > -10 C; larger means wetter relative to temperature. Not water availability.",
+      "period": "2041-2060",
+      "index": 11
+    }
+  ],
+  "crs": "EPSG:4326",
+  "bounds": [
+    -180,
+    -90,
+    180,
+    90
+  ],
+  "resolution_degrees": 0.5,
+  "cell_center": {
+    "longitude": "-180 + (column + 0.5)/2",
+    "latitude": "90 - (row + 0.5)/2"
+  },
+  "aggregation": "Arithmetic mean of valid native 3x3 cells per derived metric; no imputation. De Martonne is mean of native indices, not ratio of averaged metrics. Zero coverage yields NaN.",
+  "coverage_definition": "uint8 valid native-cell count 0..9 for each field, same shape and cell-interleaved layout as grid",
+  "periods": [
+    {
+      "id": "1970-2000",
+      "years": [
+        1970,
+        2000
+      ],
+      "kind": "historical_climatology",
+      "model": null,
+      "scenario": null,
+      "source_quality": {
+        "missing_input_cells": 1524747,
+        "temperature_inversion_cells": 0,
+        "negative_precipitation_cells": 0
+      }
+    },
+    {
+      "id": "2021-2040",
+      "years": [
+        2021,
+        2040
+      ],
+      "kind": "projected_climatology",
+      "model": "MPI-ESM1-2-HR",
+      "scenario": "SSP3-7.0",
+      "source_quality": {
+        "missing_input_cells": 1577463,
+        "temperature_inversion_cells": 1,
+        "negative_precipitation_cells": 0
+      }
+    },
+    {
+      "id": "2041-2060",
+      "years": [
+        2041,
+        2060
+      ],
+      "kind": "projected_climatology",
+      "model": "MPI-ESM1-2-HR",
+      "scenario": "SSP3-7.0",
+      "source_quality": {
+        "missing_input_cells": 1577463,
+        "temperature_inversion_cells": 5,
+        "negative_precipitation_cells": 0
+      }
+    }
+  ],
+  "places": {
+    "json": {
+      "file": "places.json",
+      "bytes": 1493989,
+      "sha256": "97a2ee63a8cb5986bbc90fe9d0fb7b1ff6a37605707d9ceba217da99d38c9c07"
+    },
+    "coordinates": {
+      "file": "places.bin",
+      "bytes": 818376,
+      "sha256": "b5ec2836fa6ad2c25892eaf4aed520cf438540ede98054f651d930608758159d"
+    },
+    "count": 34099,
+    "coordinate_layout": "places.bin 24-byte records; latitude, longitude int16LE at offsets 0,2 divided by 100",
+    "sampling": "nearest cell center, ties toward south/east; clamp exact geographic endpoints; no nearest-land substitution",
+    "layout": "places.json villes order; point-interleaved 12 fields",
+    "native_shape": [
+      1080,
+      2160
+    ],
+    "native_resolution_degrees": 0.16666666666666666
+  },
+  "importer_sha256": "7b1899b882b34cf0722224298b24b26f13c26e32d8697eb375529a0978353c05",
+  "grid": {
+    "file": "climate-grid.bin",
+    "bytes": 3478238,
+    "sha256": "605744bc0d4e1f14a9b5829319b72c7fcb878c756d7ec15c7c6d690a6190daf0",
+    "compression": "gzip",
+    "uncompressed_bytes": 12441600,
+    "uncompressed_sha256": "a801d7a1acae69ca5d1ebc1ef2d1ef28e4ab65fdad3558b650980decd8cbc426",
+    "shape": [
+      360,
+      720,
+      12
+    ]
+  },
+  "coverage": {
+    "file": "climate-coverage.bin",
+    "bytes": 47648,
+    "sha256": "69d6f9c40bcde5932a4823bc6a80f8ec31dd28d2f8e7581fdb3cedeb2d37cbb3",
+    "compression": "gzip",
+    "uncompressed_bytes": 3110400,
+    "uncompressed_sha256": "9fe9de5ab533da08c0c92622033d1bb15b8eae032011486dd012fbf96b4d3f45",
+    "shape": [
+      360,
+      720,
+      12
+    ]
+  },
+  "points": {
+    "file": "climate-points.bin",
+    "bytes": 1119882,
+    "sha256": "7c8b6d0a7e22ce1a77541039b2132630af80b761db1044debeca37564fc3a6e8",
+    "compression": "gzip",
+    "uncompressed_bytes": 1636752,
+    "uncompressed_sha256": "c7db82c6fe0fc5061216873f856e69fada7dd061acb72ceafd0e083d6273521f",
+    "shape": [
+      34099,
+      12
+    ]
+  }
+}

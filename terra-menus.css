@@ -1018,11 +1018,12 @@ body.pret #dossier #timeline .an { display: block; width: 100%; font-family: var
 #dossier .coords { text-transform: none; letter-spacing: 0; }
 #dossier .duel:not([hidden]) { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; }
 #dossier .duel { margin-top: 14px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--fiche-ligne); border-radius: 8px; }
+#dossier .comparison-missing { flex-basis: 100%; text-align: center; color: var(--fiche-mute); font-size: 12px; }
 #dossier .actions { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 8px; flex: none; padding: 14px 18px; border-top: 1px solid var(--fiche-ligne); background: var(--fiche-fond); }
 #dossier .actions button { display: flex; align-items: center; justify-content: center; min-height: 46px; padding: 8px; border: 1px solid #ffffff25; border-radius: 8px; font-size: 13px; font-weight: 500; line-height: 1.25; text-align: center; }
 #dossier .actions button:hover { background: #ffffff16; }
 #dossier .actions #dossier-story { background: linear-gradient(115deg, #d8e5f01f, #8cabc329); color: #f2f3ef; border-color: #ffffff40; }
-#dossier.sans-donnees :is(.trajectoire,.fiche-risques,.fiche-indice,.comparer) { display: none; }
+#dossier.sans-donnees :is(.trajectoire,.fiche-indice) { display: none; }
 #scrim-dossier { position: fixed; inset: 0; z-index: 15; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent 35%, #0005); transition: opacity 220ms ease; }
 #scrim-dossier.ouvert { opacity: 1; }
 body:not(.pret) #dossier { visibility: hidden; }

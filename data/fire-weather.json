@@ -1,0 +1,337 @@
+{
+  "source": "https://www.research-collection.ethz.ch/server/api/core/bitstreams/21ebf431-5c20-4a85-82c6-bb96df91daaa/content",
+  "doi": "10.3929/ethz-b-000583391",
+  "archive": "fwixd_hurs.zip",
+  "archiveChecksum": {
+    "checkSumAlgorithm": "MD5",
+    "value": "6d4d066589519f78ed6f31c7b457ee29"
+  },
+  "scenario": "ssp370",
+  "members": [
+    {
+      "model": "ACCESS-CM2",
+      "file": "fwixd_ann_ACCESS-CM2_historical_r1i1p1f1_g025.nc",
+      "sha256": "e58fa31893786f9b27bfd1ef3c115d25306f0f79d96923fade8800dc2474412f",
+      "crc32": "0cd3a49d"
+    },
+    {
+      "model": "ACCESS-CM2",
+      "file": "fwixd_ann_ACCESS-CM2_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "86166fb314d379ae11e2e9aa55e328f6d45a33253c4969f1bbddd048a3632194",
+      "crc32": "46bea6f3"
+    },
+    {
+      "model": "ACCESS-ESM1-5",
+      "file": "fwixd_ann_ACCESS-ESM1-5_historical_r1i1p1f1_g025.nc",
+      "sha256": "12fed10480009f1b7f667bb95f801ee36787bc9c4fb9d15f7659a03a08a13b70",
+      "crc32": "5175f2e2"
+    },
+    {
+      "model": "ACCESS-ESM1-5",
+      "file": "fwixd_ann_ACCESS-ESM1-5_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "e69cf84899f11ef4020516234131825080444ce13c901325718f6c8954b87835",
+      "crc32": "503fe066"
+    },
+    {
+      "model": "CMCC-CM2-SR5",
+      "file": "fwixd_ann_CMCC-CM2-SR5_historical_r1i1p1f1_g025.nc",
+      "sha256": "78763ba1c9dac3b567e2c93418d89b6461e7edd5e383047e3c4ef7c21c6b2660",
+      "crc32": "78d95bc9"
+    },
+    {
+      "model": "CMCC-CM2-SR5",
+      "file": "fwixd_ann_CMCC-CM2-SR5_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "0c9b9abeee89ee74d234d68f62311473728746a35883ee440f9b939a15cdf109",
+      "crc32": "7256c86f"
+    },
+    {
+      "model": "CMCC-ESM2",
+      "file": "fwixd_ann_CMCC-ESM2_historical_r1i1p1f1_g025.nc",
+      "sha256": "11e91db06ce4e6d91f384fde85835121be62e2dd71f89aa593ad588aeb8d307a",
+      "crc32": "2cec861b"
+    },
+    {
+      "model": "CMCC-ESM2",
+      "file": "fwixd_ann_CMCC-ESM2_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "18e6696f380be09422de2dc0bdd434173a7d143098f1beab3d65e005ae755708",
+      "crc32": "7a883b87"
+    },
+    {
+      "model": "CanESM5",
+      "file": "fwixd_ann_CanESM5_historical_r1i1p1f1_g025.nc",
+      "sha256": "3513332a64372919190b0e1a70cf60f76f83d3f369d250a4638b7182a388c75b",
+      "crc32": "f94c8165"
+    },
+    {
+      "model": "CanESM5",
+      "file": "fwixd_ann_CanESM5_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "fcfb96cb02edce98b2614549ef9858d46b1a170b10c50ae9049c0fbd0445fc27",
+      "crc32": "6dd9f9e6"
+    },
+    {
+      "model": "EC-Earth3",
+      "file": "fwixd_ann_EC-Earth3_historical_r1i1p1f1_g025.nc",
+      "sha256": "713da853588554a25b0c5e3d1d65e6fb51f53b527d38257df33f3a16fc5483dd",
+      "crc32": "e447f8ed"
+    },
+    {
+      "model": "EC-Earth3",
+      "file": "fwixd_ann_EC-Earth3_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "11b806a898c0301a9d33b1f98fde5f2dab567e6e51fc372291ada6bbb83c5b6b",
+      "crc32": "53791a8f"
+    },
+    {
+      "model": "FGOALS-g3",
+      "file": "fwixd_ann_FGOALS-g3_historical_r1i1p1f1_g025.nc",
+      "sha256": "f610e43ded931c112da48e1a4dbe56d606ec880f31a9cb04cc96b52cde93be58",
+      "crc32": "bffad016"
+    },
+    {
+      "model": "FGOALS-g3",
+      "file": "fwixd_ann_FGOALS-g3_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "6179903d9e2009b6cad9d9bc842d1029df5f5ae9c2816a5e9dc14d4e998a6e4a",
+      "crc32": "2dc20389"
+    },
+    {
+      "model": "GFDL-ESM4",
+      "file": "fwixd_ann_GFDL-ESM4_historical_r1i1p1f1_g025.nc",
+      "sha256": "90a8369a1911b19b3df4f6e3b1fd5729008d1a859f09635e22a9d0628aa01e2a",
+      "crc32": "a9ffbaea"
+    },
+    {
+      "model": "GFDL-ESM4",
+      "file": "fwixd_ann_GFDL-ESM4_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "ae8d250c433c7efc61a88d880a654544297045c96e9768f0cf0d75eac65fbe69",
+      "crc32": "8db8ba4e"
+    },
+    {
+      "model": "INM-CM4-8",
+      "file": "fwixd_ann_INM-CM4-8_historical_r1i1p1f1_g025.nc",
+      "sha256": "7ef7ebd4ce1c086da2930228ec3fec74c5b478b9285cf3445e068f506bfb2414",
+      "crc32": "156d4090"
+    },
+    {
+      "model": "INM-CM4-8",
+      "file": "fwixd_ann_INM-CM4-8_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "c316e6d26f88f383bd041657069e9f1ece5888794b08c065a670fe07c714b470",
+      "crc32": "932990f2"
+    },
+    {
+      "model": "INM-CM5-0",
+      "file": "fwixd_ann_INM-CM5-0_historical_r1i1p1f1_g025.nc",
+      "sha256": "342da8faa73b614e1764db632f737660d364367d923e7573f6b12fdee52f6993",
+      "crc32": "bf815ce8"
+    },
+    {
+      "model": "INM-CM5-0",
+      "file": "fwixd_ann_INM-CM5-0_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "a576d46c8557096976cc9150ccf5f0ce59ef90c3aa1333275f1e534d0a30e1b0",
+      "crc32": "a19a751e"
+    },
+    {
+      "model": "IPSL-CM6A-LR",
+      "file": "fwixd_ann_IPSL-CM6A-LR_historical_r1i1p1f1_g025.nc",
+      "sha256": "78dd412a5cc3dba3e907283f8e9e85c372b29292060e5131aaa616b91a3cb493",
+      "crc32": "691f13e8"
+    },
+    {
+      "model": "IPSL-CM6A-LR",
+      "file": "fwixd_ann_IPSL-CM6A-LR_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "5890e62bb0e29cbca87e91a215d7c44e30fe866da39d52ae5a0b0a810e22ef9e",
+      "crc32": "07da2f5c"
+    },
+    {
+      "model": "KACE-1-0-G",
+      "file": "fwixd_ann_KACE-1-0-G_historical_r1i1p1f1_g025.nc",
+      "sha256": "42608ab3e8d0a9b4d52e499a07870eb01ffefde36f8ff17302e2d104c29e64d8",
+      "crc32": "f7d7c6ff"
+    },
+    {
+      "model": "KACE-1-0-G",
+      "file": "fwixd_ann_KACE-1-0-G_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "3880a313ed35c85f1a9dd1fd3e71a6ae8aef91c673105124e685e77115caba1c",
+      "crc32": "44fe782d"
+    },
+    {
+      "model": "MIROC-ES2L",
+      "file": "fwixd_ann_MIROC-ES2L_historical_r1i1p1f2_g025.nc",
+      "sha256": "a0f083cd5a128cabda4fa9b5590fefff730c79890ad8e099af27aa3e839f8cb1",
+      "crc32": "d90df0f9"
+    },
+    {
+      "model": "MIROC-ES2L",
+      "file": "fwixd_ann_MIROC-ES2L_ssp370_r1i1p1f2_g025.nc",
+      "sha256": "c1e9a8c6bd9c2655b46c55e64e13f057fbdb81ac9ec72c7a56f57688c435b31b",
+      "crc32": "6d67725f"
+    },
+    {
+      "model": "MIROC6",
+      "file": "fwixd_ann_MIROC6_historical_r1i1p1f1_g025.nc",
+      "sha256": "3c53f377fef953a168f8df4234a15f73987a9a3456ed3faf18b3d5573f8892f9",
+      "crc32": "f52f362a"
+    },
+    {
+      "model": "MIROC6",
+      "file": "fwixd_ann_MIROC6_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "97ab8a4db7174f27fe51689ce4975fcf1161d019a4910f71be1a4968902f5401",
+      "crc32": "bfb09e9d"
+    },
+    {
+      "model": "MPI-ESM1-2-HR",
+      "file": "fwixd_ann_MPI-ESM1-2-HR_historical_r1i1p1f1_g025.nc",
+      "sha256": "88a63e3e3c8a5abd60578df60756f09489aab1efba47b10ba978a0612fee3216",
+      "crc32": "4de989bb"
+    },
+    {
+      "model": "MPI-ESM1-2-HR",
+      "file": "fwixd_ann_MPI-ESM1-2-HR_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "51d2992d4f90436b008633af3ba9a72fdbb8b83fcb620818bb8586d2ade2ade5",
+      "crc32": "cfc4ccda"
+    },
+    {
+      "model": "MPI-ESM1-2-LR",
+      "file": "fwixd_ann_MPI-ESM1-2-LR_historical_r1i1p1f1_g025.nc",
+      "sha256": "727e37974753e06334a06947e287876f46b723b3b8aa8a66aa92aa4c2bde6bc0",
+      "crc32": "40dfecf6"
+    },
+    {
+      "model": "MPI-ESM1-2-LR",
+      "file": "fwixd_ann_MPI-ESM1-2-LR_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "17ff788544d444c02c859752f522fcf5b4c58314ce3cd7d49000ecf833b16ea4",
+      "crc32": "35b09dc7"
+    },
+    {
+      "model": "MRI-ESM2-0",
+      "file": "fwixd_ann_MRI-ESM2-0_historical_r1i1p1f1_g025.nc",
+      "sha256": "50d781c0a00d6488b67fcd498aceb0c98db56697b5c4dc67cde7653ca34651d7",
+      "crc32": "35bb1b2f"
+    },
+    {
+      "model": "MRI-ESM2-0",
+      "file": "fwixd_ann_MRI-ESM2-0_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "d2990e94cc86e77cd2b2016d476b6b1fe202012a7689ceba52b40bfb22d9d15a",
+      "crc32": "d024dc05"
+    },
+    {
+      "model": "NorESM2-LM",
+      "file": "fwixd_ann_NorESM2-LM_historical_r1i1p1f1_g025.nc",
+      "sha256": "36d16912bb2213d585ee91132ba42ca4b07561bfc1ca4c3f9e03f2c2b90ba24f",
+      "crc32": "5395b084"
+    },
+    {
+      "model": "NorESM2-LM",
+      "file": "fwixd_ann_NorESM2-LM_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "ddb2509646184638439b2e4fd295cb44868c659752f8527e725703c5cc00e470",
+      "crc32": "6bbd8974"
+    },
+    {
+      "model": "NorESM2-MM",
+      "file": "fwixd_ann_NorESM2-MM_historical_r1i1p1f1_g025.nc",
+      "sha256": "bc846eccb10a72115b206d9d5aebe29c76be5bf27b3607291a45013954a3b4f6",
+      "crc32": "ae7f50e2"
+    },
+    {
+      "model": "NorESM2-MM",
+      "file": "fwixd_ann_NorESM2-MM_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "19d16fdbc6b3bd7809f1e697c652823f8f7531bf155d4a54f6439bf608f7f7eb",
+      "crc32": "90c1a074"
+    },
+    {
+      "model": "TaiESM1",
+      "file": "fwixd_ann_TaiESM1_historical_r1i1p1f1_g025.nc",
+      "sha256": "8c48a38831c9e41fa7a63f356d945572947d89cfbff92011119a8ab2dd748db5",
+      "crc32": "a67e311c"
+    },
+    {
+      "model": "TaiESM1",
+      "file": "fwixd_ann_TaiESM1_ssp370_r1i1p1f1_g025.nc",
+      "sha256": "8fe3b68b5b3f4ce5363a48eac262811271c87a53308127931e65912e12d60881",
+      "crc32": "dbc3edad"
+    },
+    {
+      "model": "UKESM1-0-LL",
+      "file": "fwixd_ann_UKESM1-0-LL_historical_r1i1p1f2_g025.nc",
+      "sha256": "7a0bcbaac8b2a7ce6ea5c6f3c9b8c32af4f2026ad614ddfea4c131b494cb393b",
+      "crc32": "3e49c246"
+    },
+    {
+      "model": "UKESM1-0-LL",
+      "file": "fwixd_ann_UKESM1-0-LL_ssp370_r1i1p1f2_g025.nc",
+      "sha256": "1a4f4936c27d26f32073c84d8b29ae45c21ab734f1b4b9abbe58e451e658aa99",
+      "crc32": "533b14a8"
+    }
+  ],
+  "schema": 2,
+  "metric": "Days per year above the local preindustrial FWI 95th percentile",
+  "units": "days/year",
+  "thresholdReference": "1850\u20131899 (as recorded in source NetCDF)",
+  "historicalPeriod": [
+    1995,
+    2014
+  ],
+  "nearPeriod": [
+    2016,
+    2035
+  ],
+  "futurePeriod": [
+    2041,
+    2060
+  ],
+  "nearLabelYear": 2026,
+  "futureLabelYear": 2050,
+  "timeline": "Linear interpolation between two 20-year model climatologies; not observed annual fires",
+  "ensemble": "Equal weight per model; first available paired single-digit realization; arithmetic mean of 20-year means",
+  "modelCount": 21,
+  "models": [
+    "ACCESS-CM2",
+    "ACCESS-ESM1-5",
+    "CMCC-CM2-SR5",
+    "CMCC-ESM2",
+    "CanESM5",
+    "EC-Earth3",
+    "FGOALS-g3",
+    "GFDL-ESM4",
+    "INM-CM4-8",
+    "INM-CM5-0",
+    "IPSL-CM6A-LR",
+    "KACE-1-0-G",
+    "MIROC-ES2L",
+    "MIROC6",
+    "MPI-ESM1-2-HR",
+    "MPI-ESM1-2-LR",
+    "MRI-ESM2-0",
+    "NorESM2-LM",
+    "NorESM2-MM",
+    "TaiESM1",
+    "UKESM1-0-LL"
+  ],
+  "biasCorrection": false,
+  "uncertainty": "10th\u201390th percentiles of paired model changes; model spread, not a confidence interval",
+  "resolutionDegrees": 2.5,
+  "width": 144,
+  "height": 72,
+  "layout": "north-first, west-first, cell-interleaved float32 little-endian",
+  "fields": [
+    "historical",
+    "near",
+    "future",
+    "pairedChangeMean",
+    "pairedChangeP10",
+    "pairedChangeP90",
+    "signAgreement",
+    "burnableFraction"
+  ],
+  "nodata": "NaN; cells with more than 80% infrequently burning land cover excluded",
+  "maskSource": "spatial_info.nc, ESA CCI land cover 2016, distributed with the source dataset",
+  "maskSha256": "20da0c17de9dc06dff7ffa91a2fd8312d985abf7c72aea56402a98e947ffdfa0",
+  "license": "CC BY 4.0",
+  "article": "https://essd.copernicus.org/articles/15/2153/2023/",
+  "file": "fire-weather.bin",
+  "sha256": "43d964c3c02fcdbdb8073557b68bac02503c7858a8e092fe2e1d2c71f21e1b04",
+  "limitations": [
+    "Weather potential, not ignition, burned area or active fires",
+    "Regional grid; not a city-scale forecast",
+    "Uncorrected climate-model biases",
+    "Static 2016 land cover; no projected vegetation or land-use change"
+  ]
+}
