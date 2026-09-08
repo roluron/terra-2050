@@ -1309,19 +1309,20 @@ const matGlobe = new THREE.ShaderMaterial({
         float souffle = 0.94 + 0.06 * sin(vUv.y * 80.0 - uTemps * 0.7);
         vec3 variation = changement >= 0.0 ? vec3(0.95, 0.65, 0.25) : vec3(0.15, 0.65, 0.65);
         col = mix(col, variation, amplitude * uFeu * 0.85 * souffle);
-        vec2 cellules = vec2(420.0, 210.0);
+        vec2 cellules = vec2(260.0, 130.0);
         vec2 cellule = floor(vUv * cellules);
         vec2 centre = (cellule + 0.5) / cellules;
         float initial = texture2D(uB2026, centre).r;
         float futur = texture2D(uB2050, centre).r;
         float graine = fract(sin(dot(cellule, vec2(127.1, 311.7))) * 43758.5453);
-        float point = 1.0 - smoothstep(0.07, 0.19, length(fract(vUv * cellules) - 0.5));
+        float rythme = pow(0.5 + 0.5 * sin(uTemps * 2.2 + graine * 6.283 + cellule.y * 0.18), 2.0);
+        float rayon = 0.10 + 0.18 * rythme;
+        float point = 1.0 - smoothstep(rayon * 0.35, rayon, length(fract(vUv * cellules) - 0.5));
         float ecart = (futur - initial) * P;
         float forcePoint = clamp(abs(ecart) / 0.10, 0.0, 1.0);
-        float rythme = 0.80 + 0.20 * sin(uTemps * 1.4 + graine * 6.283);
-        vec3 couleurPoint = mix(vec3(0.48, 0.55, 0.60), ecart >= 0.0 ? vec3(1.0, 0.74, 0.36) : vec3(0.25, 0.88, 0.82), forcePoint);
+        vec3 couleurPoint = mix(vec3(0.70, 0.80, 0.88), ecart >= 0.0 ? vec3(1.0, 0.74, 0.36) : vec3(0.25, 0.88, 0.82), forcePoint);
         float densite = step(graine, 0.35) * step(0.06, max(initial, futur));
-        col = mix(col, couleurPoint, point * densite * terre * uFeu * (0.24 + 0.70 * forcePoint) * rythme);
+        col = mix(col, couleurPoint, point * densite * terre * uFeu * (0.55 + 0.40 * forcePoint) * (0.20 + 0.80 * rythme));
       }
 
       
