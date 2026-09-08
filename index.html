@@ -713,6 +713,7 @@ const nomPays = (() => {
 const GRILLES = {};
 let FIRE_WEATHER = null;
 let SCIENCE = null;
+let scienceLoadFailed = false;
 const SOURCE_INDEX = new WeakMap();
 const SCORE_CACHE = new Map();
 const COUNTRY_MEASURES_CACHE = { source: null, entries: new Map() };
@@ -747,8 +748,15 @@ function penalitePhysique(key, value){
     : key === 'feux' ? value / 366 : key === 'stabilite' ? value / 5 : value / 3;
   return Math.max(0, Math.min(1, normalized));
 }
+function unavailableScienceText(){
+  const en = langue === 'en';
+  if (!SCIENCE) return scienceLoadFailed
+    ? { title: en ? 'Download failed' : 'Échec du téléchargement', detail: en ? 'Reload the page to retry downloading the data.' : 'Rechargez la page pour retélécharger les données.' }
+    : { title: en ? 'Loading data…' : 'Chargement des données…', detail: en ? 'Scientific measurements are still downloading.' : 'Les mesures scientifiques sont en cours de téléchargement.' };
+  return { title: en ? 'No estimate' : 'Estimation indisponible', detail: en ? 'Outside usable source coverage' : 'Hors couverture exploitable de la source' };
+}
 function detailPhysique(key, reading){
-  if (!reading?.available) return langue === 'en' ? 'No estimate within usable source coverage.' : 'Aucune estimation dans la couverture exploitable de la source.';
+  if (!reading?.available) return unavailableScienceText().detail;
   const format = value => value.toLocaleString(langue, { maximumFractionDigits: 2 });
   const unit = reading.unit === 'days/year' && langue === 'fr' ? 'jours/an' : reading.unit;
   return `${format(reading.value)} ${unit} · ${langue === 'en' ? '2026 illustrative estimate' : 'estimation illustrative 2026'}: ${format(reading.baseline)} · 2050: ${format(reading.future)}.`;
@@ -1149,7 +1157,7 @@ function chargerGrillesCalques(){
       texture.wrapS = THREE.RepeatWrapping; texture.needsUpdate = true;
       uniformsGlobe.uFireWeather.value = texture;
       return true;
-    }).catch(error => { console.error('Fire-weather source unavailable', error); return false; }),
+    }).catch(error => { scienceLoadFailed = true; if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
   ]).then(async r => {
     if (SCIENCE){
       const textures = await buildScientificTextures(THREE, SCIENCE.climate, r[0]);
@@ -2401,9 +2409,9 @@ function finirRisques(nouveau){
     el.dataset.change = available ? sample.change : '';
     el.querySelector('.risk-change').textContent = available
       ? `2026: ${format(sample.baseline)} · ${sample.change > 0 ? '+' : ''}${Math.abs(sample.change) > 0 && Math.abs(sample.change) < .01 ? (sample.change < 0 ? '−<0.01' : '<0.01') : format(sample.change)} ${unit}`
-      : (en ? 'Outside usable source coverage' : 'Hors couverture exploitable de la source');
+      : unavailableScienceText().detail;
     const increased = key === 'eau' ? sample?.change < 0 : sample?.change > 0;
-    el.querySelector('.v-now').textContent = !available ? (en ? 'No estimate' : 'Estimation indisponible')
+    el.querySelector('.v-now').textContent = !available ? unavailableScienceText().title
       : etat.annee === 2026 ? (en ? 'Illustrative baseline' : 'Référence illustrative')
       : Math.abs(sample.change) < 1e-7 ? (en ? 'Unchanged estimate' : 'Estimation inchangée')
       : key === 'eau' ? increased ? (en ? 'Drier' : 'Plus aride') : (en ? 'Wetter' : 'Moins aride')
