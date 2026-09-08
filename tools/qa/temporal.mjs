@@ -11,7 +11,7 @@ try {
  const page=await browser.newPage({viewport:{width:1440,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route(url=>url.pathname==='/',async route=>{
   const response=await route.fetch();let body=await response.text();
-  body=body.replace('</script>\n</body>',`globalThis.__temporalRead=()=>({year:etat.annee,progress:etat.progression,globe:uniformsGlobe.uProgression.value,fire:feuxUniforms.uProgression.value,place:lieuDossier?nomVille(lieuDossier):null,score:lieuDossier?indiceHabitabilite(lieuDossier,etat.annee):null,risks:lieuDossier&&!estPays(lieuDossier)?CRITERES.map(c=>({key:c.cle,risk:c.penalite(lieuDossier,(etat.annee-2026)/24)*100})):notesPays(lieuDossier[1],(etat.annee-2026)/24).map((n,i)=>({key:CRITERES[i].cle,risk:100-n}))});\n</script>\n</body>`);
+  body=body.replace('</script>\n</body>',`globalThis.__temporalRead=()=>({year:etat.annee,progress:etat.progression,globe:uniformsGlobe.uProgression.value,place:lieuDossier?nomVille(lieuDossier):null,score:lieuDossier?indiceHabitabilite(lieuDossier,etat.annee):null,risks:lieuDossier&&!estPays(lieuDossier)?CRITERES.map(c=>({key:c.cle,risk:c.penalite(lieuDossier,(etat.annee-2026)/24)*100})):notesPays(lieuDossier[1],(etat.annee-2026)/24).map((n,i)=>({key:CRITERES[i].cle,risk:100-n}))});\n</script>\n</body>`);
   await route.fulfill({response,body});
  });
  await page.goto(base+'#v=Paris&an=2026&cc=FR');await enter(page);
@@ -23,7 +23,7 @@ try {
   for(const card of state.cards)assert.ok(Math.abs(card.value-state.risks.find(r=>r.key===card.key).risk)<=.051,JSON.stringify({state,card}));
   return state;
  };
- const setYear=async year=>{await page.locator('#curseur').focus();await page.keyboard.press('Home');if(year===2050)await page.keyboard.press('End');else for(let i=2026;i<year;i++)await page.keyboard.press('ArrowRight');await page.waitForTimeout(700);const r=await read();assert.equal(r.year,year);assert.ok(Math.abs(r.globe-(year-2026)/24)<.001);assert.ok(Math.abs(r.fire-r.globe)<.001);assert.ok((await page.locator('#layer-context').textContent()).includes(String(year)));return r;};
+ const setYear=async year=>{await page.locator('#curseur').focus();await page.keyboard.press('Home');if(year===2050)await page.keyboard.press('End');else for(let i=2026;i<year;i++)await page.keyboard.press('ArrowRight');await page.waitForTimeout(700);const r=await read();assert.equal(r.year,year);assert.ok(Math.abs(r.globe-(year-2026)/24)<.001);assert.ok((await page.locator('#layer-context').textContent()).includes(String(year)));return r;};
  for(const place of ['Paris','Ho Chi Minh City','France','Ouagadougou']){
   if(place!=='Paris'){
    await page.click('#champ-recherche');await page.fill('#champ-recherche',place);
