@@ -95,6 +95,19 @@ for (const [name, engine, configuration] of [
     const overflow = await page.locator('#earth-shell').evaluate(element => element.scrollWidth > element.clientWidth);
     assert.equal(overflow, false);
     await page.screenshot({path:out+'/'+name+'-letter.png'});
+    await page.evaluate(() => {
+      const filters = [...document.querySelectorAll('.calque')];
+      window.__filterReveal = Array(filters.length).fill(null);
+      const started = performance.now();
+      const sample = time => {
+        filters.forEach((filter, i) => {
+          if (!document.querySelector('#earth-shell').open && window.__filterReveal[i] === null && Number(getComputedStyle(filter).opacity) > .15)
+            window.__filterReveal[i] = time - started;
+        });
+        if (window.__filterReveal.some(value => value === null) && time - started < 25000) requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+    });
     const measurement = page.evaluate(() => new Promise(resolve => {
       const intervals = [], movement = [];
       let last = performance.now(), sampledAt = 0, vertex = -1;
@@ -129,8 +142,11 @@ for (const [name, engine, configuration] of [
     await page.waitForTimeout(1200);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0', 'Labels wait for globe interaction');
     if (name === 'desktop') {
-      const opacity = await page.locator('.calque').evaluateAll(elements => elements.map(el => Number(getComputedStyle(el).opacity)));
-      assert.ok(opacity[0] > opacity.at(-1), 'Filters enter one by one after the transition');
+      await page.waitForFunction(() => window.__filterReveal.every(Number.isFinite));
+      const revealed = await page.evaluate(() => window.__filterReveal);
+      assert.ok(revealed[0] > result.duration, 'Filters appear after the Earth transition');
+      assert.ok(revealed.every((time, i) => !i || time > revealed[i - 1]), 'Filters enter one by one: ' + JSON.stringify(revealed));
+      result.filterRevealTimes = revealed;
     }
     if (name === 'desktop') await page.mouse.move(viewport.width / 2, viewport.height / 2);
     else await page.touchscreen.tap(viewport.width / 2, viewport.height / 2);
