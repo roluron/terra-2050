@@ -92,7 +92,8 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   // spam
   await page.click('#dossier-croix'); await page.waitForTimeout(600);
   for (let i = 0; i < 12; i++) await page.click('.calque[data-cle=secheresse]', { force: true, timeout: 2000 }).catch(() => {});
-  await page.waitForTimeout(500); if (await page.locator('#pedago-fermer').isVisible()) await page.click('#pedago-fermer');
+  await page.keyboard.press('Escape');
+  await page.locator('#pedago').waitFor({state:'hidden'});
   await search(page, 'Cairo');
   for (let i = 0; i < 6; i++) await page.click('#dossier-partage', { force: true, timeout: 2000 }).catch(() => {});
   await page.waitForTimeout(2000);

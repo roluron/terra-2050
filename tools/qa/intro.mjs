@@ -122,12 +122,17 @@ for (const [name, engine, configuration] of [
         }
         if (!document.querySelector('#earth-shell').open || time-started > 20000) {
           intervals.sort((a,b)=>a-b);
-          resolve({duration:time-started,p95:intervals[Math.floor(intervals.length*.95)],movement,closed:!document.querySelector('#earth-shell').open});
+          const canvas = document.querySelector('#scene');
+          canvas.dispatchEvent(new PointerEvent('pointermove', {clientX:innerWidth/2,clientY:innerHeight/2}));
+          const earlyHoverOpacity = getComputedStyle(document.querySelector('#etiquettes')).opacity;
+          canvas.dispatchEvent(new PointerEvent('pointerleave'));
+          resolve({duration:time-started,p95:intervals[Math.floor(intervals.length*.95)],movement,closed:!document.querySelector('#earth-shell').open,earlyHoverOpacity});
         } else requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
     }));
     await page.locator('#future').click();
+    await page.mouse.move(5, 5);
     const result = await measurement;
     assert.equal(result.closed, true);
     const opening = await page.evaluate(() => globalThis.__introProbe());
@@ -135,10 +140,7 @@ for (const [name, engine, configuration] of [
     assert.equal(await page.locator('#an-distance').isVisible(), false);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
     const viewport = page.viewportSize();
-    await page.mouse.move(viewport.width / 2, viewport.height / 2);
-    await page.waitForTimeout(300);
-    assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0', 'The first second stays free of labels even on hover');
-    await page.mouse.move(5, 5);
+    assert.equal(result.earlyHoverOpacity, '0', 'Hover at transition completion does not reveal labels immediately');
     await page.waitForTimeout(1200);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0', 'Labels wait for globe interaction');
     if (name === 'desktop') {
