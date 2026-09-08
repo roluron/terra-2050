@@ -16,22 +16,69 @@ assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},1),{x:10,y:15});
 }
 const out = process.env.QA_SORTIE || fs.mkdtempSync('/tmp/terra-intro-');
 fs.mkdirSync(out, { recursive: true });
+async function verifierRetourCamera(page, name){
+  const results = [];
+  for (const order of ['resize-close', 'close-resize', 'search-resize']) {
+    await page.goto('about:blank');
+    await page.setViewportSize({width:1440,height:900});
+    await page.goto((process.env.URL0 || 'http://localhost:8080/') + '#v=Dacca&an=2050&cc=BD');
+    await discover(page);
+    await page.locator('#future').click();
+    await page.waitForFunction(() => !document.querySelector('#earth-shell').open && document.querySelector('#dossier').classList.contains('ouvert'));
+    assert.equal(await page.locator('#curseur').inputValue(), '2050');
+    if (order === 'search-resize') {
+      await page.locator('#champ-recherche').click();
+      await page.locator('#champ-recherche').fill('Paris');
+      await page.getByRole('option').filter({hasText:'Paris'}).first().click();
+      await page.locator('#champ-recherche').focus();
+    }
+    if (order === 'resize-close') await page.setViewportSize({width:1280,height:720});
+    if (order !== 'search-resize') await page.locator('#dossier-croix').click();
+    if (order === 'close-resize') {
+      assert.equal((await page.evaluate(() => globalThis.__introProbe())).flightSettled, false);
+      await page.setViewportSize({width:1280,height:720});
+    }
+    if (order === 'search-resize') await page.setViewportSize({width:1280,height:720});
+    await page.waitForFunction(() => {
+      const state = globalThis.__introProbe();
+      return state.flightSettled && Math.abs(state.yearOffset) < .01;
+    }, null, {timeout:10000});
+    const resized = await page.evaluate(() => globalThis.__introProbe());
+    await page.screenshot({path:`${out}/${name}-${order}.png`});
+    results.push({order, ...resized});
+    fs.writeFileSync(`${out}/${name}-camera.json`, JSON.stringify(results,null,2));
+    assert.equal(resized.panelOpen, false);
+    assert.ok(Math.abs(resized.distance - resized.homeDistance) < .001, JSON.stringify(resized));
+    assert.ok(resized.auraBottom + 16 < resized.yearTop, 'Panel resize then close preserves year clearance: ' + JSON.stringify(resized));
+  }
+}
 for (const [name, engine, configuration] of [
   ['desktop', chromium, {viewport:{width:1440,height:900}}],
   ['iphone-reduced', webkit, {...devices['iPhone 15 Pro'],reducedMotion:'reduce'}]
 ]) {
+  if (process.env.QA_INTRO_CAMERA_ONLY && name !== 'desktop') continue;
   const browser = await engine.launch({executablePath:engine.executablePath()});
   try {
-    const context = await browser.newContext(configuration);
+    const context = await browser.newContext({...configuration,
+      ...(process.env.QA_CAMERA_VIDEO ? {recordVideo:{dir:out,size:{width:1440,height:900}}} : {})});
     const page = await context.newPage();
     await page.route('**/*', async route => {
       if (route.request().resourceType() !== 'document') return route.continue();
       const response = await route.fetch();
-      const html = (await response.text()).replace('</script>\n</body>', `globalThis.__introProbe=()=>({rotating:controles.autoRotate,position:camera.position.toArray(),location:versLatLon(camera.position.clone().normalize()),auraBottom:innerHeight/2+1.16*innerHeight/(2*Math.tan(camera.fov*Math.PI/360)*Math.sqrt(camera.position.lengthSq()-1.16**2)),yearTop:document.getElementById('an').getBoundingClientRect().top});\n</script>\n</body>`);
+      const html = (await response.text()).replace('</script>\n</body>', `globalThis.__introProbe=()=>({rotating:controles.autoRotate,position:camera.position.toArray(),distance:camera.position.length(),homeDistance:CAMERA_ACCUEIL.length(),flightSettled:!volEnCours || volEnCours.progress()===1,yearOffset:Number(gsap.getProperty(document.getElementById('an'),'y')),panelOpen:!!lieuDossier,location:versLatLon(camera.position.clone().normalize()),auraBottom:innerHeight/2+1.16*innerHeight/(2*Math.tan(camera.fov*Math.PI/360)*Math.sqrt(camera.position.lengthSq()-1.16**2)),yearTop:document.getElementById('an').getBoundingClientRect().top});\n</script>\n</body>`);
       await route.fulfill({ response, body: html });
     });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
+    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+    if (process.env.QA_INTRO_CAMERA_ONLY) {
+      await verifierRetourCamera(page, name);
+      assert.deepEqual(errors,[]);
+      await context.close();
+      if (process.env.QA_CAMERA_VIDEO) await page.video().saveAs(`${out}/camera-close.webm`);
+      console.log(JSON.stringify({name,pass:true,camera:true,errors}));
+      continue;
+    }
     await page.goto(process.env.URL0 || 'http://localhost:8080/');
     await page.waitForSelector('#earth-shell[open] .word').catch(async error => {
       await page.screenshot({path:out+'/'+name+'-startup-failure.png'});
@@ -120,17 +167,7 @@ for (const [name, engine, configuration] of [
     } else assert.ok(result.duration < 2500, 'Reduced motion bypasses assembly');
     await page.screenshot({path:out+'/'+name+'-globe.png'});
     if (name === 'desktop') {
-      await page.goto('about:blank');
-      await page.goto((process.env.URL0 || 'http://localhost:8080/') + '#v=Dacca&an=2050&cc=BD');
-      await discover(page);
-      await page.locator('#future').click();
-      await page.waitForFunction(() => !document.querySelector('#earth-shell').open && document.querySelector('#dossier').classList.contains('ouvert'));
-      assert.equal(await page.locator('#curseur').inputValue(), '2050');
-      await page.setViewportSize({width:1280,height:720});
-      await page.locator('#dossier-croix').click();
-      await page.waitForTimeout(2500);
-      const resized = await page.evaluate(() => globalThis.__introProbe());
-      assert.ok(resized.auraBottom + 16 < resized.yearTop, 'Panel resize then close preserves year clearance: ' + JSON.stringify(resized));
+      await verifierRetourCamera(page, name);
     }
     assert.deepEqual(errors,[]);
     console.log(JSON.stringify({name,pass:true,duration:result.duration,p95FrameMs:result.p95,rotation:result.normalizedRotationDisplacement,errors}));

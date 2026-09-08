@@ -27,9 +27,13 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
     assert.equal(await page.locator('.risque[data-cle="mer"] .risk-reading small').innerText(), 'm');
     for (const endpoint of [0,100]) {
       const inside = await page.locator('.risque[data-cle="mer"]').evaluate((el, value) => {
+        const indicator = el.querySelector('.risk-meter i'), transition = indicator.style.transition;
+        indicator.style.transition = 'none';
         const previous = el.style.getPropertyValue('--risk'); el.style.setProperty('--risk', value);
-        const track = el.querySelector('.risk-meter').getBoundingClientRect(), marker = el.querySelector('.risk-meter i').getBoundingClientRect();
+        const track = el.querySelector('.risk-meter').getBoundingClientRect(), marker = indicator.getBoundingClientRect();
         el.style.setProperty('--risk', previous);
+        indicator.getBoundingClientRect();
+        indicator.style.transition = transition;
         return marker.top >= track.top && marker.bottom <= track.bottom;
       }, endpoint);
       assert.ok(inside, 'Gauge endpoint ' + endpoint + ' stays inside its track');

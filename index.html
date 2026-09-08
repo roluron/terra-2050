@@ -1842,6 +1842,11 @@ document.getElementById('accroche-x').addEventListener('click', e => {
   e.stopPropagation(); cacherAccroche(); SoundManager.play('ui_click');
 });
 let volEnCours = null, minuterieRepos = null;
+function arreterVolCamera(){
+  volEnCours?.kill();
+  gsap.killTweensOf(camera.position);
+  volEnCours = null;
+}
 const contactsGlobe = new Set();
 toile.addEventListener('pointerdown', event => contactsGlobe.add(event.pointerId));
 for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, event => contactsGlobe.delete(event.pointerId));
@@ -1987,7 +1992,7 @@ function afficherResultats(){
       document.body.classList.add('atlantide');
       controles.autoRotate = false; SoundManager.play('camera_fly');
       const cible = latLonVersVec3(31, -24).multiplyScalar(2.6);   // plaine abyssale, au large des Acores
-      if (volEnCours) volEnCours.kill();
+      arreterVolCamera();
       volEnCours = gsap.to(camera.position, { x: cible.x, y: cible.y, z: cible.z,
         duration: MOINS_ANIM ? 0 : 2.4, ease: EASE,
         onUpdate: () => camera.lookAt(0, 0, 0),
@@ -2026,7 +2031,7 @@ function choisirLieu(l){
   SoundManager.play('camera_fly');
   controles.autoRotate = false;
   const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(estPays(l) ? 3.1 : 2.45);
-  if (volEnCours) volEnCours.kill();
+  arreterVolCamera();
   volEnCours = gsap.to(camera.position, {
     x: cible.x, y: cible.y, z: cible.z, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
@@ -2710,6 +2715,7 @@ function distanceAccueil(){
 const CAMERA_ACCUEIL = latLonVersVec3(22, 15, distanceAccueil());
 controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
 function fermerDossier(depuisChamp){
+  arreterVolCamera();
   timelineRepere.after(timelineEl);
   dossierEl.inert = true;
   document.getElementById('dossier-croix').inert = true;
@@ -2737,8 +2743,6 @@ function fermerDossier(depuisChamp){
   document.body.classList.remove('dossier-ouvert');
   CAMERA_ACCUEIL.setLength(distanceAccueil());
   controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
-  if (volEnCours) volEnCours.kill();
-  gsap.killTweensOf(camera.position);
   volEnCours = gsap.to(camera.position, {
     ...CAMERA_ACCUEIL, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
     onUpdate: () => camera.lookAt(0, 0, 0),
@@ -3560,7 +3564,7 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   // plan d'ouverture : recul caméra progressif — sauf si un lien profond a
   // déjà lancé un vol vers une ville (les deux tweens se battaient)
   if (!lieuDossier){
-    gsap.killTweensOf(camera.position);
+    arreterVolCamera();
     volEnCours = gsap.to(camera.position, { ...CAMERA_ACCUEIL, duration: MOINS_ANIM ? 0 : 2.6, ease: EASE });
   }
   // la terre s'éveille : la surface s'éclaircit pendant le recul caméra
@@ -3579,7 +3583,7 @@ window.terraIntro = {
     if (!lieuDossier && introVueAccueil) {
       CAMERA_ACCUEIL.setLength(distanceAccueil());
       controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
-      gsap.killTweensOf(camera.position);
+      arreterVolCamera();
       controles.autoRotate = false;
       const orbit = { lon: MOINS_ANIM ? 15 : 46 };
       const position = () => camera.position.copy(latLonVersVec3(22, orbit.lon, Math.hypot(...Object.values(CAMERA_ACCUEIL))));
@@ -3986,7 +3990,11 @@ addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   CAMERA_ACCUEIL.setLength(distanceAccueil());
   controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
-  if (!lieuDossier) camera.position.setLength(CAMERA_ACCUEIL.length());
+  if (!lieuDossier){
+    arreterVolCamera();
+    camera.position.setLength(CAMERA_ACCUEIL.length());
+    if (!introOrbit?.isActive()) reprendreRotation();
+  }
   moteur.setSize(innerWidth, innerHeight);
   const pr = moteur.getPixelRatio();
   cibles.forEach(c => c.setSize(innerWidth * pr, innerHeight * pr));
