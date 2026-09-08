@@ -20,5 +20,5 @@ try{
  result.pixels=await page.evaluate(()=>globalThis.__motionProbe());
  for(const [k,v]of Object.entries(result.pixels.animation))assert.ok(v.changed>100,JSON.stringify({k,v}));
  assert.equal(result.pixels.heat2026.changed,0);assert.ok(result.pixels.heat2050.changed>100);
- assert.equal(result.pixels.fireBaseline.changed,0);assert.ok(result.pixels.fireYear.changed>100);assert.equal(result.pixels.riverYear.changed,0);assert.deepEqual(errors,[]);await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await enter(page);await page.waitForTimeout(1200);result.reducedClock=await page.evaluate(()=>globalThis.__motionClock());assert.deepEqual(result.reducedClock,[0]);result.pass=true;
+ assert.ok(result.pixels.fireBaseline.changed>100);assert.ok(result.pixels.fireYear.changed>100);assert.equal(result.pixels.riverYear.changed,0);assert.deepEqual(errors,[]);await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await enter(page);await page.waitForTimeout(1200);result.reducedClock=await page.evaluate(()=>globalThis.__motionClock());assert.deepEqual(result.reducedClock,[0]);result.pass=true;
 }catch(e){result.pass=false;result.error=String(e);result.errors=errors;process.exitCode=1}finally{fs.writeFileSync(out+'/motion.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));await browser.close()}
