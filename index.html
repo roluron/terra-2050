@@ -1048,8 +1048,11 @@ function affinerTerre(){
     im.onerror = () => suite && essayer(suite, null);
     im.src = url;
   };
-  essayer(WEBP_OK ? './assets/textures/earth_color_4096.webp' : './assets/textures/earth_color_4096.jpg',
-          WEBP_OK ? './assets/textures/earth_color_4096.jpg' : null);
+  const hauteDefinition = WEBP_OK && PIXELS_RENDUS >= 1600
+    && !matchMedia('(pointer: coarse)').matches && moteur.capabilities.maxTextureSize >= 8192;
+  essayer(hauteDefinition ? './assets/textures/earth_color_8192.webp'
+    : WEBP_OK ? './assets/textures/earth_color_4096.webp' : './assets/textures/earth_color_4096.jpg',
+    WEBP_OK ? './assets/textures/earth_color_4096.jpg' : null);
 }
 // masque terre/mer derive de GEBCO 15" : la mer est l'eau RELIEE a l'ocean,
 // donc les terres sous le niveau marin (depression caspienne, polders) ne sont

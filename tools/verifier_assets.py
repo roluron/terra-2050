@@ -36,6 +36,7 @@ DEFAUT = Path(__file__).resolve().parent.parent / "assets" / "textures"
 PAIRES = [
     ("earth_mask_4320.webp", "earth_mask_4320.png", "exact"),
     ("earth_color_4096.webp", "earth_color_4096.jpg", "psnr>=38"),
+    ("earth_color_8192.webp", "earth_color_8192.jpg", "psnr>=38"),
     ("earth_color_2048.webp", "earth_color_2048.jpg", "psnr>=38"),
 ]
 
