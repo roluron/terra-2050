@@ -46,7 +46,10 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
     assert.equal(await page.locator('#champ-recherche').inputValue(), '');
     await page.locator('#champ-recherche').fill('Paris');
     await page.locator('#resultats li').filter({hasText:'Paris'}).first().click();
-    await page.waitForTimeout(2200);
+    await page.waitForFunction(() => {
+      const text = document.querySelector('#dossier-duel').innerText;
+      return /Dhaka|Dacca/.test(text) && /Paris/.test(text);
+    });
     assert.match(await page.locator('#dossier-duel').innerText(), /Dhaka|Dacca/);
     assert.match(await page.locator('#dossier-duel').innerText(), /Paris/);
     await page.screenshot({path:`/tmp/terra-polish-${name}.png`});
