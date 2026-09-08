@@ -145,7 +145,9 @@ for (const [name, engine, configuration] of [
       await page.waitForFunction(() => window.__filterReveal.every(Number.isFinite));
       const revealed = await page.evaluate(() => window.__filterReveal);
       assert.ok(revealed[0] > result.duration, 'Filters appear after the Earth transition');
-      assert.ok(revealed.every((time, i) => !i || time > revealed[i - 1]), 'Filters enter one by one: ' + JSON.stringify(revealed));
+      assert.ok(revealed.every((time, i) => !i || time >= revealed[i - 1]), 'Filters enter in order: ' + JSON.stringify(revealed));
+      assert.ok(new Set(revealed).size >= 4 && revealed.at(-1) - revealed[0] >= 700,
+        'Filter reveal remains visibly staggered across sampled frames: ' + JSON.stringify(revealed));
       result.filterRevealTimes = revealed;
     }
     if (name === 'desktop') await page.mouse.move(viewport.width / 2, viewport.height / 2);
