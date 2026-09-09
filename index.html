@@ -381,6 +381,9 @@ import { loadFloodHazards } from './climate-data.mjs';
 import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+// Slow GPU frames must not stretch short UI transitions into minutes.
+gsap.ticker.lagSmoothing(0);
+
 /* =====================================================================
    0. EASING SIGNATURE — courbes du design system fromanother (GSAP 3)
    ===================================================================== */

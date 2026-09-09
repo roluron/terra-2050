@@ -21,6 +21,21 @@ for (const [name, engine, options, expected] of [
     });
     await page.goto((process.env.URL0 || 'http://localhost:8087/') + '#v=Le%20Caire&an=2026&cc=EG');
     await enter(page);
+    if (name === 'desktop') {
+      const progress = await page.evaluate(async () => {
+        const value = { progress: 0 };
+        const tween = window.gsap.to(value, { progress: 1, duration: 1 });
+        for (let frame = 0; frame < 4; frame++) {
+          await new Promise(requestAnimationFrame);
+          const until = performance.now() + 600;
+          while (performance.now() < until) {}
+        }
+        await new Promise(requestAnimationFrame);
+        tween.kill();
+        return value.progress;
+      });
+      assert.equal(progress, 1, 'Transitions finish in real time after slow frames');
+    }
     await page.waitForFunction(width => globalThis.__detail().width === width, expected);
     await page.locator('#dossier-nom').waitFor({ state: 'visible' });
     await page.locator('#dossier-story').focus();
