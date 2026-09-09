@@ -128,6 +128,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
     return pairs;
   });
   ok('B iPhone paysage aucun chevauchement', collide.length === 0, collide.join(','));
+  ok('B recherche fermée non interactive', await page.$eval('#resultats', el => !el.classList.contains('ouvert') && getComputedStyle(el).pointerEvents === 'none'));
   await page.screenshot({ path: OUT + 'B-landscape-dossier.png' });
   await page.tap('#dossier-story'); await page.waitForTimeout(2500);
   const st = await page.$eval('#story-partager', b => { const r = b.getBoundingClientRect(); return r.bottom <= innerHeight && r.top >= 0; });

@@ -41,7 +41,8 @@ async function verifierRetourCamera(page, name){
     if (order === 'search-resize') await page.setViewportSize({width:1280,height:720});
     await page.waitForFunction(() => {
       const state = globalThis.__introProbe();
-      return state.flightSettled && Math.abs(state.yearOffset) < .01;
+      return state.flightSettled && Math.abs(state.yearOffset) < .01
+        && Math.abs(state.aspect - innerWidth / innerHeight) < .0001;
     }, null, {timeout:10000});
     const resized = await page.evaluate(() => globalThis.__introProbe());
     await page.screenshot({path:`${out}/${name}-${order}.png`});
@@ -65,7 +66,7 @@ for (const [name, engine, configuration] of [
     await page.route('**/*', async route => {
       if (route.request().resourceType() !== 'document') return route.continue();
       const response = await route.fetch();
-      const html = (await response.text()).replace('</script>\n</body>', `globalThis.__introProbe=()=>({rotating:controles.autoRotate,position:camera.position.toArray(),distance:camera.position.length(),homeDistance:CAMERA_ACCUEIL.length(),flightSettled:!volEnCours || volEnCours.progress()===1,yearOffset:Number(gsap.getProperty(document.getElementById('an'),'y')),panelOpen:!!lieuDossier,location:versLatLon(camera.position.clone().normalize()),auraBottom:innerHeight/2+1.16*innerHeight/(2*Math.tan(camera.fov*Math.PI/360)*Math.sqrt(camera.position.lengthSq()-1.16**2)),yearTop:document.getElementById('an').getBoundingClientRect().top});\n</script>\n</body>`);
+      const html = (await response.text()).replace('</script>\n</body>', `globalThis.__introProbe=()=>({aspect:camera.aspect,rotating:controles.autoRotate,position:camera.position.toArray(),distance:camera.position.length(),homeDistance:CAMERA_ACCUEIL.length(),flightSettled:!volEnCours || volEnCours.progress()===1,yearOffset:Number(gsap.getProperty(document.getElementById('an'),'y')),panelOpen:!!lieuDossier,location:versLatLon(camera.position.clone().normalize()),auraBottom:innerHeight/2+1.16*innerHeight/(2*Math.tan(camera.fov*Math.PI/360)*Math.sqrt(camera.position.lengthSq()-1.16**2)),yearTop:document.getElementById('an').getBoundingClientRect().top});\n</script>\n</body>`);
       await route.fulfill({ response, body: html });
     });
     const errors = [];

@@ -11,5 +11,12 @@ exports.enter = async function(page, repeated = false) {
     await page.locator('#future').dispatchEvent('click');
   }
   await page.waitForFunction(() => !document.getElementById('earth-shell').open, null, { timeout: 20000 });
-  await page.waitForFunction(() => [...document.querySelectorAll('.calque')].every(el => !el.style.opacity && !el.style.transform));
+  await page.waitForFunction(() => [...document.querySelectorAll('.calque')].every(el => !el.style.opacity && !el.style.transform)).catch(async error => {
+    console.error('Unfinished filter entrance', await page.evaluate(() => ({
+      visibility: document.visibilityState,
+      filters: [...document.querySelectorAll('.calque')].map(el => ({key: el.dataset.cle, style: el.getAttribute('style')})),
+      animations: window.gsap?.globalTimeline.getChildren().filter(t => t.isActive()).map(t => ({time:t.time(), duration:t.duration(), targets:t.targets?.().map(el => el.id || el.className || typeof el)}))
+    })));
+    throw error;
+  });
 };

@@ -1143,7 +1143,7 @@ body:not(.pret) #model-notice { display: none; }
 
 @media(max-width:720px), (max-height:500px) { #model-notice #layer-context { max-height: 1.4em; overflow: hidden; } #model-notice:has(details[open]) { max-width: min(300px,calc(100vw - 20px)); width: 300px; } #model-notice:has(details[open]) #layer-context { max-height: none; } #model-notice summary { min-height: 44px; } }
 
-@media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #loupe, #resultats { pointer-events: auto; } }
+@media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #loupe, #resultats.ouvert { pointer-events: auto; } }
 body.comparaison-active #champ-recherche { caret-color: #b5cbea; }
 #model-notice details[open] { animation: beta-reveal 280ms ease-out; }
 @keyframes beta-reveal { from { opacity: .6; } to { opacity: 1; } }
