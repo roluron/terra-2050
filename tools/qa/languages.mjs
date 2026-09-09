@@ -29,9 +29,11 @@ for (const [name, engine, options] of [
       await page.screenshot({path:`${out}/${name}-${code}-letter.png`});
       await enter(page);
       await page.locator('#dossier.ouvert').waitFor();
+      const historyState = await page.evaluate(() => history.state);
       await page.locator('#bouton-reglages').click();
       await page.locator('#bouton-langue').selectOption(code === 'en' ? 'fr' : 'en');
       await page.locator('#bouton-langue').selectOption(code);
+      assert.deepEqual(await page.evaluate(() => history.state), historyState);
       await page.locator('#bouton-reglages').click();
       await page.waitForFunction(() => document.querySelector('#bouton-reglages').getAttribute('aria-expanded') === 'false');
       assert.equal(await page.locator('#dossier-comparer').textContent(), text.comparer);

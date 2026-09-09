@@ -87,15 +87,18 @@ for (const [name, type, options] of [
       await page.goto(url);
       await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
       await search('Paris');
-      await page.goBack(); await page.waitForTimeout(1200);
+      await page.goBack();
+      await page.waitForFunction(() => !document.getElementById('dossier').classList.contains('ouvert'));
       const back = await page.locator('#dossier').evaluate(e => e.classList.contains('ouvert'));
       assert.equal(back, false);
       await page.locator('#dossier-story').evaluate(e => e.focus());
       assert.equal(await page.locator('#dossier').evaluate(e => e.contains(document.activeElement)), false);
-      await page.goForward(); await page.waitForTimeout(1800);
+      await page.goForward();
+      await page.locator('#dossier.ouvert').waitFor({state:'visible'});
+      await page.waitForFunction(() => !document.getElementById('dossier').inert);
       assert.equal(await page.locator('#dossier').evaluate(e => e.classList.contains('ouvert')), true);
       await page.locator('#dossier-story').focus();
-      assert.equal(await page.locator('#dossier-story').evaluate(e => e === document.activeElement), true);
+      assert.equal(await page.locator('#dossier-story').evaluate(e => e === document.activeElement), true, 'Restored dossier must accept keyboard focus');
     });
     await check(`${name}: city labels open a diagnosis`, async () => {
       await page.click('#dossier-croix'); await page.waitForTimeout(2500);

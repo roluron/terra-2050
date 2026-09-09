@@ -17,7 +17,7 @@ export function setLanguage(code) {
   document.documentElement.lang = code;
   try { localStorage.setItem('terra-langue', code); } catch {}
   const url = new URL(location.href); url.searchParams.set('lang', code);
-  history.replaceState(null, '', url);
+  history.replaceState(history.state, '', url);
   window.dispatchEvent(new CustomEvent('terra-language'));
 }
 export function languageSelect(select) {
