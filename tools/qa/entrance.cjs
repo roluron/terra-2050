@@ -1,5 +1,18 @@
+exports.welcome = async function(page) {
+  if (await page.locator('#language-dialog').isVisible()) {
+    await page.locator('#language-continue').click();
+    await page.locator('#language-dialog').waitFor({state:'hidden'});
+  }
+};
+exports.chooseLanguage = async function(page, code) {
+  if (await page.locator('#bouton-reglages').getAttribute('aria-expanded') !== 'true') await page.locator('#bouton-reglages').click();
+  await page.locator('#bouton-langue').click();
+  await page.locator(`#language-options input[value="${code}"]`).check();
+  await exports.welcome(page);
+};
 exports.discover = async function(page) {
   await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 });
+  await exports.welcome(page);
   for (const word of await page.locator('#earth-shell .word').all()) await word.focus();
   await page.waitForSelector('#earth-shell.complete');
 };

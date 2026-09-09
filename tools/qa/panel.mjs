@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { enter } from './entrance.cjs';
+import { enter, chooseLanguage } from './entrance.cjs';
 import os from 'node:os';
 import assert from 'node:assert/strict';
 import {chromium, webkit, devices} from 'playwright';
@@ -60,7 +60,7 @@ for (const [name, engine, options] of [
     assert.equal(await page.locator('#dossier-sources').isVisible(),true);
     assert.match(await page.locator('.fiche-methode').textContent(),/SSP3-7.0/);
     await page.screenshot({path:`${out}/${name}-method.png`});
-    await page.click('#bouton-reglages');await page.selectOption('#bouton-langue', 'fr');
+    await page.click('#bouton-reglages');await chooseLanguage(page, 'fr');
     assert.match(await page.locator('.fiche-methode summary').textContent(),/Comprendre/);
     assert.match(await page.locator('.fiche-temps-label').textContent(),/Année/);
     await page.click('#dossier-story');

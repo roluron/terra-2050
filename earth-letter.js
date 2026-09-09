@@ -1,9 +1,8 @@
 import { startOrb } from './earth-orb.mjs';
-import { language, getText, message, languageSelect } from './i18n.mjs';
+import { language, getText, message, openLanguage } from './i18n.mjs';
 
 const shell = document.querySelector('#earth-shell');
 shell.showModal();
-shell.querySelector('h1').focus();
 shell.addEventListener('cancel', event => event.preventDefault());
 shell.addEventListener('keydown', event => event.stopPropagation());
 const letter = document.querySelector('#letter');
@@ -14,7 +13,10 @@ const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
 let finished = 0;
 const revealTimers = new Set();
-languageSelect(document.querySelector('#earth-language'));
+openLanguage(() => {
+  document.getElementById('earth-letter-main').hidden = false;
+  shell.querySelector('h1').focus({preventScroll:true});
+}, true);
 
 function buildLetter() {
   for (const timer of revealTimers) clearInterval(timer);
@@ -138,7 +140,6 @@ document.querySelector('#earth-retry').addEventListener('click', () => location.
 future.addEventListener('click', () => {
   if (finished !== words.length || departing) return;
   departing = true;
-  document.querySelector('#earth-language').disabled = true;
   clearInterval(codeTimer);
   const origins = [];
   for (const element of shell.querySelectorAll('h1, .latin')) {

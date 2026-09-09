@@ -20,14 +20,52 @@ export function setLanguage(code) {
   history.replaceState(history.state, '', url);
   window.dispatchEvent(new CustomEvent('terra-language'));
 }
-export function languageSelect(select) {
-  select.replaceChildren(...Object.entries(languageNames).map(([code, name]) => {
-    const option = document.createElement('option'); option.value = code; option.lang = code; option.textContent = name; return option;
-  }));
-  select.value = current;
-  select.setAttribute('aria-label', getText().ui.language);
-  select.addEventListener('change', () => setLanguage(select.value));
-  window.addEventListener('terra-language', () => {select.value = current; select.setAttribute('aria-label', getText().ui.language);});
+const languagePrompts = {
+  en: ['Select your language', 'Continue'], fr: ['Choisis ta langue', 'Continuer'],
+  ja: ['言語を選んでください', '続ける'], zh: ['请选择语言', '继续'],
+  vi: ['Chọn ngôn ngữ của bạn', 'Tiếp tục'], es: ['Elige tu idioma', 'Continuar'],
+  it: ['Scegli la tua lingua', 'Continua'],
+};
+const languageDialog = document.getElementById('language-dialog');
+let afterLanguage, welcome = false, closingLanguage = false;
+document.getElementById('language-options').replaceChildren(...Object.entries(languageNames).map(([code, name]) => {
+  const label = document.createElement('label'), input = document.createElement('input'), text = document.createElement('span');
+  input.type = 'radio'; input.name = 'language'; input.value = code;
+  text.lang = code; text.textContent = name;
+  input.addEventListener('change', () => setLanguage(code));
+  label.append(input, text); return label;
+}));
+function syncLanguageDialog() {
+  languageDialog.lang = current;
+  document.getElementById('language-title').textContent = languagePrompts[current][0];
+  document.querySelector('#language-continue span').textContent = languagePrompts[current][1];
+  for (const input of languageDialog.querySelectorAll('input')) input.checked = input.value === current;
+}
+export function openLanguage(onClose, first = false) {
+  if (languageDialog.open) return;
+  afterLanguage = onClose; welcome = first; closingLanguage = false;
+  syncLanguageDialog(); languageDialog.showModal();
+  languageDialog.querySelector('input:checked').focus({preventScroll:true});
+}
+async function closeLanguage() {
+  if (closingLanguage) return;
+  closingLanguage = true;
+  const content = languageDialog.querySelector('.language-content');
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    await content.animate([{opacity:1,filter:'blur(0px)',transform:'translateY(0)'},{opacity:0,filter:'blur(8px)',transform:'translateY(-8px)'}], {duration:420,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).finished;
+  }
+  languageDialog.close();
+  for (const animation of content.getAnimations()) animation.cancel();
+  afterLanguage?.();
+}
+languageDialog.querySelector('form').addEventListener('submit', event => {event.preventDefault(); closeLanguage();});
+languageDialog.addEventListener('cancel', event => {event.preventDefault(); if (!welcome) closeLanguage();});
+languageDialog.addEventListener('keydown', event => event.stopPropagation());
+window.addEventListener('terra-language', syncLanguageDialog);
+export function languageControl(button) {
+  const sync = () => {button.textContent = languageNames[current] + ' ↗'; button.setAttribute('aria-label', languageNames[current] + ' — ' + getText().ui.language);};
+  sync(); button.addEventListener('click', () => openLanguage(() => document.getElementById('bouton-reglages').focus({preventScroll:true})));
+  window.addEventListener('terra-language', sync);
 }
 function translateStatic() {
   document.documentElement.lang = current;

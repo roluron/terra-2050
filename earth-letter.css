@@ -3,8 +3,29 @@
 @font-face{font-family:EarthHerbik;src:url('./fonts/Herbik-MediumItalic.woff2') format('woff2');font-style:italic;font-display:swap}
 #earth-shell{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:none;color:#c9cdc9;overflow:auto;--earth-ease:cubic-bezier(.19,1,.22,1)}
 #earth-shell[open]{display:grid;place-items:center}
-#earth-language{position:absolute;right:24px;top:20px;z-index:2;min-height:44px;max-width:160px;padding:8px 26px 8px 12px;background:#101313;color:#c9cdc9;border:1px solid #c9cdc930;border-radius:22px;font:14px/1.5 Arial,sans-serif;color-scheme:dark}
-#earth-language:focus-visible{outline:1px solid #c9cdc9;outline-offset:4px}
+#earth-letter-main[hidden]{display:none}
+#language-dialog{position:fixed;inset:0;margin:0;border:0;padding:32px 24px;width:100%;height:100%;max-width:none;max-height:none;box-sizing:border-box;overflow:auto;background:radial-gradient(ellipse at 50% 30%,#0b1020 0%,#060808 45%,#050606 75%);color:#daddd7}
+#language-dialog::backdrop{background:#050606}
+#language-dialog[open]{display:grid;place-items:center}
+.language-content{width:min(320px,100%);margin:auto;text-align:center;animation:language-arrive 1.2s cubic-bezier(.19,1,.22,1) both}
+.language-globe{width:68px;height:68px;stroke:#a8b6d2;stroke-width:.65;opacity:.75;margin-bottom:24px;filter:drop-shadow(0 0 18px #365bbc55)}
+#language-title{font:italic 30px/1.25 EarthHerbik,Georgia,serif;letter-spacing:-.02em;margin:0 0 28px}
+#language-dialog:is(:lang(ja),:lang(zh)) #language-title{font:400 24px/1.5 var(--police),sans-serif;letter-spacing:0}
+#language-options{border:0;padding:0;margin:0;display:grid;gap:3px;text-align:left;min-width:0}
+#language-options label{position:relative;display:flex;align-items:center;min-height:46px;padding:0 20px;border:1px solid transparent;border-radius:7px;cursor:pointer;transition:background .25s,border-color .25s,color .25s;color:#939b9e}
+#language-options input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;width:100%;height:100%}
+#language-options span{font:400 17px/1.5 var(--police),Arial,sans-serif;letter-spacing:0}
+#language-options label:has(input:checked){background:#d4dcf00a;border-color:#bdcbee20;color:#e6e9df}
+#language-options label:has(input:checked)::after{content:'';margin-left:auto;width:5px;height:5px;border-radius:50%;background:#7899ee;box-shadow:0 0 12px #5c82ed88}
+#language-options label:hover{color:#f0f2e9;background:#ffffff05}
+#language-options label:has(input:focus-visible){outline:1px solid #9ab1eb;outline-offset:3px}
+#language-continue{display:inline-flex;align-items:center;gap:15px;margin:28px 0 0;padding:8px 0;border:0;background:none;color:#c3cac7;font:400 13px/1.5 var(--police),Arial,sans-serif;cursor:pointer}
+#language-continue svg{width:40px;height:40px;box-sizing:border-box;padding:10px;border:1px solid #cad6f030;border-radius:50%;stroke:currentColor;stroke-width:1.25;transition:background .25s,border-color .25s,transform .25s}
+#language-continue:hover svg{background:#ffffff09;border-color:#cad6f077;transform:translateX(3px)}
+#language-continue:focus-visible{outline:1px solid #9ab1eb;outline-offset:7px;border-radius:2px}
+@keyframes language-arrive{from{opacity:0;filter:blur(12px);transform:translateY(10px)}to{opacity:1;filter:none;transform:none}}
+@media(max-height:650px){#language-dialog{padding-block:24px}.language-globe{width:46px;height:46px;margin-bottom:14px}#language-title{margin-bottom:18px}#language-options label{min-height:44px}#language-continue{margin-top:16px}}
+@media(prefers-reduced-motion:reduce){.language-content{animation:none}#language-options label,#language-continue svg{transition:none}}
 #earth-shell:lang(ja) .letter,#earth-shell:lang(zh) .letter{font-style:normal;font-family:var(--police),sans-serif;line-height:1.75;letter-spacing:0}
 #earth-shell:lang(ja) h1,#earth-shell:lang(ja) .signature{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-style:normal;line-height:1.5}
 #earth-shell:lang(zh) h1,#earth-shell:lang(zh) .signature{font-family:'Songti SC','Noto Serif CJK SC',serif;font-style:normal;line-height:1.5}

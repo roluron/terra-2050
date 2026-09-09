@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium, webkit, devices } from 'playwright';
-import { discover } from './entrance.cjs';
+import { discover, welcome } from './entrance.cjs';
 import { morphPoint, startOrb } from '../../earth-orb.mjs';
 
 assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},0),{x:0,y:5});
@@ -81,6 +81,8 @@ for (const [name, engine, configuration] of [
       continue;
     }
     await page.goto(process.env.URL0 || 'http://localhost:8080/');
+    await page.locator('#language-dialog').waitFor();
+    await welcome(page);
     await page.waitForSelector('#earth-shell[open] .word').catch(async error => {
       await page.screenshot({path:out+'/'+name+'-startup-failure.png'});
       console.error(JSON.stringify({errors,state:await page.locator('body').innerText()}));

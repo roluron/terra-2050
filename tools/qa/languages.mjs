@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { chromium, webkit, devices } from 'playwright';
 import { translations } from '../../locales/catalog.mjs';
-import { discover, enter } from './entrance.cjs';
+import { discover, enter, welcome, chooseLanguage } from './entrance.cjs';
 
 const url = process.env.URL0 || 'http://localhost:8087/';
 const out = process.env.QA_SORTIE || '/tmp/terra-languages';
@@ -17,7 +17,28 @@ for (const [name, engine, options] of [
       const page = await browser.newPage(options), errors = [], text = translations[code];
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(url + '?lang=en#v=Le%20Caire&an=2050&cc=EG');
-      await page.locator('#earth-language').selectOption(code);
+      await page.locator('#language-dialog').waitFor();
+      assert.equal(await page.locator('#earth-letter-main').isVisible(), false);
+      await page.locator(`#language-options input[value="${code}"]`).check();
+      await page.waitForFunction(() => getComputedStyle(document.querySelector('.language-content')).opacity === '1');
+      await page.screenshot({path:`${out}/${name}-${code}-welcome.png`});
+      if (code === 'en') {
+        await page.locator('#language-options input:checked').focus();
+        await page.keyboard.press('ArrowDown');
+        assert.equal(await page.locator('html').getAttribute('lang'), 'fr');
+        await page.keyboard.press('ArrowUp');
+        assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+        if (name === 'phone') {
+          await page.setViewportSize({width:320,height:568});
+          await page.locator('#language-continue').scrollIntoViewIfNeeded();
+          assert.ok(await page.locator('.language-content').evaluate(el => el.getBoundingClientRect().right <= innerWidth));
+          await page.screenshot({path:`${out}/phone-compact-welcome.png`});
+          await page.setViewportSize(options.viewport);
+        }
+      }
+      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('#language-dialog').isVisible(), true);
+      await welcome(page);
       assert.equal(await page.locator('html').getAttribute('lang'), code);
       assert.equal(await page.locator('#earth-shell h1').textContent(), text.ui.letterTitle);
       await discover(page);
@@ -31,11 +52,10 @@ for (const [name, engine, options] of [
       await page.locator('#dossier.ouvert').waitFor();
       const historyState = await page.evaluate(() => history.state);
       await page.locator('#bouton-reglages').click();
-      await page.locator('#bouton-langue').selectOption(code === 'en' ? 'fr' : 'en');
-      await page.locator('#bouton-langue').selectOption(code);
+      await chooseLanguage(page, code === 'en' ? 'fr' : 'en');
+      await chooseLanguage(page, code);
       assert.deepEqual(await page.evaluate(() => history.state), historyState);
-      await page.locator('#bouton-reglages').click();
-      await page.waitForFunction(() => document.querySelector('#bouton-reglages').getAttribute('aria-expanded') === 'false');
+      if (await page.locator('#bouton-reglages').getAttribute('aria-expanded') === 'true') await page.locator('#bouton-reglages').click();
       assert.equal(await page.locator('#dossier-comparer').textContent(), text.comparer);
       assert.equal(await page.locator('.fiche-temps-label').textContent(), text.panelYear);
       await page.waitForFunction(() => document.querySelector('[data-cle="feux"] .risk-number')?.textContent !== '—');
@@ -55,8 +75,8 @@ for (const [name, engine, options] of [
       assert.equal(await page.locator('#story-titre').textContent(), text.storyTitre);
       await page.screenshot({path:`${out}/${name}-${code}-story.png`});
       await page.goto(url + '?lang=toString');
-      await page.locator('#earth-language').waitFor();
-      assert.equal(await page.locator('#earth-language').inputValue(), code);
+      await page.locator('#language-dialog').waitFor();
+      assert.equal(await page.locator('#language-options input:checked').inputValue(), code);
       assert.equal(await page.locator('html').getAttribute('lang'), code);
       assert.deepEqual(errors, []);
       await page.close();

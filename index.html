@@ -184,9 +184,8 @@
 </head>
 <body>
 <dialog id="earth-shell" lang="en" aria-label="A letter from Earth">
-  <select id="earth-language" aria-label="Language"></select>
   <canvas id="earth-orb" aria-hidden="true"></canvas>
-  <main id="earth-letter-main">
+  <main id="earth-letter-main" hidden>
     <h1 tabindex="-1">Hello human.</h1>
     <div class="letter" id="letter">
       <p>You leave a trace on everything you touch.<br>Including me. You can blame the corporations. The governments. Each other. You can leave it all until tomorrow. But tomorrow is already taking shape. I will be here for millions of years. I wish I could say the same for you.</p>
@@ -195,6 +194,14 @@
     <div class="invitation"><button id="future" type="button" tabindex="-1">See your future</button></div>
   </main>
   <div id="earth-recovery" role="status" hidden><p>The globe is taking longer to arrive.</p><button type="button" id="earth-retry">Try again</button></div>
+</dialog>
+<dialog id="language-dialog" aria-labelledby="language-title">
+  <form class="language-content">
+    <svg class="language-globe" viewBox="0 0 80 80" fill="none" aria-hidden="true"><circle cx="40" cy="40" r="33"/><ellipse cx="40" cy="40" rx="16" ry="33"/><path d="M8 40h64M14 20c17 9 35 9 52 0M14 60c17-9 35-9 52 0"/></svg>
+    <h2 id="language-title"></h2>
+    <fieldset id="language-options" aria-labelledby="language-title"></fieldset>
+    <button id="language-continue" type="submit"><span></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+  </form>
 </dialog>
 <link rel="stylesheet" href="./earth-letter.css">
 <script type="module" src="./earth-letter.js"></script>
@@ -275,7 +282,7 @@
       <button class="bouton-ico fa-lien" id="bouton-position"></button>
       <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
-      <select class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language"></select>
+      <button class="bouton-ico fa-lien" id="bouton-langue" type="button" aria-haspopup="dialog"></button>
     </div>
   </div>
 </div>
@@ -380,7 +387,7 @@ import { loadScientificMetrics } from './science-metrics.mjs';
 import { loadFloodHazards } from './climate-data.mjs';
 import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { language, getText, message, languageSelect } from './i18n.mjs';
+import { language, getText, message, languageControl } from './i18n.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
 gsap.ticker.lagSmoothing(0);
@@ -3168,7 +3175,7 @@ function traduire(){
   }
   // sur ecran tactile, le raccourci clavier n'a pas de sens
   champ.placeholder = matchMedia('(pointer: coarse)').matches ? t.chercher.replace(/\s*—\s*⌘K$/, '') : t.chercher;
-  for (const [id, cle] of Object.entries(t.aria)) document.getElementById(id).setAttribute('aria-label', cle);
+  for (const [id, cle] of Object.entries(t.aria)) if (id !== 'bouton-langue') document.getElementById(id).setAttribute('aria-label', cle);
   curseur.setAttribute('aria-valuetext', `${etat.annee} — ${t.distanceAn(etat.annee - 2026)}`);
   document.getElementById('bouton-partager').textContent = t.partagerSite;
   if (lieuDossier) champ.value = nomVille(lieuDossier);
@@ -3181,7 +3188,7 @@ function traduire(){
   boutonSon.textContent = t.son(!SoundManager.mute);
   if (lieuDossier){ majDossier(); derniereAnnonce = ''; annoncer(); }
 }
-languageSelect(document.getElementById('bouton-langue'));
+languageControl(document.getElementById('bouton-langue'));
 window.addEventListener('terra-language', () => {
   langue = language();
   SoundManager.play('ui_click');

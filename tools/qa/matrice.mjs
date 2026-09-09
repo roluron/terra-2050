@@ -1,4 +1,4 @@
-import { enter as enterEarth } from './entrance.cjs';
+import { enter as enterEarth, chooseLanguage } from './entrance.cjs';
 /* Matrice de lancement TERRA/2050 — 25 controles sur 7 configurations.
  *
  *   URL0=https://roluron.github.io/terra-2050/ node tools/qa/matrice.mjs
@@ -193,7 +193,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
 {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1280, height: 800 } });
   await enter(page);
-  await page.click('#bouton-reglages'); await page.waitForTimeout(400); await page.click('#bouton-son'); await page.waitForTimeout(200); await page.selectOption('#bouton-langue', 'fr'); await page.waitForTimeout(400);
+  await page.click('#bouton-reglages'); await page.waitForTimeout(400); await page.click('#bouton-son'); await page.waitForTimeout(200); await chooseLanguage(page, 'fr'); await page.waitForTimeout(400);
   const before = await page.evaluate(() => [document.getElementById('bouton-son').textContent, document.documentElement.lang]);
   await page.reload(); await enter(page);
   const after = await page.evaluate(() => [document.getElementById('bouton-son').textContent, document.documentElement.lang]);
