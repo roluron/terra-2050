@@ -3,6 +3,11 @@
 @font-face{font-family:EarthHerbik;src:url('./fonts/Herbik-MediumItalic.woff2') format('woff2');font-style:italic;font-display:swap}
 #earth-shell{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:none;color:#c9cdc9;overflow:auto;--earth-ease:cubic-bezier(.19,1,.22,1)}
 #earth-shell[open]{display:grid;place-items:center}
+#earth-language{position:absolute;right:24px;top:20px;z-index:2;min-height:44px;max-width:160px;padding:8px 26px 8px 12px;background:#101313;color:#c9cdc9;border:1px solid #c9cdc930;border-radius:22px;font:14px/1.5 Arial,sans-serif;color-scheme:dark}
+#earth-language:focus-visible{outline:1px solid #c9cdc9;outline-offset:4px}
+#earth-shell:lang(ja) .letter,#earth-shell:lang(zh) .letter{font-style:normal;font-family:var(--police),sans-serif;line-height:1.75;letter-spacing:0}
+#earth-shell:lang(ja) h1,#earth-shell:lang(ja) .signature{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-style:normal;line-height:1.5}
+#earth-shell:lang(zh) h1,#earth-shell:lang(zh) .signature{font-family:'Songti SC','Noto Serif CJK SC',serif;font-style:normal;line-height:1.5}
 #earth-shell::backdrop{background:#050606;opacity:1;transition:opacity 3.6s cubic-bezier(.4,0,.2,1)}
 #earth-shell.materializing::backdrop{opacity:0}
 body:has(#earth-shell[open]) #voile{visibility:hidden}

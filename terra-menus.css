@@ -1144,6 +1144,13 @@ body:not(.pret) #model-notice { display: none; }
 @media(max-width:720px), (max-height:500px) { #model-notice #layer-context { max-height: 1.4em; overflow: hidden; } #model-notice:has(details[open]) { max-width: min(300px,calc(100vw - 20px)); width: 300px; } #model-notice:has(details[open]) #layer-context { max-height: none; } #model-notice summary { min-height: 44px; } }
 
 @media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #loupe, #resultats.ouvert { pointer-events: auto; } }
+html:lang(ja){--police:'Hiragino Kaku Gothic ProN','Yu Gothic',Meiryo,sans-serif;--herbik:'Hiragino Mincho ProN','Yu Mincho',serif;--mono:'Hiragino Kaku Gothic ProN',sans-serif}
+html:lang(zh){--police:'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif;--herbik:'Songti SC','Noto Serif CJK SC',serif;--mono:'PingFang SC','Microsoft YaHei',sans-serif}
+html:lang(vi){--police:Arial,sans-serif;--herbik:Georgia,serif}
+#bouton-langue{width:100%;min-height:44px;padding:8px 28px 8px 12px;border:1px solid var(--hairline);border-radius:10px;background:#101313;color:var(--texte);font:14px/1.5 var(--police);text-transform:none;letter-spacing:0;color-scheme:dark}
+:is(html:lang(ja),html:lang(zh)) :is(.risk-heading,.fiche-eyebrow,.micro,.nom,.detail){letter-spacing:0;line-height:1.65}
+:is(html:lang(ja),html:lang(zh)) .fiche-methode{line-height:1.8}
+.risk-heading{overflow-wrap:anywhere}
 body.comparaison-active #champ-recherche { caret-color: #b5cbea; }
 #model-notice details[open] { animation: beta-reveal 280ms ease-out; }
 @keyframes beta-reveal { from { opacity: .6; } to { opacity: 1; } }

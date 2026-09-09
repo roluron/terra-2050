@@ -184,6 +184,7 @@
 </head>
 <body>
 <dialog id="earth-shell" lang="en" aria-label="A letter from Earth">
+  <select id="earth-language" aria-label="Language"></select>
   <canvas id="earth-orb" aria-hidden="true"></canvas>
   <main id="earth-letter-main">
     <h1 tabindex="-1">Hello human.</h1>
@@ -237,7 +238,7 @@
 
 <div id="timeline" class="panneau">
   <div id="accroche" hidden><button id="accroche-txt"></button><button id="accroche-x" aria-label="Fermer">×</button></div>
-  <div class="micro">Projection temporelle</div>
+  <div class="micro" data-t="panelYear"></div>
   <div class="an" id="an">2026</div>
   <div class="an-distance" id="an-distance"></div>
   <div class="regle" aria-hidden="true"></div>
@@ -274,7 +275,7 @@
       <button class="bouton-ico fa-lien" id="bouton-position"></button>
       <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
-      <button class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language / Langue">FR · <em>en</em></button>
+      <select class="bouton-ico fa-lien" id="bouton-langue" aria-label="Language"></select>
     </div>
   </div>
 </div>
@@ -282,9 +283,8 @@
 <div id="hud" class="panneau"></div>
 
 <div id="secours">
-  <h2>WebGL indisponible</h2>
-  <p>Cette expérience repose sur un rendu GPU temps réel. Votre navigateur ou votre machine ne permet pas d'initialiser WebGL — essayez un navigateur récent avec l'accélération matérielle activée.</p>
-  <p lang="en">This experience needs real-time GPU rendering. Your browser or device could not start WebGL — try a recent browser with hardware acceleration enabled.</p>
+  <h2 data-ui="webglTitle"></h2>
+  <p data-ui="webglBody"></p>
 </div>
 
 <div id="story-popup" hidden aria-modal="true" role="dialog">
@@ -359,7 +359,7 @@
       <p class="coords" id="dossier-coords"></p>
       <p class="sources" id="dossier-sources"></p>
       <p class="sources"><a href="https://www.worldclim.org/data/cmip6/cmip6climate.html" target="_blank" rel="noopener">WorldClim ↗</a> · <a href="https://essd.copernicus.org/articles/15/2153/2023/" target="_blank" rel="noopener">CMIP6 Fire Weather Index ↗</a> · <a href="https://www.wri.org/data/aqueduct-floods-hazard-maps" target="_blank" rel="noopener">WRI Aqueduct Floods ↗</a> · <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN WPP ↗</a></p>
-      <p class="sources"><a href="./data/climate-manifest.json" target="_blank" rel="noopener">WorldClim provenance ↗</a> · <a href="./data/fire-weather.json" target="_blank" rel="noopener">FWI provenance ↗</a> · <a href="./data/flood-metadata.json" target="_blank" rel="noopener">Flood provenance ↗</a> · <a href="./data/population-provenance.json" target="_blank" rel="noopener">UN provenance ↗</a></p>
+      <p class="sources"><a href="./data/climate-manifest.json" target="_blank" rel="noopener">WorldClim · <span data-ui="provenance"></span> ↗</a> · <a href="./data/fire-weather.json" target="_blank" rel="noopener">FWI · <span data-ui="provenance"></span> ↗</a> · <a href="./data/flood-metadata.json" target="_blank" rel="noopener">Aqueduct · <span data-ui="provenance"></span> ↗</a> · <a href="./data/population-provenance.json" target="_blank" rel="noopener">UN WPP · <span data-ui="provenance"></span> ↗</a></p>
     </details>
   </div>
   <footer class="actions">
@@ -380,6 +380,7 @@ import { loadScientificMetrics } from './science-metrics.mjs';
 import { loadFloodHazards } from './climate-data.mjs';
 import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { language, getText, message, languageSelect } from './i18n.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
 gsap.ticker.lagSmoothing(0);
@@ -463,228 +464,8 @@ function revelerChars(el, texte){
    1 bis. LANGUES — tout le texte d'interface passe par T(). Les éléments
    porteurs de data-t sont réécrits par traduire().
    ===================================================================== */
-const TEXTES = {
-  fr: {
-    lang: 'fr',
-    panelVerdict: {bon: 'Indice expérimental élevé', moyen: 'Indice expérimental intermédiaire', dur: 'Indice expérimental bas'},
-    panelSummary: risque => `Axe dominant de l’indice expérimental : ${risque.toLowerCase()}.`,
-    panelMinimal: 'Valeurs basses sur les échelles choisies pour cet indice expérimental.',
-    panelYear: 'Année · 2026–2050',
-    panelCity: 'Ville',
-    panelCountry: 'Vue du pays',
-    panelIndex: 'Indice climatique expérimental',
-    betaShort: 'Bêta · Données potentiellement inexactes',
-    betaNotice: 'Les animations illustrent les indicateurs, pas des événements observés. Signalez-nous une donnée qui semble incorrecte.',
-    betaContact: 'Votre lieu semble inexact ? Contactez-nous ↗',
-    panelDataLimits: 'Traçabilité incomplète : générateurs actuels absents, certaines lacunes et marées de repli sans marqueur par ville. Zéro ne prouve pas l’absence de risque. Notes de villes non validées scientifiquement.',
-    panelDirection: 'Plus haut = pénalités normalisées plus faibles.',
-    panelRisks: 'Les risques à comprendre',
-    panelRiskHelp: 'Unités indiquées sur chaque carte. Les indices expérimentaux ne sont pas des probabilités.',
-    panelGraph: 'Indice sur 100 · 2026 à 2050',
-    panelMethod: 'Comprendre le score et les données',
-    panelMethodText: 'Comparaison expérimentale, non validée comme mesure de risque ou d’habitabilité. Chaque axe est ramené entre 0 et 1 : chaleur (°C−20)/30 ; aridité 1−De Martonne/60 ; météo de feu jours/366 ; profondeur d’inondation mètres/3 ; réchauffement °C/5. Valeurs bornées à 0–1. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, réchauffement12%. Indice = 100×[1−(moyenne pondérée+maximum)/2]. Ces échelles et poids sont des choix de l’application. Les six mesures sont requises ; une donnée absente n’est jamais un zéro. Climat/feu : SSP3-7.0 ; inondations : RCP8.5, scénarios distincts. Aucune probabilité de catastrophe ou recommandation de déménagement.',
-    panelScenario: '2026 n’est pas une observation : les années sont interpolées entre des estimations issues de moyennes climatiques sur 20 ans, un modèle CMIP6, SSP3-7.0. Fleuves : référence fixe. Détails côtiers : 2050 uniquement. Pas une prévision annuelle ni une étude locale de danger.',
-    panelCountryNote: n => `Moyenne de ${n} villes, pondérée par leur population. Les conditions varient d’une ville à l’autre.`,
-    panelEvolution: n => n === 0 ? 'Même indice qu’en 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points par rapport à 2026.`,
-
-    sous1: 'Observatoire prospectif',
-    sous2: 'Votre ville sera-t-elle encore vivable en 2050 ?',
-    initialiser: 'Explorer',
-    chercher: 'Chercher une ville — ⌘K',
-    aucunLieu: 'Aucune ville trouvée',
-    atlantide: 'Atlantide — submergée depuis −9600. Indice 0/100. Essayez une ville encore émergée.',
-    chargementVilles: 'Chargement des 34 099 villes…',
-    calquesHS: 'Cartes de calques indisponibles — rechargez la page',
-    cartesPartielles: 'Certaines cartes n’ont pas pu être chargées : le globe sera incomplet.',
-    sousHeader: 'Indicateurs climatiques expérimentaux · 2026→2050',
-    son: e => e ? 'Son · on' : 'Son · off',
-    calque: { chaleur: 'Chaleur estivale', feux: 'Météo de feu · évolution',
-      secheresse: 'Aridité',
-      mer: 'Submersion marine', fleuves: 'Inondations fluviales', stabilite: 'Réchauffement local',
-      declin: 'Déclin de population' },
-    info: {
-      chaleur: 'Maximum mensuel de la moyenne des températures maximales quotidiennes.',
-      feux: 'Évolution des jours de météo de feu extrême. Pas une carte des incendies actifs.',
-      secheresse: 'Aridité modélisée à partir de la température et des pluies.',
-      mer: 'Là où la mer peut recouvrir la terre.',
-      fleuves: 'Évolution d’une crue centennale modélisée.',
-      stabilite: 'Variation de température annuelle moyenne depuis 1970–2000.',
-      declin: 'Les pays qui perdent des habitants d’ici 2050.',
-    },
-    infoplus: {
-      chaleur: 'Température maximale quotidienne moyenne du mois le plus chaud, en °C. WorldClim : climat historique 1970–2000, projections 2021–2040 et 2041–2060, modèle MPI-ESM1-2-HR, SSP3-7.0. Les années sont interpolées entre ces moyennes ; ce ne sont ni des observations annuelles, ni des records, ni un nombre de jours de canicule. Résolution native : 10 minutes d’arc.',
-      feux: 'Jours/an au-dessus du 95e percentile préindustriel local du Fire Weather Index. Moyenne de 21 modèles CMIP6 SSP3-7.0 : 2016–2035 vers 2041–2060. Carte : ambre en hausse, turquoise en baisse ; points proportionnels aux conditions météo modélisées, pas aux départs de feu. Résolution 2,5°, sans correction des biais, masque végétal de 2016 fixe. Les années intermédiaires sont illustratives ; ni incendies actifs, ni surface brûlée.',
-      secheresse: 'Indice d’aridité température/pluie ; hors consommation, réservoirs et accès à l’eau potable.',
-      mer: 'Aqueduct Floods : événement centennal, RCP8.5, niveau marin médian, sans affaissement ni protections. Historique 1979–2014, horizons 2030 et 2050. Profondeur de la maille native au centre de la ville ; la carte résume la fraction des cellules couvertes dépassant 0,5 m. Interpolation illustrative, pas une prévision annuelle ou une probabilité locale. Le scénario diffère du SSP3-7.0 des couches climatiques.',
-      fleuves: 'Aqueduct Floods : événement centennal, RCP8.5, cinq modèles, sans protections. Historique 1960–1999 ; 2030 = 2010–2049, 2050 = 2030–2069. Profondeur à la maille native du centre de la ville ; carte = fraction des cellules couvertes dépassant 0,5 m. Interpolation illustrative entre périodes, pas une prévision annuelle. La dispersion des modèles n’est pas un intervalle de confiance.',
-      stabilite: 'Réchauffement local en °C relativement à 1970–2000. Température annuelle dérivée de la moyenne mensuelle de (minimum + maximum)/2. WorldClim / MPI-ESM1-2-HR, SSP3-7.0, périodes 2021–2040 et 2041–2060. Interpolation illustrative ; un seul modèle, pas un seuil de basculement climatique.',
-      declin: 'Variation nationale estimée selon le scénario médian ONU WPP 2024. Une projection démographique est incertaine ; elle ne prédit pas directement les services, les emplois ni la population de chaque ville.',
-    },
-    infoSource: {
-      chaleur: 'WorldClim 2.1 · MPI-ESM1-2-HR · SSP3-7.0',
-      feux: 'ETH Zurich · Quilcaille et al. · 21 modèles CMIP6 · SSP3-7.0',
-      secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · indice de De Martonne',
-      mer: 'WRI Aqueduct Floods · événement centennal · RCP8.5',
-      fleuves: 'WRI Aqueduct Floods · cinq modèles · RCP8.5',
-      stabilite: 'WorldClim 2.1 · MPI-ESM1-2-HR · SSP3-7.0',
-      declin: 'ONU WPP 2024 (médiane) · Our World in Data · Natural Earth',
-    },
-    pedagoOk: 'Compris',
-    sansDonnees: 'Données insuffisantes',
-    sansDonneesLong: 'Une ou plusieurs mesures manquent dans les sources. Les mesures disponibles restent affichées ; l’indice exige les six axes.',
-    popLabel: 'Population du pays',
-    meilleuresVilles: 'Moins exposées dans ce modèle',
-    critere: { thermique: 'Chaleur estivale', eau: 'Aridité', feux: 'Météo de feu extrême',
-      mer: 'Submersion marine', fleuves: 'Inondation fluviale', stabilite: 'Réchauffement local' },
-    verdict: { bon: 'Indice expérimental élevé', moyen: 'Indice expérimental intermédiaire', dur: 'Indice expérimental bas' },
-    trajectoire: 'Ce qui change d’ici 2050',
-    ailleurs: 'Moins exposées dans ce modèle, à proximité',
-    rienDeMieux: 'Aucune ville proche n’a un indice nettement supérieur dans ce modèle.',
-    partage: 'Partager le lien ↗', story: 'Image story ↗',
-    comparer: 'Comparer une ville',
-    accrocheChoisir: 'Cherchez la ville à comparer',
-    partagerSite: 'Partager TERRA ↗',
-    partageSite: 'Explorez 34 099 villes et leurs indicateurs climatiques expérimentaux entre 2026 et 2050. Estimations, sources et limites ; pas une prévision locale.',
-    posIndispo: 'Position indisponible — cherchez votre ville',
-    aria: { 'champ-recherche': 'Rechercher un lieu', resultats: 'Résultats', 'bouton-position': 'Ma position',
-      calques: 'Calques de risque', curseur: 'Année de projection', dossier: 'Diagnostic du lieu',
-      'dossier-croix': 'Fermer', 'accroche-x': 'Fermer', 'story-fermer': 'Fermer', 'bouton-reglages': 'Réglages', 'bouton-langue': 'Langue' },
-    storyTitre: 'Composer la story', storyPartager: 'Partager en story ↗',
-    storyPreparation: 'Préparation de l’image…', storyReessayer: 'Réessayer l’image ↻',
-    storyEnregistrer: 'Enregistrer en JPEG ↓', storyEnregistree: 'Enregistré ✓',
-    frappeChaud: (j, an) => `Estimation ${an} : ${j >= 300 ? '≥' : ''}${j} jours/an d’indice de chaleur >32 °C`,
-    frappeMer: f => `${f} % des terres sous la ligne de submersion 2050`,
-    frappeFleuves: f => `${f} % du territoire en zone de crue centennale`,
-    frappeEau: p => `plus aride que ${p} % des villes du monde`,
-    frappeFeux: p => `une météo de feu au-dessus de ${p} % des villes`,
-    frappeStab: p => `un climat qui bascule plus vite que ${p} % des villes`,
-    accrocheDefi: 'Comparer cette ville à la vôtre',
-    distanceAn: n => n <= 0 ? 'aujourd’hui' : n === 1 ? 'dans 1 an' : `dans ${n} ans`,
-    optPlanete: 'La planète en fond', optTrajectoire: 'La trajectoire 2026 → 2050',
-    optAxes: 'Les aléas les plus durs', optPop: 'La population du pays',
-    paliers: ['risque minime', 'risque faible', 'risque modéré', 'risque élevé', 'risque sévère'],
-    detChaud: (j, d) => `Estimation : ${j >= 300 ? "≥" : ""}${j} jours/an d’indice de chaleur >32 °C${d ? ` · ${d > 0 ? '+' : ''}${d} depuis 2026` : ''}`,
-    detFroid: j => `${j >= 200 ? "≥" : ""}${j} jours de gel estimés/an`,
-    detChaud40: j => `${j >= 200 ? "≥" : ""}${j} jours estimés d’indice de chaleur >40 °C ; estimation séparée, plafonnée`,
-    detEau: (v, pct, d) => `${v}/100 sur une échelle d’aridité issue de la température et des précipitations (De Martonne). Ne mesure ni les réserves ni l’accès à l’eau potable.`,
-    detFeux: (v, pct, d) => `${v}/100 pour un indicateur de temps chaud et sec. Ne prédit pas les incendies réels et ne tient pas compte de la végétation locale ni des départs de feu.`,
-    detMer: (f, f5, med, sub, r, mt) => `${f} % des terres à moins de ${r} km sous la ligne de submersion 2050${sub >= 0.05 ? ` (estimation stockée d’affaissement : −${sub} m d’ici 2050)` : ''} · ${f5} % sous la ligne ＋ 1 m · altitude médiane ${med} m · ligne = niveau 2050 ＋ marée de tempête centennale (${mt} m, dérivée de COAST-RP ; repli non identifié) · seule l’eau reliée à la mer compte · les digues en terre figurent dans le relief, les ouvrages mobiles non · relief FABDEM 30 m, sol nu`,
-    detFleuves: (f, d90, r) => `crue centennale (1 % de dépassement annuel) : ${f} % des terres à moins de ${r} km inondées${d90 ? `, jusqu’à ${d90} m d’eau (p90)` : ''} · carte modèle JRC, constante à 2050`,
-    detStab: v => `Indicateur de changement climatique : ${v}/100 · combine température et précipitations. Indice propre à l’application, pas une température en °C.`,
-    sources: 'Données et transformations reproductibles : WorldClim 2.1 / MPI-ESM1-2-HR SSP3-7.0 ; ETH Zurich, Quilcaille et al., 21 modèles CMIP6 SSP3-7.0 pour la météo de feu ; WRI Aqueduct Floods RCP8.5, événement centennal sans protections ; ONU WPP 2024 annuel, mise à jour Togo 2026. Les projections ne sont pas des observations annuelles. Ces organismes ne valident pas notre indice expérimental. Géographie : Natural Earth, GeoNames.',
-  },
-  en: {
-    lang: 'en',
-    panelVerdict: {bon: 'Higher experimental index', moyen: 'Mid-range experimental index', dur: 'Lower experimental index'},
-    panelSummary: risk => `Dominant axis in the experimental index: ${risk.toLowerCase()}.`,
-    panelMinimal: 'Low values on the scales chosen for this experimental index.',
-    panelYear: 'Year · 2026–2050',
-    panelCity: 'City',
-    panelCountry: 'Country overview',
-    panelIndex: 'Experimental climate index',
-    betaShort: 'Beta · Data may be inaccurate',
-    betaNotice: 'Animations illustrate indicators, not observed events. Let us know if a place’s data looks incorrect.',
-    betaContact: 'Your place looks inaccurate? Contact us ↗',
-    panelDataLimits: 'Provenance incomplete: current generators are missing; some source gaps and tide fallbacks have no per-city flag. Zero does not prove no risk. City ratings are not scientifically validated.',
-    panelDirection: 'Higher = lower normalized penalties.',
-    panelRisks: 'Understand the risks',
-    panelRiskHelp: 'Units are shown on each card. Experimental indices are not probabilities.',
-    panelGraph: 'Index out of 100 · 2026 to 2050',
-    panelMethod: 'About the score and data',
-    panelMethodText: 'Experimental comparison, not validated as a risk or habitability measure. Each axis is scaled to 0–1: heat (°C−20)/30; aridity 1−De Martonne/60; fire-weather days/366; flood depth metres/3; warming °C/5. Values are clamped to 0–1. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, warming12%. Index = 100×[1−(weighted mean+maximum)/2]. These scales and weights are app choices. All six measurements are required; missing data never become zero. Climate/fire: SSP3-7.0; floods: RCP8.5, distinct scenarios. No disaster probability or relocation recommendation.',
-    panelScenario: '2026 is not an observation: years interpolate estimates derived from 20-year climate averages, one CMIP6 model, SSP3-7.0. Rivers: fixed reference. Coastal details: 2050 only. Not an annual forecast or local hazard assessment.',
-    panelCountryNote: n => `Average of ${n} cities, weighted by population. Conditions vary between cities.`,
-    panelEvolution: n => n === 0 ? 'Same index as in 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points compared with 2026.`,
-
-    sous1: 'Prospective observatory',
-    sous2: 'Will your city still be livable in 2050?',
-    initialiser: 'Explore',
-    chercher: 'Search a city — ⌘K',
-    aucunLieu: 'No city found',
-    atlantide: 'Atlantis — underwater since 9600 BC. Index 0/100. Try a city still above the sea.',
-    chargementVilles: 'Loading 34,099 cities…',
-    calquesHS: 'Layer maps unavailable — reload the page',
-    cartesPartielles: 'Some maps could not be loaded: the globe will be incomplete.',
-    sousHeader: 'Experimental climate indicators · 2026→2050',
-    son: e => e ? 'Sound · on' : 'Sound · off',
-    calque: { chaleur: 'Summer heat', feux: 'Fire-weather change',
-      secheresse: 'Aridity',
-      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Local warming',
-      declin: 'Population decline' },
-    info: {
-      chaleur: 'Hottest-month mean daily maximum temperature.',
-      feux: 'Change in extreme fire-weather days. Not a map of active fires.',
-      secheresse: 'Modelled aridity from temperature and rainfall.',
-      mer: 'Where the sea can cover the land.',
-      fleuves: 'Change in a modelled 100-year river flood.',
-      stabilite: 'Annual mean temperature change since 1970–2000.',
-      declin: 'Countries losing people by 2050.',
-    },
-    infoplus: {
-      chaleur: 'Hottest-month mean daily maximum temperature, °C. WorldClim historical climate 1970–2000; projections 2021–2040 and 2041–2060, MPI-ESM1-2-HR, SSP3-7.0. Years interpolate these climate averages; they are not annual observations, records or heatwave-day counts. Native resolution: 10 arcminutes.',
-      feux: 'Days/year above the local preindustrial Fire Weather Index 95th percentile. Mean of 21 CMIP6 models, SSP3-7.0: 2016–2035 to 2041–2060. Amber increases; teal decreases. Point density represents modelled weather conditions, not ignitions. Resolution 2.5°, no bias correction, static 2016 land-cover mask. Intermediate years are illustrative; neither active fires nor burned area.',
-      secheresse: 'Temperature/rainfall aridity proxy; excludes water use, reservoirs and drinking-water access.',
-      mer: 'Aqueduct Floods: 100-year event, RCP8.5, median sea-level projection, no subsidence or flood protection. Historical 1979–2014, horizons 2030 and 2050. Native grid depth at the city centre; globe shows fraction of covered cells exceeding 0.5 m. Illustrative interpolation, not an annual forecast or property probability. Scenario differs from SSP3-7.0 climate layers.',
-      fleuves: 'Aqueduct Floods: 100-year event, RCP8.5, five models, without protection. Historical 1960–1999; 2030 means 2010–2049 and 2050 means 2030–2069. Native grid depth at the city centre; globe shows fraction of covered cells exceeding 0.5 m. Illustrative interpolation between climate periods, not annual forecasts. Model spread is not a confidence interval.',
-      stabilite: 'Local warming in °C relative to 1970–2000. Annual temperature derived from monthly means of (minimum + maximum)/2. WorldClim / MPI-ESM1-2-HR, SSP3-7.0, periods 2021–2040 and 2041–2060. Illustrative interpolation; one model, not a climate tipping-point threshold.',
-      declin: 'Estimated national change under the UN WPP 2024 medium scenario. Demographic projections are uncertain; they do not directly predict services, jobs or each city’s population.',
-    },
-    infoSource: {
-      chaleur: 'WorldClim 2.1 · MPI-ESM1-2-HR · SSP3-7.0',
-      feux: 'ETH Zurich · Quilcaille et al. · 21 CMIP6 models · SSP3-7.0',
-      secheresse: 'WorldClim 2.1 · CMIP6 SSP3-7.0 · De Martonne index',
-      mer: 'WRI Aqueduct Floods · 100-year event · RCP8.5',
-      fleuves: 'WRI Aqueduct Floods · five models · RCP8.5',
-      stabilite: 'WorldClim 2.1 · MPI-ESM1-2-HR · SSP3-7.0',
-      declin: 'UN WPP 2024 (medium) · Our World in Data · Natural Earth',
-    },
-    pedagoOk: 'Got it',
-    sansDonnees: 'Not enough data',
-    sansDonneesLong: 'One or more source measurements are unavailable. Available measurements remain visible; the index requires all six axes.',
-    popLabel: 'Country population',
-    meilleuresVilles: 'Lower exposure in this model',
-    critere: { thermique: 'Summer heat', eau: 'Aridity', feux: 'Extreme fire weather',
-      mer: 'Coastal flooding', fleuves: 'River flooding', stabilite: 'Local warming' },
-    verdict: { bon: 'Higher experimental index', moyen: 'Mid-range experimental index', dur: 'Lower experimental index' },
-    trajectoire: 'How the outlook changes',
-    ailleurs: 'Higher experimental index nearby',
-    rienDeMieux: 'No nearby city has a meaningfully higher index in this model.',
-    partage: 'Share link ↗', story: 'Story image ↗',
-    comparer: 'Compare cities',
-    accrocheChoisir: 'Search the city to compare with',
-    partagerSite: 'Share TERRA ↗',
-    partageSite: 'Explore 34,099 cities and their experimental climate indicators from 2026 to 2050. Estimates, sources and limitations; not a local forecast.',
-    posIndispo: 'Location unavailable — search your city',
-    aria: { 'champ-recherche': 'Search a place', resultats: 'Results', 'bouton-position': 'My location',
-      calques: 'Risk layers', curseur: 'Projection year', dossier: 'Place diagnosis',
-      'dossier-croix': 'Close', 'accroche-x': 'Close', 'story-fermer': 'Close', 'bouton-reglages': 'Settings', 'bouton-langue': 'Language' },
-    storyTitre: 'Compose your story', storyPartager: 'Share to Stories ↗',
-    storyPreparation: 'Preparing image…', storyReessayer: 'Retry image ↻',
-    storyEnregistrer: 'Save as JPEG ↓', storyEnregistree: 'Saved ✓',
-    frappeChaud: (j, an) => `${an} estimate: ${j >= 300 ? '≥' : ''}${j} days/year above a 32 °C heat index`,
-    frappeMer: f => `${f}% of the land below the 2050 flood line`,
-    frappeFleuves: f => `${f}% of the area inside the 100-yr flood zone`,
-    frappeEau: p => `drier than ${p}% of the world’s cities`,
-    frappeFeux: p => `fire weather above ${p}% of cities`,
-    frappeStab: p => `a climate shifting faster than ${p}% of cities`,
-    accrocheDefi: 'Compare this city with yours',
-    distanceAn: n => n <= 0 ? 'today' : n === 1 ? 'in 1 year' : `in ${n} years`,
-    optPlanete: 'Planet as backdrop', optTrajectoire: 'The 2026 → 2050 trajectory',
-    optAxes: 'The hardest risks', optPop: 'Country population',
-    paliers: ['minimal risk', 'low risk', 'moderate risk', 'high risk', 'severe risk'],
-    detChaud: (j, d) => `Estimated ${j >= 300 ? "≥" : ""}${j} days/year above 32 °C heat index${d ? ` · ${d > 0 ? '+' : ''}${d} since 2026` : ''}`,
-    detFroid: j => `${j >= 200 ? "≥" : ""}${j} estimated freezing days/year`,
-    detChaud40: j => `${j >= 200 ? "≥" : ""}${j} estimated days with heat index >40 °C; separate capped estimate`,
-    detEau: (v, pct, d) => `${v}/100 on a custom aridity scale derived from temperature and rainfall (De Martonne). Not a measure of water reserves or drinking-water supply.`,
-    detFeux: (v, pct, d) => `${v}/100 on a custom hot/dry-weather proxy. It does not predict actual fires or include local vegetation and ignition.`,
-    detMer: (f, f5, med, sub, r, mt) => `${f}% of land within ${r} km below the 2050 flood line${sub >= 0.05 ? ` (stored subsidence estimate: −${sub} m by 2050)` : ''} · ${f5}% below the line + 1 m · median elevation ${med} m · line = 2050 level + the 1-in-100-year storm tide (${mt} m, COAST-RP-derived; fallback flags unavailable) · only water connected to the sea counts · earthen dikes are part of the terrain, movable barriers are not · FABDEM relief at 30 m, bare earth`,
-    detFleuves: (f, d90, r) => `100-year flood (1% annual exceedance): ${f}% of land within ${r} km flooded${d90 ? `, up to ${d90} m deep (p90)` : ''} · JRC model map, held constant to 2050`,
-    detStab: v => `Climate-shift proxy: ${v}/100 · combines temperature and precipitation changes. This is a custom index, not a temperature in °C.`,
-    sources: 'Reproducible source data and transformations: WorldClim 2.1 / MPI-ESM1-2-HR SSP3-7.0; ETH Zurich, Quilcaille et al., 21 CMIP6 SSP3-7.0 models for fire weather; WRI Aqueduct Floods RCP8.5, unprotected 100-year event; annual UN WPP 2024 including the 2026 Togo update. Projections are not annual observations. These organisations do not validate our experimental index. Geography: Natural Earth, GeoNames.',
-  },
-};
-let langue = 'en';   // anglais d'abord — le toggle FR·EN mémorise le choix
-const T = () => TEXTES[langue];
+let langue = language();
+const T = getText;
 
 /* =====================================================================
    1 ter. ANNUAIRE & LECTURE DES GRILLES
@@ -700,7 +481,7 @@ let PAYS_LIGNES = [];              // pseudo-rangées pays pour la recherche
 let VILLES_PAR_PAYS = {};          // iso2 -> rangées de villes
 const estPays = l => l && l[5] === 2;
 // [nom_fr, iso2, lat, lon, pop, capitale, nom_en] — le nom affiché suit la langue
-const nomVille = l => (langue === 'en' ? l[6] : l[0]) || l[0];
+const nomVille = l => estPays(l) ? nomPays(l[1]) : (langue === 'fr' ? l[0] : l[6]) || l[0];
 const nomPays = (() => {
   const cache = {};
   return iso => {
@@ -752,17 +533,16 @@ function penalitePhysique(key, value){
   return Math.max(0, Math.min(1, normalized));
 }
 function unavailableScienceText(){
-  const en = langue === 'en';
   if (!SCIENCE) return scienceLoadFailed
-    ? { title: en ? 'Download failed' : 'Échec du téléchargement', detail: en ? 'Reload the page to retry downloading the data.' : 'Rechargez la page pour retélécharger les données.' }
-    : { title: en ? 'Loading data…' : 'Chargement des données…', detail: en ? 'Scientific measurements are still downloading.' : 'Les mesures scientifiques sont en cours de téléchargement.' };
-  return { title: en ? 'No estimate' : 'Estimation indisponible', detail: en ? 'Outside usable source coverage' : 'Hors couverture exploitable de la source' };
+    ? { title: T().ui.download_failed, detail: T().ui.reload_the_page_to_retry }
+    : { title: T().ui.loading_data, detail: T().ui.scientific_measurements_are_still_downloading };
+  return { title: T().ui.no_estimate, detail: T().ui.outside_usable_source_coverage };
 }
 function detailPhysique(key, reading){
   if (!reading?.available) return unavailableScienceText().detail;
   const format = value => value.toLocaleString(langue, { maximumFractionDigits: 2 });
-  const unit = reading.unit === 'days/year' && langue === 'fr' ? 'jours/an' : reading.unit;
-  return `${format(reading.value)} ${unit} · ${langue === 'en' ? '2026 illustrative estimate' : 'estimation illustrative 2026'}: ${format(reading.baseline)} · 2050: ${format(reading.future)}.`;
+  const unit = uniteLocale(reading.unit);
+  return `${format(reading.value)} ${unit} · ${T().ui['2026_illustrative_estimate']}: ${format(reading.baseline)} · 2050: ${format(reading.future)}.`;
 }
 function penVille(l, cle, t){
   const reading = mesuresLieu(l, 2026 + 24 * t)?.[cle];
@@ -1761,23 +1541,22 @@ const etat = { progression: 0, annee: 2026, crise: false };
 function majContexteCalques(){
   const el = document.getElementById('layer-context');
   const actifs = [...document.querySelectorAll('.calque.actif')].map(b => b.dataset.cle);
-  const en = langue === 'en';
-  const notes = [`${etat.annee} · ${en ? 'Model indicators' : 'Indicateurs modélisés'}`];
-  if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(en ? 'WRI · RCP8.5 · 100-year event, no protection · interpolated historical / 2030 / 2050 epochs' : 'WRI · RCP8.5 · événement centennal sans protections · interpolation historique / 2030 / 2050');
-  if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(en ? 'Globe: fraction of covered cells >0.5 m · amber increase / teal decrease · full change colour at 5 percentage points' : 'Globe : fraction de cellules couvertes >0,5 m · ambre hausse / turquoise baisse · couleur maximale à 5 points de pourcentage');
-  if (actifs.includes('chaleur')) notes.push(en ? 'Hottest-month mean maximum · 20–50 °C display scale · SSP3-7.0' : 'Maximum moyen du mois le plus chaud · échelle 20–50 °C · SSP3-7.0');
-  if (actifs.includes('secheresse')) notes.push(en ? 'De Martonne · 0 dry to ≥60 wet · lower means drier · SSP3-7.0' : 'De Martonne · 0 aride à ≥60 humide · plus bas = plus aride · SSP3-7.0');
-  if (actifs.includes('stabilite')) notes.push(en ? 'Local warming since 1970–2000 · 0–5 °C display scale · SSP3-7.0' : 'Réchauffement depuis 1970–2000 · échelle 0–5 °C · SSP3-7.0');
+  const notes = [`${etat.annee} · ${T().ui.model_indicators}`];
+  if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(T().ui.wri_rcp85_100year_event_no);
+  if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(T().ui.globe_fraction_of_covered_cells);
+  if (actifs.includes('chaleur')) notes.push(T().ui.hottestmonth_mean_maximum_2050_c);
+  if (actifs.includes('secheresse')) notes.push(T().ui.de_martonne_0_dry_to);
+  if (actifs.includes('stabilite')) notes.push(T().ui.local_warming_since_19702000_05);
   if (actifs.includes('declin')) notes.push(uniformsGlobe.uPopulation.value === texVide
-    ? (en ? 'Population map loading or unavailable' : 'Carte de population en chargement ou indisponible')
-    : (en ? 'UN annual medium projection · decline since 2025' : 'Projection annuelle médiane ONU · déclin depuis 2025'));
-  if (actifs.some(c => !['fleuves','declin'].includes(c))) notes.push(en ? 'Interpolated estimates · not annual forecasts' : 'Estimations interpolées · pas de prévisions annuelles');
+    ? (T().ui.population_map_loading_or_unavailable)
+    : (T().ui.un_annual_medium_projection_decline));
+  if (actifs.some(c => !['fleuves','declin'].includes(c))) notes.push(T().ui.interpolated_estimates_not_annual_forecasts);
   if (actifs.includes('feux')) {
-    notes.unshift(en ? 'Fire-weather change · not active fires' : 'Évolution météo de feu · pas des incendies actifs');
-    notes.push(en ? 'Change in extreme fire-weather days/year: amber increase / teal decrease · full colour ≥10 days' : 'Variation des jours/an de météo de feu extrême : ambre hausse / turquoise baisse · couleur maximale ≥10 jours');
-    notes.push(en ? 'Uncoloured: no displayed change or unavailable data; not an absence of risk' : 'Sans couleur : pas de variation affichée ou données indisponibles ; pas une absence de risque');
-    notes.push(en ? '21-model mean · SSP3-7.0 · 2016–2035 → 2041–2060 · interpolated climate, not annual observations' : 'Moyenne de 21 modèles · SSP3-7.0 · 2016–2035 → 2041–2060 · climat interpolé, pas des observations annuelles');
-    notes.push(en ? 'Point density represents modelled weather conditions, not fire locations' : 'La densité des points représente les conditions météo modélisées, pas des incendies localisés');
+    notes.unshift(T().ui.fireweather_change_not_active_fires);
+    notes.push(T().ui.change_in_extreme_fireweather_daysyear);
+    notes.push(T().ui.uncoloured_no_displayed_change_or);
+    notes.push(T().ui['21model_mean_ssp370_20162035_20412060']);
+    notes.push(T().ui.point_density_represents_modelled_weather);
   }
   el.textContent = notes.join('\n');
 }
@@ -1957,7 +1736,7 @@ function afficherResultats(){
           const li = document.createElement('li');
           li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
       li.id = 'res-' + resultatsActuels.indexOf(l);
-          li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
+          li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (T().ui.country) : nomPays(l[1])}</span>`;
           li.addEventListener('click', () => choisirLieu(l));
           li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
           liste.appendChild(li);
@@ -1973,7 +1752,7 @@ function afficherResultats(){
   const debut = [], dedans = [];
   for (const l of PAYS_LIGNES){
     const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
-    if (a.startsWith(q) || b.startsWith(q)) debut.push(l);
+    if (a.startsWith(q) || b.startsWith(q) || normaliser(nomPays(l[1])).startsWith(q)) debut.push(l);
   }
   for (const l of LIEUX){
     const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
@@ -1985,7 +1764,7 @@ function afficherResultats(){
   /* un site de villes montre d'abord des VILLES — mais un nom tape en entier
      gagne toujours, et un pays qui correspond garde sa place plutot que d'etre
      noye sous ses propres villes (« fran » doit proposer la France). */
-  const exact = l => (normaliser(l[0]) === q || normaliser(l[6] || '') === q ? 0 : 1);
+  const exact = l => (normaliser(l[0]) === q || normaliser(l[6] || '') === q || normaliser(nomVille(l)) === q ? 0 : 1);
   const rang = l => exact(l) * 2 + (estPays(l) ? 1 : 0);
   debut.sort((a, b) => rang(a) - rang(b) || (b[4] || 0) - (a[4] || 0));
   resultatsActuels = debut.concat(dedans).slice(0, 7);
@@ -2020,7 +1799,7 @@ function afficherResultats(){
       const li = document.createElement('li');
       li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
       li.id = 'res-' + resultatsActuels.indexOf(l);
-      li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1])}</span>`;
+      li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (T().ui.country) : nomPays(l[1])}</span>`;
       li.addEventListener('click', () => choisirLieu(l));
       li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
       liste.appendChild(li);
@@ -2394,6 +2173,7 @@ function creerRisques(conteneur, cles, t, signature, nouveau){
     <summary><span class="nom-crit">${t.critere[cle]}</span><span class="risque-chevron" aria-hidden="true">+</span><span class="risk-reading"><b class="risk-number"></b><small>/100</small></span><span class="risk-meter" aria-hidden="true"><i></i></span><span class="val"><b class="v-now"></b></span><span class="risk-change"></span></summary>
     <p class="detail"></p></details>`).join('');
 }
+const uniteLocale = unit => unit === 'days/year' ? T().ui.daysyear : unit === 'De Martonne index' ? 'De Martonne' : unit || '';
 function finirRisques(nouveau){
   const conteneur = document.getElementById('dossier-risques');
   const rangees = [...conteneur.querySelectorAll('.risque')];
@@ -2401,11 +2181,11 @@ function finirRisques(nouveau){
     rangees.sort((a, b) => Number(a.dataset.note) - Number(b.dataset.note));
     conteneur.append(...rangees);
   }
-  const readings = mesuresLieu(lieuDossier, etat.annee), en = langue === 'en';
+  const readings = mesuresLieu(lieuDossier, etat.annee);
   const format = value => value.toLocaleString(langue, { maximumFractionDigits: 2 });
   rangees.forEach(el => {
     const key = el.dataset.cle, sample = readings?.[key], available = sample?.available;
-    const unit = key === 'feux' ? (en ? 'days/year' : 'jours/an') : key === 'eau' ? 'De Martonne' : sample?.unit || '';
+    const unit = uniteLocale(key === 'feux' ? 'days/year' : key === 'eau' ? 'De Martonne index' : sample?.unit);
     el.querySelector('.risk-reading small').textContent = unit;
     el.querySelector('.risk-number').textContent = available ? format(sample.value) : '—';
     el.style.setProperty('--risk', available ? penalitePhysique(key, sample.value) * 100 : 0);
@@ -2414,18 +2194,18 @@ function finirRisques(nouveau){
     el.dataset.value = available ? sample.value : '';
     el.dataset.change = available ? sample.change : '';
     el.querySelector('.risk-change').textContent = available
-      ? `2026: ${format(sample.baseline)} · ${sample.change > 0 ? '+' : ''}${Math.abs(sample.change) > 0 && Math.abs(sample.change) < .01 ? (sample.change < 0 ? '−<0.01' : '<0.01') : format(sample.change)} ${unit}`
+      ? `2026: ${format(sample.baseline)} · ${sample.change > 0 ? '+' : ''}${Math.abs(sample.change) > 0 && Math.abs(sample.change) < .01 ? `${sample.change < 0 ? '−' : ''}<${format(.01)}` : format(sample.change)} ${unit}`
       : unavailableScienceText().detail;
     const increased = key === 'eau' ? sample?.change < 0 : sample?.change > 0;
     el.querySelector('.v-now').textContent = !available ? unavailableScienceText().title
-      : etat.annee === 2026 ? (en ? 'Illustrative baseline' : 'Référence illustrative')
-      : Math.abs(sample.change) < 1e-7 ? (en ? 'Unchanged estimate' : 'Estimation inchangée')
-      : key === 'eau' ? increased ? (en ? 'Drier' : 'Plus aride') : (en ? 'Wetter' : 'Moins aride')
-      : increased ? (en ? 'Increase' : 'Hausse') : (en ? 'Decrease' : 'Baisse');
+      : etat.annee === 2026 ? (T().ui.illustrative_baseline)
+      : Math.abs(sample.change) < 1e-7 ? (T().ui.unchanged_estimate)
+      : key === 'eau' ? increased ? (T().ui.drier) : (T().ui.wetter)
+      : increased ? (T().ui.increase) : (T().ui.decrease);
     el.querySelector('.v-now').style.color = !available || Math.abs(sample.change) < 1e-7 ? '#aab4bf' : increased ? '#efad83' : '#91d9b7';
     el.dataset.detail = definitionRisque(T(), key) + '\n\n' + detailPhysique(key, sample);
-    if (sample?.country) el.dataset.detail += en ? ' Population-weighted mean of listed cities with all six metrics; not a representative national assessment.' : ' Moyenne pondérée des villes listées disposant des six mesures ; pas une évaluation nationale représentative.';
-    else if (available && Number.isFinite(sample.p10) && Number.isFinite(sample.p90)) el.dataset.detail += ` ${en ? 'Change spread across models (10–90%, not a confidence interval)' : 'Dispersion de la variation entre modèles (10–90 %, pas un intervalle de confiance)'}: ${format(sample.p10)} / ${format(sample.p90)} ${unit}.`;
+    if (sample?.country) el.dataset.detail += T().ui.populationweighted_mean_of_listed_cities;
+    else if (available && Number.isFinite(sample.p10) && Number.isFinite(sample.p90)) el.dataset.detail += ` ${T().ui.change_spread_across_models_1090}: ${format(sample.p10)} / ${format(sample.p90)} ${unit}.`;
     el.querySelector('.detail').textContent = el.dataset.detail;
     if (nouveau) el.open = false;
   });
@@ -2455,8 +2235,8 @@ function majDossierPays(l, an, t, dossierNeuf){
 
   const ecart = indice2050 - indice;   // meme reference que le conseil : l'annee affichee
   document.getElementById('dossier-delta').textContent =
-    (ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'} · `) +
-    (langue === 'en' ? `${nVilles} cities weighted by population` : `${nVilles} villes pondérées par population`);
+    (ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${T().ui.pts_by_2050} · `) +
+    message('countryWeighted', {n: nVilles.toLocaleString(langue)});
 
   majRangeePop(iso, an);
 
@@ -2514,7 +2294,7 @@ function majDuel(l, an){
   el.innerHTML = `<b style="color:${Number.isFinite(sL) ? couleurNote(sL) : '#aab4bf'}">${nomVille(l)} ${sL ?? '—'}</b>`
     + `<span class="vs">vs</span>`
     + `<b style="color:${Number.isFinite(sV) ? couleurNote(sV) : '#aab4bf'}">${nomVille(lieuVs)} ${sV ?? '—'}</b>`;
-  if (!Number.isFinite(sL) || !Number.isFinite(sV)) el.innerHTML += `<span class="comparison-missing">${langue === 'en' ? 'Incomplete coverage · compare available measurements' : 'Couverture incomplète · comparez les mesures disponibles'}</span>`;
+  if (!Number.isFinite(sL) || !Number.isFinite(sV)) el.innerHTML += `<span class="comparison-missing">${T().ui.incomplete_coverage_compare_available_measurements}</span>`;
 }
 document.getElementById('dossier-duel').addEventListener('click', () => {
   if (!lieuVs) return;
@@ -2532,10 +2312,10 @@ document.getElementById('dossier-comparer').addEventListener('click', () => {
   SoundManager.play('ui_click');
   deployerRecherche();
   champ.focus(); champ.value = '';
-  champ.placeholder = langue === 'en' ? `Compare ${nom} with…` : `Comparer ${nom} avec…`;
+  champ.placeholder = message('comparePrompt', {city: nom});
   document.body.classList.add('comparaison-active');
   afficherResultats();
-  montrerAccroche(langue === 'en' ? `${nom} selected · Choose a second city` : `${nom} sélectionnée · Choisissez une autre ville`, null, 0);
+  montrerAccroche(message('compareSelected', {city: nom}), null, 0);
 });
 function majRangeePop(iso, an){
   const el = document.getElementById('dossier-pop'), pop = PAYS_POP[iso];
@@ -2544,7 +2324,7 @@ function majRangeePop(iso, an){
   const pct = (value / pop[0] - 1) * 100;
   const format = new Intl.NumberFormat(langue, {notation: 'compact', maximumFractionDigits: 2});
   el.dataset.year = an; el.dataset.population = value;
-  el.innerHTML = `<h3>${langue === 'en' ? 'Country population' : 'Population du pays'} · ${an}</h3><p class="population-valeur">${format.format(value)}</p><p class="fiche-secondaire">${pct > 0 ? '+' : ''}${pct.toLocaleString(langue, {maximumFractionDigits: 1})}% ${langue === 'en' ? 'since 2025' : 'depuis 2025'}</p><p class="fiche-secondaire">${langue === 'en' ? 'UN WPP 2024 annual medium projection, 1 July; includes the 2026 Togo update. Not an observed count.' : 'Projection annuelle médiane ONU WPP 2024, au 1er juillet ; mise à jour Togo 2026 incluse. Pas un décompte observé.'}</p>`;
+  el.innerHTML = `<h3>${T().ui.country_population} · ${an}</h3><p class="population-valeur">${format.format(value)}</p><p class="fiche-secondaire">${pct > 0 ? '+' : ''}${pct.toLocaleString(langue, {maximumFractionDigits: 1})}% ${T().ui.since_2025}</p><p class="fiche-secondaire">${T().ui.un_wpp_2024_annual_medium}</p>`;
 }
 
 function majDossier(){
@@ -2554,14 +2334,14 @@ function majDossier(){
   document.getElementById('dossier-scope').textContent = estPays(l) ? t.panelCountry : `${t.panelCity} · ${nomPays(l[1])}`;
   document.getElementById('dossier-evolution').textContent = (estPays(l) || l[7]) ? t.panelEvolution(indiceHabitabilite(l, an) - indiceHabitabilite(l, 2026)) : '';
   document.getElementById('dossier-coords').textContent =
-    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (langue === 'en' ? 'W' : 'O')} · ${nomPays(l[1]).toUpperCase()}`;
+    `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (T().ui.w)} · ${nomPays(l[1]).toUpperCase()}`;
   dossierEl.classList.toggle('sans-donnees', !estPays(l) && !l[7]);
   const formule = document.getElementById('score-formula');
-  if (estPays(l)) formule.textContent = langue === 'en' ? 'Country score: population-weighted mean of the listed city records. These records can overlap; this is not a representative national assessment.' : 'Note du pays : moyenne des villes listées pondérée par population. Des périmètres peuvent se chevaucher ; ce n’est pas une évaluation nationale représentative.';
+  if (estPays(l)) formule.textContent = T().ui.country_score_populationweighted_mean_of;
   else if (l[7]) {
     const penalties = CRITERES.map(c => c.penalite(l, (an - 2026) / 24));
     const average = penalties.reduce((sum,p,i) => sum + p * CRITERES[i].poids, 0) * 100;
-    formule.textContent = `${langue === 'en' ? 'Weighted exposure' : 'Exposition pondérée'} ${average.toFixed(1)} /100 · ${langue === 'en' ? 'strongest hazard' : 'aléa le plus fort'} ${(Math.max(...penalties) * 100).toFixed(1)} /100. ${100} − (${average.toFixed(1)} + ${(Math.max(...penalties) * 100).toFixed(1)}) ÷ 2 ≈ ${indiceHabitabilite(l, an)}.`;
+    formule.textContent = `${T().ui.weighted_exposure} ${average.toFixed(1)} /100 · ${T().ui.strongest_hazard} ${(Math.max(...penalties) * 100).toFixed(1)} /100. ${100} − (${average.toFixed(1)} + ${(Math.max(...penalties) * 100).toFixed(1)}) ÷ 2 ≈ ${indiceHabitabilite(l, an)}.`;
   } else formule.textContent = '';
 
   if (estPays(l)){
@@ -2639,7 +2419,7 @@ function majDossier(){
 
   tracerTrajectoire(l, an);
   const ecart = indice2050 - indice;   // meme reference que le conseil : l'annee affichee
-  const texteEcart = ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${langue === 'en' ? 'pts by 2050' : 'pts d’ici 2050'}`;
+  const texteEcart = ecart === 0 ? '' : `${ecart > 0 ? '＋' : '−'}${Math.abs(ecart)} ${T().ui.pts_by_2050}`;
   const elDelta = document.getElementById('dossier-delta');
   elDelta.textContent = texteEcart;
   majRangeePop(l[1], an);
@@ -2802,9 +2582,7 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
   const t = T();
   const texte = indice === null
     ? `${nomVille(l)} — TERRA/2050`
-    : (langue === 'en'
-      ? `${nomVille(l)}: experimental climate index ${indice}/100 in ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. Not a local forecast.`
-      : `${nomVille(l)} : indice climatique expérimental ${indice}/100 en ${an} — ${t.verdict[niveauDe(indice)].toLowerCase()}. Pas une prévision locale.`);
+    : message('shareSummary', {city: nomVille(l), score: indice, year: an, verdict: t.verdict[niveauDe(indice)]});
   const titre = `${nomVille(l)} — TERRA/2050`;
   await partagerTexte(titre, texte, location.href, document.getElementById('dossier-partage'));
 });
@@ -2816,12 +2594,12 @@ async function partagerTexte(titre, texte, url, bouton){
       catch (e) { if (e.name === 'AbortError') return; }
     }
     await navigator.clipboard.writeText(texte + '\n' + url);
-    flashBouton(bouton, langue === 'en' ? 'Link copied ✓' : 'Lien copié ✓');
+    flashBouton(bouton, T().ui.link_copied);
     SoundManager.play('ui_click');
   } catch (e) {
     // un presse-papiers refuse (navigateur integre, permission) ne doit pas
     // ressembler a une reussite : le lien reste lisible dans la barre d adresse
-    flashBouton(bouton, langue === 'en' ? 'Copy failed — link is in the URL bar' : 'Copie refusée — le lien est dans la barre');
+    flashBouton(bouton, T().ui.copy_failed_link_is_in);
   }
 }
 function flashBouton(bouton, texte, delai = 1900){
@@ -2843,6 +2621,9 @@ document.getElementById('bouton-partager').addEventListener('click', () => {
 async function genererStory(opts){
   const l = lieuDossier; if (!l) return null;
   const an = etat.annee, t = T(), pays = estPays(l);
+  const sans = getComputedStyle(document.body).fontFamily;
+  const serif = getComputedStyle(document.documentElement).getPropertyValue('--herbik') || 'Georgia, serif';
+  const cjk = ['ja', 'zh'].includes(langue);
   const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const indice50 = pays ? indicePays(l[1], 2050) : (l[7] ? indiceHabitabilite(l, 2050) : null);
   await Promise.all(['600 340px "TWK Lausanne"', '500 36px "TWK Lausanne"',
@@ -2866,49 +2647,49 @@ async function genererStory(opts){
   g.fillStyle = lueur; g.fillRect(0, 0, 1080, 1920);
 
   // wordmark terra / 2050
-  g.font = '600 62px "TWK Lausanne"';
+  g.font = `600 62px ${sans}`;
   const seg = [['terra', CREME], [' / ', '#1740A9'], ['2050', CREME]];
   let x = 540 - seg.reduce((a, [txt]) => a + g.measureText(txt).width, 0) / 2;
   g.textAlign = 'left';
   for (const [txt, col] of seg){ g.fillStyle = col; g.fillText(txt, x, 200); x += g.measureText(txt).width; }
   g.textAlign = 'center';
-  g.letterSpacing = '3px'; g.font = '500 28px "TWK Lausanne"'; g.fillStyle = MUTER;
-  g.fillText((langue === 'en' ? 'EXPERIMENTAL CLIMATE INDEX ' : 'INDICE CLIMATIQUE EXPÉRIMENTAL ') + an, 540, 320, 840);
+  g.letterSpacing = cjk ? '0px' : '3px'; g.font = `500 28px ${sans}`; g.fillStyle = MUTER;
+  g.fillText((T().ui.experimental_climate_index) + an, 540, 320, 840);
   g.letterSpacing = '0px';
 
   // le nom, ajusté à la largeur
-  let taille = 150; g.font = `600 ${taille}px "TWK Lausanne"`;
+  let taille = 150; g.font = `600 ${taille}px ${sans}`;
   const nom = nomVille(l);
-  while (g.measureText(nom).width > 930 && taille > 54){ taille -= 6; g.font = `600 ${taille}px "TWK Lausanne"`; }
+  while (g.measureText(nom).width > 930 && taille > 54){ taille -= 6; g.font = `600 ${taille}px ${sans}`; }
   g.fillStyle = CREME; g.fillText(nom, 540, 545);
-  g.letterSpacing = '6px'; g.font = '500 28px "TWK Lausanne"'; g.fillStyle = MUTER;
-  g.fillText(pays ? (langue === 'en' ? 'COUNTRY' : 'PAYS') : nomPays(l[1]).toUpperCase(), 540, 615);
+  g.letterSpacing = cjk ? '0px' : '6px'; g.font = `500 28px ${sans}`; g.fillStyle = MUTER;
+  g.fillText(pays ? (T().ui.country) : nomPays(l[1]).toUpperCase(), 540, 615);
   g.letterSpacing = '0px';
 
   // le score — ou la sentinelle
   if (indice === null){
-    g.fillStyle = MUTER; g.font = '600 200px "TWK Lausanne"'; g.fillText('——', 540, 1020);
-    g.font = 'italic 500 46px "Herbik"'; g.fillText(t.sansDonnees, 540, 1130);
+    g.fillStyle = MUTER; g.font = `600 200px ${sans}`; g.fillText('——', 540, 1020);
+    g.font = `${cjk ? '' : 'italic '}500 46px ${serif}`; g.fillText(t.sansDonnees, 540, 1130, 900);
   } else {
     const teinte = couleurNote(indice);
-    g.font = '600 340px "TWK Lausanne"';
+    g.font = `600 340px ${sans}`;
     const lg = g.measureText(String(indice)).width;
     g.textAlign = 'left'; g.fillStyle = teinte;
     const x0 = 540 - (lg + 14 + 96) / 2;
     g.fillText(String(indice), x0, 1050);
-    g.fillStyle = MUTER; g.font = '500 52px "TWK Lausanne"'; g.fillText('/100', x0 + lg + 14, 1050);
+    g.fillStyle = MUTER; g.font = `500 52px ${sans}`; g.fillText('/100', x0 + lg + 14, 1050);
     g.textAlign = 'center';
-    g.fillStyle = teinte; g.font = 'italic 500 46px "Herbik"';
-    g.fillText(t.verdict[niveauDe(indice)], 540, 1150);
+    g.fillStyle = teinte; g.font = `${cjk ? '' : 'italic '}500 46px ${serif}`;
+    g.fillText(t.verdict[niveauDe(indice)], 540, 1150, 900);
     if (opts.trajectoire && indice50 !== null && an < 2050){
-      g.fillStyle = MUTER; g.font = '500 32px "TWK Lausanne"';
+      g.fillStyle = MUTER; g.font = `500 32px ${sans}`;
       g.fillText(`${an} · ${indice}    →    2050 · ${indice50}`, 540, 1230);
     }
     if (lieuVs && lieuVs !== l){
       const sV = estPays(lieuVs) ? indicePays(lieuVs[1], an)
         : (lieuVs[7] ? indiceHabitabilite(lieuVs, an) : null);
       if (sV !== null){
-        g.font = '600 44px "TWK Lausanne"';
+        g.font = `600 44px ${sans}`;
         const seg2 = [[`${nomVille(l)} ${indice}`, couleurNote(indice)],
           ['   vs   ', MUTER], [`${nomVille(lieuVs)} ${sV}`, couleurNote(sV)]];
         let x2 = 540 - seg2.reduce((a2, [t2]) => a2 + g.measureText(t2).width, 0) / 2;
@@ -2928,10 +2709,10 @@ async function genererStory(opts){
   for (const r of rangs){
     g.strokeStyle = 'rgba(255,253,226,0.14)'; g.lineWidth = 1;
     g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
-    g.textAlign = 'left'; g.fillStyle = CREME; g.font = '400 36px "TWK Lausanne"';
+    g.textAlign = 'left'; g.fillStyle = CREME; g.font = `400 36px ${sans}`;
     g.fillText(r.nom, 120, y, 540);
-    g.textAlign = 'right'; g.fillStyle = couleurNote(r.note); g.font = '500 36px "TWK Lausanne"';
-    const unit = r.reading.unit === 'days/year' && langue === 'fr' ? 'jours/an' : r.reading.unit;
+    g.textAlign = 'right'; g.fillStyle = couleurNote(r.note); g.font = `500 36px ${sans}`;
+    const unit = uniteLocale(r.reading.unit);
     g.fillText(r.reading.value.toLocaleString(langue, { maximumFractionDigits: 2 }) + ' ' + unit, 960, y, 280);
     y += 88;
   }
@@ -2939,20 +2720,19 @@ async function genererStory(opts){
     const pop = PAYS_POP[l[1]], pct = Math.round((populationAnnuelle(l[1], an) / pop[0] - 1) * 100);
     g.strokeStyle = 'rgba(255,253,226,0.14)';
     g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
-    g.textAlign = 'left'; g.fillStyle = CREME; g.font = '400 36px "TWK Lausanne"';
+    g.textAlign = 'left'; g.fillStyle = CREME; g.font = `400 36px ${sans}`;
     g.fillText(`${t.popLabel} · 2025 → ${an}`, 120, y);
     g.textAlign = 'right';
     g.fillStyle = pct <= -15 ? '#E0452E' : pct <= -4 ? '#E06A3C' : pct < 5 ? '#4D7CF2' : '#2E8F6A';
-    g.font = '500 36px "TWK Lausanne"';
+    g.font = `500 36px ${sans}`;
     g.fillText(`${pct > 0 ? '+' : pct < 0 ? '−' : ''}${Math.abs(pct)} %`, 960, y);
   }
 
   {   // signature toujours presente : la question et le lien font l'image
-    g.textAlign = 'center'; g.letterSpacing = '5px';
-    g.fillStyle = MUTER; g.font = '500 26px "TWK Lausanne"';
-    g.fillText(langue === 'en' ? 'MODELLED INDICATORS · NOT A LOCAL FORECAST'
-      : 'INDICATEURS MODÉLISÉS · PAS UNE PRÉVISION LOCALE', 540, 1690, 840);
-    g.letterSpacing = '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = '400 24px "TWK Lausanne"';
+    g.textAlign = 'center'; g.letterSpacing = cjk ? '0px' : '5px';
+    g.fillStyle = MUTER; g.font = `500 26px ${sans}`;
+    g.fillText(T().ui.modelled_indicators_not_a_local, 540, 1690, 840);
+    g.letterSpacing = cjk ? '0px' : '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = `400 24px ${sans}`;
     g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}&cc=${l[1]}`, 540, 1746);
     g.letterSpacing = '0px';
   }
@@ -3376,9 +3156,7 @@ function traduire(){
   document.getElementById('survol').classList.remove('visible', 'fige');
   document.body.classList.remove('sur-lieu');
   document.documentElement.lang = langue;
-  document.title = langue === 'en'
-    ? 'TERRA／2050 — Will your city still be livable in 2050?'
-    : 'TERRA／2050 — Votre ville sera-t-elle encore vivable en 2050 ?';
+  document.title = T().ui.terra2050_will_your_city_still;
   const t = T();
   document.documentElement.lang = t.lang;
   for (const el of document.querySelectorAll('[data-t]')){
@@ -3401,17 +3179,14 @@ function traduire(){
   document.getElementById('bouton-position').textContent = t.aria['bouton-position'];
   majDistanceAn(); majContexteCalques(); cacherAccroche();
   boutonSon.textContent = t.son(!SoundManager.mute);
-  document.getElementById('bouton-langue').innerHTML = langue === 'fr'
-    ? 'FR · <em>en</em>' : '<em>fr</em> · EN';
   if (lieuDossier){ majDossier(); derniereAnnonce = ''; annoncer(); }
 }
-document.getElementById('bouton-langue').addEventListener('click', () => {
-  langue = langue === 'fr' ? 'en' : 'fr';
-  try { localStorage.setItem('terra-langue', langue); } catch (e) {}
+languageSelect(document.getElementById('bouton-langue'));
+window.addEventListener('terra-language', () => {
+  langue = language();
   SoundManager.play('ui_click');
   traduire();
 });
-try { const m = localStorage.getItem('terra-langue'); if (m) langue = m; } catch (e) {}
 traduire();
 
 /* =====================================================================
@@ -3828,7 +3603,7 @@ function montrerSurvol(s, cx, cy, fige){
   survolNom.textContent = l ? nomVille(l) : nomPays(iso);
   survolIndice.textContent = indice === null ? '' : indice;
   survolIndice.style.color = indice === null ? '' : couleurNote(indice);
-  survolSous.textContent = l && !estPays(l) ? nomPays(l[1]) : (langue === 'en' ? 'COUNTRY' : 'PAYS');
+  survolSous.textContent = l && !estPays(l) ? nomPays(l[1]) : (T().ui.country);
   survolEl.classList.toggle('fige', survolFige);
   const w = survolEl.offsetWidth, h = survolEl.offsetHeight;
   const x = cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16;

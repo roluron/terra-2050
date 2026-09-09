@@ -1,4 +1,5 @@
 import { startOrb } from './earth-orb.mjs';
+import { language, getText, message, languageSelect } from './i18n.mjs';
 
 const shell = document.querySelector('#earth-shell');
 shell.showModal();
@@ -12,19 +13,41 @@ const signs = Array.from('·✳+⋮✶⋅⊹✧');
 const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
 let finished = 0;
+const revealTimers = new Set();
+languageSelect(document.querySelector('#earth-language'));
 
+function buildLetter() {
+  for (const timer of revealTimers) clearInterval(timer);
+  revealTimers.clear(); words.length = 0; finished = 0;
+  shell.classList.remove('complete'); future.tabIndex = -1;
+  const t = getText().ui;
+  shell.lang = language(); shell.setAttribute('aria-label', t.letterLabel);
+  shell.querySelector('h1').textContent = t.letterTitle;
+  const body = document.createElement('p'), signature = document.createElement('p');
+  body.append(t.letterOpening, document.createElement('br'), t.letterBody);
+  signature.className = 'signature'; signature.textContent = t.letterSignature;
+  letter.replaceChildren(body, signature); future.textContent = t.letterFuture;
+  document.querySelector('#earth-recovery p').textContent = t.globeSlow;
+  document.querySelector('#earth-retry').textContent = t.retry;
+  const segmenter = new Intl.Segmenter(language(), {granularity:'word'});
 for (const [line, paragraph] of [...letter.querySelectorAll('p')].entries()) {
   paragraph.style.setProperty('--line', line);
   for (const node of [...paragraph.childNodes]) {
     if (node.nodeType !== Node.TEXT_NODE) continue;
     const fragment = document.createDocumentFragment();
-    for (const text of node.textContent.split(/(\s+)/)) {
+    const segments = ['ja', 'zh'].includes(language())
+      ? [...segmenter.segment(node.textContent)].reduce((parts, {segment, isWordLike}) => {
+        if (!isWordLike && parts.length && !/\s/.test(segment)) parts[parts.length - 1] += segment;
+        else parts.push(segment);
+        return parts;
+      }, []) : node.textContent.split(/(\s+)/);
+    for (const text of segments) {
       if (!text.trim()) { fragment.append(text); continue; }
       const word = document.createElement('span');
       word.className = 'word';
       word.tabIndex = 0;
       word.setAttribute('role', 'button');
-      word.setAttribute('aria-label', `Reveal: ${text}`);
+      word.setAttribute('aria-label', message('revealWord', {word: text}));
       const latin = document.createElement('span');
       latin.className = 'latin';
       latin.textContent = text;
@@ -48,6 +71,9 @@ for (const [line, paragraph] of [...letter.querySelectorAll('p')].entries()) {
     node.replaceWith(fragment);
   }
 }
+}
+buildLetter();
+window.addEventListener('terra-language', () => { if (!departing) buildLetter(); });
 
 function signsFor(index, length) {
   return Array.from({ length: Math.max(1, Math.ceil(length / 1.2)) }, (_, j) => signs[(index * 3 + j * 5) % signs.length]).join('');
@@ -62,13 +88,14 @@ function reveal(item) {
   let step = 0;
   const timer = setInterval(() => {
     step++;
-    if (step === 8 || motion.matches) { clearInterval(timer); finish(item); return; }
+    if (step === 8 || motion.matches) { clearInterval(timer); revealTimers.delete(timer); finish(item); return; }
     if (step < 4) glyphs.textContent = signsFor(index + step, text.length);
     else {
       glyphs.classList.add('roman');
       glyphs.textContent = Array.from(text, (character, position) => position < (step - 3) / 4 * text.length ? character : cuneiform[(position + step * 7 + index) % cuneiform.length]).join('');
     }
   }, 75);
+  revealTimers.add(timer);
 }
 
 function finish({ word }) {
@@ -111,6 +138,7 @@ document.querySelector('#earth-retry').addEventListener('click', () => location.
 future.addEventListener('click', () => {
   if (finished !== words.length || departing) return;
   departing = true;
+  document.querySelector('#earth-language').disabled = true;
   clearInterval(codeTimer);
   const origins = [];
   for (const element of shell.querySelectorAll('h1, .latin')) {
