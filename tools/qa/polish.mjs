@@ -57,8 +57,11 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
     await page.locator('#dossier-croix').click();
     await page.waitForTimeout(2200);
     if (name === 'phone') {
+      assert.equal(await page.locator('#calques').isVisible(),false);
+      await page.locator('#map-toggle').tap();
       const rail = await page.locator('#calques').evaluate(el => ({client:el.clientWidth,scroll:el.scrollWidth,bottom:el.getBoundingClientRect().bottom,height:innerHeight}));
-      assert.ok(rail.scroll > rail.client && rail.bottom < rail.height, 'Phone filters scroll horizontally inside viewport');
+      assert.ok(rail.scroll <= rail.client && rail.bottom < rail.height, 'Phone filter grid stays inside viewport');
+      await page.locator('#map-toggle').tap();
     }
     await page.screenshot({path:`/tmp/terra-polish-${name}-home.png`});
     assert.deepEqual(errors,[]);
