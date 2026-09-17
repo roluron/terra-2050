@@ -1,0 +1,15 @@
+User rejection supersedes previous visual acceptance: Italian multi-layer legend overlaps controls; actual timeline changes were visually imperceptible.
+
+Scope: index.html map shaders, timeline/readout UI, map inspector CSS/copy, scientific texture precision and relevant QA. No deployment or merge requested for this correction.
+
+Acceptance: no overlapping controls/legend at desktop/mobile sizes; one interpretable colour layer at a time; default explicitly labelled change since2026, zero reference neutral, fixed signed scales, original absolute level retained; seven layer journeys through real year input and inspected captures; original scientific values and coverage preserved; bounded collapsed sources, accessible controls; independent data/code review.
+
+Diagnosis: heat median delta0.84°C on30°C scale; alpha compositing of multiple indicators hides earlier signals. Two fixed-position panels overlap when scientific notes expand. Prior tests proved changed pixels, not perceptible change or combined layout.
+
+Implementation in progress: exclusive active layer, data-derived differences, compact unified inspector. Aridity must use Float32 without display clipping (five real values overflow HalfFloat). Float filtering conditional on OES_texture_float_linear; nearest fallback retains data. Population stores direct signed fractional difference from2026 in separate channel.
+
+Final verification: Italian desktop Retina and mobile WebKit journeys PASS (map-evolution.mjs, session62929), all seven layers through keyboard timeline, exclusive state, bounded panels, collapsed/expanded sources and absolute-level switch. Initial capture exposed excess mobile occlusion; compact copy and projection offset corrected, final phone capture inspected. One parallel headed run lost keyboard focus (stopped at2031); targeting the range element for every key fixes the test harness without weakening the2050 assertion.
+
+Scientific-maps PASS (session48934): source texels match data, three geographic views show deterministic real differences in all six climate layers; e.g. Africa heat meanRGB10.86, aridity3.79, fire3.93, rivers1.67. Coastal changes remain geographically coastal, not artificially enlarged. Population exhaustive annual values and signed2026-channel tests PASS (session52055). Scientific textures full-grid checks and20 GPU samples PASS, all aridity coverage retained including five values exceedingHalfFloat capacity, nearest fallback tested (session5326). Static8 PASS (session33287). Existing interactions desktop/iPhone/iPhoneSE PASS (session72956).
+
+Final independent review found no remaining blocker after correcting scientific copy for population reference2026 and flood fractions above0.5m. Desktop/mobile screenshots inspected under ../../outputs/terra-map-evolution and scientific renders under ../../outputs/terra-map-scientific. Native CUA user tab reloaded and real mouse drag2050→2026→2050 observed with globe colours responding; preview left on2050. No publication or merge. Spend0, concurrency2.

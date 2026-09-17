@@ -23,8 +23,9 @@ try {
         PAYS_ISO.forEach((iso,i)=>{
           for(let y=0;y<26;y++){
             const offset=(y*256+i)*4,a=expected[iso];
-            const value=a?Math.round(Math.min(1,Math.max(0,(1-a[y]/a[0])/.30))*255):0;
-            if(pixels[offset]!==value || pixels[offset+3]!== (a?255:0))throw Error('Population texture '+iso+' '+y);
+            const value=a?Math.min(1,Math.max(0,(1-a[y]/a[0])/.30)):0;
+            const change=a?1-a[y]/a[1]:0;
+            if(Math.abs(pixels[offset]-value)>1e-6 || Math.abs(pixels[offset+1]-change)>1e-6 || pixels[offset+3]!== (a?1:0))throw Error('Population texture '+iso+' '+y);
             texels++;
           }
         });

@@ -30,27 +30,24 @@ function floodReader(grid, hazard) {
     progress: (2026 - historicalYear) / (2030 - historicalYear) };
 }
 
-export async function buildScientificTextures(THREE, climate, floods) {
+export async function buildScientificTextures(THREE, climate, floods, linearFloat = false) {
   const started = performance.now();
   const ci = fields(climate, ['historical_temperature', 'near_temperature', 'future_temperature',
     'historical_precipitation', 'near_precipitation', 'future_precipitation',
     'historical_summerMaximum', 'near_summerMaximum', 'future_summerMaximum']);
   const rivers = floodReader(floods.river, 'river'), coasts = floodReader(floods.coast, 'coast');
   const names = ['heat', 'aridity', 'warming', 'coast', 'river'];
-  const buffers = names.map(() => new Uint16Array(WIDTH * HEIGHT * 4));
+  const buffers = names.map(name => name === 'aridity' ? new Float32Array(WIDTH * HEIGHT * 4) : new Uint16Array(WIDTH * HEIGHT * 4));
   const validCells = [0, 0, 0, 0, 0], overflowCells = [0, 0, 0, 0, 0], displayCappedCells = [0, 0, 0, 0, 0];
   const half = THREE.DataUtils.toHalfFloat, halfOne = half(1);
   const values = climate.values, stride = climate.metadata.fields.length;
   let chunkStarted = performance.now(), maxChunkMs = chunkStarted - started, yields = 0;
   const store = (kind, offset, a, b, c) => {
     if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) return;
-    if (kind === 1) {
-      if (a > 60 || b > 60 || c > 60) displayCappedCells[kind]++;
-      a = Math.min(a, 60); b = Math.min(b, 60); c = Math.min(c, 60);
-    }
-    if (Math.abs(a) > 65504 || Math.abs(b) > 65504 || Math.abs(c) > 65504) { overflowCells[kind]++; return; }
+    if (kind !== 1 && (Math.abs(a) > 65504 || Math.abs(b) > 65504 || Math.abs(c) > 65504)) { overflowCells[kind]++; return; }
     const target = buffers[kind];
-    target[offset] = half(a); target[offset + 1] = half(b); target[offset + 2] = half(c); target[offset + 3] = halfOne;
+    const encode = kind === 1 ? value => value : half;
+    target[offset] = encode(a); target[offset + 1] = encode(b); target[offset + 2] = encode(c); target[offset + 3] = kind === 1 ? 1 : halfOne;
     validCells[kind]++;
   };
   const flood = (source, row, output, kind) => {
@@ -92,17 +89,17 @@ export async function buildScientificTextures(THREE, climate, floods) {
   const stats = { durationMs: performance.now() - started, maxChunkMs, yields, bytes: buffers.reduce((sum, buffer) => sum + buffer.byteLength, 0) };
   const units = ['degC', 'De Martonne index', 'degC anomaly from historical', 'fraction of valid cells >0.5m', 'fraction of valid cells >0.5m'];
   return Object.fromEntries(names.map((name, index) => {
-    const texture = new THREE.DataTexture(buffers[index], WIDTH, HEIGHT, THREE.RGBAFormat, THREE.HalfFloatType);
+    const texture = new THREE.DataTexture(buffers[index], WIDTH, HEIGHT, THREE.RGBAFormat, name === 'aridity' ? THREE.FloatType : THREE.HalfFloatType);
     texture.name = `science-${name}`;
-    texture.minFilter = THREE.LinearFilter; texture.magFilter = THREE.LinearFilter;
+    texture.minFilter = texture.magFilter = name === 'aridity' && !linearFloat ? THREE.NearestFilter : THREE.LinearFilter;
     texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.ClampToEdgeWrapping;
     texture.generateMipmaps = false; texture.flipY = false; texture.premultiplyAlpha = false;
     texture.colorSpace = THREE.NoColorSpace; texture.unpackAlignment = 1; texture.needsUpdate = true;
     texture.userData.scientific = { years: YEARS, unit: units[index], rowOrder: 'south-first',
       decode: 'RGB/alpha when alpha>0; RGB=2026,2030,2050. Alpha is matched validity, not risk.',
       temporalMethod: 'Illustrative endpoint interpolation, not annual forecasts; intermediate De Martonne interpolation is a display approximation.',
-      displayCap: name === 'aridity' ? 60 : null,
-      displayCapMeaning: name === 'aridity' ? 'GPU display only: 60 means >=60, the wetter legend endpoint. Source and city De Martonne values are unchanged.' : null,
+      displayCap: null,
+      displayCapMeaning: null,
       displayCappedCells: displayCappedCells[index],
       validCells: validCells[index], halfFloatOverflowCells: overflowCells[index], stats };
     return [name, texture];

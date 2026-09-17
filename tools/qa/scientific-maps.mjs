@@ -23,19 +23,19 @@ async function probe() {
     const texture = uniformsGlobe['uScientific_' + name].value, data = texture.image.data;
     let valid = 0, changed = 0, positive = 0, negative = 0;
     for (let i = 0; i < data.length; i += 4) if (data[i+3]) {
-      valid++; const d = half(data[i+2])-half(data[i]);
+      valid++; const d = name === 'aridity' ? data[i+2]-data[i] : half(data[i+2])-half(data[i]);
       if (d) changed++; if (d > 0) positive++; if (d < 0) negative++;
     }
     sourceStats[name] = { valid, changed, positive, negative, metadata: texture.userData.scientific };
     for (const [lat,lon] of locations) {
       const x = Math.floor((lon+180)*2), y = Math.floor((90-lat)*2), offset = ((359-y)*720+x)*4;
-      const actual = Array.from(data.slice(offset,offset+4),half);
+      const actual = Array.from(data.slice(offset,offset+4),name === 'aridity' ? v=>v : half);
       const expected = [2026,2030,2050].map(year => {
         if (name === 'coast' || name === 'river') {
           const value = floodAtYear(floods[name],lat,lon,year,name); return value.available ? value.fraction : NaN;
         }
         const value = climateAtYear(SCIENCE.climate,lat,lon,year)[{heat:'summerMaximum',aridity:'aridity',warming:'warming'}[name]];
-        return name === 'aridity' ? Math.min(value,60) : value;
+        return value;
       });
       const available = expected.every(Number.isFinite);
       const pass = actual[3] === Number(available) && (!available || expected.every((value,i) => Math.abs(value-actual[i]) <= Math.max(1e-6,Math.abs(value)*.001)));
