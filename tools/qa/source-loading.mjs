@@ -21,7 +21,9 @@ try {
   await enter(page);
   await page.waitForFunction(() => document.querySelector('.risque[data-cle="feux"] .risk-number')?.textContent === '50.09');
   assert.equal(await page.locator('.risque[data-cle="mer"] .risk-number').innerText(), '0');
-  assert.equal(await page.locator('#dossier-risques').getByText('No estimate', { exact: true }).count(), 4);
+  assert.equal(await page.locator('#dossier-risques').getByText('No estimate', { exact: true }).count(), 0);
+  assert.equal(await page.locator('.risque[data-spatial="regional"]').count(), 4);
+  assert.equal(await page.locator('.risque[data-value]').evaluateAll(rows => rows.filter(row => row.dataset.value !== '' && Number.isFinite(+row.dataset.value)).length), 6);
   assert.match(await page.locator('#dossier-duel').innerText(), /Ouagadougou 50/);
   assert.equal(await page.locator('.calque:disabled').count(), 0);
   assert.deepEqual(errors, []);

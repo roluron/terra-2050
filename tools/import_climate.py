@@ -140,6 +140,17 @@ def output_record(path):
 
 
 def self_test():
+    historical = np.full((4, 3, 3), np.nan, dtype='<f4')
+    historical[:, 0, :2] = [0, 10]
+    future = np.full_like(historical, np.nan)
+    future[:, 0, 1] = 12
+    matched = np.isfinite(historical) & np.isfinite(future)
+    before, count_before = aggregate(historical, matched)
+    after, count_after = aggregate(future, matched)
+    np.testing.assert_array_equal(after - before, np.full((1, 1, 4), 2))
+    np.testing.assert_array_equal(count_before, count_after)
+    np.testing.assert_array_equal(count_before, np.ones((1, 1, 4)))
+    assert historical[0, 0, 0] == 0
     lo = np.full((12, 1, 3), 10.)
     hi = np.full((12, 1, 3), 20.)
     rain = np.full((12, 1, 3), 25.)
@@ -269,14 +280,24 @@ def run():
     print(f'PASS: wrote {manifest_path}; {len(manifest["verification_samples"])} source-derived samples', flush=True)
 
 
-def aggregate(grid):
-    blocks = grid.reshape(4, 360, 3, 720, 3)
+def aggregate(grid, matched=None):
+    bands, height, width = grid.shape
+    blocks = grid.reshape(bands, height//3, 3, width//3, 3)
     valid = np.isfinite(blocks)
+    if matched is not None:
+        valid &= matched.reshape(blocks.shape)
     coverage = valid.sum(axis=(2, 4)).astype('u1')
     total = np.where(valid, blocks, 0).sum(axis=(2, 4), dtype='float64')
     result = np.full(total.shape, np.nan, dtype='<f4')
     np.divide(total, coverage, out=result, where=coverage > 0)
     return result.transpose(1, 2, 0), coverage.transpose(1, 2, 0)
+
+
+def matched_native_grids(audit, native):
+    grids = [np.memmap(audit / period['grid']['file'], dtype='<f4', mode='r', shape=(4, HEIGHT, WIDTH))
+             for period in native['periods']]
+    matched = np.logical_and.reduce([np.isfinite(grid) for grid in grids])
+    return grids, matched
 
 
 def place_cells(output):
@@ -299,9 +320,9 @@ def package_runtime(output, audit, native):
     output.mkdir(parents=True, exist_ok=True)
     rows, cols = place_cells(output)
     grids, counts, points = [], [], []
-    for period in native['periods']:
-        grid = np.memmap(audit / period['grid']['file'], dtype='<f4', mode='r', shape=(4, HEIGHT, WIDTH))
-        reduced, coverage = aggregate(grid)
+    native_grids, matched = matched_native_grids(audit, native)
+    for grid in native_grids:
+        reduced, coverage = aggregate(grid, matched)
         grids.append(reduced)
         counts.append(coverage)
         points.append(grid[:, rows, cols].T)
@@ -313,7 +334,7 @@ def package_runtime(output, audit, native):
         'byte_offset': '4 * ((row * 720 + column) * 12 + field)',
         'fields': fields, 'crs': 'EPSG:4326', 'bounds': [-180, -90, 180, 90], 'resolution_degrees': 0.5,
         'cell_center': {'longitude': '-180 + (column + 0.5)/2', 'latitude': '90 - (row + 0.5)/2'},
-        'aggregation': 'Arithmetic mean of valid native 3x3 cells per derived metric; no imputation. De Martonne is mean of native indices, not ratio of averaged metrics. Zero coverage yields NaN.',
+        'aggregation': 'Arithmetic mean of the same native 3x3 cells per derived metric, finite in all three periods; matched spatial support, no imputation. De Martonne is mean of native indices, not ratio of averaged metrics. Zero matched coverage yields NaN. Native city-point sampling is unchanged.',
         'coverage_definition': 'uint8 valid native-cell count 0..9 for each field, same shape and cell-interleaved layout as grid',
         'periods': [{k: p[k] for k in ('id', 'years', 'kind', 'model', 'scenario', 'source_quality')} for p in native['periods']],
         'places': {'json': output_record(output / 'places.json'), 'coordinates': output_record(output / 'places.bin'),
@@ -346,15 +367,19 @@ def verify_runtime(output, audit, native):
     assert (arrays['coverage'] <= 9).all()
     np.testing.assert_array_equal(np.isnan(arrays['grid']), arrays['coverage'] == 0)
     rows, cols = place_cells(output)
-    for i, period in enumerate(native['periods']):
-        grid = np.memmap(audit / period['grid']['file'], dtype='<f4', mode='r', shape=(4, HEIGHT, WIDTH))
+    native_grids, matched = matched_native_grids(audit, native)
+    for i, grid in enumerate(native_grids):
         np.testing.assert_array_equal(arrays['points'][:, i*4:i*4+4], grid[:, rows, cols].T)
+        expected_grid, expected_coverage = aggregate(grid, matched)
+        np.testing.assert_array_equal(arrays['grid'][:, :, i*4:i*4+4], expected_grid)
+        np.testing.assert_array_equal(arrays['coverage'][:, :, i*4:i*4+4], expected_coverage)
         for _, lat, lon in SAMPLES:
             row, col = cell(lat, lon)
             r, c = row//3, col//3
             block = grid[:, r*3:r*3+3, c*3:c*3+3]
             for j in range(4):
-                values = [float(x) for x in block[j].ravel() if math.isfinite(x)]
+                support = matched[j, r*3:r*3+3, c*3:c*3+3].ravel()
+                values = [float(x) for x, valid in zip(block[j].ravel(), support) if valid]
                 expected = np.float32(math.fsum(values)/len(values)) if values else np.float32(np.nan)
                 np.testing.assert_array_equal(arrays['grid'][r, c, i*4+j], expected)
                 assert arrays['coverage'][r, c, i*4+j] == len(values)

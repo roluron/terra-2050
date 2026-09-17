@@ -28,11 +28,17 @@ const languagePrompts = {
 };
 const languageDialog = document.getElementById('language-dialog');
 let afterLanguage, welcome = false, closingLanguage = false;
-document.getElementById('language-options').replaceChildren(...Object.entries(languageNames).map(([code, name]) => {
+document.getElementById('language-options').replaceChildren(...Object.entries(languageNames).map(([code, name], index) => {
   const label = document.createElement('label'), input = document.createElement('input'), text = document.createElement('span');
+  label.style.setProperty('--row', index);
   input.type = 'radio'; input.name = 'language'; input.value = code;
   text.lang = code; text.textContent = name;
   input.addEventListener('change', () => setLanguage(code));
+  label.addEventListener('pointerenter', event => {
+    if (event.pointerType !== 'mouse' || closingLanguage) return;
+    input.checked = true;
+  });
+  input.addEventListener('click', () => setLanguage(code));
   label.append(input, text); return label;
 }));
 function syncLanguageDialog() {
@@ -45,10 +51,12 @@ export function openLanguage(onClose, first = false) {
   if (languageDialog.open) return;
   afterLanguage = onClose; welcome = first; closingLanguage = false;
   syncLanguageDialog(); languageDialog.showModal();
+  document.getElementById('boot-screen').hidden = true;
   languageDialog.querySelector('input:checked').focus({preventScroll:true});
 }
 async function closeLanguage() {
   if (closingLanguage) return;
+  setLanguage(languageDialog.querySelector('input:checked').value);
   closingLanguage = true;
   const content = languageDialog.querySelector('.language-content');
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -60,7 +68,10 @@ async function closeLanguage() {
 }
 languageDialog.querySelector('form').addEventListener('submit', event => {event.preventDefault(); closeLanguage();});
 languageDialog.addEventListener('cancel', event => {event.preventDefault(); if (!welcome) closeLanguage();});
-languageDialog.addEventListener('keydown', event => event.stopPropagation());
+languageDialog.addEventListener('keydown', event => {
+  event.stopPropagation();
+  if (event.key === 'Enter') { event.preventDefault(); closeLanguage(); }
+});
 window.addEventListener('terra-language', syncLanguageDialog);
 export function languageControl(button) {
   const sync = () => {button.textContent = languageNames[current] + ' ↗'; button.setAttribute('aria-label', languageNames[current] + ' — ' + getText().ui.language);};

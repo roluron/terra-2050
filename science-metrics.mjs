@@ -1,5 +1,5 @@
-import { loadWorldClim, loadFireWeather, fireAtYear, climateAtYear } from './climate-data.mjs';
-import { floodCityAtYear, loadFloodCities } from './flood-data.mjs';
+import { loadWorldClim, loadFireWeather, loadFloodHazards, fireAtYear, climateAtYear } from './climate-data.mjs';
+import { floodCityAtYear, floodAtYear, loadFloodCities } from './flood-data.mjs';
 
 const axes = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
 const units = ['°C', 'De Martonne index', 'days/year', 'm', 'm', '°C'];
@@ -25,9 +25,10 @@ function metric(value, baseline, future, unit, source, extra = {}) {
 }
 
 export async function loadScientificMetrics() {
-  const [climate, fire, floods, placesBytes, coordinatesBytes] = await Promise.all([
+  const [climate, fire, floods, placesBytes, coordinatesBytes, regionalFloods] = await Promise.all([
     loadWorldClim(), loadFireWeather(), loadFloodCities(),
     buffer('./data/places.json'), buffer('./data/places.bin'),
+    loadFloodHazards().catch(() => null),
   ]);
   const places = JSON.parse(new TextDecoder().decode(placesBytes)).villes;
   const count = places.length, cm = climate.metadata, fm = floods.metadata;
@@ -65,23 +66,53 @@ export async function loadScientificMetrics() {
     const baseline = year === 2026 ? current : climateAtYear(climate, latitude, longitude, 2026, index);
     const future = year === 2050 ? current : climateAtYear(climate, latitude, longitude, 2050, index);
     const weather = fireAtYear(fire, latitude, longitude, year);
-    const coast = floodCityAtYear(floods, index, year, 'coast');
-    const river = floodCityAtYear(floods, index, year, 'river');
-    const climateMetric = (key, unit, extra = {}) => metric(current?.[key], baseline?.[key], future?.[key], unit, climateSource, extra);
+    let regionalClimate;
+    const climateMetric = (key, unit, extra = {}) => {
+      const nativeAvailable = [current?.[key], baseline?.[key], future?.[key]].every(Number.isFinite);
+      if (!nativeAvailable && !regionalClimate) regionalClimate = [year, 2026, 2050]
+        .map(epoch => climateAtYear(climate, latitude, longitude, epoch));
+      const regionalFallback = !nativeAvailable && regionalClimate.every(reading => Number.isFinite(reading?.[key]));
+      const readings = regionalFallback ? regionalClimate : [current, baseline, future];
+      const spatialSupport = regionalFallback ? 'containing-regional-grid-cell' : climateSource.spatialSupport;
+      const resolutionDegrees = regionalFallback ? 0.5 : climateSource.resolutionDegrees;
+      const provenance = { spatialSupport, resolutionDegrees, regionalFallback, nativeAvailable,
+        nativeUnavailableReason: nativeAvailable ? null : 'No matched native city-cell climate measurements for this indicator',
+        ...(regionalFallback ? { fallbackMethod: 'containing-cell-only-no-neighbour-search' } : {}) };
+      return metric(readings[0]?.[key], readings[1]?.[key], readings[2]?.[key], unit,
+        { ...climateSource, ...provenance }, { ...extra, ...provenance });
+    };
+    const cityFlood = hazard => {
+      const native = floodCityAtYear(floods, index, year, hazard);
+      const regional = native.available ? null : floodAtYear(regionalFloods, latitude, longitude, year, hazard);
+      const regionalFallback = !native.available && regional?.available === true;
+      return { ...(regionalFallback ? regional : native), regionalFallback, nativeAvailable: native.available,
+        nativeUnavailableReason: native.available ? null : native.reason,
+        spatialSupport: regionalFallback ? 'containing-regional-grid-cell' : native.spatialSupport,
+        resolutionDegrees: regionalFallback ? 0.5 : fm.native_resolution_arcseconds / 3600,
+        ...(regionalFallback ? { fallbackMethod: 'containing-cell-only-no-neighbour-search' } : {}) };
+    };
+    const coast = cityFlood('coast'), river = cityFlood('river');
     const floodMetric = reading => metric(reading.value, reading.baseline, reading.future, 'm', {
       dataset: 'WRI Aqueduct Floods', scenario: reading.scenario, periods: reading.sourcePeriods,
       returnPeriodYears: reading.returnPeriodYears, spatialSupport: reading.spatialSupport,
       nativeResolutionArcseconds: reading.nativeResolutionArcseconds, models: reading.models,
+      resolutionDegrees: reading.resolutionDegrees, regionalFallback: reading.regionalFallback,
+      fallbackMethod: reading.fallbackMethod,
     }, { available: reading.available, change: finite(reading.change), p10: finite(reading.p10), p90: finite(reading.p90),
       agreement: finite(reading.agreement), modelCount: reading.modelCount, uncertainty: reading.uncertainty,
-      reason: reading.reason });
+      reason: reading.reason, spatialSupport: reading.spatialSupport, resolutionDegrees: reading.resolutionDegrees,
+      regionalFallback: reading.regionalFallback, nativeAvailable: reading.nativeAvailable,
+      nativeUnavailableReason: reading.nativeUnavailableReason, fallbackMethod: reading.fallbackMethod });
     return {
       thermique: climateMetric('summerMaximum', '°C', { definition: 'Hottest-month mean daily maximum temperature; not a daily extreme or hot-day count' }),
       eau: climateMetric('aridity', 'De Martonne index', { direction: 'lower-is-drier', temporalMethod: 'derived-from-illustratively-interpolated-temperature-and-precipitation', definition: 'Annual precipitation / (annual mean temperature + 10), defined only above -10°C; not water availability' }),
       feux: metric(weather?.value, weather?.near, weather?.future, 'days/year', fire.metadata,
         { change: finite(weather?.change), p10: finite(weather?.changeP10), p90: finite(weather?.changeP90),
           agreement: finite(weather?.signAgreement), modelCount: fire.metadata.modelCount,
-          uncertainty: fire.metadata.uncertainty, definition: fire.metadata.metric }),
+          uncertainty: fire.metadata.uncertainty, definition: fire.metadata.metric,
+          spatialSupport: 'containing-fire-weather-model-grid-cell', resolutionDegrees: fire.metadata.resolutionDegrees,
+          regionalFallback: false, nativeAvailable: [weather?.value, weather?.near, weather?.future].every(Number.isFinite),
+          nativeUnavailableReason: weather ? null : 'No matched fire-weather model cell' }),
       mer: floodMetric(coast), fleuves: floodMetric(river),
       stabilite: climateMetric('warming', '°C', { definition: 'Annual mean warming relative to historical 1970–2000 climatology; change is additional warming since the 2026 estimate' }),
     };

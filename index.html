@@ -2,6 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<style>html,body{background:#050606}#boot-screen{position:fixed;inset:0;z-index:100000;background:#050606;display:grid;place-items:center}#boot-screen[hidden]{display:none}.planet-sprite{width:96px;height:96px}</style>
+<script type="module" src="./planet-loader.mjs"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="modulepreload" href="./assets/lib/three.module.min.js">
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_color_2048.webp">
@@ -179,10 +181,12 @@
   }
 </style>
 <link rel="stylesheet" href="./terra-menus.css">
+<link rel="stylesheet" href="./refinement.css">
 <style>
 </style>
 </head>
 <body>
+<div id="boot-screen" aria-label="Loading"><canvas class="planet-sprite" width="96" height="96" aria-hidden="true"></canvas></div>
 <dialog id="earth-shell" lang="en" aria-label="A letter from Earth">
   <canvas id="earth-orb" aria-hidden="true"></canvas>
   <main id="earth-letter-main" hidden>
@@ -197,7 +201,7 @@
 </dialog>
 <dialog id="language-dialog" aria-labelledby="language-title">
   <form class="language-content">
-    <svg class="language-globe" viewBox="0 0 80 80" fill="none" aria-hidden="true"><circle cx="40" cy="40" r="33"/><ellipse cx="40" cy="40" rx="16" ry="33"/><path d="M8 40h64M14 20c17 9 35 9 52 0M14 60c17-9 35-9 52 0"/></svg>
+    <canvas class="planet-sprite language-globe" width="96" height="96" aria-hidden="true"></canvas>
     <h2 id="language-title"></h2>
     <fieldset id="language-options" aria-labelledby="language-title"></fieldset>
     <button id="language-continue" type="submit"><span></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
@@ -388,6 +392,8 @@ import { loadFloodHazards } from './climate-data.mjs';
 import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { language, getText, message, languageControl } from './i18n.mjs';
+import { refinementCopy, moistureBand, moistureSource } from './refinement-copy.mjs';
+import { createComparison } from './city-comparison.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
 gsap.ticker.lagSmoothing(0);
@@ -517,16 +523,24 @@ function mesuresLieu(l, year){
   if (key !== null && cache.entries.has(key)) return cache.entries.get(key);
   const sums = {}, weights = {};
   for (const city of VILLES_PAR_PAYS[l[1]] || []){
-    if (!city[7]) continue;
     const readings = SCIENCE.forCity(SOURCE_INDEX.get(city), city[2], city[3], year);
     for (const [key, reading] of Object.entries(readings)){
       if (!reading.available) continue;
-      if (!sums[key]) { sums[key] = { ...reading, value: 0, baseline: 0, future: 0, change: 0, p10: null, p90: null, country: true }; weights[key] = 0; }
+      if (!sums[key]) { sums[key] = { ...reading, value: 0, baseline: 0, future: 0, change: 0, p10: null, p90: null, country: true, contributingCities: 0, regionalCities: 0, nativeCities: 0, regionalFallback: false, spatialSupport: 'population-weighted-listed-city-measures', resolutionDegrees: null, source: { ...reading.source, spatialSupport: 'population-weighted-listed-city-measures', resolutionDegrees: null } }; weights[key] = 0; }
       for (const field of ['value', 'baseline', 'future', 'change']) sums[key][field] += reading[field] * city[4];
+      sums[key].contributingCities++;
+      sums[key][reading.regionalFallback ? 'regionalCities' : 'nativeCities']++;
+      sums[key].regionalFallback ||= reading.regionalFallback;
       weights[key] += city[4];
     }
   }
-  for (const key of Object.keys(sums)) for (const field of ['value', 'baseline', 'future', 'change']) sums[key][field] /= weights[key];
+  for (const key of Object.keys(sums)) {
+    for (const field of ['value', 'baseline', 'future', 'change']) sums[key][field] /= weights[key];
+    sums[key].nativeAvailable = null;
+    sums[key].nativeUnavailableReason = null;
+    sums[key].fallbackMethod = null;
+    sums[key].source = { ...sums[key].source, regionalFallback: sums[key].regionalFallback, fallbackMethod: null, contributingCities: sums[key].contributingCities, regionalCities: sums[key].regionalCities };
+  }
   if (key !== null){
     if (cache.entries.size >= 256) cache.entries.delete(cache.entries.keys().next().value);
     cache.entries.set(key, sums);
@@ -544,6 +558,13 @@ function unavailableScienceText(){
     ? { title: T().ui.download_failed, detail: T().ui.reload_the_page_to_retry }
     : { title: T().ui.loading_data, detail: T().ui.scientific_measurements_are_still_downloading };
   return { title: T().ui.no_estimate, detail: T().ui.outside_usable_source_coverage };
+}
+function couvertureLieu(l, an = etat.annee){
+  return Object.values(mesuresLieu(l, an) || {}).filter(reading => reading.available).length;
+}
+function texteCouverture(l){
+  const count = couvertureLieu(l);
+  return count ? refinementCopy(langue).coverage.replace('{n}', count) : refinementCopy(langue).noClimate;
 }
 function detailPhysique(key, reading){
   if (!reading?.available) return unavailableScienceText().detail;
@@ -664,7 +685,7 @@ function distanceKm(la1, lo1, la2, lo2){
       Fichiers : placeholders générés, à remplacer à l'identique.
    ===================================================================== */
 const SoundManager = new class {
-  constructor(){ this.registre = {}; this.derniereLecture = {}; this.volumeGlobal = 1; this._mute = false;
+  constructor(){ this.registre = {}; this.derniereLecture = {}; this.volumeGlobal = 1; this.mute = true;
     // boucles creees a la demande : un lien profond en 2040+ declenche la
     // crise avant l entree, donc avant chargerBoucles()
     this.differes = { ambient_loop: ['ambient_loop.mp3', 0.5, true], crisis_loop: ['crisis_loop.mp3', 0.5, true] }; }
@@ -706,7 +727,7 @@ const SoundManager = new class {
     s.timer = setTimeout(() => s.audio.stop(), 2000);
   }
   // volume global — CORRIGÉ (la référence appelait "Holwer.volume", code mort)
-  setVolume(v){ this.volumeGlobal = v; Howler.volume(this._mute ? 0 : v); }
+  setVolume(v){ this.volumeGlobal = v; Howler.volume(v); }
   set mute(b){ this._mute = b; Howler.mute(b); }
   get mute(){ return this._mute; }
 }();
@@ -839,7 +860,7 @@ function affinerTerre(){
     im.src = url;
   };
   const hauteDefinition = WEBP_OK && PIXELS_RENDUS >= 1600
-    && !matchMedia('(pointer: coarse)').matches && moteur.capabilities.maxTextureSize >= 8192;
+    && moteur.capabilities.maxTextureSize >= 8192;
   essayer(hauteDefinition ? './assets/textures/earth_color_8192.webp'
     : WEBP_OK ? './assets/textures/earth_color_4096.webp' : './assets/textures/earth_color_4096.jpg',
     WEBP_OK ? './assets/textures/earth_color_4096.jpg' : null);
@@ -849,7 +870,7 @@ function affinerTerre(){
 // plus peintes en mer — Astrakhan ne flotte plus au milieu de l'eau
 const texMasque  = chargerTextureImage('./assets/textures/earth_mask_4320.webp',
                                        './assets/textures/earth_mask_4320.png');
-texCouleur.anisotropy = 8;   // netteté aux angles rasants, quasi gratuit
+texCouleur.anisotropy = moteur.capabilities.getMaxAnisotropy();
 texMasque.anisotropy = 4;
 texCouleur.colorSpace = THREE.SRGBColorSpace;
 
@@ -1059,53 +1080,34 @@ const matGlobe = new THREE.ShaderMaterial({
         
         
         
-        float chaud = ga.r * terre;
-        float souffleChaud = 0.88 + 0.12 * sin(vUv.y * 100.0 + uTemps * 2.0);
-        float t2 = smoothstep(0.12, 0.85, chaud);
-        vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(1.0, 0.16, 0.05), t2) * (0.80 + 0.55 * t2);
-        col = mix(col, thermique, smoothstep(0.04, 0.55, chaud) * uChaleur * 0.85 * souffleChaud);
-        
-        float gagne = smoothstep(0.02, 0.12, da.r) * terre;
-        col = mix(col, vec3(1.0, 0.80, 0.45), gagne * uChaleur * 0.7);
-        col = mix(col, vec3(0.15, 0.65, 0.65), clamp((a26.r - ga.r) * 15.0, 0.0, 1.0) * terre * uChaleur * 0.6);
+        float chaud = clamp((scientificValue(heatData, P) - 20.0) / 30.0, 0.0, 1.0);
+        vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(0.90, 0.06, 0.025), chaud);
+        col = mix(col, thermique, 0.85 * uChaleur * terre * heatData.a);
       }
 
 
       
       if (uSecheresse > 0.001){
         
-        float m = clamp(ga.b, 0.0, 1.0) * terre;
-        float sec = m * uSecheresse * (0.75 + 0.20 * sin(vUv.x * 120.0 + vUv.y * 60.0 - uTemps * 1.3));
-        vec3 solSec = mix(vec3(0.16, 0.15, 0.12), vec3(0.34, 0.28, 0.14), bruit(vP * 30.0));
-        col = mix(col, solSec, sec * 0.8);
-        
-        float creuse = smoothstep(0.01, 0.07, da.b) * terre;
-        col = mix(col, vec3(0.70, 0.56, 0.26), creuse * uSecheresse * 0.65);
-        col = mix(col, vec3(0.15, 0.65, 0.65), clamp((a26.b - ga.b) * 8.0, 0.0, 1.0) * terre * uSecheresse * 0.6);
+        float humidite = clamp(scientificValue(aridityData, P) / 60.0, 0.0, 1.0);
+        vec3 sol = mix(vec3(0.667, 0.522, 0.224), vec3(0.149, 0.220, 0.173), humidite);
+        col = mix(col, sol, uSecheresse * terre * aridityData.a * 0.85);
       }
 
       if (uFeu > 0.001){
         vec4 fireWeather = texture2D(uFireWeather, vUv);
-        float changement = (fireWeather.g - fireWeather.r) / max(fireWeather.a, 0.001) * P;
-        float amplitude = clamp(abs(changement) / 10.0, 0.0, 1.0) * fireWeather.a * terre;
-        float souffle = 0.94 + 0.06 * sin(vUv.y * 80.0 - uTemps * 0.7);
-        vec3 variation = changement >= 0.0 ? vec3(0.95, 0.65, 0.25) : vec3(0.15, 0.65, 0.65);
-        col = mix(col, variation, amplitude * uFeu * 0.55 * souffle);
+        float jours = mix(fireWeather.r, fireWeather.g, P) / max(fireWeather.a, 0.001);
+        float amplitude = clamp(jours / 100.0, 0.0, 1.0);
+        vec3 meteoFeu = mix(vec3(0.30, 0.24, 0.12), vec3(0.98, 0.20, 0.055), amplitude);
+        col = mix(col, meteoFeu, sqrt(amplitude) * fireWeather.a * terre * uFeu * 0.85);
       }
 
       
       if (uMer > 0.001){
         
-        float eau = smoothstep(0.06, 0.50, submersion) * terre;
-        float bord = smoothstep(0.03, 0.11, submersion) - smoothstep(0.18, 0.44, submersion);
-        float houle = 0.68 + 0.32 * bruit(vP * 90.0 + vec3(0.0, uTemps * 0.22, uTemps * 0.14));
-        vec3 neon = vec3(0.16, 0.48, 1.0);
-        col = mix(col, neon * houle, eau * uMer * 0.70);
-        col += neon * bord * terre * uMer * 0.85;             
-        
-        float gagneMer = smoothstep(0.004, 0.04, db.g) * terre;
-        col += neon * gagneMer * uMer * 0.9;
-        col = mix(col, gb.g >= b26.g ? vec3(0.95, 0.65, 0.25) : vec3(0.15, 0.65, 0.65), clamp(abs(gb.g - b26.g) / 0.05, 0.0, 1.0) * terre * uMer * 0.65);
+        float fraction = clamp(scientificValue(coastData, P), 0.0, 1.0);
+        vec3 eau = mix(vec3(0.45, 0.82, 1.0), vec3(0.08, 0.28, 0.95), fraction);
+        col = mix(col, eau, sqrt(fraction) * coastData.a * terre * uMer * 0.9);
       }
 
       
@@ -1114,10 +1116,9 @@ const matGlobe = new THREE.ShaderMaterial({
       if (uStabilite > 0.001){
         
         float inst = scientificValue(warmingData, P);
-        float m = clamp(abs(inst) / 5.0, 0.0, 1.0) * terre * warmingData.a;
-        float souffle = 0.72 + 0.28 * sin(uTemps * 1.1 + inst * 8.0);
-        vec3 violet = inst >= 0.0 ? vec3(0.565, 0.365, 1.0) : vec3(0.15, 0.65, 0.65);
-        col = mix(col, violet * souffle, m * uStabilite * 0.85);
+        float m = clamp(abs(inst) / 5.0, 0.0, 1.0);
+        vec3 anomalie = mix(vec3(0.96, 0.79, 0.58), inst >= 0.0 ? vec3(0.88, 0.14, 0.09) : vec3(0.18, 0.55, 0.88), m);
+        col = mix(col, anomalie, terre * warmingData.a * uStabilite * 0.85);
       }
 
       
@@ -1132,7 +1133,7 @@ const matGlobe = new THREE.ShaderMaterial({
         
         vec3 vide = mix(vec3(gris * 0.5), vec3(0.55, 0.47, 0.78), 0.75);
         
-        float vidage = uDeclin * (0.83 + 0.17 * sin(uTemps * 1.4 + vUv.y * 30.0));
+        float vidage = uDeclin;
         col = mix(col, vide, m * vidage);
         col += vec3(0.42, 0.34, 0.66) * m * vidage * 0.35;
       }
@@ -1140,13 +1141,9 @@ const matGlobe = new THREE.ShaderMaterial({
       
       if (uCrue > 0.001){
         if (crueReference > 0.0 || b26.b > 0.0){
-          float f = crueReference;
-          float m = smoothstep(0.02, 0.35, f) * terre;
-          float onde = 0.75 + 0.25 * sin(uTemps * 0.9 + vUv.x * 60.0);
-          vec3 bleu = vec3(0.44, 0.64, 1.0);
-          col = mix(col, bleu * onde, m * uCrue * 0.72);
-          col += bleu * (smoothstep(0.02, 0.10, f) - smoothstep(0.20, 0.55, f)) * terre * uCrue * 0.5;
-          col = mix(col, gb.b >= b26.b ? vec3(0.95, 0.65, 0.25) : vec3(0.15, 0.65, 0.65), clamp(abs(gb.b - b26.b) / 0.05, 0.0, 1.0) * terre * uCrue * 0.65);
+          float fraction = clamp(scientificValue(riverData, P), 0.0, 1.0);
+          vec3 bleu = mix(vec3(0.45, 0.82, 1.0), vec3(0.08, 0.28, 0.95), fraction);
+          col = mix(col, bleu, sqrt(fraction) * riverData.a * terre * uCrue * 0.9);
         }
       }
 
@@ -1285,7 +1282,7 @@ let feux, feuxUniforms;
       void main(){
         float d = mix(aDanger.x, aDanger.y, uProgression);
         vVif = smoothstep(aSeuil - 0.0014, aSeuil + 0.0014, d);
-        float scintille = 0.55 + 0.45 * sin(uTemps * (5.0 + aGraine * 5.0) + aGraine * 43.0);
+        float scintille = 1.0;
         vFlamme = scintille;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         gl_PointSize = (4.0 + 6.0 * scintille) * uIntensite * sqrt(0.35 + 0.65 * vVif) * uPixelRatio * (2.6 / -mv.z);
@@ -1366,7 +1363,7 @@ function genererLUT(){
     for (let g = 0; g < 64; g++) for (let r = 0; r < 64; r++){
       let R = courbe(r / 63), G = courbe(g / 63), B = courbe(b / 63);
       B = Math.min(1, B * 1.05 + 0.012);                    // ombres froides
-      R = R * 0.98 + Math.pow(R, 3) * 0.06;                 // hautes lumières légèrement chaudes
+      R = Math.min(1, R * 0.98 + Math.pow(R, 3) * 0.06);
       const i = ((cy + g) * T + cx + r) * 4;
       donnees[i] = R * 255; donnees[i + 1] = G * 255; donnees[i + 2] = B * 255; donnees[i + 3] = 255;
     }
@@ -1540,7 +1537,7 @@ const CALQUES = {
   feux:       { uniforme: uniformsGlobe.uFeu,        son: 'layer_on', objet: feux },
   secheresse: { uniforme: uniformsGlobe.uSecheresse, son: 'layer_on' },
   mer:        { uniforme: uniformsGlobe.uMer,        son: 'layer_on' },
-  fleuves:    { uniforme: uniformsGlobe.uCrue,       son: 'layer_on' },
+  fleuves:    { uniforme: uniformsGlobe.uCrue,       son: 'layer_on', objet: groupeFleuves },
   stabilite:  { uniforme: uniformsGlobe.uStabilite,  son: 'layer_on' },
   declin:     { uniforme: uniformsGlobe.uDeclin,     son: 'layer_on' },
 };
@@ -1551,6 +1548,7 @@ function majContexteCalques(){
   const notes = [`${etat.annee} · ${T().ui.model_indicators}`];
   if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(T().ui.wri_rcp85_100year_event_no);
   if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(T().ui.globe_fraction_of_covered_cells);
+  if (actifs.includes('fleuves')) notes.push(refinementCopy(langue).riverLines);
   if (actifs.includes('chaleur')) notes.push(T().ui.hottestmonth_mean_maximum_2050_c);
   if (actifs.includes('secheresse')) notes.push(T().ui.de_martonne_0_dry_to);
   if (actifs.includes('stabilite')) notes.push(T().ui.local_warming_since_19702000_05);
@@ -1559,13 +1557,30 @@ function majContexteCalques(){
     : (T().ui.un_annual_medium_projection_decline));
   if (actifs.some(c => !['fleuves','declin'].includes(c))) notes.push(T().ui.interpolated_estimates_not_annual_forecasts);
   if (actifs.includes('feux')) {
-    notes.unshift(T().ui.fireweather_change_not_active_fires);
-    notes.push(T().ui.change_in_extreme_fireweather_daysyear);
-    notes.push(T().ui.uncoloured_no_displayed_change_or);
+    notes.push(refinementCopy(langue).summary[2]);
     notes.push(T().ui['21model_mean_ssp370_20162035_20412060']);
     notes.push(T().ui.point_density_represents_modelled_weather);
   }
-  el.textContent = notes.join('\n');
+  el.replaceChildren();
+  const scales = {
+    chaleur: ['#ffC738,#e61006','20 °C','50 °C'],
+    feux: ['#4d3d1f,#fa330e','0',`100+ ${T().ui.daysyear}`],
+    secheresse: ['#aa8539,#26382c','0','60+ De Martonne'],
+    mer: ['#73d1ff,#1447f2','0%','100%'],
+    fleuves: ['#73d1ff,#1447f2','0%','100%'],
+    stabilite: ['#2e8ce0,#f5c993,#e02417','≤ −5 °C','0','≥ +5 °C'],
+    declin: ['#31343a,#8c78c7','0%','55%+']
+  };
+  for (const key of actifs){
+    const row = document.createElement('div'); row.className = 'map-scale';
+    const title = document.createElement('strong');
+    title.textContent = document.querySelector(`.calque[data-cle="${key}"] .nom`).textContent + ` · ${etat.annee}`;
+    const bar = document.createElement('i'); bar.style.background = `linear-gradient(90deg,${scales[key][0]})`;
+    const ticks = document.createElement('span');
+    for (const value of scales[key].slice(1)) {const tick = document.createElement('span');tick.textContent=value;ticks.append(tick);}
+    row.append(title,bar,ticks);el.append(row);
+  }
+  const description = document.createElement('p'); description.textContent = notes.join('\n'); el.append(description);
 }
 
 
@@ -2214,6 +2229,30 @@ function finirRisques(nouveau){
     if (sample?.country) el.dataset.detail += T().ui.populationweighted_mean_of_listed_cities;
     else if (available && Number.isFinite(sample.p10) && Number.isFinite(sample.p90)) el.dataset.detail += ` ${T().ui.change_spread_across_models_1090}: ${format(sample.p10)} / ${format(sample.p90)} ${unit}.`;
     el.querySelector('.detail').textContent = el.dataset.detail;
+    const explanation = refinementCopy(langue).summary[CRITERES.findIndex(c => c.cle === key)];
+    let plain = el.querySelector('.risk-meaning');
+    if (!plain) { plain = document.createElement('p'); plain.className = 'risk-meaning'; el.querySelector('summary').append(plain); }
+    plain.textContent = (key === 'mer' || key === 'fleuves')
+      ? sample?.country ? T().ui.populationweighted_mean_of_listed_cities : sample?.regionalFallback ? refinementCopy(langue).regionalFlood : refinementCopy(langue).cell
+      : explanation;
+    if (key === 'eau') el.querySelector('.nom-crit').textContent = refinementCopy(langue).humidity;
+    if (key === 'eau' && available && !sample.country) {
+      plain.textContent = `${moistureBand(sample.value, langue)} · ${plain.textContent}`;
+      const source = document.createElement('a');
+      source.href = moistureSource; source.target = '_blank'; source.rel = 'noopener';
+      source.textContent = 'De Martonne · MITECO, table 12';
+      el.querySelector('.detail').append('\n\n', source);
+    }
+    if (sample?.country) {
+      plain.textContent += ` (${sample.contributingCities})`;
+      if (sample.regionalCities) plain.textContent += ` · ${refinementCopy(langue).regionalScore}: ${sample.regionalCities}/${sample.contributingCities}`;
+      el.dataset.spatial = 'country';
+    } else if (available && sample.regionalFallback) {
+      plain.textContent += ' ' + refinementCopy(langue).regional;
+      el.dataset.spatial = 'regional';
+    } else el.dataset.spatial = 'native';
+    if (!sample?.country && (key === 'mer' || key === 'fleuves')) el.querySelector('.detail').textContent += '\n\n' + (sample?.regionalFallback ? refinementCopy(langue).regionalFlood : refinementCopy(langue).cell);
+    el.dataset.detail = el.querySelector('.detail').textContent;
     if (nouveau) el.open = false;
   });
 }
@@ -2305,8 +2344,18 @@ function majDuel(l, an){
 }
 document.getElementById('dossier-duel').addEventListener('click', () => {
   if (!lieuVs) return;
-  const autre = lieuVs; lieuVs = lieuDossier;
-  choisirLieu(autre);
+  comparaison.open(lieuDossier, lieuVs, etat.annee);
+});
+const comparaison = createComparison({
+  places: () => [...LIEUX, ...PAYS_LIGNES], name: nomVille, country: nomPays,
+  measures: mesuresLieu, criteria: CRITERES, population: populationAnnuelle,
+  normalize: normaliser,
+  onYear: year => { curseur.value = year; curseur.dispatchEvent(new Event('input')); },
+  onPair: (first, second) => {
+    if (lieuDossier !== first && lieuDossier !== second) return;
+    lieuVs = lieuDossier === first ? second : first;
+    majDuel(lieuDossier, etat.annee); majLien(true);
+  }
 });
 /* Le duel n'était accessible que par un lien reçu : personne ne pouvait
    comparer deux villes de lui-même. Le bouton emprunte le même chemin que le
@@ -2314,15 +2363,8 @@ document.getElementById('dossier-duel').addEventListener('click', () => {
    le duel — et renvoie au champ, qui est l'endroit où l'on choisit. */
 document.getElementById('dossier-comparer').addEventListener('click', () => {
   if (!lieuDossier) return;
-  defiLien = lieuDossier;
-  const nom = nomVille(lieuDossier);
   SoundManager.play('ui_click');
-  deployerRecherche();
-  champ.focus(); champ.value = '';
-  champ.placeholder = message('comparePrompt', {city: nom});
-  document.body.classList.add('comparaison-active');
-  afficherResultats();
-  montrerAccroche(message('compareSelected', {city: nom}), null, 0);
+  comparaison.open(lieuDossier, lieuVs, etat.annee);
 });
 function majRangeePop(iso, an){
   const el = document.getElementById('dossier-pop'), pop = PAYS_POP[iso];
@@ -2336,9 +2378,10 @@ function majRangeePop(iso, an){
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
+  const regional = Object.values(mesuresLieu(l, an) || {}).some(reading => reading.regionalFallback);
   const dossierNeuf = tracerTrajectoire.animer;
   document.getElementById('dossier-nom').textContent = nomVille(l);
-  document.getElementById('dossier-scope').textContent = estPays(l) ? t.panelCountry : `${t.panelCity} · ${nomPays(l[1])}`;
+  document.getElementById('dossier-scope').textContent = (estPays(l) ? t.panelCountry : `${t.panelCity} · ${nomPays(l[1])}`) + (regional ? ' · ' + refinementCopy(langue).regionalScore : '');
   document.getElementById('dossier-evolution').textContent = (estPays(l) || l[7]) ? t.panelEvolution(indiceHabitabilite(l, an) - indiceHabitabilite(l, 2026)) : '';
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (T().ui.w)} · ${nomPays(l[1]).toUpperCase()}`;
@@ -2362,10 +2405,10 @@ function majDossier(){
     document.getElementById('dossier-frappe').textContent = '';
     majDuel(l, an);
     odoIndice.colonnes = null;        // le nœud est détruit : forcer la reconstruction
-    document.getElementById('dossier-verdict-txt').textContent = t.sansDonnees;
+    document.getElementById('dossier-verdict-txt').textContent = couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees;
     document.getElementById('dossier-verdict').className = 'verdict';
     document.getElementById('dossier-delta').textContent = '';
-    document.getElementById('dossier-conseil').textContent = t.sansDonneesLong;
+    document.getElementById('dossier-conseil').textContent = texteCouverture(l);
     majRangeePop(l[1], an);
     creerRisques(document.getElementById('dossier-risques'), CRITERES.map(c => c.cle), t, langue, dossierNeuf);
     finirRisques(dossierNeuf);
@@ -2470,7 +2513,7 @@ function annoncer(){
   const t = T(), an = etat.annee;
   const sc = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const txt = sc === null
-    ? `${nomVille(l)} · ${t.sansDonnees}`
+    ? `${nomVille(l)} · ${texteCouverture(l)}`
     : `${nomVille(l)} · ${an} · ${sc}/100 · ${t.panelVerdict[niveauDe(sc)]}`;
   if (txt === derniereAnnonce) return;   // remis a zero a la fermeture (voir fermerDossier)
   derniereAnnonce = txt;
@@ -2676,7 +2719,7 @@ async function genererStory(opts){
   // le score — ou la sentinelle
   if (indice === null){
     g.fillStyle = MUTER; g.font = `600 200px ${sans}`; g.fillText('——', 540, 1020);
-    g.font = `${cjk ? '' : 'italic '}500 46px ${serif}`; g.fillText(t.sansDonnees, 540, 1130, 900);
+    g.font = `${cjk ? '' : 'italic '}500 46px ${serif}`; g.fillText(couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees, 540, 1130, 900);
   } else {
     const teinte = couleurNote(indice);
     g.font = `600 340px ${sans}`;
@@ -3171,7 +3214,7 @@ function traduire(){
     if (typeof v === 'string') el.textContent = v;
   }
   for (const btn of document.querySelectorAll('.calque')){
-    btn.querySelector('[data-t-calque]').textContent = t.calque[btn.dataset.cle];
+    btn.querySelector('[data-t-calque]').textContent = btn.dataset.cle === 'feux' ? t.critere.feux : t.calque[btn.dataset.cle];
   }
   // sur ecran tactile, le raccourci clavier n'a pas de sens
   champ.placeholder = matchMedia('(pointer: coarse)').matches ? t.chercher.replace(/\s*—\s*⌘K$/, '') : t.chercher;
@@ -3352,7 +3395,7 @@ document.getElementById('bouton-entree').addEventListener('click', () => {
   document.body.classList.add('pret');
   SoundManager.init();
   SoundManager.setVolume(1);
-  try { if (localStorage.getItem('terra-son') === 'off') SoundManager.mute = true; } catch (e) {}
+  SoundManager.mute = true;
   SoundManager.chargerBoucles();
   SoundManager.play('ambient_loop', true);   // boucle à 0.5, fondu 2 s — après le geste utilisateur
   SoundManager.play('camera_fly');
@@ -3755,7 +3798,8 @@ function boucle(){
 
   uniformsGlobe.uTemps.value = MOINS_ANIM ? 0 : t;
   marqueurUniforms.uTemps.value = t;
-  fleuvesUniforms.uTemps.value = t;
+  fleuvesUniforms.uTemps.value = MOINS_ANIM ? 0 : t;
+  fleuvesUniforms.uCrue.value = uniformsGlobe.uCrue.value * 0.45;
 
 
   controles.update();

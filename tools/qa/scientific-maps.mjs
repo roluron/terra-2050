@@ -13,6 +13,10 @@ async function probe() {
   const keys = ['chaleur', 'secheresse', 'stabilite', 'mer', 'fleuves', 'feux'];
   const names = ['heat', 'aridity', 'warming', 'coast', 'river'];
   const sourceChecks = [], sourceStats = {}, failures = [];
+  const lut = matPost.uniforms.tLut.value.image.data;
+  let redReversals = 0;
+  for (let i=4;i<lut.length;i+=4) if ((i/4)%64 && lut[i]<lut[i-4]) redReversals++;
+  if (redReversals) failures.push(`Color grade reverses increasing red in ${redReversals} cells`);
   const half = THREE.DataUtils.fromHalfFloat;
   const locations = [[48.75,2.25],[23.75,90.25],[-33.75,151.25],[12.25,-1.75],[0.25,-140.25],[89.75,-179.75],[-89.75,179.75]];
   for (const name of names) {
@@ -90,7 +94,7 @@ async function probe() {
     scene.children.forEach((o,i)=>o.visible=visibility[i]);for(const[k,v]of Object.entries(saved))uniformsGlobe[k].value=v;
     moteur.setRenderTarget(null);target.dispose();compteurImages=requestAnimationFrame(boucle);
   }
-  return {sourceChecks,sourceStats,particleChecks,pixels,controls,images,failures};
+  return {sourceChecks,sourceStats,particleChecks,pixels,controls,images,failures,redReversals};
 }
 const browser = await chromium.launch({executablePath:chromium.executablePath(),headless:false});
 const context = await browser.newContext({viewport:{width:1280,height:800},locale:'en-US',recordVideo:{dir:out,size:{width:1280,height:800}}});

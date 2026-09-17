@@ -43,7 +43,14 @@ async function verifierRetourCamera(page, name){
       const state = globalThis.__introProbe();
       return state.flightSettled && Math.abs(state.yearOffset) < .01
         && Math.abs(state.aspect - innerWidth / innerHeight) < .0001;
-    }, null, {timeout:10000});
+    }, null, {timeout:10000}).catch(async error => {
+      console.error(JSON.stringify({order, state:await page.evaluate(() => ({
+        ...globalThis.__introProbe(), visibility:document.visibilityState,
+        yearTransform:getComputedStyle(document.getElementById('an')).transform,
+        tweens:gsap.getTweensOf('#an').map(tween => ({progress:tween.progress(),paused:tween.paused()}))
+      }))}));
+      throw error;
+    });
     const resized = await page.evaluate(() => globalThis.__introProbe());
     await page.screenshot({path:`${out}/${name}-${order}.png`});
     results.push({order, ...resized});
@@ -58,7 +65,7 @@ for (const [name, engine, configuration] of [
   ['iphone-reduced', webkit, {...devices['iPhone 15 Pro'],reducedMotion:'reduce'}]
 ]) {
   if (process.env.QA_INTRO_CAMERA_ONLY && name !== 'desktop') continue;
-  const browser = await engine.launch({executablePath:engine.executablePath()});
+  const browser = await engine.launch({executablePath:engine.executablePath(),headless:false});
   try {
     const context = await browser.newContext({...configuration,
       ...(process.env.QA_CAMERA_VIDEO ? {recordVideo:{dir:out,size:{width:1440,height:900}}} : {})});

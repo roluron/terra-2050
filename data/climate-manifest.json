@@ -731,7 +731,7 @@
     "longitude": "-180 + (column + 0.5)/2",
     "latitude": "90 - (row + 0.5)/2"
   },
-  "aggregation": "Arithmetic mean of valid native 3x3 cells per derived metric; no imputation. De Martonne is mean of native indices, not ratio of averaged metrics. Zero coverage yields NaN.",
+  "aggregation": "Arithmetic mean of the same native 3x3 cells per derived metric, finite in all three periods; matched spatial support, no imputation. De Martonne is mean of native indices, not ratio of averaged metrics. Zero matched coverage yields NaN. Native city-point sampling is unchanged.",
   "coverage_definition": "uint8 valid native-cell count 0..9 for each field, same shape and cell-interleaved layout as grid",
   "periods": [
     {
@@ -801,14 +801,14 @@
     ],
     "native_resolution_degrees": 0.16666666666666666
   },
-  "importer_sha256": "7b1899b882b34cf0722224298b24b26f13c26e32d8697eb375529a0978353c05",
+  "importer_sha256": "0316caef80371e6bf71099e1ba3cf3d0e4f53a040f05cb09105989cdb77eb4ad",
   "grid": {
     "file": "climate-grid.bin",
-    "bytes": 3478238,
-    "sha256": "605744bc0d4e1f14a9b5829319b72c7fcb878c756d7ec15c7c6d690a6190daf0",
+    "bytes": 3362567,
+    "sha256": "f479a3ab5f8d5aa64f62380950cd527640a39359dd6cf3ce4140b351df85517d",
     "compression": "gzip",
     "uncompressed_bytes": 12441600,
-    "uncompressed_sha256": "a801d7a1acae69ca5d1ebc1ef2d1ef28e4ab65fdad3558b650980decd8cbc426",
+    "uncompressed_sha256": "12317ab01352808d48799900bc6265f52e2e0e78d942065d04240ab36074b50a",
     "shape": [
       360,
       720,
@@ -817,11 +817,11 @@
   },
   "coverage": {
     "file": "climate-coverage.bin",
-    "bytes": 47648,
-    "sha256": "69d6f9c40bcde5932a4823bc6a80f8ec31dd28d2f8e7581fdb3cedeb2d37cbb3",
+    "bytes": 25798,
+    "sha256": "1e5edf3672531770e51af7452b0b2cc7388eb426eeaa37bab8910d1afe6c19ed",
     "compression": "gzip",
     "uncompressed_bytes": 3110400,
-    "uncompressed_sha256": "9fe9de5ab533da08c0c92622033d1bb15b8eae032011486dd012fbf96b4d3f45",
+    "uncompressed_sha256": "839401702ce89e7ec7cf2057448009db27c1b51d14e2ef546eb1f4aa06014d8d",
     "shape": [
       360,
       720,
