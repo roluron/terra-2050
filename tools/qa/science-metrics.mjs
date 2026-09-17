@@ -36,7 +36,9 @@ for (let index = 0; index < places.length; index++) {
   }
   if (complete) allSix++;
   const hottest = native.readFloatLE((index * 12 + 10) * 4);
-  assert.equal(future.thermique.value, Number.isFinite(hottest) ? hottest : null);
+  assert.equal(future.thermique.nativeAvailable, Number.isFinite(hottest));
+  if (future.thermique.nativeAvailable) assert.equal(future.thermique.value, hottest);
+  else if (future.thermique.available) assert.equal(future.thermique.regionalFallback, true);
 }
 assert.deepEqual(counts, data.availability.perAxis);
 assert.equal(allSix, data.availability.allSix);

@@ -28,6 +28,8 @@ const WK = process.env.QA_WEBKIT || webkit.executablePath();
 for (const [nom, p] of [['QA_CHROMIUM', CH], ['QA_WEBKIT', WK]])
   if (!fs.existsSync(p)) { console.error(`Navigateur introuvable (${nom}) : ${p}`); process.exit(2); }
 const results = [];
+const cases = process.env.QA_MATRIX_CASE || 'ABCDEFG';
+if (!/^[A-G]+$/.test(cases)) throw new Error('QA_MATRIX_CASE must contain case letters A through G');
 const ok = (name, cond, detail = '') => {
   const line = `${cond ? 'PASS' : 'FAIL'} ${name}${detail ? ' — ' + detail : ''}`;
   results.push(line); console.log(line);
@@ -63,7 +65,7 @@ const layout = (page) => page.evaluate(() => {
 const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y);
 
 // ---------- A. desktop 1280x720 : clavier timeline + duel ----------
-{
+if (cases.includes('A')) {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1280, height: 720 }, permissions: ['clipboard-read', 'clipboard-write'] });
   await enter(page);
   await search(page, 'Lisbon');
@@ -101,7 +103,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await browser.close();
 }
 // ---------- B. iPhone paysage ----------
-{
+if (cases.includes('B')) {
   const d = devices['iPhone 15 Pro landscape'];
   const { browser, page, errs } = await open(webkit, { ...d });
   await enter(page);
@@ -138,7 +140,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await browser.close();
 }
 // ---------- C. iPad ----------
-{
+if (cases.includes('C')) {
   const { browser, page, errs } = await open(webkit, { ...devices['iPad Pro 11'] });
   await enter(page); await search(page, 'Tokyo', true);
   const lay = await layout(page);
@@ -148,7 +150,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await browser.close();
 }
 // ---------- D. reduced motion ----------
-{
+if (cases.includes('D')) {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
   await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 }); await enterEarth(page);
   // on attend l ETAT, pas une duree : sur un runner sans GPU les premieres
@@ -165,7 +167,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await browser.close();
 }
 // ---------- E. panne données ----------
-{
+if (cases.includes('E')) {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1280, height: 800 } }, { route: { url: '**/data/places.json' } });
   const pret = await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 }).then(() => true).catch(() => false);
   ok('E panne données : voile prêt', pret);
@@ -178,7 +180,7 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await browser.close();
 }
 // ---------- F. WebGL absent ----------
-{
+if (cases.includes('F')) {
   const { browser, page } = await open(chromium, { viewport: { width: 1280, height: 800 } }, { init: () => { const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); }; } });
   // meme regle : le voile met 0,8 s a disparaitre une fois le module execute,
   // et le module s execute tard sur une machine lente. On attend l etat.
@@ -190,14 +192,14 @@ const overlap = (a, b) => !(a.r <= b.x || b.r <= a.x || a.b <= b.y || b.b <= a.y
   await browser.close();
 }
 // ---------- G. persistance son + langue ----------
-{
+if (cases.includes('G')) {
   const { browser, page, errs } = await open(chromium, { viewport: { width: 1280, height: 800 } });
   await enter(page);
   await page.click('#bouton-reglages'); await page.waitForTimeout(400); await page.click('#bouton-son'); await page.waitForTimeout(200); await chooseLanguage(page, 'fr'); await page.waitForTimeout(400);
-  const before = await page.evaluate(() => [document.getElementById('bouton-son').textContent, document.documentElement.lang]);
+  const before = await page.evaluate(() => [Howler._muted, document.documentElement.lang]);
   await page.reload(); await enter(page);
-  const after = await page.evaluate(() => [document.getElementById('bouton-son').textContent, document.documentElement.lang]);
-  ok('G son + langue mémorisés après rechargement', before[0] === after[0] && before[1] === after[1] && /off/i.test(after[0]), JSON.stringify({ before, after }));
+  const after = await page.evaluate(() => [Howler._muted, document.documentElement.lang]);
+  ok('G entrée silencieuse après activation du son, langue mémorisée', before[0] === false && after[0] === true && before[1] === after[1], JSON.stringify({ before, after }));
   // double clic Explorer
   await page.reload(); await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page, true);
   await page.waitForTimeout(2500);

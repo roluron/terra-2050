@@ -57,8 +57,10 @@ for (const [name, type, options] of [
     });
     await check(`${name}: compare button → second city → duel`, async () => {
       await page.click('#dossier-comparer');
-      await page.fill('#champ-recherche', 'Berlin');
-      await page.getByRole('option').filter({ hasText: 'Berlin' }).first().click();
+      await page.fill('#comparison-search', 'Berlin');
+      await page.locator('#comparison-results [role="option"]').filter({ hasText: 'Berlin' }).first().click();
+      assert.equal(await page.locator('#city-comparison td[data-value]').count(), 12);
+      await page.locator('.compare-close').click();
       await page.waitForTimeout(2500);
       assert.equal(await page.locator('#dossier-duel').isVisible(), true);
       const duel = await page.locator('#dossier-duel').textContent();

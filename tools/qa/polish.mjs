@@ -42,10 +42,10 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
     await page.screenshot({path:`/tmp/terra-polish-${name}-risk.png`});
     assert.equal(await page.locator('[data-t="betaNotice"]').evaluate(el => /beta|bêta/i.test(el.textContent)), false);
     await page.locator('#dossier-comparer').click();
-    assert.match(await page.locator('#champ-recherche').getAttribute('placeholder'), /Dhaka|Dacca/);
-    assert.equal(await page.locator('#champ-recherche').inputValue(), '');
-    await page.locator('#champ-recherche').fill('Paris');
-    await page.locator('#resultats li').filter({hasText:'Paris'}).first().click();
+    assert.match(await page.locator('#city-comparison thead').innerText(), /Dhaka|Dacca/);
+    assert.equal(await page.locator('#comparison-search').inputValue(), '');
+    await page.locator('#comparison-search').fill('Paris');
+    await page.locator('#comparison-results [role="option"]').filter({hasText:'Paris'}).first().click();
     await page.waitForFunction(() => {
       const text = document.querySelector('#dossier-duel').innerText;
       return /Dhaka|Dacca/.test(text) && /Paris/.test(text);
@@ -53,6 +53,7 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
     assert.match(await page.locator('#dossier-duel').innerText(), /Dhaka|Dacca/);
     assert.match(await page.locator('#dossier-duel').innerText(), /Paris/);
     await page.screenshot({path:`/tmp/terra-polish-${name}.png`});
+    await page.locator('.compare-close').click();
     await page.locator('#dossier-croix').click();
     await page.waitForTimeout(2200);
     if (name === 'phone') {

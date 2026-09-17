@@ -9,7 +9,7 @@ for (const [name, engine, options, expected] of [
   ['desktop', chromium, { viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 }, 8192],
   ['phone', webkit, devices['iPhone 15 Pro'], 4096],
 ]) {
-  const browser = await engine.launch({ executablePath: engine.executablePath() });
+  const browser = await engine.launch({ executablePath: engine.executablePath(), headless:false });
   try {
     const page = await browser.newPage(options), errors = [];
     page.on('pageerror', error => errors.push(error.message));
