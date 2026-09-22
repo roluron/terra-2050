@@ -5,7 +5,7 @@ const work=process.env.DEMO_WORK||'/tmp/terra-demo';
 await mkdir(work,{recursive:true});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const browser=await chromium.launch({headless:false});
-const context=await browser.newContext({viewport:{width:1920,height:1080},deviceScaleFactor:1,recordVideo:{dir:work,size:{width:1920,height:1080}}});
+const context=await browser.newContext({viewport:{width:1920,height:1080},deviceScaleFactor:2,recordVideo:{dir:work,size:{width:3840,height:2160}}});
 const page=await context.newPage();
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 let mouse=[960,540];
@@ -62,26 +62,37 @@ const slider=await page.locator('#curseur').boundingBox();
 await glide([slider.x+6,slider.y+slider.height/2],900);await sleep(300);await page.mouse.down();
 await glide([slider.x+slider.width-6,slider.y+slider.height/2],5200);await page.mouse.up();await sleep(2200);
 
-mark('city');
-await press('#champ-recherche');await sleep(400);await type('Tokyo');
-const option=page.getByRole('option').filter({hasText:'Tokyo'}).first();await option.waitFor();await sleep(700);
-const ob=await option.boundingBox();await glide([ob.x+ob.width/2,ob.y+ob.height/2],700);await sleep(200);await page.mouse.down();await sleep(80);await page.mouse.up();
-await page.locator('#dossier.ouvert').waitFor();await sleep(3200);
-const meters=await page.locator('.risque summary').all();
-for(const meter of meters.slice(0,2)){const b=await meter.boundingBox();if(!b)continue;await glide([b.x+b.width/2,b.y+b.height/2],700);await sleep(200);await page.mouse.down();await sleep(80);await page.mouse.up();await sleep(2200)}
-
-mark('compare');
-await press('#dossier-comparer');await sleep(1200);
-await press('#comparison-search');await type('Paris');
-const rival=page.locator('#comparison-results [role="option"]').filter({hasText:'Paris'}).first();await rival.waitFor();await sleep(500);
-const rb=await rival.boundingBox();await glide([rb.x+rb.width/2,rb.y+rb.height/2],600);await sleep(200);await page.mouse.down();await sleep(80);await page.mouse.up();
-await page.locator('#city-comparison td[data-value]').first().waitFor();await sleep(4500);
-await press('.compare-close');await sleep(900);
-
-mark('story');
-await press('#dossier-story');
-await page.locator('#story-partager:not([disabled]):not([aria-busy="true"])').waitFor({timeout:30000});await sleep(4000);
-await press('#story-fermer');await sleep(700);
+async function pick(field,text,results){
+ await press(field);await sleep(300);await page.keyboard.press('Meta+a');await page.keyboard.press('Backspace');await sleep(300);await type(text);
+ const option=page.locator(results).filter({hasText:text}).first();
+ await option.waitFor().catch(async e=>{console.error(await page.evaluate(()=>({value:document.getElementById('champ-recherche').value,list:document.getElementById('resultats').innerText.slice(0,120),cmp:document.getElementById('comparison-results')?.innerText.slice(0,120)})));throw e});await sleep(700);
+ const b=await option.boundingBox();await glide([b.x+b.width/2,b.y+b.height/2],700);await sleep(200);await page.mouse.down();await sleep(80);await page.mouse.up();
+}
+const tour=[{city:'Tokyo',rival:'Paris',story:true},{city:'Dhaka',rival:'Amsterdam'},{city:'Miami',rival:'Lagos'},{city:'Jakarta',rival:'Sydney',swap:true}];
+for(const [index,stop] of tour.entries()){
+ mark('city '+stop.city);
+ if(await page.locator('#dossier.ouvert').count()){await press('#dossier-croix');await page.locator('#dossier.ouvert').waitFor({state:'detached'});await sleep(1500)}
+ await pick('#champ-recherche',stop.city,'[role="option"]');
+ await page.locator('#dossier.ouvert').waitFor();await sleep(3000);
+ const meters=await page.locator('.risque summary').all();
+ for(const meter of meters.slice(index%2,index%2+1)){const b=await meter.boundingBox();if(!b)continue;await glide([b.x+b.width/2,b.y+b.height/2],700);await sleep(200);await page.mouse.down();await sleep(80);await page.mouse.up();await sleep(2200)}
+ mark('compare '+stop.city+' '+stop.rival);
+ await press('#dossier-comparer');await sleep(1200);
+ await pick('#comparison-search',stop.rival,'#comparison-results [role="option"]');
+ await page.locator('#city-comparison td[data-value]').first().waitFor();await sleep(4000);
+ if(stop.swap){
+  const years=await page.locator('#comparison-year').boundingBox();
+  await glide([years.x+years.width-6,years.y+years.height/2],800);await sleep(300);await page.mouse.down();await glide([years.x+years.width*0.2,years.y+years.height/2],3200);await page.mouse.up();await sleep(2000);
+  await press('.compare-swap');await sleep(3000);
+ }
+ await press('.compare-close');await sleep(900);
+ if(stop.story){
+  mark('story');
+  await press('#dossier-story');
+  await page.locator('#story-partager:not([disabled]):not([aria-busy="true"])').waitFor({timeout:30000});await sleep(4000);
+  await press('#story-fermer');await sleep(700);
+ }
+}
 await press('#dossier-croix');await sleep(1500);
 
 mark('french');
