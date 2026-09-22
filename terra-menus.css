@@ -144,7 +144,10 @@ body { background: var(--encre); color: var(--texte); }
 
 /* ---- Compteur à rouleau (Counter/index.tsx) : chiffres empilés,
    glissement horizontal piloté par GSAP ---- */
-.odo { position: relative; display: inline-block; overflow: clip; vertical-align: top; }
+.odo { position: relative; display: inline-block; overflow-x: visible; overflow-y: clip; vertical-align: top; }
+/* seul le roulement vertical est masque : avec un interlettrage negatif la
+   colonne est plus etroite que son chiffre, et un clip horizontal rognait
+   le flanc droit du 9 (fiche pays « 69 ») et du 6 du millesime */
 .odo .js-number { display: block; text-align: center; will-change: transform; }
 .odo .js-number:not(:first-child) { position: absolute; inset: 0; width: 100%; height: 100%; }
 

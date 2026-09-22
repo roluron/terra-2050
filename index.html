@@ -61,8 +61,9 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;overflow:hidden;background:var(--encre)}
   body{font-family:var(--police);color:var(--texte);-webkit-font-smoothing:antialiased}
-  #scene{position:fixed;inset:0;display:block;cursor:grab}
-  #scene:active{cursor:grabbing}
+  /* pas de main : le curseur est un point (glass-cursor.mjs) ; la flèche ne
+     sert que de repli quand le point ne peut pas se dessiner */
+  #scene{position:fixed;inset:0;display:block;cursor:default}
 
   /* ===== voile de chargement / geste audio ===== */
   #voile{position:fixed;inset:0;z-index:40;background:var(--encre);
@@ -119,6 +120,10 @@
     padding:16px 26px 18px;text-align:center}
   body.pret #timeline{transform:translate(-50%,0)}
   #timeline .an{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+  /* pendant l'entrée du chrome, GSAP pilote l'opacité : la transition CSS
+     de l'année ne doit ni traîner derrière ni fondre ce que GSAP vient de
+     poser à 0 (le 2026 apparaissait, disparaissait, réapparaissait) */
+  body.entree-chrome .panneau,body.entree-chrome #timeline .an{transition:none}
   #timeline .bornes{display:flex;justify-content:space-between;margin-top:4px}
   #curseur{-webkit-appearance:none;appearance:none;width:100%;height:2px;margin-top:14px;
     background:linear-gradient(90deg,var(--cyan),var(--ambre),var(--alerte));outline:none;cursor:ew-resize}
@@ -453,6 +458,9 @@ class Odometre {
     this.colonnes.forEach((col, i) => {
       const c = txt[i];
       col.style.width = c === ' ' ? '0' : '';
+      // la colonne vide n est plus rognee horizontalement (overflow-x visible
+      // pour ne pas couper le flanc des chiffres) : on la masque vraiment
+      col.style.visibility = c === ' ' ? 'hidden' : '';
       if (c === ' ') return;
       // roulement VERTICAL : en horizontal, passer de 0 à 9 fait défiler les
       // dix chiffres dans la largeur de la colonne, ce qui se lit comme du bruit
@@ -3593,9 +3601,23 @@ if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
    calculée, donc `from` lirait 0 comme valeur d'arrivée et figerait le
    chrome invisible. clearProps rend la main au CSS une fois l'entrée jouée
    (l'opacité au repos d'un calque dépend de son état actif/inactif). ---- */
-gsap.set('.calque', { opacity: 0, x: -12 });
+/* L'état de départ est posé dès le chargement, pas au moment de l'entrée :
+   revelerChrome tourne dans le même tour que la fermeture du rideau de la
+   lettre, et un fromTo posé là arrive après le premier rendu du chrome —
+   le millésime se montrait un instant, fondait vers 0 puis rentrait. */
+const CHROME_DEPART = [
+  ['#wordmark .lettre', { yPercent: 115 }],
+  ['#recherche', { opacity: 0, y: -10 }],
+  ['#bouton-reglages', { opacity: 0, y: -8 }],
+  ['.calque', { opacity: 0, x: -12 }],
+  ['#timeline .an', { opacity: 0, y: 18 }],
+  ['#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }],
+  ['#map-inspector', { opacity: 0, y: 10 }],
+];
+for (const [cible, depart] of CHROME_DEPART) gsap.set(cible, depart);
 function revelerChrome(){
-  const tl = gsap.timeline({ delay: 0.55 });
+  document.body.classList.add('entree-chrome');
+  const tl = gsap.timeline({ delay: 0.55, onComplete: () => document.body.classList.remove('entree-chrome') });
   const entree = (cible, depart, position, extra = {}) =>
     tl.fromTo(cible, depart,
       { opacity: 1, x: 0, y: 0, duration: DUREE.fast, ease: EASE,
@@ -3607,7 +3629,8 @@ function revelerChrome(){
   entree('#bouton-reglages', { opacity: 0, y: -8 }, 0.4);
   entree('.calque', { opacity: 0, x: -12 }, 0.15, { stagger: MOINS_ANIM ? 0 : 0.16, duration: MOINS_ANIM ? 0 : 0.9 });
   entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
-  entree('#curseur, #timeline .bornes', { opacity: 0 }, 0.6);
+  entree('#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }, 0.6);
+  entree('#map-inspector', { opacity: 0, y: 10 }, 0.5, { duration: DUREE.normal });
   return tl;
 }
 
