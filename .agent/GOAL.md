@@ -1,3 +1,5 @@
+ACTIVE 2026-09-17: full premium design pass against the three supplied image references, from language/letter through globe controls, search, city, comparison, explanation, story, settings and fallback. Minimalist smoked glass, localized sage/amber gradient light, crisp type, responsive pointer/touch feedback. Preserve scientific semantics. Deliver local preview; no publication in this pass. Writable: premium.css/mjs, index.html presentation, existing styles and relevant QA, .agent/. Do not touch data, shaders, assets, original checkout. Current acceptance/state/evidence: PREMIUM.md. Historical scope below is retained for context only.
+
 GOAL: TERRA/2050 est prêt à lancer : zéro bug observable, partage maximal (lien, story,
 aperçus), irréprochable sur iPhone (Safari iOS 26/27) comme sur desktop, coordonné avec la
 session « Terra/2050 » (données/surcote) qui possède data/ et tools/pipeline.py.

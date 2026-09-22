@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { translations } from '../locales/catalog.mjs';
-assert.deepEqual(Object.keys(translations).sort(), ['en', 'es', 'fr', 'it', 'ja', 'vi', 'zh']);
+assert.deepEqual(Object.keys(translations).sort(), ['en', 'es', 'fr', 'it', 'ja', 'vi', 'zh', 'zh-Hant']);
 
 const placeholders = text => [...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort();
 function verify(reference, value, path) {

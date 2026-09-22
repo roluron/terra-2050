@@ -16,7 +16,7 @@ for(const mobile of [false,true]){
  try{
   await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=it');await enter(page);
   for(const key of keys){
-   if(mobile)await page.locator('#map-toggle').tap();
+   await page.locator('#map-toggle').click();
    await page.locator(`.calque[data-cle="${key}"]`).click();
    if(await page.locator('#pedago').isVisible())await page.locator('#pedago-fermer').click();
    assert.equal(await page.locator('.calque.actif').count(),1);

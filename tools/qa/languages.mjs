@@ -13,24 +13,23 @@ for (const [name, engine, options] of [
 ]) {
   const browser = await engine.launch({executablePath:engine.executablePath()});
   try {
-    for (const code of ['en','fr','ja','zh','vi','es','it']) {
+    for (const code of ['en','fr','ja','zh','vi','es','it','zh-Hant']) {
       const page = await browser.newPage(options), errors = [], text = translations[code];
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(url + '?lang=en#v=Le%20Caire&an=2050&cc=EG');
       await page.locator('#language-dialog').waitFor();
       assert.equal(await page.locator('#earth-letter-main').isVisible(), false);
-      await page.locator(`#language-options input[value="${code}"]`).check();
       await page.waitForFunction(() => getComputedStyle(document.querySelector('.language-content')).opacity === '1');
       await page.screenshot({path:`${out}/${name}-${code}-welcome.png`});
       if (code === 'en') {
         await page.locator('#language-options input:checked').focus();
         await page.keyboard.press('ArrowDown');
-        assert.equal(await page.locator('html').getAttribute('lang'), 'fr');
+        assert.equal(await page.locator('#language-options input:checked').inputValue(), 'fr');
         await page.keyboard.press('ArrowUp');
         assert.equal(await page.locator('html').getAttribute('lang'), 'en');
         if (name === 'phone') {
           await page.setViewportSize({width:320,height:568});
-          await page.locator('#language-continue').scrollIntoViewIfNeeded();
+          await page.locator('#language-options input[value="it"]').scrollIntoViewIfNeeded();
           assert.ok(await page.locator('.language-content').evaluate(el => el.getBoundingClientRect().right <= innerWidth));
           await page.screenshot({path:`${out}/phone-compact-welcome.png`});
           await page.setViewportSize(options.viewport);
@@ -38,7 +37,8 @@ for (const [name, engine, options] of [
       }
       await page.keyboard.press('Escape');
       assert.equal(await page.locator('#language-dialog').isVisible(), true);
-      await welcome(page);
+      await page.locator(`#language-options input[value="${code}"]`).click();
+      await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), code);
       assert.equal(await page.locator('#earth-shell h1').textContent(), text.ui.letterTitle);
       await discover(page);

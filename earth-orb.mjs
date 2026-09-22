@@ -42,14 +42,15 @@ export function startOrb(canvas, origins, options) {
     const time = assembledAt === null ? 0 : (now - assembledAt) / 1000;
     if ((time > 5.4 || simplified) && assembledAt !== null && blendAt === null) {
       blendAt = now;
-      options.materialize();
     }
     const blend = blendAt === null ? 0 : Math.min(1, (now - blendAt) / (simplified ? 1 : 3600));
+    const dissolve = blend * blend * (3 - 2 * blend);
+    if (blendAt !== null) options.materialize(dissolve);
     if (blend === 1) { stop(); options.complete(); return; }
     if (drawingAvailable && !options.reduced) {
       ctx.clearRect(0, 0, width, height);
       const progress = Math.min(1, time / 4.4);
-      const opacity = 1 - blend * blend * (3 - 2 * blend);
+      const opacity = 1 - dissolve;
       const glyphMix = 1 - Math.min(1, Math.max(0, (progress - .35) / .6));
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       const count = points.length || origins.length;

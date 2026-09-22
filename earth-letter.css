@@ -16,9 +16,8 @@
 #language-options input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;width:100%;height:100%}
 #language-options span{font:400 17px/1.5 var(--police),Arial,sans-serif;letter-spacing:0}
 #language-options label:has(input:checked){background:linear-gradient(120deg,#ffffff0c,#ffffff03);border-color:#d7dfcc25;color:#e6e9df;box-shadow:inset 0 1px #ffffff0b}
-#language-options label:has(input:checked)::after{content:'↗';margin-left:auto;font-size:16px;color:#c6ceba}
 #language-options label:hover{color:#f0f2e9;background:#ffffff09;transform:translateX(3px)}
-#language-options label:has(input:focus-visible){outline:1px solid #c6ceba;outline-offset:3px}
+#language-options label:has(input:focus-visible){outline:1px solid #e4eaf4;outline-offset:3px}
 #language-continue{display:inline-flex;align-items:center;gap:15px;margin:28px 0 0;padding:8px 0;border:0;background:none;color:#c3cac7;font:400 13px/1.5 var(--police),Arial,sans-serif;cursor:pointer}
 #language-continue svg{width:40px;height:40px;box-sizing:border-box;padding:10px;border:1px solid #cad6f030;border-radius:50%;stroke:currentColor;stroke-width:1.25;transition:background .25s,border-color .25s,transform .25s}
 #language-continue:hover svg{background:#ffffff09;border-color:#cad6f077;transform:translateX(3px)}
@@ -29,8 +28,9 @@
 #earth-shell:lang(ja) .letter,#earth-shell:lang(zh) .letter{font-style:normal;font-family:var(--police),sans-serif;line-height:1.75;letter-spacing:0}
 #earth-shell:lang(ja) h1,#earth-shell:lang(ja) .signature{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-style:normal;line-height:1.5}
 #earth-shell:lang(zh) h1,#earth-shell:lang(zh) .signature{font-family:'Songti SC','Noto Serif CJK SC',serif;font-style:normal;line-height:1.5}
-#earth-shell::backdrop{background:#050606;opacity:1;transition:opacity 3.6s cubic-bezier(.4,0,.2,1)}
-#earth-shell.materializing::backdrop{opacity:0}
+#earth-shell::backdrop{background:#050606;opacity:var(--earth-veil,1)}
+#earth-letter-main:focus{outline:none}
+#earth-shell h1 .glyphs{font-size:.62em;letter-spacing:.1em}
 body:has(#earth-shell[open]) .panneau{visibility:hidden}
 body:has(#earth-shell[open]) #voile{visibility:hidden}
 #earth-letter-main{position:relative;width:min(760px,calc(100% - 64px));padding:80px 0 54px;transition:opacity 1.3s,filter 1.5s,transform 1.8s var(--earth-ease)}
@@ -38,8 +38,9 @@ body:has(#earth-shell[open]) #voile{visibility:hidden}
 #earth-shell h1:focus{outline:none}
 #earth-shell .letter{font:italic 20px/1.28 EarthLausanne,Arial,sans-serif;letter-spacing:-.015em}
 #earth-shell p{margin:0}
+#earth-shell .letter p+p:not(.signature){margin-top:.7em}
 #earth-shell .signature{font:italic 23px/1.4 EarthHerbik,Georgia,serif;text-align:right;margin-top:62px}
-#earth-shell h1,#earth-shell .letter p{opacity:0;filter:blur(18px);transform:translateY(16px) scaleY(1.06);animation:earth-arrive 2.6s var(--earth-ease) calc(.2s + var(--line,0)*.15s) forwards}
+#earth-shell h1,#earth-shell .letter p{opacity:0;filter:blur(8px);transform:translateY(8px);animation:earth-arrive 2.2s cubic-bezier(.22,.61,.36,1) calc(.2s + var(--line,0)*1.6s) forwards}
 #earth-shell .word{position:relative;display:inline-block;white-space:pre;cursor:default;outline-offset:4px;vertical-align:bottom}
 #earth-shell .latin{opacity:0;transition:opacity .55s}
 #earth-shell .glyphs{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;font:14px/1.5 Georgia,serif;letter-spacing:2px;color:#b6bfb5;animation:earth-wave 7s ease-in-out infinite;animation-delay:var(--phase);pointer-events:none;white-space:nowrap}
@@ -53,11 +54,15 @@ body:has(#earth-shell[open]) #voile{visibility:hidden}
 #earth-shell button{font:14px/1.5 Arial,sans-serif;color:#d7dcd3;text-decoration:none;padding:9px 0;display:inline-block;background:none;border:0;cursor:pointer}
 #earth-shell #future::after{content:"";display:block;height:1px;background:#84917d;transform:scaleX(0);transform-origin:left;transition:transform 1.8s var(--earth-ease) 1s}
 #earth-shell.complete #future::after{transform:scaleX(1)}
+#earth-shell.complete h1{animation:none;opacity:1;filter:none;transform:none}
+#earth-shell.complete h1,#earth-shell #letter{transition:opacity .35s ease,filter .35s ease}
+@media(hover:hover) and (pointer:fine){#earth-shell.complete:not(.departing):has(#future:hover) :is(h1,#letter){opacity:.5;filter:blur(1.5px)}}
+@media(prefers-reduced-motion:reduce){#earth-shell.complete h1,#earth-shell #letter{transition:none}}
 #earth-shell button:focus-visible{outline:1px solid #dce3d5;outline-offset:7px}
 #earth-shell button:hover{color:white}
 #earth-orb{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .35s}
 #earth-shell.departing{overflow:hidden}
-#earth-shell.departing #earth-letter-main{pointer-events:none;opacity:0;filter:blur(9px);transform:scale(.985)}
+#earth-shell.departing #earth-letter-main{pointer-events:none;opacity:0;filter:blur(2px);transform:none;transition:opacity .35s,filter .35s}
 #earth-shell.departing #earth-orb{opacity:1}
 #earth-recovery{position:fixed;bottom:25px;left:0;right:0;text-align:center;color:#9aa397;font-size:13px}
 #earth-recovery[hidden]{display:none}

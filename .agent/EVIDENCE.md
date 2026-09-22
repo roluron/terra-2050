@@ -1,4 +1,6 @@
-# Evidence — 2026-09-07
+# Current design evidence: PREMIUM.md and outputs/terra-premium (2026-09-17)
+
+# Historical evidence — 2026-09-07
 
 The full goal remains ACTIVE. Actual iPhone checks below are required, not waived.
 Raw records are under `evidence/2026-09-07/`; historical assertions and superseded

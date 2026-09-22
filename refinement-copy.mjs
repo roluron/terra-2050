@@ -1,3 +1,4 @@
+import traditional from './locales/zh-Hant-refinement.mjs';
 export const mapCopy = {
  en: ['Change since 2026','Level','Sources & reading guide','Move the year to see where conditions change.','No change from the 2026 reference.','Colour saturates at the endpoints. Uncoloured areas may have no estimate.','wetter','drier','percentage points','population decline','population growth'],
  fr: ['Évolution depuis 2026','Niveau','Sources et lecture','Déplacez l’année pour voir où les conditions évoluent.','Aucun changement par rapport à la référence 2026.','La couleur sature aux extrémités. Une zone sans couleur peut manquer de données.','plus humide','plus sec','points de pourcentage','baisse de population','hausse de population'],
@@ -123,6 +124,11 @@ const moistureBands = {
   it:['Clima desertico','Clima arido','Clima semisecco','Clima moderatamente umido','Clima umido','Clima molto umido']
 };
 export const moistureSource = 'https://www.miteco.gob.es/content/dam/miteco/es/calidad-y-evaluacion-ambiental/publicaciones/guiasimplificadaevaluacionriesgoseninglesversion2_tcm30-185046.pdf#page=86';
+copy['zh-Hant']=traditional.copy;
+mapCopy['zh-Hant']=traditional.map;
+mapPicker['zh-Hant']=traditional.picker;
+floodMapMeaning['zh-Hant']=traditional.flood;
+moistureBands['zh-Hant']=traditional.bands;
 export function moistureBand(value, language) {
   if (!Number.isFinite(value) || value < 0) return '';
   return (moistureBands[language] || moistureBands.en)[value < 5 ? 0 : value < 10 ? 1 : value < 20 ? 2 : value < 30 ? 3 : value <= 60 ? 4 : 5];

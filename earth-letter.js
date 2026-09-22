@@ -11,33 +11,35 @@ const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const signs = Array.from('·✳+⋮✶⋅⊹✧');
 const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
-let finished = 0;
+let finished = 0, pointerReady = false;
 const revealTimers = new Set();
 openLanguage(() => {
   document.getElementById('earth-letter-main').hidden = false;
-  shell.querySelector('h1').focus({preventScroll:true});
+  document.getElementById('earth-letter-main').focus({preventScroll:true});
 }, true);
 
 function buildLetter() {
   for (const timer of revealTimers) clearInterval(timer);
   revealTimers.clear(); words.length = 0; finished = 0;
+  pointerReady = false;
   shell.classList.remove('complete'); future.tabIndex = -1;
   const t = getText().ui;
   shell.lang = language(); shell.setAttribute('aria-label', t.letterLabel);
   shell.querySelector('h1').textContent = t.letterTitle;
-  const body = document.createElement('p'), signature = document.createElement('p');
-  body.append(t.letterOpening, document.createElement('br'), t.letterBody);
+  const opening = document.createElement('p'), body = document.createElement('p'), signature = document.createElement('p');
+  opening.textContent = t.letterOpening;
+  body.textContent = t.letterBody;
   signature.className = 'signature'; signature.textContent = t.letterSignature;
-  letter.replaceChildren(body, signature); future.textContent = t.letterFuture;
+  letter.replaceChildren(opening, body, signature); future.textContent = t.letterFuture;
   document.querySelector('#earth-recovery p').textContent = t.globeSlow;
   document.querySelector('#earth-retry').textContent = t.retry;
   const segmenter = new Intl.Segmenter(language(), {granularity:'word'});
-for (const [line, paragraph] of [...letter.querySelectorAll('p')].entries()) {
+for (const [line, paragraph] of [shell.querySelector('h1'), ...letter.querySelectorAll('p')].entries()) {
   paragraph.style.setProperty('--line', line);
   for (const node of [...paragraph.childNodes]) {
     if (node.nodeType !== Node.TEXT_NODE) continue;
     const fragment = document.createDocumentFragment();
-    const segments = ['ja', 'zh'].includes(language())
+    const segments = ['ja', 'zh', 'zh-Hant'].includes(language())
       ? [...segmenter.segment(node.textContent)].reduce((parts, {segment, isWordLike}) => {
         if (!isWordLike && parts.length && !/\s/.test(segment)) parts[parts.length - 1] += segment;
         else parts.push(segment);
@@ -62,7 +64,7 @@ for (const [line, paragraph] of [...letter.querySelectorAll('p')].entries()) {
       word.append(latin, glyphs);
       const item = { word, glyphs, text, index, started: false };
       words.push(item);
-      word.addEventListener('pointerenter', () => reveal(item));
+      word.addEventListener('pointerenter', () => { if (pointerReady) reveal(item); });
       word.addEventListener('pointerdown', () => reveal(item));
       word.addEventListener('focus', () => reveal(item));
       word.addEventListener('keydown', event => {
@@ -113,7 +115,8 @@ function finish({ word }) {
   }
 }
 
-letter.addEventListener('pointermove', event => {
+document.getElementById('earth-letter-main').addEventListener('pointermove', event => {
+  pointerReady = true;
   for (const item of words) {
     if (item.started) continue;
     const rect = item.word.getBoundingClientRect();
@@ -142,7 +145,7 @@ future.addEventListener('click', () => {
   departing = true;
   clearInterval(codeTimer);
   const origins = [];
-  for (const element of shell.querySelectorAll('h1, .latin')) {
+  for (const element of shell.querySelectorAll('.latin')) {
     const style = getComputedStyle(element);
     let offset = 0;
     for (const character of Array.from(element.textContent)) {
@@ -159,7 +162,10 @@ future.addEventListener('click', () => {
     reduced: motion.matches || new URLSearchParams(location.hash.slice(1)).has('v'),
     ready: () => entered,
     points: () => window.terraIntro?.points() || [],
-    materialize: () => shell.classList.add('materializing'),
+    materialize: progress => {
+      shell.classList.add('materializing');
+      shell.style.setProperty('--earth-veil', String(1 - progress));
+    },
     complete: () => {
       clearTimeout(recoveryTimer);
       window.terraIntro.complete();

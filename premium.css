@@ -1,0 +1,221 @@
+:root {
+  --glass-tint:rgba(20,20,20,.34);
+  --glass-text:#f5f7fa;
+  --glass-muted:#c1cad5;
+  --glass-edge:#ffffff40;
+  --glass-surface:var(--glass-tint);
+  --glass-shadow:inset 0 1px 1px #ffffff55,inset 0 -1px 1px #ffffff20,0 12px 36px #0005;
+  --craft-ease:cubic-bezier(.16,1,.3,1);
+  --texte:var(--glass-text);
+}
+body {background:#050707}
+html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK TC',sans-serif;--herbik:'Songti TC','Noto Serif CJK TC',serif;--mono:'PingFang TC','Microsoft JhengHei',sans-serif}
+#earth-shell:lang(zh-Hant) h1,#earth-shell:lang(zh-Hant) .signature {font-family:'Songti TC','Noto Serif CJK TC',serif}
+::selection {background:#c9cbce45;color:#fff}
+#titre h1 {font-weight:400;letter-spacing:-.055em}
+#titre h1 em {color:#c0c2c5}
+:is(#map-inspector,#dossier,#city-comparison,.pedago-carte,.language-content) {border-radius:28px}
+:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,.language-content,#calque-bulle,#survol,#accroche) {backdrop-filter:blur(8px) saturate(1.5);-webkit-backdrop-filter:blur(8px) saturate(1.5)}
+:is(button,summary,label,a) {-webkit-tap-highlight-color:transparent}
+:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content) :is(button,summary,input,a):focus-visible {outline:2px solid #d1d3d6;outline-offset:4px}
+
+#language-dialog {background:#050707}
+.language-content {--police:"TWK Lausanne",-apple-system,sans-serif;position:relative;isolation:isolate;width:min(420px,100%);padding:32px;overflow:hidden;text-align:left}
+.language-content::before {content:'';position:absolute;z-index:-1;pointer-events:none;inset:0 0 auto;height:220px;background:radial-gradient(ellipse at 0% 5%,#98caff38,transparent 55%),radial-gradient(ellipse at 100% 0%,#d3b4ff26,transparent 55%);filter:blur(28px);animation:glass-drift 12s ease-in-out infinite alternate}
+.language-globe {display:block;width:62px;height:62px;margin:0 0 28px;opacity:1;filter:drop-shadow(0 0 18px #c6c8cb25)}
+#language-title {font:300 38px/1.08 var(--police);letter-spacing:-.055em;margin-bottom:28px;max-width:300px}
+#language-options {grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+#language-options label {padding:0 14px;border-radius:12px;color:var(--glass-muted);animation:none;transition:background .3s,border-color .3s,color .3s}
+#language-options label:has(input:checked) {background:radial-gradient(ellipse at 22% 110%,#bcbec132,transparent 80%),linear-gradient(130deg,#d9dbde17,#ffffff04);border-color:#cfd1d44d;box-shadow:inset 0 1px #eaecef2b,0 4px 18px #0002;color:#f0f2f5}
+#language-options label:has(input:checked)::after {color:#d0d2d5}
+#language-options span {font-size:15px}
+#language-continue {width:100%;justify-content:space-between;border-top:1px solid #ffffff16;padding-top:16px;margin-top:20px;color:#f0f1e9;font-size:14px}
+#language-continue svg {background:linear-gradient(145deg,#dfe1e426,#c8cacd0a);border-color:#cdcfd24d;box-shadow:inset 0 1px #fff3}
+#earth-shell #future {position:relative;min-height:48px;display:inline-flex;align-items:center;gap:24px;font:400 14px var(--police);padding:10px 0;background:none;border:0;border-radius:0;box-shadow:none}
+#earth-shell #future::after {content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:currentColor}
+
+#map-inspector {padding:12px;width:268px}
+#map-inspector #calques {gap:4px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;box-shadow:none}
+body.dossier-ouvert #map-inspector * {visibility:hidden}
+#map-inspector #calques .calque {border-radius:13px;padding:11px 12px;color:#b9bdb6;transition:background .3s,border-color .3s,color .3s}
+#map-inspector #calques .calque.actif {background:radial-gradient(ellipse at 0% 100%,#cdcfd21f,transparent 80%),linear-gradient(130deg,#ffffff10,#ffffff03);border-color:#d8dadd38;box-shadow:inset 0 1px #fff2;color:#f2f3ea}
+#map-inspector .calque .nom {font-size:12px;line-height:1.5}
+#map-inspector .calque .pastille {width:8px;height:8px;flex:none}
+#map-reading {padding:4px;border-radius:13px;background:#0004;border-color:#ffffff0d}
+#map-reading button {border-radius:9px;transition:background .25s,box-shadow .25s}
+#map-reading button[aria-pressed=true] {background:linear-gradient(145deg,#d5d7da23,#ffffff09);box-shadow:inset 0 1px #fff2,0 2px 8px #0004;color:#eceef1}
+#map-inspector .map-scale i {height:4px;border-radius:4px;box-shadow:0 1px 0 #fff2}
+#map-inspector .map-scale strong {font-weight:400}
+#map-inspector #model-notice {border-top-color:#ffffff12}
+#map-inspector #map-method summary {color:#c7cdc0}
+
+#champ-recherche {border:1px solid #ffffff23;border-radius:16px;padding:12px 38px 12px 14px;background:linear-gradient(135deg,#ffffff0a,#ffffff02),#0c110fe6;box-shadow:inset 0 1px #e1e3e620;caret-color:#d2d4d7;transition:border-color .25s,box-shadow .25s}
+#champ-recherche:focus {border-color:#d2d4d760;box-shadow:inset 0 1px #e1e3e630,0 0 0 4px #ced0d30b}
+#caret-dos {display:none}
+#loupe {right:13px}
+#resultats li {border:0;border-radius:12px;transition:background .2s}
+#resultats li:is(.choisi,:hover) {background:linear-gradient(110deg,#ccced11c,#ffffff07)}
+#resultats li .type-lieu {color:#b4b6b9;letter-spacing:.035em;font-size:10px}
+#bouton-reglages {width:44px;height:44px;border:1px solid #ffffff26;border-radius:50%;background:linear-gradient(140deg,#ffffff10,#ffffff02),#101512d9;box-shadow:inset 0 1px #fff2}
+#menu-reglages .bouton-ico {border-radius:12px;font-weight:400}
+#menu-reglages .bouton-ico:hover {background:#ccced115}
+
+body:not(.dossier-ouvert) #timeline .an {font-weight:300;letter-spacing:-.07em;text-shadow:0 0 32px #d0d2d527}
+#timeline .regle i {transition:background .25s,box-shadow .25s}
+#dossier {--fiche-ligne:#ffffff17;--fiche-secondaire:#b9bdb6}
+#dossier .fiche-entete {padding-top:22px;padding-bottom:14px}
+#dossier-nom {font-weight:300;font-size:36px;letter-spacing:-.055em}
+#dossier-scope {letter-spacing:.02em;text-transform:none;color:#babcbf}
+#dossier .score .valeur {font-size:60px;font-weight:300;letter-spacing:-.07em}
+#dossier .conseil {color:var(--glass-muted)}
+#dossier .fiche-corps {padding-top:18px}
+#dossier .fiche-section-titre h3,#dossier .risque .nom-crit {font-family:var(--police);font-size:13px;font-weight:400;letter-spacing:0;text-transform:none}
+#dossier .risque {border-radius:18px;padding:0 14px;border-color:#ffffff1c;background:radial-gradient(ellipse at 0% 0%,#c3c5c812,transparent 70%),linear-gradient(145deg,#ffffff08,#ffffff02);box-shadow:inset 0 1px #ffffff14;transition:border-color .3s,background .3s}
+#dossier .risque[open] {border-color:#d0d2d549;background:linear-gradient(145deg,#d4d6d913,#ffffff03)}
+#dossier .risque summary {padding:14px 0;gap:8px 10px}
+#dossier .risk-reading {font-size:34px;font-weight:300}
+#dossier .risk-number {font-weight:300}
+#dossier .risque-chevron {border:1px solid #ffffff1c;border-radius:50%;width:23px;height:23px;display:grid;place-items:center;line-height:1;font-size:18px}
+#dossier .risque .detail {line-height:1.65}
+#dossier .risque summary:hover .nom-crit {color:var(--glass-text)}
+#dossier-courbe {height:78px}
+#dossier-courbe .trait {stroke:#dbdde0;filter:drop-shadow(0 0 1.2px #d6d8db70)}
+#dossier-courbe .point-an {fill:#f5f8ed;filter:drop-shadow(0 0 1px #eceef1)}
+#grad-traj stop {stop-color:#babcbf}
+#dossier .actions {gap:8px;background:#101926aa;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 18px}
+#dossier .actions button {border-radius:13px;font-weight:400;background:linear-gradient(145deg,#ffffff0c,#ffffff02);border-color:#ffffff20;transition:background .2s,translate .2s}
+#dossier .actions #dossier-story {background:radial-gradient(ellipse at 50% 110%,#c9cbce3d,transparent 90%),linear-gradient(145deg,#d2d4d723,#ffffff06);border-color:#d0d2d543;box-shadow:inset 0 1px #e9ebee2e}
+:is(#dossier-croix,.compare-close,#story-fermer) {border:1px solid #ffffff26!important;background:linear-gradient(145deg,#ffffff0d,#ffffff02)!important;border-radius:50%;opacity:1}
+.compare-shell h2 {font-weight:300;font-size:38px;line-height:1.08}
+.compare-eyebrow {letter-spacing:.08em;color:#b9bbbe;font-size:10px}
+.compare-picker input {border-radius:16px;background:#0509075c;border-color:#ffffff24;padding:16px}
+.compare-picker ul {background:#152235e8;border:0;border-radius:14px}
+.compare-table-wrap thead {background:#152235e8}
+.compare-table-wrap td strong {font-weight:300;font-size:32px}
+.compare-time output {font-weight:300;font-size:38px}
+.compare-change {color:#c9cbce}
+.compare-swap {border-radius:12px;background:linear-gradient(140deg,#ffffff0c,#ffffff02)}
+.pedago-carte {padding:30px}
+.pedago-titre {font-weight:400;letter-spacing:-.025em}
+.pedago-carte p {font-weight:300;line-height:1.6}
+.entree-pedago {border-radius:14px;border:1px solid #d0d2d53b;background:linear-gradient(140deg,#cbcdd023,#ffffff04);padding:12px 18px;color:#eef3e6;letter-spacing:0;text-transform:none}
+.story-opt {border-bottom:1px solid #ffffff10}
+.story-opt i {border-color:#ced0d33d;background:#ffffff07;box-shadow:inset 0 1px #fff2}
+.story-opt input:checked+i {background:#bcbec1;box-shadow:0 0 14px #c0c2c523}
+#secours {background:#080b09;color:var(--glass-text)}
+#secours h2 {font-weight:300;letter-spacing:-.04em}
+
+@keyframes glass-drift {from{transform:translate3d(0,-6px,0);opacity:.65}to{transform:translate3d(0,22px,0);opacity:1}}
+@media(hover:hover) and (pointer:fine) {
+  #language-options label:hover {transform:none;border-color:#ffffff20}
+  #map-inspector #calques .calque:hover {background:#d6d8db12;border-color:#ffffff20}
+  #dossier .risque:hover {border-color:#c9cbce45}
+  #dossier .actions button:hover,.entree-pedago:hover {background-color:#c2c4c722;translate:0 -1px}
+}
+@media(max-width:720px) {
+  #map-inspector {width:auto;border-radius:24px;padding:8px 12px}
+  #map-inspector #calques .calque {padding:11px;min-height:50px}
+  #map-inspector .calque .nom {font-size:12px}
+  #map-toggle {font-weight:400}
+  .language-content {padding:24px;overflow-y:auto}
+  #language-title {font-size:32px;margin-bottom:20px}
+  .language-globe {width:48px;height:48px;margin-bottom:20px}
+  #language-options label {min-height:46px}
+  #language-continue {margin-top:16px;padding-top:12px}
+  #dossier {border-radius:28px 28px 0 0}
+  #dossier .fiche-entete {padding:16px 18px 10px}
+  #dossier-nom {font-size:30px}
+  #dossier .score .valeur {font-size:52px}
+  #dossier .fiche-corps {padding:14px 16px}
+  #dossier .risque {padding:0 12px;border-radius:16px}
+  #dossier .risque .nom-crit {font-size:12px}
+  #dossier .actions {padding:10px 12px max(10px,env(safe-area-inset-bottom))}
+  #dossier .actions {grid-template-columns:repeat(3,minmax(0,1fr))}
+  #dossier .actions button {grid-column:auto;min-height:48px;font-size:12px;padding:8px 6px}
+  .compare-shell h2 {font-size:29px}
+  .compare-shell header,.story-carte .pedago-titre {background:linear-gradient(#101927d9 85%,#10192700);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+  .compare-shell header {margin:-16px -14px 0;padding:24px 14px 14px;border-radius:26px 26px 0 0;top:-16px}
+  .story-carte .pedago-titre {margin:-16px -16px 0;padding:24px 64px 20px 16px;border-radius:26px 26px 0 0}
+  .story-carte #story-fermer {top:12px;right:12px}
+  .compare-table-wrap thead {background:none}
+  #city-comparison .compare-table-wrap tr {gap:10px 16px;padding:20px 0}
+  .compare-table-wrap td strong {font-size:30px}
+  .pedago-carte {padding:24px}
+  .story-carte {padding:16px}
+}
+@media(max-height:650px) {.language-content{padding:18px 24px}.language-globe{width:36px;height:36px;margin-bottom:12px}#language-title{font-size:28px;margin-bottom:14px}#language-options label{min-height:44px}#language-continue{margin-top:12px;padding-top:8px}}
+@media(prefers-reduced-motion:reduce) {.language-content::before{animation:none}:is(#language-options label,#language-continue svg,#earth-shell #future::after,#dossier .actions button,.entree-pedago){transition:none;translate:none}}
+@media(prefers-reduced-transparency:reduce) {:root{--glass-tint:#111610}}
+@supports not (backdrop-filter:blur(1px)) {:root{--glass-tint:#111610}}
+body #recherche,body.dossier-ouvert #recherche {padding-right:100px}
+#resultats {right:100px}
+#loupe {right:112px;z-index:3}
+#champ-recherche {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px) saturate(1.5);-webkit-backdrop-filter:blur(2px) saturate(1.5)}
+#menu-reglages {min-width:184px;padding:6px}
+#menu-reglages .bouton-ico {font:400 12px/1.4 var(--police);letter-spacing:0;text-transform:none;min-height:44px;padding:10px 12px}
+:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte) {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow)}
+#menu-reglages {--glass-tint:#17171799;backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6)}
+body:has(#menu-reglages.ouvert) #dossier {visibility:hidden;pointer-events:none}
+#bouton-reglages {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+@media(max-width:720px) {body #recherche,body.dossier-ouvert #recherche{padding-right:80px}#resultats{right:80px}#loupe{right:92px}#menu-reglages .bouton-ico{font-size:12px}}
+@media(prefers-reduced-transparency:reduce) {:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#champ-recherche){background:#111610}}
+
+#globe-dock {position:fixed;z-index:22;inset:0;pointer-events:none}
+body.dossier-ouvert #globe-dock {visibility:hidden}
+#globe-dock > #timeline,body.pret #globe-dock > #timeline {position:absolute;left:50%;right:auto;top:auto;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);width:200px;padding:0;pointer-events:auto}
+#globe-dock #timeline .an {font-size:80px;line-height:1;text-align:center}
+#map-inspector {position:absolute;left:24px;right:auto;top:auto;bottom:66px;width:240px;min-width:0;display:flex;flex-direction:column;padding:6px 16px;border-radius:32px;max-height:none;overflow:visible;pointer-events:auto;backdrop-filter:none;-webkit-backdrop-filter:none}
+#map-inspector.choix-ouvert {border-radius:28px}
+#map-toggle {display:flex;order:3;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:8px 4px;border-radius:22px;background:none;border:0;color:var(--glass-text);font:400 13px/1.4 var(--police);text-align:left;touch-action:manipulation;cursor:pointer}
+#map-toggle svg {width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.4;transform:rotate(180deg);transition:transform .2s}
+#map-toggle[aria-expanded=true] svg {transform:none}
+#map-inspector:not(.choix-ouvert) #calques,body.pret #map-inspector:not(.choix-ouvert) #calques,#map-inspector:not(.choix-ouvert) #model-notice {display:none}
+#map-inspector #map-options {position:absolute;bottom:calc(100% + 16px);left:0;width:460px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 220px);overflow:auto;overscroll-behavior:contain;padding:12px;box-sizing:border-box;border-radius:28px;border:1px solid var(--glass-edge);background:var(--glass-surface);box-shadow:var(--glass-shadow);backdrop-filter:blur(12px) saturate(1.5);-webkit-backdrop-filter:blur(12px) saturate(1.5)}
+#map-inspector:not(.choix-ouvert) #map-options {display:none}
+#map-inspector.choix-ouvert #calques,body.pret #map-inspector.choix-ouvert #calques {display:grid;grid-template-columns:1fr 1fr;gap:4px}
+#map-inspector #calques .calque {min-height:48px;background:none;border-color:transparent}
+#map-inspector #calques .calque.actif {background:#ffffff1a;border-color:#ffffff33;box-shadow:inset 0 1px #fff4}
+#map-inspector #model-notice {order:2;z-index:auto}
+@media(max-width:720px) {
+ #globe-dock > #timeline,body.pret #globe-dock > #timeline {width:112px;bottom:max(20px,env(safe-area-inset-bottom))}
+ #globe-dock #timeline .an {font-size:48px}
+ #map-inspector {left:12px;right:auto;top:auto;bottom:max(42px,env(safe-area-inset-bottom));width:calc(50% - 80px);padding:6px 8px;max-height:none}
+ #map-inspector #map-options {width:calc(100vw - 32px);max-width:none;max-height:calc(100dvh - 210px);bottom:calc(100% + 24px)}
+ #map-inspector #map-method summary {position:static;width:auto;height:auto;font-size:12px;display:flex;padding:8px 0;background:none;border:0}
+ #map-inspector #map-method summary::after {content:none}
+}
+@media(max-height:500px) {#map-inspector #map-options{max-height:calc(100dvh - 170px)}}
+@media(prefers-reduced-motion:reduce) {#map-toggle svg {transition:none}}
+
+body.loupe #champ-recherche {height:44px;min-height:44px;padding:0;border-radius:50%}
+body.loupe #loupe {right:122px;animation:none}
+#bouton-reglages {color:var(--glass-text)}
+#bouton-reglages {display:grid;place-items:center;padding:0}
+#bouton-reglages .rouage {width:20px;height:20px;transform-origin:center;transform-box:fill-box}
+#timeline .regle,#timeline #curseur {width:72%}
+#timeline .regle {height:29px}
+#timeline .regle i {height:7px}
+.compare-time {display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center}
+.compare-time label {grid-area:1/1;margin:0}
+.compare-time .compare-swap {grid-area:1/2}
+.compare-time output {grid-area:2/1/3/3;display:block;text-align:center;font:300 64px/1 var(--police);letter-spacing:-.07em;font-variant-numeric:tabular-nums}
+.compare-time .regle {grid-area:3/1/4/3;display:flex;justify-content:space-between;align-items:flex-end;height:38px;width:100%;pointer-events:none}
+.compare-time .regle i {width:2px;height:10px;border-radius:1px;background:var(--texte);transform-origin:bottom;opacity:.25}
+.compare-time #comparison-year {grid-area:3/1/4/3;appearance:none;-webkit-appearance:none;position:relative;z-index:2;width:100%;height:44px;margin:0;padding:0;background:transparent;cursor:ew-resize}
+#comparison-year::-webkit-slider-runnable-track {background:transparent}
+#comparison-year::-moz-range-track {background:transparent}
+#comparison-year::-webkit-slider-thumb {opacity:0}
+#comparison-year::-moz-range-thumb {opacity:0}
+#story-partager.entree-pedago {font:400 13px/1.4 var(--police)}
+:is(#champ-recherche,#bouton-reglages,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#map-inspector #map-options) {backdrop-filter:blur(2px) saturate(1.35);-webkit-backdrop-filter:blur(2px) saturate(1.35)}
+#city-comparison::backdrop,#story-popup,#pedago {background:#02060a66;backdrop-filter:none;-webkit-backdrop-filter:none}
+.language-content::before {display:none}
+#language-options label:has(input:checked),#map-inspector #calques .calque.actif,#map-reading button[aria-pressed=true],#resultats li:is(.choisi,:hover),#dossier .risque,#dossier .risque[open],#dossier .actions button,#dossier .actions #dossier-story,.compare-swap,.entree-pedago {background:#ffffff09}
+#dossier-croix,.compare-close,#story-fermer {background:#ffffff09!important}
+.compare-shell header,.story-carte .pedago-titre {background:#14171be6}
+.glass-cursor {position:fixed;z-index:2147483647;pointer-events:none!important;border:1px solid #ffffff60;border-radius:999px;box-shadow:inset 0 1px 2px #ffffff40,inset 0 -1px 2px #ffffff12;background:#ffffff03;overflow:hidden;contain:layout style;transition:width .15s,height .15s;}
+.glass-cursor[hidden] {display:none}
+#scene.glass-pointer {cursor:none!important}
+:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content) :is(button,summary,input,a):focus-visible,#language-options label:has(input:focus-visible) {outline-color:#fff}
+@media(prefers-reduced-motion:reduce){.glass-cursor{transition:none}}
+@media(max-width:720px){body.loupe #loupe{right:102px}#map-toggle{gap:4px;font-size:12px}#map-toggle span{display:none}#map-toggle::before{content:attr(data-short-label)}#map-toggle svg{width:12px;height:12px}.compare-time output{font-size:48px}}

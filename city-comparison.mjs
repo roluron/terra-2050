@@ -1,15 +1,17 @@
 import {language, getText} from './i18n.mjs';
+import {createYearRuler} from './year-ruler.mjs';
 import {refinementCopy, moistureBand, moistureSource} from './refinement-copy.mjs';
 
 export function createComparison({places, name, country, measures, criteria, population, normalize, onPair, onYear}) {
   const dialog = document.createElement('dialog');
   dialog.id = 'city-comparison';
-  dialog.innerHTML = '<div class="compare-shell"><header><div><p class="compare-eyebrow">TERRA / 2050</p><h2 id="comparison-title"></h2></div><button class="compare-close" type="button">×</button></header><div class="compare-picker"><label for="comparison-search"></label><input id="comparison-search" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="comparison-results"><ul id="comparison-results" role="listbox"></ul></div><div class="compare-time"><label for="comparison-year"></label><output for="comparison-year"></output><input id="comparison-year" type="range" min="2026" max="2050" value="2050"><button class="compare-swap" type="button"></button></div><p class="compare-period"></p><div class="compare-table-wrap"><table><thead></thead><tbody></tbody></table></div></div>';
+  dialog.innerHTML = '<div class="compare-shell"><header><div><p class="compare-eyebrow">TERRA / 2050</p><h2 id="comparison-title"></h2></div><button class="compare-close" type="button">×</button></header><div class="compare-picker"><label for="comparison-search"></label><input id="comparison-search" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="comparison-results"><ul id="comparison-results" role="listbox"></ul></div><div class="compare-time"><label for="comparison-year"></label><output for="comparison-year"></output><div class="regle" aria-hidden="true"></div><input id="comparison-year" type="range" min="2026" max="2050" value="2050"><button class="compare-swap" type="button"></button></div><p class="compare-period"></p><div class="compare-table-wrap"><table><thead></thead><tbody></tbody></table></div></div>';
   dialog.setAttribute('aria-labelledby', 'comparison-title');
   document.body.append(dialog);
   let first, second, results = [], active = -1, trigger;
   const search = dialog.querySelector('#comparison-search'), list = dialog.querySelector('ul'), slider = dialog.querySelector('input[type=range]');
   const text = () => refinementCopy(language());
+  globalThis.gsap.ticker.add(createYearRuler(slider,dialog.querySelector('.regle')));
   const format = value => Math.abs(value) > 0 && Math.abs(value) < .01 ? `${value < 0 ? '−' : ''}<${(.01).toLocaleString(language())}` : value.toLocaleString(language(), {maximumFractionDigits:2});
   const node = (tag, value, className) => {const el = document.createElement(tag); el.textContent = value; if(className) el.className = className; return el;};
   function render() {

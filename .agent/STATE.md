@@ -1,3 +1,5 @@
+Current design pass 2026-09-17 COMPLETE locally: PREMIUM.md. Preview8088, baseline6d471a7, final source hashes and observed tests in PREMIUM.md. No publication. Older state below is historical.
+
 Latest follow-up VERIFIED: animated risk overlays, pointer/center label focus and bottom-leftbeta/contactnotice onruntime7b2b494. See motion/EVIDENCE.md. Local8087; data/publicrelease/physicalgatesunchanged.
 
 Latest UI follow-up: VERIFIED dark glass compact panel on runtimed74b298.

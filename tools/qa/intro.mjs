@@ -96,6 +96,8 @@ for (const [name, engine, configuration] of [
       throw error;
     });
     assert.equal(await page.locator('iframe').count(), 0);
+    assert.ok(await page.locator('#earth-shell h1 .word').count() > 0, 'Title starts encoded');
+    assert.equal(await page.locator('#earth-shell .latin').evaluateAll(elements => elements.some(el => Number(getComputedStyle(el).opacity) > 0)), false, 'No readable words before interaction');
     assert.equal(await page.locator('#future').isVisible(), false);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
     await page.locator('#earth-shell .word').first().focus();
