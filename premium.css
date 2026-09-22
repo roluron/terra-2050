@@ -213,9 +213,13 @@ body.loupe #loupe {right:122px;animation:none}
 #language-options label:has(input:checked),#map-inspector #calques .calque.actif,#map-reading button[aria-pressed=true],#resultats li:is(.choisi,:hover),#dossier .risque,#dossier .risque[open],#dossier .actions button,#dossier .actions #dossier-story,.compare-swap,.entree-pedago {background:#ffffff09}
 #dossier-croix,.compare-close,#story-fermer {background:#ffffff09!important}
 .compare-shell header,.story-carte .pedago-titre {background:#14171be6}
-.glass-cursor {position:fixed;z-index:2147483647;pointer-events:none!important;border:1px solid #ffffff60;border-radius:999px;box-shadow:inset 0 1px 2px #ffffff40,inset 0 -1px 2px #ffffff12;background:#ffffff03;overflow:hidden;contain:layout style;transition:width .15s,height .15s;}
+/* Un seul curseur, deux etats : lentille de verre sur la Terre, point creme
+   partout ailleurs (le meme point que sous les noms des villes). La taille
+   est lissee en JS, ici seule la matiere change. */
+.glass-cursor {position:fixed;z-index:2147483647;pointer-events:none!important;border:1px solid #ffffff60;border-radius:999px;box-shadow:inset 0 1px 2px #ffffff40,inset 0 -1px 2px #ffffff12;background:#ffffff03;overflow:hidden;contain:layout style;transition:background-color .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease);}
+.glass-cursor.point {background:rgba(255,253,226,.92);border-color:transparent;box-shadow:0 0 8px rgba(255,253,226,.5)}
 .glass-cursor[hidden] {display:none}
-#scene.glass-pointer {cursor:none!important}
+body.curseur-verre, body.curseur-verre * {cursor:none!important}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content) :is(button,summary,input,a):focus-visible,#language-options label:has(input:focus-visible) {outline-color:#fff}
 @media(prefers-reduced-motion:reduce){.glass-cursor{transition:none}}
 @media(max-width:720px){body.loupe #loupe{right:102px}#map-toggle{gap:4px;font-size:12px}#map-toggle span{display:none}#map-toggle::before{content:attr(data-short-label)}#map-toggle svg{width:12px;height:12px}.compare-time output{font-size:48px}}

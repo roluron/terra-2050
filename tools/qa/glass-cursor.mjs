@@ -12,19 +12,24 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await page.mouse.move(720,450);await page.waitForTimeout(200);
   assert.equal(await page.locator('.glass-cursor').isVisible(),true,'Globe cursor');
   assert.ok(await page.evaluate(async()=> (await import('./glass-cursor.mjs')).glassCursor.radius>0));
+  assert.equal(await page.locator('.glass-cursor').evaluate(e=>e.classList.contains('point')),false,'Lens on the globe');
   for(const selector of ['#bouton-reglages','#an','#map-toggle']){
-   await page.locator(selector).hover();await page.waitForTimeout(100);
-   assert.equal(await page.locator('.glass-cursor').isVisible(),false,selector);
+   await page.locator(selector).hover();await page.waitForTimeout(400);
+   assert.equal(await page.locator('.glass-cursor').isVisible(),true,selector);
+   assert.equal(await page.locator('.glass-cursor').evaluate(e=>e.classList.contains('point')),true,selector+' is a dot');
+   assert.equal(await page.locator('body').evaluate(e=>getComputedStyle(e).cursor),'none','Native cursor hidden on '+selector);
   }
-  await page.mouse.move(400,80);await page.waitForTimeout(100);
-  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'Empty space');
+  await page.mouse.move(400,80);await page.waitForTimeout(400);
+  assert.equal(await page.locator('.glass-cursor').isVisible(),true,'Dot over empty space');
+  assert.ok(await page.locator('.glass-cursor').evaluate(e=>parseFloat(e.style.width)<8),'Small dot over empty space');
+  assert.equal(await page.evaluate(async()=> (await import('./glass-cursor.mjs')).glassCursor.radius),3,'Refraction radius follows the dot on the canvas');
   await page.mouse.move(720,450);await page.waitForTimeout(200);
   await page.screenshot({path:'/Users/robinmahieux/Documents/Codex/2026-09-16/t/outputs/globe-only-cursor.png'});
   await page.locator('#champ-recherche').fill('New York');
   await page.getByRole('option').filter({hasText:'New York'}).first().click();
   await page.locator('#dossier-comparer').click();await page.locator('.compare-close').hover();await page.waitForTimeout(100);
-  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'Comparison');
+  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'Comparison is modal: native cursor');
  }else assert.equal(await page.locator('.glass-cursor').isVisible(),false);
- assert.deepEqual(errors,[]);console.log('PASS '+name+': cursor only on globe, normal UI pointers');
+ assert.deepEqual(errors,[]);console.log('PASS '+name+': lens on globe, dot elsewhere, native in modals');
  }finally{await browser.close()}
 }

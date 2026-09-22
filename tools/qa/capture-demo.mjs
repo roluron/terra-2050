@@ -26,7 +26,7 @@ await page.addStyleTag({content:`.demo-cursor{position:fixed;z-index:2147483647;
 await page.evaluate(()=>{const dot=document.createElement('div');dot.className='demo-cursor';document.body.append(dot);const scene=document.querySelector('#scene');
  addEventListener('pointermove',e=>{dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px'},true);
  addEventListener('pointerdown',()=>dot.classList.add('down'),true);addEventListener('pointerup',()=>dot.classList.remove('down'),true);
- (function tick(){dot.style.opacity=scene?.classList.contains('glass-pointer')?0:1;requestAnimationFrame(tick)})()});
+ (function tick(){dot.style.opacity=document.body.classList.contains('curseur-verre')?0:1;requestAnimationFrame(tick)})()});
 await page.waitForSelector('#voile.pret',{state:'attached',timeout:30000});
 const began=Date.now();await sleep(2000);
 
