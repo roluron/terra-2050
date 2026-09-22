@@ -13,9 +13,16 @@ const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
 let finished = 0, pointerReady = false;
 const revealTimers = new Set();
+/* La lettre apparaît sous le pointeur, là où l'on vient de choisir la langue :
+   le premier geste décodait une diagonale de mots avant toute lecture. Le
+   pointeur est ignoré pendant la première seconde après son arrivée. */
+const POINTER_GRACE = 1000;
+let letterShownAt = Infinity;
+function armLetter() { letterShownAt = performance.now(); pointerReady = false; }
 openLanguage(() => {
   document.getElementById('earth-letter-main').hidden = false;
   document.getElementById('earth-letter-main').focus({preventScroll:true});
+  armLetter();
 }, true);
 
 function buildLetter() {
@@ -77,7 +84,7 @@ for (const [line, paragraph] of [shell.querySelector('h1'), ...letter.querySelec
 }
 }
 buildLetter();
-window.addEventListener('terra-language', () => { if (!departing) buildLetter(); });
+window.addEventListener('terra-language', () => { if (!departing) { buildLetter(); armLetter(); } });
 
 function signsFor(index, length) {
   return Array.from({ length: Math.max(1, Math.ceil(length / 1.2)) }, (_, j) => signs[(index * 3 + j * 5) % signs.length]).join('');
@@ -116,6 +123,7 @@ function finish({ word }) {
 }
 
 document.getElementById('earth-letter-main').addEventListener('pointermove', event => {
+  if (performance.now() - letterShownAt < POINTER_GRACE) return;
   pointerReady = true;
   for (const item of words) {
     if (item.started) continue;
