@@ -1108,7 +1108,8 @@ const matGlobe = new THREE.ShaderMaterial({
         float chaud = clamp((scientificValue(heatData, P) - 20.0) / 30.0, 0.0, 1.0);
         vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(0.90, 0.06, 0.025), chaud);
         col = mix(col, thermique, 0.85 * uChaleur * terre * heatData.a);
-        if (uChange > 0.5) col = changeColor(base, scientificValue(heatData, P) - scientificValue(heatData, 0.0), 3.0, uChaleur * terre * heatData.a);
+        // ±4 °C : a ±3 °C, un +1,5 °C (la moitie du globe en 2050) etait deja ecarlate
+        if (uChange > 0.5) col = changeColor(base, scientificValue(heatData, P) - scientificValue(heatData, 0.0), 4.0, uChaleur * terre * heatData.a);
       }
 
 
@@ -1148,7 +1149,7 @@ const matGlobe = new THREE.ShaderMaterial({
         float m = clamp(abs(inst) / 5.0, 0.0, 1.0);
         vec3 anomalie = mix(vec3(0.96, 0.79, 0.58), inst >= 0.0 ? vec3(0.88, 0.14, 0.09) : vec3(0.18, 0.55, 0.88), m);
         col = mix(col, anomalie, terre * warmingData.a * uStabilite * 0.85);
-        if (uChange > 0.5) col = changeColor(base, inst - scientificValue(warmingData, 0.0), 3.0, terre * warmingData.a * uStabilite);
+        if (uChange > 0.5) col = changeColor(base, inst - scientificValue(warmingData, 0.0), 4.0, terre * warmingData.a * uStabilite);
       }
 
       
@@ -1630,12 +1631,12 @@ function majContexteCalques(){
   }
   el.replaceChildren();
   const scales = changing ? {
-    chaleur: ['#1fb3e6,#29333a,#ff300b','≤ −3 °C','0','≥ +3 °C'],
+    chaleur: ['#1fb3e6,#29333a,#ff300b','≤ −4 °C','0','≥ +4 °C'],
     feux: ['#1fb3e6,#29333a,#ff300b',`≤ −30 ${T().ui.daysyear}`,'0',`≥ +30 ${T().ui.daysyear}`],
     secheresse: ['#1fb3e6,#29333a,#ff300b',`+10 · ${words[6]}`,'0',`−10 · ${words[7]}`],
     mer: ['#1fb3e6,#29333a,#ff300b','≤ −5','0','≥ +5'],
     fleuves: ['#1fb3e6,#29333a,#ff300b','≤ −5','0','≥ +5'],
-    stabilite: ['#1fb3e6,#29333a,#ff300b','≤ −3 °C','0','≥ +3 °C'],
+    stabilite: ['#1fb3e6,#29333a,#ff300b','≤ −4 °C','0','≥ +4 °C'],
     declin: ['#25667f,#29333a,#ff300b',`≥ +20%`,'0',`≤ −20%`]
   } : {
     chaleur: ['#ffC738,#e61006','20 °C','50 °C'],
