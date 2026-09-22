@@ -277,7 +277,8 @@
       <button class="calque" aria-pressed="false" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
       
     </nav>
-<aside id="model-notice"><div id="map-reading"><button type="button" data-map-mode="change" aria-pressed="true"></button><button type="button" data-map-mode="value" aria-pressed="false"></button></div><div id="layer-context" aria-live="polite"></div><details id="map-method"><summary></summary><div id="layer-method"></div><p data-t="betaNotice"></p><a href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a></details></aside>
+<aside id="model-notice"><div id="map-reading"><button type="button" data-map-mode="change" aria-pressed="true"></button><button type="button" data-map-mode="value" aria-pressed="false"></button></div><div id="layer-context" aria-live="polite"></div><details id="map-method"><summary></summary><div id="layer-method"></div><p data-t="betaNotice"></p></details></aside>
+<a id="map-contact" href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a>
 </div>
 </section>
 </div>
@@ -1165,7 +1166,9 @@ const matGlobe = new THREE.ShaderMaterial({
         float vidage = uDeclin;
         col = mix(col, vide, m * vidage);
         col += vec3(0.42, 0.34, 0.66) * m * vidage * 0.35;
-        if (uChange > 0.5) col = changeColor(base, population.g, 0.20, population.a * terre * uDeclin);
+        // la hausse (Afrique : +30 a +50 %) se peignait aussi fort que la baisse
+        // et se lisait comme un declin : sur ce calque, seule la baisse sature
+        if (uChange > 0.5) col = changeColor(base, population.g, 0.20, population.a * terre * uDeclin * (population.g >= 0.0 ? 1.0 : 0.4));
       }
 
       
@@ -1633,7 +1636,7 @@ function majContexteCalques(){
     mer: ['#1fb3e6,#29333a,#ff300b','≤ −5','0','≥ +5'],
     fleuves: ['#1fb3e6,#29333a,#ff300b','≤ −5','0','≥ +5'],
     stabilite: ['#1fb3e6,#29333a,#ff300b','≤ −3 °C','0','≥ +3 °C'],
-    declin: ['#1fb3e6,#29333a,#ff300b',`≥ +20%`,'0',`≤ −20%`]
+    declin: ['#25667f,#29333a,#ff300b',`≥ +20%`,'0',`≤ −20%`]
   } : {
     chaleur: ['#ffC738,#e61006','20 °C','50 °C'],
     feux: ['#4d3d1f,#fa330e','0',`100+ ${T().ui.daysyear}`],
