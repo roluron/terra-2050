@@ -1,11 +1,15 @@
 import { translations } from './locales/catalog.mjs';
 export { translations };
-export const languageNames = {en:'English', fr:'Français', ja:'日本語', zh:'简体中文', vi:'Tiếng Việt', es:'Español', it:'Italiano'};
+export const languageNames = {en:'English', fr:'Français', ja:'日本語', zh:'简体中文', vi:'Tiếng Việt', es:'Español', it:'Italiano', 'zh-Hant':'繁體中文'};
+export function supportedLanguage(code='') {
+  if (/^zh-(?:hant|tw|hk|mo)(?:-|$)/i.test(code)) return 'zh-Hant';
+  return code.toLowerCase().split('-')[0];
+}
 export function initialLanguage() {
   const requested = new URLSearchParams(location.search).get('lang');
   if (Object.hasOwn(translations, requested)) return requested;
   try { const saved = localStorage.getItem('terra-langue'); if (Object.hasOwn(translations, saved)) return saved; } catch {}
-  return (navigator.languages || [navigator.language]).map(code => code.split('-')[0]).find(code => Object.hasOwn(translations, code)) || 'en';
+  return (navigator.languages || [navigator.language]).map(supportedLanguage).find(code => Object.hasOwn(translations, code)) || 'en';
 }
 let current = initialLanguage();
 export const language = () => current;
@@ -23,6 +27,7 @@ export function setLanguage(code) {
 const languagePrompts = {
   en: ['Select your language', 'Continue'], fr: ['Choisis ta langue', 'Continuer'],
   ja: ['言語を選んでください', '続ける'], zh: ['请选择语言', '继续'],
+  'zh-Hant': ['請選擇語言', '繼續'],
   vi: ['Chọn ngôn ngữ của bạn', 'Tiếp tục'], es: ['Elige tu idioma', 'Continuar'],
   it: ['Scegli la tua lingua', 'Continua'],
 };
@@ -33,18 +38,12 @@ document.getElementById('language-options').replaceChildren(...Object.entries(la
   label.style.setProperty('--row', index);
   input.type = 'radio'; input.name = 'language'; input.value = code;
   text.lang = code; text.textContent = name;
-  input.addEventListener('change', () => setLanguage(code));
-  label.addEventListener('pointerenter', event => {
-    if (event.pointerType !== 'mouse' || closingLanguage) return;
-    input.checked = true;
-  });
-  input.addEventListener('click', () => setLanguage(code));
+  input.addEventListener('click', () => closeLanguage());
   label.append(input, text); return label;
 }));
 function syncLanguageDialog() {
   languageDialog.lang = current;
   document.getElementById('language-title').textContent = languagePrompts[current][0];
-  document.querySelector('#language-continue span').textContent = languagePrompts[current][1];
   for (const input of languageDialog.querySelectorAll('input')) input.checked = input.value === current;
 }
 export function openLanguage(onClose, first = false) {
@@ -70,11 +69,18 @@ languageDialog.querySelector('form').addEventListener('submit', event => {event.
 languageDialog.addEventListener('cancel', event => {event.preventDefault(); if (!welcome) closeLanguage();});
 languageDialog.addEventListener('keydown', event => {
   event.stopPropagation();
+  if (['ArrowDown','ArrowRight','ArrowUp','ArrowLeft'].includes(event.key) && event.target.matches('#language-options input')) {
+    event.preventDefault();
+    const inputs = [...languageDialog.querySelectorAll('input')];
+    const step = ['ArrowDown','ArrowRight'].includes(event.key) ? 1 : -1;
+    const next = inputs[(inputs.indexOf(event.target) + step + inputs.length) % inputs.length];
+    next.checked = true; next.focus();
+  }
   if (event.key === 'Enter') { event.preventDefault(); closeLanguage(); }
 });
 window.addEventListener('terra-language', syncLanguageDialog);
 export function languageControl(button) {
-  const sync = () => {button.textContent = languageNames[current] + ' ↗'; button.setAttribute('aria-label', languageNames[current] + ' — ' + getText().ui.language);};
+  const sync = () => {button.textContent = languageNames[current]; button.setAttribute('aria-label', languageNames[current] + ' — ' + getText().ui.language);};
   sync(); button.addEventListener('click', () => openLanguage(() => document.getElementById('bouton-reglages').focus({preventScroll:true})));
   window.addEventListener('terra-language', sync);
 }

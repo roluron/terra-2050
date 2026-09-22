@@ -189,7 +189,7 @@
 <div id="boot-screen" aria-label="Loading"><canvas class="planet-sprite" width="96" height="96" aria-hidden="true"></canvas></div>
 <dialog id="earth-shell" lang="en" aria-label="A letter from Earth">
   <canvas id="earth-orb" aria-hidden="true"></canvas>
-  <main id="earth-letter-main" hidden>
+  <main id="earth-letter-main" tabindex="-1" hidden>
     <h1 tabindex="-1">Hello human.</h1>
     <div class="letter" id="letter">
       <p>You leave a trace on everything you touch.<br>Including me. You can blame the corporations. The governments. Each other. You can leave it all until tomorrow. But tomorrow is already taking shape. I will be here for millions of years. I wish I could say the same for you.</p>
@@ -204,10 +204,11 @@
     <canvas class="planet-sprite language-globe" width="96" height="96" aria-hidden="true"></canvas>
     <h2 id="language-title"></h2>
     <fieldset id="language-options" aria-labelledby="language-title"></fieldset>
-    <button id="language-continue" type="submit"><span></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
   </form>
 </dialog>
 <link rel="stylesheet" href="./earth-letter.css">
+<link rel="stylesheet" href="./premium.css">
+<script type="module" src="./premium.mjs"></script>
 <script type="module" src="./earth-letter.js"></script>
 <canvas id="scene"></canvas>
 
@@ -247,6 +248,7 @@
   <ul id="resultats" role="listbox" aria-label="Résultats"></ul>
 </div>
 
+<div id="globe-dock">
 <div id="timeline" class="panneau">
   <div id="accroche" hidden><button id="accroche-txt"></button><button id="accroche-x" aria-label="Fermer">×</button></div>
   <div class="micro" data-t="panelYear"></div>
@@ -258,7 +260,8 @@
 </div>
 
 <section id="map-inspector">
-<button id="map-toggle" type="button" aria-expanded="false" aria-controls="calques"><span></span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
+<button id="map-toggle" type="button" aria-expanded="false" aria-controls="map-options"><span></span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
+<div id="map-options">
 <nav id="calques" aria-label="Calques de risque">
       <button class="calque" aria-pressed="false" data-cle="chaleur" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-01</span></button>
       <button class="calque" aria-pressed="false" data-cle="feux" data-couleur="chaud"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-02</span></button>
@@ -270,7 +273,9 @@
       
     </nav>
 <aside id="model-notice"><div id="map-reading"><button type="button" data-map-mode="change" aria-pressed="true"></button><button type="button" data-map-mode="value" aria-pressed="false"></button></div><div id="layer-context" aria-live="polite"></div><details id="map-method"><summary></summary><div id="layer-method"></div><p data-t="betaNotice"></p><a href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a></details></aside>
+</div>
 </section>
+</div>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
 <div id="etiquettes"></div>
@@ -372,8 +377,8 @@
       <p class="delta-score" id="dossier-delta"></p>
       <p class="coords" id="dossier-coords"></p>
       <p class="sources" id="dossier-sources"></p>
-      <p class="sources"><a href="https://www.worldclim.org/data/cmip6/cmip6climate.html" target="_blank" rel="noopener">WorldClim ↗</a> · <a href="https://essd.copernicus.org/articles/15/2153/2023/" target="_blank" rel="noopener">CMIP6 Fire Weather Index ↗</a> · <a href="https://www.wri.org/data/aqueduct-floods-hazard-maps" target="_blank" rel="noopener">WRI Aqueduct Floods ↗</a> · <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN WPP ↗</a></p>
-      <p class="sources"><a href="./data/climate-manifest.json" target="_blank" rel="noopener">WorldClim · <span data-ui="provenance"></span> ↗</a> · <a href="./data/fire-weather.json" target="_blank" rel="noopener">FWI · <span data-ui="provenance"></span> ↗</a> · <a href="./data/flood-metadata.json" target="_blank" rel="noopener">Aqueduct · <span data-ui="provenance"></span> ↗</a> · <a href="./data/population-provenance.json" target="_blank" rel="noopener">UN WPP · <span data-ui="provenance"></span> ↗</a></p>
+      <p class="sources"><a href="https://www.worldclim.org/data/cmip6/cmip6climate.html" target="_blank" rel="noopener">WorldClim</a> · <a href="https://essd.copernicus.org/articles/15/2153/2023/" target="_blank" rel="noopener">CMIP6 Fire Weather Index</a> · <a href="https://www.wri.org/data/aqueduct-floods-hazard-maps" target="_blank" rel="noopener">WRI Aqueduct Floods</a> · <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN WPP</a></p>
+      <p class="sources"><a href="./data/climate-manifest.json" target="_blank" rel="noopener">WorldClim · <span data-ui="provenance"></span></a> · <a href="./data/fire-weather.json" target="_blank" rel="noopener">FWI · <span data-ui="provenance"></span></a> · <a href="./data/flood-metadata.json" target="_blank" rel="noopener">Aqueduct · <span data-ui="provenance"></span></a> · <a href="./data/population-provenance.json" target="_blank" rel="noopener">UN WPP · <span data-ui="provenance"></span></a></p>
     </details>
   </div>
   <footer class="actions">
@@ -397,6 +402,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { language, getText, message, languageControl } from './i18n.mjs';
 import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker } from './refinement-copy.mjs';
 import { createComparison } from './city-comparison.mjs';
+import { createYearRuler } from './year-ruler.mjs';
+import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
 gsap.ticker.lagSmoothing(0);
@@ -708,6 +715,7 @@ const SoundManager = new class {
     this.creer('crisis_loop',   'crisis_loop.mp3',   0.5, true);
   }
   creer(id, fichier, volume = 1, boucle = false){
+    if (!globalThis.Howl) return;
     if (this.registre[id]) return this.registre[id];
     const s = { audio: new Howl({ src: ['./assets/sounds/' + fichier], loop: boucle, volume }), volume };
     return (this.registre[id] = s);
@@ -730,8 +738,8 @@ const SoundManager = new class {
     s.timer = setTimeout(() => s.audio.stop(), 2000);
   }
   // volume global — CORRIGÉ (la référence appelait "Holwer.volume", code mort)
-  setVolume(v){ this.volumeGlobal = v; Howler.volume(v); }
-  set mute(b){ this._mute = b; Howler.mute(b); }
+  setVolume(v){ this.volumeGlobal = v; globalThis.Howler?.volume(v); }
+  set mute(b){ this._mute = b; globalThis.Howler?.mute(b); }
   get mute(){ return this._mute; }
 }();
 // SoundManager.init() est appele au clic d entree : six fichiers et 60 Ko
@@ -1400,13 +1408,17 @@ const matPost = new THREE.ShaderMaterial({
     uVerre: { value: new THREE.Vector4(0, 0, 0, 0) },   // centre.xy + demi-taille.xy, en UV
     uVerreRayon: { value: 0.0 }, uVerreForce: { value: 0.0 }, uRatio: { value: 1.0 },
     uVerre2: { value: new THREE.Vector4(0, 0, 0, 0) },  // lentille des menus déroulants
-    uVerreRayon2: { value: 0.0 }, uVerreForce2: { value: 0.0 } },
+    uVerreRayon2: { value: 0.0 }, uVerreForce2: { value: 0.0 },
+    uGlassRects: { value: Array.from({length:6},()=>new THREE.Vector4()) },
+    uGlassRadii: { value: new Float32Array(6) }, uCursor: {value:new THREE.Vector3()} },
   vertexShader: /* glsl */`
     varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
   fragmentShader: /* glsl */`
     uniform sampler2D tScene; uniform sampler2D tLut; uniform float uQuantite;
     uniform vec4 uVerre; uniform float uVerreRayon, uVerreForce, uRatio;
     uniform vec4 uVerre2; uniform float uVerreRayon2, uVerreForce2;
+    uniform vec4 uGlassRects[6]; uniform float uGlassRadii[6];
+    uniform vec3 uCursor;
     varying vec2 vUv;
     /* SDF de rectangle arrondi, en espace corrigé du ratio d'écran */
     float sdfBoite(vec2 p, vec2 demi, float r){
@@ -1440,8 +1452,8 @@ const matPost = new THREE.ShaderMaterial({
             sdfBoite(p + vec2(0.0015, 0.0), demi, uVerreRayon) - sdfBoite(p - vec2(0.0015, 0.0), demi, uVerreRayon),
             sdfBoite(p + vec2(0.0, 0.0015), demi, uVerreRayon) - sdfBoite(p - vec2(0.0, 0.0015), demi, uVerreRayon));
           // la réfraction ne mord que sur les 30 % extérieurs de la lentille
-          float epaisseur = pow(smoothstep(-uVerreRayon * 0.60, 0.0, sd), 2.2);
-          uv -= normalize(g + 1e-6) * epaisseur * 0.020 * uVerreForce / e;
+          float epaisseur = pow(smoothstep(-uVerreRayon, 0.0, sd), 1.8);
+          uv -= normalize(g + 1e-6) * epaisseur * min(.018,uVerreRayon*.55) * uVerreForce / e;
           bord = smoothstep(0.0028, 0.0, abs(sd)) * dedans;
         }
       }
@@ -1458,24 +1470,42 @@ const matPost = new THREE.ShaderMaterial({
           vec2 g2 = vec2(
             sdfBoite(p2 + vec2(0.0015, 0.0), demi2, uVerreRayon2) - sdfBoite(p2 - vec2(0.0015, 0.0), demi2, uVerreRayon2),
             sdfBoite(p2 + vec2(0.0, 0.0015), demi2, uVerreRayon2) - sdfBoite(p2 - vec2(0.0, 0.0015), demi2, uVerreRayon2));
-          float ep2 = pow(smoothstep(-uVerreRayon2 * 1.4, 0.0, sd2), 2.0);
-          uv -= normalize(g2 + 1e-6) * ep2 * 0.016 * uVerreForce2 / e2;
+          float ep2 = pow(smoothstep(-uVerreRayon2, 0.0, sd2), 1.8);
+          uv -= normalize(g2 + 1e-6) * ep2 * min(.018,uVerreRayon2*.55) * uVerreForce2 / e2;
           bord2 = smoothstep(0.0026, 0.0, abs(sd2)) * dedans2;
         }
       }
 
+      float otherInside = 0.0, otherEdge = 0.0;
+      for(int i=0;i<6;i++){
+        if(uGlassRadii[i] <= 0.0) continue;
+        vec2 e = vec2(uRatio,1.0);
+        vec2 p = (vUv-uGlassRects[i].xy)*e;
+        vec2 size = uGlassRects[i].zw*e;
+        float radius = uGlassRadii[i];
+        float sd = sdfBoite(p,size,radius);
+        float inside = smoothstep(0.002,-0.002,sd);
+        if(inside <= 0.0) continue;
+        vec2 normal = normalize(vec2(
+          sdfBoite(p+vec2(.001,0),size,radius)-sdfBoite(p-vec2(.001,0),size,radius),
+          sdfBoite(p+vec2(0,.001),size,radius)-sdfBoite(p-vec2(0,.001),size,radius))+1e-6);
+        uv -= normal*pow(smoothstep(-radius,0.0,sd),1.8)*min(.018,radius*.55)/e;
+        otherInside=max(otherInside,inside);
+        otherEdge+=smoothstep(.0025,0.0,abs(sd))*inside*(.3+.7*max(0.0,dot(normal,normalize(vec2(-1,1)))));
+      }
+      if(uCursor.z>0.0){
+        vec2 offset=vUv-uCursor.xy;
+        float distanceToCursor=length(offset*vec2(uRatio,1.0))/uCursor.z;
+        if(distanceToCursor<1.0) uv-=offset*.22*(1.0-distanceToCursor*distanceToCursor);
+      }
       vec4 s = texture2D(tScene, uv);
       vec3 col = mix(s.rgb, grade(clamp(s.rgb, 0.0, 1.0)), uQuantite);
       float d = distance(vUv, vec2(0.5));
       col *= 1.0 - 0.22 * smoothstep(0.42, 0.85, d);        // vignettage
 
       if (dedans > 0.0){
-        // dispersion chromatique légère + voile interne + liseré spéculaire
-        vec2 ab = (uv - vUv) * 0.35;
-        col.r = mix(col.r, texture2D(tScene, uv + ab).r, dedans * uVerreForce);
-        col.b = mix(col.b, texture2D(tScene, uv - ab).b, dedans * uVerreForce);
-        col = mix(col, col * 1.18 + vec3(0.014, 0.030, 0.070), dedans * 0.40 * uVerreForce);
-        col += vec3(1.0, 0.99, 0.89) * bord * 0.30 * uVerreForce;
+        col = mix(col, col * 1.12 + vec3(0.012), dedans * 0.40 * uVerreForce);
+        col += vec3(1.0) * bord * 0.5 * uVerreForce;
       }
 
       if (dedans2 > 0.0){
@@ -1488,10 +1518,10 @@ const matPost = new THREE.ShaderMaterial({
         flou += texture2D(tScene, uv + vec2(-0.0021,-0.0035)).rgb;
         flou /= 5.0;
         float f2 = dedans2 * uVerreForce2;
-        col = mix(col, flou, f2);
-        col = mix(col, col * 0.52 + vec3(0.006, 0.012, 0.034), f2 * 0.6);
-        col += vec3(1.0, 0.99, 0.89) * bord2 * 0.24 * uVerreForce2;
+        col = mix(col, flou, f2*.15);
+        col += vec3(1.0) * bord2 * 0.48 * uVerreForce2;
       }
+      col+=vec3(1.0)*otherEdge*.48;
       gl_FragColor = vec4(col, 1.0);
     }`,
 });
@@ -1563,6 +1593,9 @@ function majContexteCalques(){
   matAtmo.uniforms.uProgression.value = actifs.length ? 0 : etat.progression;
   const words = mapCopy[langue] || mapCopy.en;
   document.querySelector('#map-toggle span').textContent = actifs.length ? document.querySelector(`.calque[data-cle="${actifs[0]}"] .nom`).textContent : (mapPicker[langue] || mapPicker.en);
+  const toggle=document.getElementById('map-toggle');
+  toggle.dataset.shortLabel=({en:'Filters',fr:'Filtres',it:'Filtri',es:'Filtros',vi:'Bộ lọc',ja:'指標',zh:'指标','zh-Hant':'指標'})[langue]||'Filters';
+  toggle.setAttribute('aria-label',`${toggle.dataset.shortLabel}: ${toggle.querySelector('span').textContent}`);
   const changing = uniformsGlobe.uChange.value > 0.5;
   document.getElementById('model-notice').hidden = !actifs.length;
   document.querySelector('[data-map-mode="change"]').textContent = words[0];
@@ -1626,7 +1659,7 @@ function cadrerCarte(){
 }
 new MutationObserver(cadrerCarte).observe(document.body,{attributes:true,attributeFilter:['class']});
 function fermerChoixCarte(){
-  if (matchMedia('(max-width:720px)').matches && document.getElementById('calques').contains(document.activeElement)) document.getElementById('map-toggle').focus({preventScroll:true});
+  if (document.getElementById('calques').contains(document.activeElement)) document.getElementById('map-toggle').focus({preventScroll:true});
   document.getElementById('map-inspector').classList.remove('choix-ouvert');
   document.getElementById('map-toggle').setAttribute('aria-expanded','false');
 }
@@ -1635,7 +1668,7 @@ document.getElementById('map-toggle').addEventListener('click', () => {
   document.getElementById('map-toggle').setAttribute('aria-expanded',String(open));
 });
 document.addEventListener('pointerdown', event => {if (!event.target.closest('#map-inspector')) fermerChoixCarte();});
-document.getElementById('map-inspector').addEventListener('keydown', event => {
+document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && document.getElementById('map-inspector').classList.contains('choix-ouvert')) {fermerChoixCarte();document.getElementById('map-toggle').focus();}
 });
 for (const button of document.querySelectorAll('[data-map-mode]')) button.addEventListener('click', () => {
@@ -1956,39 +1989,7 @@ const anDistance = document.getElementById('an-distance');
 function majDistanceAn(){ anDistance.hidden = +curseur.value === 2026; anDistance.textContent = T().distanceAn(+curseur.value - 2026); }
 majDistanceAn();
 const regle = document.querySelector('#timeline .regle');
-regle.innerHTML = Array.from({ length: 25 }, () => '<i></i>').join('');
-const traits = [...regle.children];
-const etatRegle = { h: traits.map(() => 1), o: traits.map(() => 0.25), survol: null };
-function majRegle(){
-  const actif = +curseur.value - 2026;
-  for (let i = 0; i < 25; i++){
-    const dA = i - actif;
-    let cible = i === actif ? 3.1 : 1 + 1.6 * Math.exp(-(dA * dA) / 7);
-    let op = i === actif ? 1 : i < actif ? 0.55 : 0.25;
-    if (!MOINS_ANIM && etatRegle.survol !== null){
-      const dS = i - etatRegle.survol;
-      cible += 0.9 * Math.exp(-(dS * dS) / 5);
-      if (Math.abs(dS) < 1) op = Math.max(op, 0.85);
-    }
-    const nh = MOINS_ANIM ? cible : etatRegle.h[i] + (cible - etatRegle.h[i]) * 0.22;
-    const no = MOINS_ANIM ? op : etatRegle.o[i] + (op - etatRegle.o[i]) * 0.22;
-    // au repos, zéro écriture de style : le rAF ne paie que le mouvement
-    if (Math.abs(nh - etatRegle.h[i]) > 0.0015){
-      etatRegle.h[i] = nh;
-      traits[i].style.transform = `scaleY(${nh.toFixed(3)})`;
-    }
-    if (Math.abs(no - etatRegle.o[i]) > 0.0015){
-      etatRegle.o[i] = no;
-      traits[i].style.opacity = no.toFixed(3);
-    }
-  }
-}
-gsap.ticker.add(majRegle);
-curseur.addEventListener('pointermove', ev => {
-  const r = regle.getBoundingClientRect();
-  etatRegle.survol = Math.max(0, Math.min(24, Math.round((ev.clientX - r.left) / r.width * 24)));
-});
-curseur.addEventListener('pointerleave', () => (etatRegle.survol = null));
+gsap.ticker.add(createYearRuler(curseur, regle));
 let minuterieAnnonce = null;
 curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-annee'));
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
@@ -2020,7 +2021,7 @@ curseur.addEventListener('input', () => {
    lentille WebGL, en cercle). Le clic la déploie en pilule, un balayage de
    lumière passe sur le placeholder. Elle se replie vide, hors dossier.
    ===================================================================== */
-const LARGEUR_LOUPE = 46;
+const LARGEUR_LOUPE = 44;
 const etatRecherche = { w: LARGEUR_LOUPE };
 const loupe = document.getElementById('loupe');
 function largeurBarre(){
@@ -2143,7 +2144,8 @@ addEventListener('resize', () => {
 }
 
 /* ---- verre liquide : la lentille du pass post suit le rect réel du champ ---- */
-const etatVerre = { force: 0 };
+const etatVerre = { force: 0.7 };
+let actualiserVerrePanneau = () => {};
 function majVerre(){
   // le rect du CHAMP, pas de #recherche : ce dernier englobe la liste de
   // résultats repliée, ce qui rendait la lentille bien plus haute que la barre
@@ -2157,8 +2159,9 @@ function majVerre(){
     (r.width / 2) / innerWidth,
     (r.height / 2) / innerHeight);
   // le rayon reste celui de la pilule : ouvert, le verre devient un carré arrondi
-  matPost.uniforms.uVerreRayon.value = Math.min(rc.height / 2, r.height / 2, r.width / 2) / innerHeight;
+  matPost.uniforms.uVerreRayon.value = Math.min(parseFloat(getComputedStyle(liste.classList.contains('ouvert') ? liste : champ).borderRadius) || 16, r.height / 2, r.width / 2) / innerHeight;
   matPost.uniforms.uVerreForce.value = etatVerre.force;
+  actualiserVerrePanneau();
 }
 addEventListener('resize', majVerre);
 champ.addEventListener('focus', () => gsap.to(etatVerre, { force: 1, duration: DUREE.fast, ease: EASE, onUpdate: majVerre }));
@@ -2734,17 +2737,15 @@ document.getElementById('bouton-partager').addEventListener('click', () => {
 async function genererStory(opts){
   const l = lieuDossier; if (!l) return null;
   const an = etat.annee, t = T(), pays = estPays(l);
-  const sans = getComputedStyle(document.body).fontFamily;
-  const serif = getComputedStyle(document.documentElement).getPropertyValue('--herbik') || 'Georgia, serif';
-  const cjk = ['ja', 'zh'].includes(langue);
+  const sans = getComputedStyle(document.documentElement).getPropertyValue('--police').trim() || getComputedStyle(document.body).fontFamily;
+  const cjk = ['ja', 'zh', 'zh-Hant'].includes(langue);
   const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const indice50 = pays ? indicePays(l[1], 2050) : (l[7] ? indiceHabitabilite(l, 2050) : null);
-  await Promise.all(['600 340px "TWK Lausanne"', '500 36px "TWK Lausanne"',
-    '400 36px "TWK Lausanne"', 'italic 500 46px "Herbik"'].map(f => document.fonts.load(f)));
+  await Promise.all([`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`].map(f => document.fonts.load(f)));
   const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
   const g = cv.getContext('2d');
-  const CREME = '#FFFDE2', MUTER = 'rgba(255,253,226,0.5)';
-  g.fillStyle = '#070706'; g.fillRect(0, 0, 1080, 1920);
+  const CREME = '#F5F7FA', MUTER = 'rgba(245,247,250,0.65)';
+  g.fillStyle = '#05070a'; g.fillRect(0, 0, 1080, 1920);
   if (opts.planete && toile.width > 0){
     // la scène (sans post) rendue à l'instant, recadrée en couverture,
     // puis voilée pour la lisibilité
@@ -2771,9 +2772,9 @@ async function genererStory(opts){
   g.letterSpacing = '0px';
 
   // le nom, ajusté à la largeur
-  let taille = 150; g.font = `600 ${taille}px ${sans}`;
+  let taille = 150; g.font = `400 ${taille}px ${sans}`;
   const nom = nomVille(l);
-  while (g.measureText(nom).width > 930 && taille > 54){ taille -= 6; g.font = `600 ${taille}px ${sans}`; }
+  while (g.measureText(nom).width > 930 && taille > 54){ taille -= 6; g.font = `400 ${taille}px ${sans}`; }
   g.fillStyle = CREME; g.fillText(nom, 540, 545);
   g.letterSpacing = cjk ? '0px' : '6px'; g.font = `500 28px ${sans}`; g.fillStyle = MUTER;
   g.fillText(pays ? (T().ui.country) : nomPays(l[1]).toUpperCase(), 540, 615);
@@ -2782,17 +2783,17 @@ async function genererStory(opts){
   // le score — ou la sentinelle
   if (indice === null){
     g.fillStyle = MUTER; g.font = `600 200px ${sans}`; g.fillText('——', 540, 1020);
-    g.font = `${cjk ? '' : 'italic '}500 46px ${serif}`; g.fillText(couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees, 540, 1130, 900);
+    g.font = `400 46px ${sans}`; g.fillText(couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees, 540, 1130, 900);
   } else {
-    const teinte = couleurNote(indice);
-    g.font = `600 340px ${sans}`;
+    const teinte = CREME;
+    g.font = `300 340px ${sans}`;
     const lg = g.measureText(String(indice)).width;
     g.textAlign = 'left'; g.fillStyle = teinte;
     const x0 = 540 - (lg + 14 + 96) / 2;
     g.fillText(String(indice), x0, 1050);
     g.fillStyle = MUTER; g.font = `500 52px ${sans}`; g.fillText('/100', x0 + lg + 14, 1050);
     g.textAlign = 'center';
-    g.fillStyle = teinte; g.font = `${cjk ? '' : 'italic '}500 46px ${serif}`;
+    g.fillStyle = teinte; g.font = `400 46px ${sans}`;
     g.fillText(t.verdict[niveauDe(indice)], 540, 1150, 900);
     if (opts.trajectoire && indice50 !== null && an < 2050){
       g.fillStyle = MUTER; g.font = `500 32px ${sans}`;
@@ -2803,8 +2804,8 @@ async function genererStory(opts){
         : (lieuVs[7] ? indiceHabitabilite(lieuVs, an) : null);
       if (sV !== null){
         g.font = `600 44px ${sans}`;
-        const seg2 = [[`${nomVille(l)} ${indice}`, couleurNote(indice)],
-          ['   vs   ', MUTER], [`${nomVille(lieuVs)} ${sV}`, couleurNote(sV)]];
+        const seg2 = [[`${nomVille(l)} ${indice}`, CREME],
+          ['   vs   ', MUTER], [`${nomVille(lieuVs)} ${sV}`, CREME]];
         let x2 = 540 - seg2.reduce((a2, [t2]) => a2 + g.measureText(t2).width, 0) / 2;
         g.textAlign = 'left';
         for (const [t2, c2] of seg2){ g.fillStyle = c2; g.fillText(t2, x2, 1310); x2 += g.measureText(t2).width; }
@@ -2820,23 +2821,23 @@ async function genererStory(opts){
     .sort((a, b) => a.note - b.note).slice(0, 3) : [];
   let y = 1370;
   for (const r of rangs){
-    g.strokeStyle = 'rgba(255,253,226,0.14)'; g.lineWidth = 1;
+    g.strokeStyle = 'rgba(245,247,250,0.14)'; g.lineWidth = 1;
     g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
     g.textAlign = 'left'; g.fillStyle = CREME; g.font = `400 36px ${sans}`;
     g.fillText(r.nom, 120, y, 540);
-    g.textAlign = 'right'; g.fillStyle = couleurNote(r.note); g.font = `500 36px ${sans}`;
+    g.textAlign = 'right'; g.fillStyle = CREME; g.font = `400 36px ${sans}`;
     const unit = uniteLocale(r.reading.unit);
     g.fillText(r.reading.value.toLocaleString(langue, { maximumFractionDigits: 2 }) + ' ' + unit, 960, y, 280);
     y += 88;
   }
   if (opts.population && PAYS_POP[l[1]]){
     const pop = PAYS_POP[l[1]], pct = Math.round((populationAnnuelle(l[1], an) / pop[0] - 1) * 100);
-    g.strokeStyle = 'rgba(255,253,226,0.14)';
+    g.strokeStyle = 'rgba(245,247,250,0.14)';
     g.beginPath(); g.moveTo(120, y - 48); g.lineTo(960, y - 48); g.stroke();
     g.textAlign = 'left'; g.fillStyle = CREME; g.font = `400 36px ${sans}`;
     g.fillText(`${t.popLabel} · 2025 → ${an}`, 120, y);
     g.textAlign = 'right';
-    g.fillStyle = pct <= -15 ? '#E0452E' : pct <= -4 ? '#E06A3C' : pct < 5 ? '#4D7CF2' : '#2E8F6A';
+    g.fillStyle = CREME;
     g.font = `500 36px ${sans}`;
     g.fillText(`${pct > 0 ? '+' : pct < 0 ? '−' : ''}${Math.abs(pct)} %`, 960, y);
   }
@@ -2845,7 +2846,7 @@ async function genererStory(opts){
     g.textAlign = 'center'; g.letterSpacing = cjk ? '0px' : '5px';
     g.fillStyle = MUTER; g.font = `500 26px ${sans}`;
     g.fillText(T().ui.modelled_indicators_not_a_local, 540, 1690, 840);
-    g.letterSpacing = cjk ? '0px' : '2px'; g.fillStyle = 'rgba(255,253,226,0.35)'; g.font = `400 24px ${sans}`;
+    g.letterSpacing = cjk ? '0px' : '2px'; g.fillStyle = 'rgba(245,247,250,0.45)'; g.font = `400 24px ${sans}`;
     g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}&cc=${l[1]}`, 540, 1746);
     g.letterSpacing = '0px';
   }
@@ -3144,16 +3145,29 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
   const verreMenu = { force: 0, panneau: null };
   function majVerreMenu(){
     const u = matPost.uniforms;
-    if (!verreMenu.panneau){ u.uVerreForce2.value = 0; return; }
-    const r = verreMenu.panneau.getBoundingClientRect();
+    u.uGlassRadii.value.fill(0);
+    const panneau = verreMenu.force > .001 && verreMenu.panneau || document.querySelector('#story-popup:not([hidden]) .story-carte') || document.querySelector('#city-comparison[open]') || document.querySelector('#dossier.ouvert') || document.getElementById('map-inspector');
+    const style = getComputedStyle(panneau);
+    if (document.querySelector('#earth-shell[open],#language-dialog[open]') || style.visibility === 'hidden' || style.display === 'none') {u.uVerreForce2.value = 0;return;}
+    const r = panneau.getBoundingClientRect();
     u.uVerre2.value.set(
       (r.left + r.width / 2) / innerWidth,
       1 - (r.top + r.height / 2) / innerHeight,
       (r.width / 2) / innerWidth,
       (r.height / 2) / innerHeight);
-    u.uVerreRayon2.value = 10 / innerHeight;           // congé doux, ~10 px
-    u.uVerreForce2.value = verreMenu.force;
+    u.uVerreRayon2.value = Math.min(parseFloat(style.borderTopLeftRadius) || 18,r.width/2,r.height/2) / innerHeight;
+    u.uVerreForce2.value = panneau === verreMenu.panneau ? verreMenu.force : .9;
+    let slot=0;
+    for(const surface of document.querySelectorAll('#bouton-reglages,#map-inspector,#map-options,#dossier.ouvert,#city-comparison[open],.pedago-carte')){
+      if(surface===panneau || slot===6) continue;
+      const s=getComputedStyle(surface),box=surface.getBoundingClientRect();
+      if(s.visibility==='hidden'||s.display==='none'||box.width===0||box.height===0||Number(s.opacity)===0) continue;
+      u.uGlassRects.value[slot].set((box.left+box.width/2)/innerWidth,1-(box.top+box.height/2)/innerHeight,box.width/2/innerWidth,box.height/2/innerHeight);
+      u.uGlassRadii.value[slot]=Math.min(parseFloat(s.borderTopLeftRadius)||24,box.width/2,box.height/2)/innerHeight;
+      slot++;
+    }
   }
+  actualiserVerrePanneau = majVerreMenu;
   addEventListener('resize', majVerreMenu);
   const fermer = m => {
     if (!m.panneau.classList.contains('ouvert')) return;
@@ -3291,6 +3305,7 @@ function traduire(){
   document.getElementById('dossier-sources').textContent = t.sources;
   document.getElementById('bouton-position').textContent = t.aria['bouton-position'];
   majDistanceAn(); majContexteCalques(); cacherAccroche();
+  if (defiLien && lieuDossier && !document.body.classList.contains('pret')) montrerAccroche(t.accrocheDefi, () => document.getElementById('dossier-comparer').click(), 3400);
   boutonSon.textContent = t.son(!SoundManager.mute);
   if (lieuDossier){ majDossier(); derniereAnnonce = ''; annoncer(); }
 }
@@ -3501,7 +3516,7 @@ window.terraIntro = {
   points: () => earthSurface?.() || [],
   complete() {
     if (!lieuDossier && introVueAccueil) {
-      introOrbit?.progress(1).kill();
+      introOrbit?.kill();
       controles.autoRotateSpeed = 31 / 9 / 6;
       reprendreRotation();
     }
@@ -3673,6 +3688,7 @@ function pointSurGlobe(cx, cy){
   const t = -b - Math.sqrt(disc);
   return t > 0 ? _pt.copy(o).addScaledVector(d, t) : null;
 }
+setCursorGlobeHitTest((x,y)=>document.body.classList.contains('pret')&&!document.querySelector('dialog[open]')&&pointSurGlobe(x,y)!==null);
 function versLatLon(v){
   let lon = Math.atan2(v.z, -v.x) * 180 / Math.PI - 180;
   if (lon < -180) lon += 360;
@@ -3872,9 +3888,11 @@ function boucle(){
   moteur.render(scene, camera);
   moteur.setRenderTarget(null);
   matPost.uniforms.tScene.value = cibles[indiceCible].texture;
+  majVerre();
+  matPost.uniforms.uCursor.value.set(glassCursor.x/innerWidth,1-glassCursor.y/innerHeight,glassCursor.radius/innerHeight);
   moteur.render(scenePost, cameraPost);
   majEtiquettes();
-  majVerre(); calerListe();
+  calerListe();
   if (document.body.classList.contains('recherche-active')) placerCaret();
 
   // HUD (mis à jour 2×/s seulement — pas de layout thrash)

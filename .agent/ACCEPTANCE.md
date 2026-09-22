@@ -1,4 +1,6 @@
-# Acceptance — active completion pass, 2026-09-07
+# Current design-pass acceptance: PREMIUM.md (2026-09-17)
+
+# Acceptance — historical completion pass, 2026-09-07
 
 A checked item cites current observed evidence in EVIDENCE.md. Pending items stay
 required. Historical September 2 assertions are retained in history/ and are not

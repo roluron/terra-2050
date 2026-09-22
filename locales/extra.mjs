@@ -61,7 +61,7 @@ export const EXTRA = {
     "language": "Language",
     "webglTitle": "WebGL unavailable",
     "webglBody": "This experience needs real-time GPU rendering. Your browser or device could not start WebGL — try a recent browser with hardware acceleration enabled.",
-    "provenance": "Source metadata ↗",
+    "provenance": "Source metadata",
     "dataRecovery": "Some maps could not be loaded. Reload to try again."
   },
   "fr": {
@@ -126,7 +126,7 @@ export const EXTRA = {
     "language": "Langue",
     "webglTitle": "WebGL indisponible",
     "webglBody": "Cette expérience repose sur un rendu GPU en temps réel. WebGL n’a pas pu démarrer : essayez un navigateur récent avec l’accélération matérielle activée.",
-    "provenance": "Traçabilité des sources ↗",
+    "provenance": "Traçabilité des sources",
     "dataRecovery": "Certaines cartes n’ont pas pu être chargées. Rechargez pour réessayer."
   }
 };
