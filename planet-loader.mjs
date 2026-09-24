@@ -25,7 +25,7 @@ try {
       const light = Math.max(.08, -.4 * nx + .25 * ny + .8 * z);
       const density = ((x * 13 + y * 7) % 19) / 19;
       if (density > (land ? .92 : .18) * light) continue;
-      pen.fillStyle = `rgba(214,222,205,${(land ? .85 : .32) * light})`;
+      pen.fillStyle = `rgba(220,220,214,${(land ? .85 : .32) * light})`;
       pen.fillRect(x, y, 1.25, 1.25);
     }
     frames.push(sprite);
