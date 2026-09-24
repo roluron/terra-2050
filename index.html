@@ -2,6 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<!-- l'import map doit preceder tout module et tout modulepreload :
+     Firefox (et Chrome < 133) l'ignorent sinon, et le globe ne charge pas -->
+<script type="importmap">
+{"imports":{"three":"./assets/lib/three.module.min.js","three/addons/controls/OrbitControls.js":"./assets/addons/OrbitControls.js"}}
+</script>
 <style>html,body{background:#050606}#boot-screen{position:fixed;inset:0;z-index:100000;background:#050606;display:grid;place-items:center}#boot-screen[hidden]{display:none}.planet-sprite{width:96px;height:96px}</style>
 <script type="module" src="./planet-loader.mjs"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -395,9 +400,6 @@
 </aside>
 <script src="./assets/lib/gsap.min.js"></script>
 <script src="./assets/lib/howler.min.js"></script>
-<script type="importmap">
-{"imports":{"three":"./assets/lib/three.module.min.js","three/addons/controls/OrbitControls.js":"./assets/addons/OrbitControls.js"}}
-</script>
 <script type="module">
 import * as THREE from 'three';
 import { createEarthSurface } from './earth-surface.mjs';
@@ -879,8 +881,11 @@ function affinerTerre(){
     im.onerror = () => suite && essayer(suite, null);
     im.src = url;
   };
+  // la 8192 (~128 Mo decodes) reste aux postes a souris : sur iPad elle
+  // suffisait a faire recharger l'onglet par manque de memoire
   const hauteDefinition = WEBP_OK && PIXELS_RENDUS >= 1600
-    && moteur.capabilities.maxTextureSize >= 8192;
+    && moteur.capabilities.maxTextureSize >= 8192
+    && !matchMedia('(pointer: coarse)').matches;
   essayer(hauteDefinition ? './assets/textures/earth_color_8192.webp'
     : WEBP_OK ? './assets/textures/earth_color_4096.webp' : './assets/textures/earth_color_4096.jpg',
     WEBP_OK ? './assets/textures/earth_color_4096.jpg' : null);
@@ -2183,7 +2188,9 @@ champ.addEventListener('blur',  () => gsap.to(etatVerre, { force: 0.55, duration
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
 const timelineEl = document.getElementById('timeline');
-timelineEl.before(document.getElementById('accroche'));
+// l'invitation vit hors du dock : le dock est masque des qu'une fiche
+// s'ouvre, precisement quand l'invitation a comparer s'affiche
+document.body.append(document.getElementById('accroche'));
 const timelineRepere = document.createComment('timeline');
 timelineEl.before(timelineRepere);
 document.getElementById('dossier-score').setAttribute('aria-hidden', 'true');
@@ -3945,11 +3952,16 @@ addEventListener('resize', () => {
     camera.position.setLength(CAMERA_ACCUEIL.length());
     if (!introOrbit?.isActive()) reprendreRotation();
   }
+  // zoom navigateur ou fenetre passee d'un ecran Retina a un ecran 1x
+  moteur.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   moteur.setSize(innerWidth, innerHeight);
   const pr = moteur.getPixelRatio();
   cibles.forEach(c => c.setSize(innerWidth * pr, innerHeight * pr));
 });
-addEventListener('pagehide', () => {
+addEventListener('pagehide', e => {
+  // page mise en cache (retour arriere Safari/Firefox/Chrome) : rien a detruire,
+  // la boucle reprend seule au retour ; detruire ici figeait le globe
+  if (e.persisted) return;
   cancelAnimationFrame(compteurImages);
   scene.traverse(o => {
     if (o.geometry) o.geometry.dispose();

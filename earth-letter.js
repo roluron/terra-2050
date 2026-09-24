@@ -4,7 +4,9 @@ import { language, getText, message, openLanguage } from './i18n.mjs';
 const shell = document.querySelector('#earth-shell');
 shell.showModal();
 shell.addEventListener('cancel', event => event.preventDefault());
-shell.addEventListener('keydown', event => event.stopPropagation());
+// Chrome 120+ n'accepte l'annulation de `cancel` qu'une fois : au second
+// Echap le dialogue se fermait et l'intro restait a moitie jouee
+shell.addEventListener('keydown', event => { event.stopPropagation(); if (event.key === 'Escape') event.preventDefault(); });
 const letter = document.querySelector('#letter');
 const future = document.querySelector('#future');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
