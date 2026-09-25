@@ -30,8 +30,10 @@ for (const [name, engine, options] of [
       await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), 'fr');
     } else {
+      // un seul toucher confirme la langue (language-click.mjs) : le second visait un
+      // dialogue deja ferme, et passait ou non selon la vitesse de fermeture
       await page.locator('#language-options input[value="en"]').tap();
-      await page.locator('#language-options input:checked').tap();
+      await page.locator('#language-dialog').waitFor({state:'hidden'});
     }
     await discover(page);
     await page.locator('#future').click();
