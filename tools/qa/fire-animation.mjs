@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, openFilters } from './entrance.cjs';
 
 const out = process.env.QA_SORTIE || '/tmp/terra-fire-animation';
 fs.mkdirSync(out, { recursive: true });
@@ -13,6 +13,7 @@ page.on('pageerror', e => errors.push(e.message));
 try {
   await page.goto(process.env.URL0 || 'http://localhost:8087/');
   await enter(page);
+  await openFilters(page);
   await page.locator('.calque[data-cle="feux"]').click();
   if (await page.locator('#pedago').isVisible()) await page.locator('#pedago-fermer').click();
   for (const year of [2026, 2050]) {

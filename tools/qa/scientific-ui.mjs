@@ -4,7 +4,7 @@ import { chromium, webkit, devices } from 'playwright';
 import { enter } from './entrance.cjs';
 
 const base = process.env.URL0 || 'http://localhost:8087/';
-const out = process.env.QA_SORTIE || '/Users/robinmahieux/Documents/Codex/2026-09-07/new-chat/outputs/scientific-ui';
+const out = process.env.QA_SORTIE || (process.env.QA_SORTIE||'/tmp/terra-qa')+'/outputs/scientific-ui';
 await fs.mkdir(out, { recursive: true });
 const results = [];
 for (const [name, engine, options] of [

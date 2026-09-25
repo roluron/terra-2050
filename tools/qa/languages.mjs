@@ -40,7 +40,8 @@ for (const [name, engine, options] of [
       await page.locator(`#language-options input[value="${code}"]`).click();
       await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), code);
-      assert.equal(await page.locator('#earth-shell h1').textContent(), text.ui.letterTitle);
+      // le titre porte aussi ses glyphes de decodage (.glyphs, aria-hidden) : on lit le texte seul
+      assert.equal(await page.locator('#earth-shell h1').evaluate(el => { const c = el.cloneNode(true); c.querySelectorAll('.glyphs').forEach(g => g.remove()); return c.textContent; }), text.ui.letterTitle);
       await discover(page);
       await page.waitForFunction(() => Number(getComputedStyle(document.querySelector('#future')).opacity) > .99);
       await page.locator('#earth-shell h1').click();

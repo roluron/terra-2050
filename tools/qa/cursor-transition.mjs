@@ -4,7 +4,7 @@ import {discover} from './entrance.cjs';
 const browser=await chromium.launch({headless:false});
 try{
  const page=await browser.newPage({viewport:{width:1280,height:900}});
- await page.goto('http://127.0.0.1:8088/?lang=en');
+ await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');
  await page.locator('#language-options label').first().hover();await page.waitForTimeout(150);
  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'Language dialog keeps the native cursor');
  await discover(page);
@@ -13,7 +13,7 @@ try{
  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'CTA keeps its underline, without magnetic rectangle');
  const line=await page.locator('#future').evaluate(el=>{const s=getComputedStyle(el,'::after');return {content:s.content,height:s.height,width:s.width}});
  assert.equal(line.height,'1px');assert.notEqual(line.content,'none');assert.ok(parseFloat(line.width)>50);
- await page.screenshot({path:'/Users/robinmahieux/Documents/Codex/2026-09-16/t/outputs/future-underline.png'});
+ await page.screenshot({path:(process.env.QA_SORTIE||'/tmp/terra-qa')+'/outputs/future-underline.png'});
  await page.locator('#future').click();await page.mouse.move(650,450);await page.waitForTimeout(100);
  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'No cursor stranded during departure');
  await page.waitForFunction(()=>!document.querySelector('#earth-shell').open,{},{timeout:20000});

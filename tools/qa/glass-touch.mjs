@@ -9,8 +9,9 @@ for(const [name,engine,options] of [
  const tap=async selector=>page.locator(selector).tap();
  const shot=async suffix=>{await page.waitForTimeout(650);await page.screenshot({path:`${out}/${name}-${suffix}.png`});};
  const glass=async selector=>{
-  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
-  assert.match(surface.background,/gradient/);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
+  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,tint:s.backgroundColor,blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
+  // depuis a9462fd le verre est une teinte unie translucide (--glass-surface), plus un degrade
+  assert.ok(/gradient/.test(surface.background)||/rgba\([^)]*,\s*0?\.\d+\)/.test(surface.tint),`${selector}: verre opaque ${surface.tint}`);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
  };
  const target=async selector=>{for(const item of await page.locator(selector).all()){const b=await item.boundingBox();assert.ok(b&&b.height>=44&&b.width>=44,`${selector}: ${JSON.stringify(b)}`);}};
  try{

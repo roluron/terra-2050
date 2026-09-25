@@ -7,7 +7,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
  try{
   const page=await browser.newPage(options),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error(name,e.message)});
   if(name==='mobile')await page.route('**/howler.min.js',route=>route.abort());
-  await page.goto('http://127.0.0.1:8088/?lang=en');await page.locator('#language-dialog').waitFor();await welcome(page);await page.mouse.move(0,0);await page.waitForTimeout(3000);
+  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await page.locator('#language-dialog').waitFor();await welcome(page);await page.mouse.move(0,0);await page.waitForTimeout(3000);
   assert.ok(await page.locator('h1 .word').count());
   assert.equal(await page.locator('#letter>p').count(),3);
   if(name==='desktop'){
@@ -16,7 +16,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
    assert.ok(blocks[1].opacity>blocks[2].opacity,'First paragraph appears before second');
   }
   assert.equal(await page.locator('#earth-shell .latin').evaluateAll(es=>es.some(e=>Number(getComputedStyle(e).opacity)>0)),false);
-  await page.screenshot({path:'/Users/robinmahieux/Documents/Codex/2026-09-16/t/work/instagram/'+name+'-mystery.png'});
+  await page.screenshot({path:(process.env.QA_SORTIE||'/tmp/terra-qa')+'/work/instagram/'+name+'-mystery.png'});
   await page.waitForFunction(()=>window.terraIntro?.ready(),null,{timeout:30000}).catch(async error=>{console.error(await page.evaluate(()=>({ready:window.terraIntro?.ready(),progress:document.querySelector('#jauge')?.textContent,resources:performance.getEntriesByType('resource').filter(r=>r.duration>3000).map(r=>r.name)})));throw error});
   for(const word of await page.locator('#earth-shell .word').all())await word.focus();
   await page.waitForSelector('#earth-shell.complete');

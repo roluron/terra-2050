@@ -8,7 +8,7 @@ assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},0),{x:0,y:5});
 assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},1),{x:10,y:15});
 {
   let next, ready = false, completed = 0;
-  Object.assign(globalThis,{innerWidth:800,innerHeight:600,devicePixelRatio:1,document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){}});
+  Object.assign(globalThis,{innerWidth:800,innerHeight:600,devicePixelRatio:1,document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){},matchMedia:()=>({matches:false,addEventListener(){},removeEventListener(){}})});
   startOrb({getContext:()=>null},[],{ready:()=>ready,points:()=>[],materialize(){},complete(){completed++;}});
   const now=performance.now();
   next(now+100);assert.equal(completed,0);

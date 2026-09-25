@@ -23,7 +23,10 @@ for(const [name,engine,options] of [
   await page.screenshot({path:`${out}/${name}-light-a.png`});
   await page.waitForTimeout(1000);
   const after=await card.evaluate(e=>getComputedStyle(e,'::before').transform);
-  assert.equal(before===after,name==='desktop-reduced');
+  // le halo derivant de la carte est masque depuis a9462fd (premium.css) : il
+  // ne doit ni s'afficher ni bouger, quel que soit le reglage de mouvement
+  assert.equal(await card.evaluate(e=>getComputedStyle(e,'::before').display),'none');
+  assert.equal(before,after);
   await page.screenshot({path:`${out}/${name}-light-b.png`});
   if(name.startsWith('desktop')){
    const b=await card.boundingBox();await page.mouse.move(b.x+30,b.y+30);await page.waitForTimeout(100);

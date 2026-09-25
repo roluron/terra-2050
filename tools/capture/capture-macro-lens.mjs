@@ -1,6 +1,6 @@
 import {chromium} from 'playwright';
 import {readFile,writeFile} from 'node:fs/promises';
-const root='/Users/robinmahieux/Documents/Codex/2026-09-16/t',work=root+'/work/instagram',name='13-macro-planet-lens';
+const root=process.env.CAPTURE_ROOT||'/tmp/terra-capture',work=root+'/work/instagram',name='13-macro-planet-lens';
 const html=(await readFile(root+'/outputs/cursor-lab.html','utf8')).replace('const cx=w<700?w*.74:w*.73,cy=h*.47,r=Math.min(w*.36,h*.37)','const cx=w*.5,cy=h*.72,r=w*.64').replace('r=down?18:25','r=240').replace('lens(fx,fy,r,.22)','lens(fx,fy,r,.76)').replace('vx=Math.min(2.6,speed*.12)','vx=0').replaceAll('#cceaff99','#ffffffbb').replaceAll('#f2b8de66','#ffffff77');
 const browser=await chromium.launch({headless:false});
 const context=await browser.newContext({viewport:{width:1080,height:1080},recordVideo:{dir:work,size:{width:1080,height:1080}}});

@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, openFilters } from './entrance.cjs';
 
-const out = process.env.QA_SORTIE || '/Users/robinmahieux/Documents/Codex/2026-09-07/new-chat/outputs/scientific-maps';
+const out = process.env.QA_SORTIE || (process.env.QA_SORTIE||'/tmp/terra-qa')+'/outputs/scientific-maps';
 await fs.mkdir(out, { recursive: true });
 const result = { errors: [], failures: [], runtimeHashes: {}, method: 'Production materials, isolated globe renders; fixed camera/time/light, no atmosphere, markers, DOM or postprocessing. Separate real UI video.' };
 async function probe() {
@@ -114,6 +114,7 @@ await page.route('**/*',async route=>{
 });
 try {
   await page.goto(process.env.URL0||'http://localhost:8087/');await enter(page);
+  await openFilters(page);
   await page.locator('.calque[data-cle="chaleur"]').click();
   if(await page.locator('#pedago').isVisible())await page.locator('#pedago-fermer').click();
   await page.waitForFunction(()=>globalThis.__mapsReady(),null,{timeout:30000});
@@ -121,7 +122,9 @@ try {
   for(const image of audit.images)await fs.writeFile(`${out}/${image.name}.png`,Buffer.from(image.data.split(',')[1],'base64'));
   delete audit.images;Object.assign(result,audit);
   for(const key of ['chaleur','secheresse','stabilite','mer','fleuves','feux']){
+    await openFilters(page);
     for(const active of await page.locator('.calque.actif').all())await active.click();
+    await openFilters(page);
     await page.locator(`.calque[data-cle="${key}"]`).click();
     if(await page.locator('#pedago').isVisible())await page.locator('#pedago-fermer').click();
     await page.locator('#curseur').focus();await page.keyboard.press('Home');await page.waitForTimeout(700);

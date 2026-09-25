@@ -105,6 +105,7 @@ Quatre pièges rencontrés, à ne pas réintroduire :
 | `terra-menus.css` | Couche de design par-dessus les styles de base inline dans `index.html`. Les règles tardives gagnent : le fichier se lit du haut vers le bas comme une suite de passes. |
 | `tools/pipeline.py` | Pipeline hors-ligne : sources climatiques brutes → `data/`. Ne tourne jamais dans le navigateur. |
 | `tools/pays_raster.py` | Grille des pays (`data/pays.png`, `data/pays_index.json`) depuis Natural Earth 50 m, pour le survol du globe. Autonome, ~1 s. |
+| `tools/capture/` | Scripts d'enregistrement des vidéos (démo, boucles Instagram) : navigateur fenêtré, vidéo 1080×1080. Ce ne sont pas des tests, `tools/check.py` ne les lance pas. Sorties dans `$CAPTURE_ROOT` ou `$QA_SORTIE` (par défaut `/tmp`). `capture-instagram*` et `capture-macro-lens` demandent en plus la maquette `cursor-lab.html` servie sur le port 8091, absente du dépôt. |
 | `data/` | Sorties du pipeline (voir formats ci-dessous). |
 | `assets/` | Librairies vendorées, textures, sons, polices, icônes. |
 | `.agent/` | Contrat de complétion : objectif, critères d'acceptation, état, preuves. |
