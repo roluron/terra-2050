@@ -5,6 +5,8 @@ import assert from 'node:assert/strict';
 import { chromium, webkit, devices } from 'playwright';
 
 const url = process.env.URL0 || 'http://localhost:8080/';
+// les pages attendent 'domcontentloaded' puis #voile.pret : 'load' attend aussi la
+// feuille Google Fonts importee par earth-letter.css, qui a depasse 30 s sur la CI
 const out = process.env.QA_SORTIE || fs.mkdtempSync(os.tmpdir() + '/terra-interactions-');
 fs.mkdirSync(out, { recursive: true });
 const results = [];
@@ -26,7 +28,7 @@ for (const [name, type, options] of [
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#voile.pret', { state: 'attached' }).catch(error => {
       console.error('Startup errors:', errors); throw error;
     });
@@ -86,7 +88,7 @@ for (const [name, type, options] of [
       await page.click('#story-fermer');
     });
     await check(`${name}: browser back closes dossier; forward reopens`, async () => {
-      await page.goto(url);
+      await page.goto(url, { waitUntil: 'domcontentloaded' });
       await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
       await search('Paris');
       await page.goBack();
@@ -141,7 +143,7 @@ await check('iphone SE: search remains tappable after history and story', async 
   const browser = await webkit.launch({ executablePath: webkit.executablePath() });
   try {
     const page = await browser.newPage({ ...devices['iPhone SE'], locale: 'en-US' });
-    await page.goto(url); await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
+    await page.goto(url, { waitUntil: 'domcontentloaded' }); await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
     await page.click('#champ-recherche'); await page.fill('#champ-recherche', 'Paris');
     await page.getByRole('option').filter({ hasText: 'Paris' }).first().click();
     await page.waitForTimeout(4200);

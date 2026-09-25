@@ -8,7 +8,7 @@ assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},0),{x:0,y:5});
 assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},1),{x:10,y:15});
 {
   let next, ready = false, completed = 0;
-  Object.assign(globalThis,{innerWidth:800,innerHeight:600,devicePixelRatio:1,document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){}});
+  Object.assign(globalThis,{innerWidth:800,innerHeight:600,devicePixelRatio:1,document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){},matchMedia:()=>({matches:false,addEventListener(){},removeEventListener(){}})});
   startOrb({getContext:()=>null},[],{ready:()=>ready,points:()=>[],materialize(){},complete(){completed++;}});
   const now=performance.now();
   next(now+100);assert.equal(completed,0);
@@ -160,7 +160,9 @@ for (const [name, engine, configuration] of [
       const revealed = await page.evaluate(() => window.__filterReveal);
       assert.ok(revealed[0] > result.duration, 'Filters appear after the Earth transition');
       assert.ok(revealed.every((time, i) => !i || time >= revealed[i - 1]), 'Filters enter in order: ' + JSON.stringify(revealed));
-      assert.ok(new Set(revealed).size >= 4 && revealed.at(-1) - revealed[0] >= 700,
+      // sur un runner lent (~1,5 image/s) sept filtres tombent sur 3 images : l'etalement se
+      // juge a l'ordre et a la duree, le nombre d'images distinctes suit la cadence
+      assert.ok(new Set(revealed).size >= 3 && revealed.at(-1) - revealed[0] >= 700,
         'Filter reveal remains visibly staggered across sampled frames: ' + JSON.stringify(revealed));
       result.filterRevealTimes = revealed;
     }

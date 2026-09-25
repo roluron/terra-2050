@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import {writeFile,readFile} from 'node:fs/promises';
-import {enter} from './entrance.cjs';
-const work='/Users/robinmahieux/Documents/Codex/2026-09-16/t/work/instagram';
+import {enter} from '../qa/entrance.cjs';
+const work=(process.env.QA_SORTIE||'/tmp/terra-qa')+'/work/instagram';
 const browser=await chromium.launch({headless:false}),cuts=JSON.parse(await readFile(work+'/cuts-more.json','utf8').catch(()=>'[]'));
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function years(page,selector,start,end,duration){const began=Date.now();while(Date.now()-began<duration){const t=Math.min(1,(Date.now()-began)/duration),v=Math.round(start+(end-start)*t*t*(3-2*t));await page.locator(selector).evaluate((el,v)=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))},v);await sleep(40)}await page.locator(selector).evaluate((el,v)=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))},end)}
@@ -9,7 +9,7 @@ for(const name of ['04-year-ruler','05-summer-heat','06-one-planet','07-language
  if(process.env.SHOTS&&!process.env.SHOTS.split(',').includes(name))continue;
  const context=await browser.newContext({viewport:{width:1080,height:1080},recordVideo:{dir:work,size:{width:1080,height:1080}}});
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:8088/?lang=en');await page.evaluate(()=>document.fonts.ready);
+ await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await page.evaluate(()=>document.fonts.ready);
  let began;
  if(name==='07-languages'){
   await page.locator('#language-dialog').waitFor();

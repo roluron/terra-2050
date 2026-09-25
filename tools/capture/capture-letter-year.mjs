@@ -1,11 +1,11 @@
 import {chromium} from 'playwright';
 import {writeFile} from 'node:fs/promises';
-import {welcome} from './entrance.cjs';
-const work='/Users/robinmahieux/Documents/Codex/2026-09-16/t/work/instagram';
+import {welcome} from '../qa/entrance.cjs';
+const work=(process.env.QA_SORTIE||'/tmp/terra-qa')+'/work/instagram';
 const browser=await chromium.launch({headless:false});
 const context=await browser.newContext({viewport:{width:1080,height:1080},recordVideo:{dir:work,size:{width:1080,height:1080}}});
 const page=await context.newPage(),sleep=ms=>new Promise(r=>setTimeout(r,ms));
-await page.goto('http://127.0.0.1:8088/?lang=en');await page.locator('#language-dialog').waitFor();await page.evaluate(()=>document.fonts.ready);
+await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await page.locator('#language-dialog').waitFor();await page.evaluate(()=>document.fonts.ready);
 await page.addStyleTag({content:'.glass-cursor,#survol,#etiquettes,#titre,#recherche,#util,#globe-dock,#accroche{display:none!important}#earth-letter-main{width:820px!important;padding:0!important}#earth-shell h1{font-size:64px!important;margin-bottom:65px!important}#earth-shell .letter{font-size:29px!important;line-height:1.42!important}#earth-shell .signature{font-size:32px!important;margin-top:44px!important}#earth-shell h1,#earth-shell .letter p{animation:none;opacity:0;filter:blur(8px)}body.video-year #globe-dock{display:block!important}body.video-year #globe-dock>*:not(#timeline){display:none!important}body.video-year #globe-dock>#timeline{bottom:42px!important;width:280px!important;animation:video-year-in 1.5s ease both}#timeline .an{font-size:80px!important;white-space:nowrap!important}@keyframes video-year-in{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}'});
 await welcome(page);await page.mouse.move(0,0);
 await page.locator('#earth-shell h1,#letter>p').evaluateAll(nodes=>nodes.forEach(el=>{

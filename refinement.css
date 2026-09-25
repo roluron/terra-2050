@@ -92,5 +92,5 @@ body:has(#city-comparison[open],#story-popup:not([hidden])) #dossier{visibility:
  #language-dialog{padding:16px}.language-content{max-height:calc(100dvh - 32px);padding:22px}.language-globe{width:48px;height:48px;margin-bottom:14px}#language-title{font-size:28px;margin-bottom:20px}
 }
 @media(prefers-reduced-transparency:reduce){:root{--glass-tint:#101a21}}
-@supports not (backdrop-filter:blur(1px)){:root{--glass-tint:#101a21}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--glass-tint:#101a21}}
 @media(prefers-reduced-motion:reduce){#map-toggle svg,#map-inspector #calques .calque{transition:none}}

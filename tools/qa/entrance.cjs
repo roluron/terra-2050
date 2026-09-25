@@ -33,3 +33,13 @@ exports.enter = async function(page, repeated = false) {
     throw error;
   });
 };
+// Les filtres vivent dans un panneau replie derriere #map-toggle : l'ouvrir
+// avant de cliquer un .calque, sans le refermer s'il est deja ouvert.
+exports.openFilters = async function(page) {
+  const toggle = page.locator('#map-toggle');
+  if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click();
+  await page.locator('#calques').waitFor({state:'visible'});
+};
+// Fenetre visible sur le runner macOS : Chrome la croit masquee et suspend
+// requestAnimationFrame, ce qui fige les animations lissees (curseur, regle).
+exports.chromeArgs = ['--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding', '--disable-background-timer-throttling'];

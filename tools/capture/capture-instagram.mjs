@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import {mkdir,writeFile} from 'node:fs/promises';
-import {discover,welcome} from './entrance.cjs';
-const root='/Users/robinmahieux/Documents/Codex/2026-09-16/t';
+import {discover,welcome} from '../qa/entrance.cjs';
+const root=process.env.CAPTURE_ROOT||'/tmp/terra-capture';
 const work=root+'/work/instagram';
 await mkdir(work,{recursive:true});
 const browser=await chromium.launch({headless:false});
@@ -16,7 +16,7 @@ for(const name of ['01-cursor','02-earth-letter','03-transformation']){
  const context=await browser.newContext({viewport:{width:1080,height:1080},deviceScaleFactor:1,recordVideo:{dir:work,size:{width:1080,height:1080}}});
  const page=await context.newPage();
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(name==='01-cursor'?'http://127.0.0.1:8091/outputs/cursor-lab.html':'http://127.0.0.1:8088/?lang=en');
+ await page.goto(name==='01-cursor'?'http://127.0.0.1:8091/outputs/cursor-lab.html':(process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');
  await page.evaluate(()=>document.fonts.ready);
  let began;
  if(name==='01-cursor'){

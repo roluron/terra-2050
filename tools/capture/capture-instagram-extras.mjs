@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import {writeFile,readFile} from 'node:fs/promises';
-import {welcome} from './entrance.cjs';
-const work='/Users/robinmahieux/Documents/Codex/2026-09-16/t/work/instagram';
+import {welcome} from '../qa/entrance.cjs';
+const work=(process.env.QA_SORTIE||'/tmp/terra-qa')+'/work/instagram';
 const browser=await chromium.launch({headless:false}),cuts=JSON.parse(await readFile(work+'/cuts-extras.json','utf8').catch(()=>'[]'));
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function glide(p,a,b,ms){const start=Date.now();while(Date.now()-start<ms){const t=Math.min(1,(Date.now()-start)/ms),k=t*t*(3-2*t);await p.mouse.move(a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k);await sleep(20)}}
@@ -9,7 +9,7 @@ for(const name of ['09-hello-to-earth','10-lens-close-up','11-earth-halo','12-de
  if(process.env.SHOTS&&!process.env.SHOTS.split(',').includes(name))continue;
  const context=await browser.newContext({viewport:{width:1080,height:1080},recordVideo:{dir:work,size:{width:1080,height:1080}}}),page=await context.newPage();
  const demo=name.startsWith('10')||name.startsWith('11');
- await page.goto(demo?'http://127.0.0.1:8091/outputs/cursor-lab.html':'http://127.0.0.1:8088/?lang=en');await page.evaluate(()=>document.fonts.ready);
+ await page.goto(demo?'http://127.0.0.1:8091/outputs/cursor-lab.html':(process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await page.evaluate(()=>document.fonts.ready);
  let began;
  if(demo){
   await page.waitForFunction(()=>texture!==null);

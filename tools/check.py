@@ -40,7 +40,12 @@ def lancer(nom, argv, env=None):
         encoding="utf8")
     print(f"{etat}  {nom}  (code {r.returncode})", flush=True)
     if r.returncode != 0:
-        for ligne in (r.stdout + r.stderr).strip().splitlines()[-12:]:
+        lignes = (r.stdout + r.stderr).strip().splitlines()
+        # un scenario qui enchaine des sous-controles peut echouer bien avant
+        # ses 12 dernieres lignes : les echecs nommes sont montres d'abord
+        for ligne in [l for l in lignes[:-12] if '"pass":false' in l or "AssertionError" in l][:6]:
+            print("       ! " + ligne[:400])
+        for ligne in lignes[-12:]:
             print("       | " + ligne)
     return int(r.returncode != 0)
 

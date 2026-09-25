@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { chromium, webkit, devices } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, openFilters } from './entrance.cjs';
 
 const out = process.env.QA_SORTIE || '/tmp/terra-map-evolution';
 await fs.mkdir(out,{recursive:true});
@@ -16,7 +16,7 @@ for(const mobile of [false,true]){
  try{
   await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=it');await enter(page);
   for(const key of keys){
-   await page.locator('#map-toggle').click();
+   await openFilters(page);
    await page.locator(`.calque[data-cle="${key}"]`).click();
    if(await page.locator('#pedago').isVisible())await page.locator('#pedago-fermer').click();
    assert.equal(await page.locator('.calque.actif').count(),1);
@@ -34,6 +34,7 @@ for(const mobile of [false,true]){
    assert.deepEqual(geometry,{overlap:false,panelOutside:false,overflow:false});
    await page.screenshot({path:`${out}/${name}-${key}-2050.png`});
   }
+  await openFilters(page);
   await page.locator('#map-method summary').click();
   await page.screenshot({path:`${out}/${name}-sources.png`});
   await page.locator('#map-method summary').click();

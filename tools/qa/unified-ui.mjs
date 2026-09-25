@@ -1,10 +1,10 @@
 import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import {enter} from './entrance.cjs';
+import {enter,chromeArgs} from './entrance.cjs';
 const out=process.env.QA_SORTIE||'/tmp/terra-unified';await fs.mkdir(out,{recursive:true});
 for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,height:900},deviceScaleFactor:2}],['phone',webkit,devices['iPhone SE']]]){
- const browser=await engine.launch({headless:false});
+ const browser=await engine.launch({headless:false,...(engine===chromium?{args:chromeArgs}:{})});
  try{
   const page=await browser.newPage(options),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(()=>{
@@ -13,7 +13,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
    Object.defineProperty(CanvasRenderingContext2D.prototype,'font',{...font,set(value){if(this.canvas.width===1080&&this.canvas.height===1920)storyFonts.push(value);font.set.call(this,value);}});
    Object.defineProperty(navigator,'canShare',{value:()=>false});
   });
-  await page.goto('http://127.0.0.1:8088/?lang=en');await enter(page);
+  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await enter(page);
   const year=await page.locator('#an').boundingBox(),filter=await page.locator('#map-inspector').boundingBox(),search=await page.locator('#champ-recherche').boundingBox(),gear=await page.locator('#bouton-reglages').boundingBox();
   assert.ok(Math.abs(year.x+year.width/2-page.viewportSize().width/2)<1,'Year is independently centered');
   assert.ok(filter.x<30&&filter.x+filter.width<year.x,'Filters remain left of year');
@@ -26,8 +26,12 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   for(const key of ['Home','End']){
    await page.locator('#comparison-year').focus();await page.keyboard.press(key);await page.waitForTimeout(700);
    assert.equal(await page.locator('#curseur').inputValue(),await page.locator('#comparison-year').inputValue());
+   // la barre de l'annee active s'allonge par interpolation (22 % par image, year-ruler.mjs) :
+   // on attend son etat final au lieu de la lire apres un delai fixe
+   const indice=key==='Home'?0:24;
+   await page.waitForFunction(i=>/3\.0|3\.1/.test(document.querySelectorAll('.compare-time .regle i')[i].style.transform),indice,{timeout:30000}).catch(()=>{});
    const bars=await page.locator('.compare-time .regle i').evaluateAll(es=>es.map(e=>e.style.transform));
-   assert.match(bars[key==='Home'?0:24],/3\.0|3\.1/);
+   assert.match(bars[indice],/3\.0|3\.1/);
   }
   await page.screenshot({path:`${out}/${name}-comparison.png`});await page.locator('.compare-close').click();
   await page.locator('#dossier-story').click();await page.waitForFunction(()=>!document.getElementById('story-partager').disabled);

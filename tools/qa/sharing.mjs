@@ -47,7 +47,7 @@ for (const [name, type, options, native, mode] of [
     const year = await page.locator('#curseur').inputValue();
     if (mode === 'delay') assert.equal(await page.locator('#story-partager').isDisabled(), true);
     if (mode === 'fail') {
-      await page.getByRole('button', { name: 'Retry image ↻' }).waitFor();
+      await page.getByRole('button', { name: 'Retry image' }).waitFor();
       await page.click('#story-partager');
     }
     await page.waitForFunction(() => !document.querySelector('#story-partager').disabled);
