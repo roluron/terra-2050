@@ -11,6 +11,9 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   assert.ok(await page.locator('h1 .word').count());
   assert.equal(await page.locator('#letter>p').count(),3);
   if(name==='desktop'){
+   // sur un runner lent, rien n'est encore apparu apres 3 s : on attend que le premier
+   // paragraphe commence a se montrer avant de le comparer au second
+   await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector('#letter>p')).opacity)>.02,null,{timeout:20000});
    const blocks=await page.locator('#earth-shell h1,#letter>p').evaluateAll(es=>es.map(e=>({delay:parseFloat(getComputedStyle(e).animationDelay),opacity:Number(getComputedStyle(e).opacity)})));
    assert.ok(blocks.every((b,i)=>!i||b.delay>blocks[i-1].delay),'Paragraphs arrive in order');
    assert.ok(blocks[1].opacity>blocks[2].opacity,'First paragraph appears before second');

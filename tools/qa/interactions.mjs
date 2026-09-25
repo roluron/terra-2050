@@ -26,7 +26,7 @@ for (const [name, type, options] of [
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'domcontentloaded' }); // 'load' attend aussi la feuille Google Fonts, qui peut trainer
     await page.waitForSelector('#voile.pret', { state: 'attached' }).catch(error => {
       console.error('Startup errors:', errors); throw error;
     });
@@ -86,7 +86,7 @@ for (const [name, type, options] of [
       await page.click('#story-fermer');
     });
     await check(`${name}: browser back closes dossier; forward reopens`, async () => {
-      await page.goto(url);
+      await page.goto(url, { waitUntil: 'domcontentloaded' }); // 'load' attend aussi la feuille Google Fonts, qui peut trainer
       await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
       await search('Paris');
       await page.goBack();
@@ -141,7 +141,7 @@ await check('iphone SE: search remains tappable after history and story', async 
   const browser = await webkit.launch({ executablePath: webkit.executablePath() });
   try {
     const page = await browser.newPage({ ...devices['iPhone SE'], locale: 'en-US' });
-    await page.goto(url); await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
+    await page.goto(url, { waitUntil: 'domcontentloaded' }); // 'load' attend aussi la feuille Google Fonts, qui peut trainer await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
     await page.click('#champ-recherche'); await page.fill('#champ-recherche', 'Paris');
     await page.getByRole('option').filter({ hasText: 'Paris' }).first().click();
     await page.waitForTimeout(4200);
