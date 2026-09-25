@@ -40,3 +40,6 @@ exports.openFilters = async function(page) {
   if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click();
   await page.locator('#calques').waitFor({state:'visible'});
 };
+// Fenetre visible sur le runner macOS : Chrome la croit masquee et suspend
+// requestAnimationFrame, ce qui fige les animations lissees (curseur, regle).
+exports.chromeArgs = ['--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding', '--disable-background-timer-throttling'];

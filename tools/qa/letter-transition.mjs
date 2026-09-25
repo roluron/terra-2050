@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import {chromium,webkit,devices} from 'playwright';
-import {welcome,discover} from './entrance.cjs';
+import {welcome,discover,chromeArgs} from './entrance.cjs';
 for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,height:900}}],['mobile',webkit,{...devices['iPhone 15 Pro'],reducedMotion:'reduce'}]]){
  if(process.env.TARGET&&process.env.TARGET!==name)continue;
- const browser=await engine.launch({headless:false});
+ const browser=await engine.launch({headless:false,...(engine===chromium?{args:chromeArgs}:{})});
  try{
   const page=await browser.newPage(options),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error(name,e.message)});
   if(name==='mobile')await page.route('**/howler.min.js',route=>route.abort());

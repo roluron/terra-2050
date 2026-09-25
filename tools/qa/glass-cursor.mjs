@@ -1,8 +1,8 @@
 import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
-import {enter} from './entrance.cjs';
+import {enter,chromeArgs} from './entrance.cjs';
 for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,height:900}}],['phone',webkit,devices['iPhone SE']]]){
- const browser=await engine.launch({headless:false});try{
+ const browser=await engine.launch({headless:false,...(engine===chromium?{args:chromeArgs}:{})});try{
  const page=await browser.newPage(options),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');
  await page.locator('#language-options label').first().hover();

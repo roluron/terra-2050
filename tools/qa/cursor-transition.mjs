@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
-import {discover} from './entrance.cjs';
-const browser=await chromium.launch({headless:false});
+import {discover,chromeArgs} from './entrance.cjs';
+const browser=await chromium.launch({headless:false,args:chromeArgs});
 try{
  const page=await browser.newPage({viewport:{width:1280,height:900}});
  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');

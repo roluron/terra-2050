@@ -1,10 +1,10 @@
 import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import {enter} from './entrance.cjs';
+import {enter,chromeArgs} from './entrance.cjs';
 const out=process.env.QA_SORTIE||'/tmp/terra-unified';await fs.mkdir(out,{recursive:true});
 for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,height:900},deviceScaleFactor:2}],['phone',webkit,devices['iPhone SE']]]){
- const browser=await engine.launch({headless:false});
+ const browser=await engine.launch({headless:false,...(engine===chromium?{args:chromeArgs}:{})});
  try{
   const page=await browser.newPage(options),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(()=>{
