@@ -160,7 +160,9 @@ for (const [name, engine, configuration] of [
       const revealed = await page.evaluate(() => window.__filterReveal);
       assert.ok(revealed[0] > result.duration, 'Filters appear after the Earth transition');
       assert.ok(revealed.every((time, i) => !i || time >= revealed[i - 1]), 'Filters enter in order: ' + JSON.stringify(revealed));
-      assert.ok(new Set(revealed).size >= 4 && revealed.at(-1) - revealed[0] >= 700,
+      // sur un runner lent (~1,5 image/s) sept filtres tombent sur 3 images : l'etalement se
+      // juge a l'ordre et a la duree, le nombre d'images distinctes suit la cadence
+      assert.ok(new Set(revealed).size >= 3 && revealed.at(-1) - revealed[0] >= 700,
         'Filter reveal remains visibly staggered across sampled frames: ' + JSON.stringify(revealed));
       result.filterRevealTimes = revealed;
     }

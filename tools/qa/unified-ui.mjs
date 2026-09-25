@@ -26,8 +26,12 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   for(const key of ['Home','End']){
    await page.locator('#comparison-year').focus();await page.keyboard.press(key);await page.waitForTimeout(700);
    assert.equal(await page.locator('#curseur').inputValue(),await page.locator('#comparison-year').inputValue());
+   // la barre de l'annee active s'allonge par interpolation (22 % par image, year-ruler.mjs) :
+   // on attend son etat final au lieu de la lire apres un delai fixe
+   const indice=key==='Home'?0:24;
+   await page.waitForFunction(i=>/3\.0|3\.1/.test(document.querySelectorAll('.compare-time .regle i')[i].style.transform),indice,{timeout:5000}).catch(()=>{});
    const bars=await page.locator('.compare-time .regle i').evaluateAll(es=>es.map(e=>e.style.transform));
-   assert.match(bars[key==='Home'?0:24],/3\.0|3\.1/);
+   assert.match(bars[indice],/3\.0|3\.1/);
   }
   await page.screenshot({path:`${out}/${name}-comparison.png`});await page.locator('.compare-close').click();
   await page.locator('#dossier-story').click();await page.waitForFunction(()=>!document.getElementById('story-partager').disabled);

@@ -9,9 +9,10 @@ for(const [name,engine,options] of [
  const tap=async selector=>page.locator(selector).tap();
  const shot=async suffix=>{await page.waitForTimeout(650);await page.screenshot({path:`${out}/${name}-${suffix}.png`});};
  const glass=async selector=>{
-  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,tint:s.backgroundColor,blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
+  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,tint:s.backgroundColor,reduced:matchMedia('(prefers-reduced-transparency: reduce)').matches,blurSupport:CSS.supports('backdrop-filter','blur(1px)')||CSS.supports('-webkit-backdrop-filter','blur(1px)'),blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
   // depuis a9462fd le verre est une teinte unie translucide (--glass-surface), plus un degrade
-  assert.ok(/gradient/.test(surface.background)||/rgba\([^)]*,\s*0?\.\d+\)/.test(surface.tint),`${selector}: verre opaque ${surface.tint}`);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
+  // « Réduire la transparence » (ou un navigateur sans flou) demande au contraire une surface opaque
+  assert.ok(surface.reduced||!surface.blurSupport||/gradient/.test(surface.background)||/rgba\([^)]*,\s*0?\.\d+\)/.test(surface.tint),`${selector}: verre opaque ${surface.tint} (reduce-transparency=${surface.reduced}, flou=${surface.blurSupport})`);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
  };
  const target=async selector=>{for(const item of await page.locator(selector).all()){const b=await item.boundingBox();assert.ok(b&&b.height>=44&&b.width>=44,`${selector}: ${JSON.stringify(b)}`);}};
  try{

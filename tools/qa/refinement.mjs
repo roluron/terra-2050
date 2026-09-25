@@ -25,8 +25,8 @@ for (const [name, engine, options] of [
     assert.equal(await page.locator('#language-dialog').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(5, 7, 7)'); // premium.css #050707 depuis a9462fd
     await page.screenshot({path:`${output}/${name}-language.png`});
     if (name === 'desktop') {
-      await page.locator('#language-options label').filter({hasText:'Français'}).hover();
-      await page.keyboard.press('Enter');
+      // le survol ne choisit plus de langue (language-click.mjs) : un clic confirme
+      await page.locator('#language-options label').filter({hasText:'Français'}).click();
       await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), 'fr');
     } else {

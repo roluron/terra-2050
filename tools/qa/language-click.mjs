@@ -13,11 +13,14 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   assert.equal(await page.locator('html').getAttribute('lang'),'it');
   assert.equal(await page.locator('#earth-shell').isVisible(),true);
   await page.evaluate(async()=>{(await import('/i18n.mjs')).openLanguage(()=>{});});
+  // la fleche droite choisit la langue suivante de la liste (chinois traditionnel
+  // arrive apres l'italien depuis a9462fd) : l'attente se lit dans la liste
+  const suivante=await page.locator('#language-options input').evaluateAll(inputs=>{const i=inputs.findIndex(x=>x.checked);return inputs[(i+1)%inputs.length].value;});
   await page.locator('#language-options input:checked').focus();await page.keyboard.press('ArrowRight');
   assert.equal(await page.locator('#language-dialog').isVisible(),true);
   assert.equal(await page.locator('html').getAttribute('lang'),'it');
   await page.keyboard.press('Enter');await page.locator('#language-dialog').waitFor({state:'hidden'});
-  assert.equal(await page.locator('html').getAttribute('lang'),'en');
+  assert.equal(await page.locator('html').getAttribute('lang'),suivante);
   await page.evaluate(async()=>{(await import('/i18n.mjs')).openLanguage(()=>{});});
   await page.locator('#language-options input:checked').click();await page.locator('#language-dialog').waitFor({state:'hidden'});
   assert.deepEqual(errors,[]);console.log(`PASS ${name}: browser-language default, no hover selection, one-click confirmation, same-language click, keyboard confirmation`);
