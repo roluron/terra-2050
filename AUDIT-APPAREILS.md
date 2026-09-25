@@ -75,6 +75,7 @@ aucune valeur de risque qui sort de sa carte. `tools/check.py` le trouve seul.
 
 ### Détails
 
+- `year-ruler.mjs` lisse les barres de 22 % **par image**, sans tenir compte du temps écoulé : sur un appareil lent (~1 image/s, vu sur la CI macOS), la règle met 20 s à se mettre en place. Un lissage fondé sur le temps (`1 - exp(-dt/τ)`, comme `glass-cursor.mjs`) le rendrait indépendant de la cadence.
 - « ⌘K » s'affiche aussi sur Windows/Linux. Il faudrait « Ctrl K » hors Mac.
 - À l'année de base, les fiches affichent « 2026 : 28,73 · 0 De Martonne » et « 0 °C · Évolution depuis 2026 » : autant masquer un écart nul.
 - Le champ de recherche de la comparaison n'a pas de placeholder.

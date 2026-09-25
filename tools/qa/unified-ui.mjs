@@ -29,7 +29,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
    // la barre de l'annee active s'allonge par interpolation (22 % par image, year-ruler.mjs) :
    // on attend son etat final au lieu de la lire apres un delai fixe
    const indice=key==='Home'?0:24;
-   await page.waitForFunction(i=>/3\.0|3\.1/.test(document.querySelectorAll('.compare-time .regle i')[i].style.transform),indice,{timeout:5000}).catch(()=>{});
+   await page.waitForFunction(i=>/3\.0|3\.1/.test(document.querySelectorAll('.compare-time .regle i')[i].style.transform),indice,{timeout:30000}).catch(()=>{});
    const bars=await page.locator('.compare-time .regle i').evaluateAll(es=>es.map(e=>e.style.transform));
    assert.match(bars[indice],/3\.0|3\.1/);
   }
