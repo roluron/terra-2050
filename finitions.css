@@ -1,0 +1,73 @@
+/* =====================================================================
+   FINITIONS — phase 1 du plan .agent/FINITIONS.md : les défauts visibles.
+   Chargée après premium.css, elle gagne sur les passes précédentes sans
+   les réécrire. Chaque bloc nomme le défaut qu'il corrige.
+   ===================================================================== */
+
+/* ---- lumière de pointeur sur le verre --------------------------------
+   premium.mjs écrivait --light-x/--light-y à chaque mouvement, mais aucune
+   règle ne les lisait : la lumière n'existait pas. Elle devient une couche
+   crème (la même que le point du curseur) posée sur la surface de verre,
+   qui s'allume au survol et s'éteint en fondu là où elle était. */
+@property --light-a { syntax:'<number>'; inherits:false; initial-value:0 }
+:is(#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages) {
+  --glass-surface:
+    radial-gradient(280px circle at var(--light-x,50%) var(--light-y,0%), rgb(255 253 226 / calc(var(--light-a) * .075)), transparent 70%),
+    linear-gradient(135deg,#daeaff18 0%,#ffffff06 38%,#8faab508 100%),
+    var(--glass-tint);
+  transition: --light-a .45s cubic-bezier(.165,.84,.44,1);
+}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+  :is(#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages):hover { --light-a:1 }
+}
+@media (prefers-reduced-transparency:reduce) {
+  :is(#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages) { --glass-surface:var(--glass-tint) }
+}
+
+/* ---- le rectangle derrière « 2026 » ----------------------------------
+   Le halo en text-shadow des chiffres était coupé net par .odo
+   (overflow-y:clip) : un rectangle clair à bords durs sur tous les écrans.
+   Le halo passe sur l'année entière, en dégradé radial, que rien ne coupe. */
+body:not(.dossier-ouvert) #timeline .an { text-shadow:none; position:relative }
+body:not(.dossier-ouvert) #timeline .an::before {
+  content:''; position:absolute; inset:-35% -20%; z-index:-1; pointer-events:none;
+  background:radial-gradient(closest-side, #d0d2d514, transparent);
+}
+
+/* ---- résultats de recherche : les lignes déjà là ne rejouent pas leur
+   entrée (index.html marque .reste), seules les nouvelles glissent ---- */
+#resultats li.reste { animation:none }
+
+/* ---- téléphone à l'horizontale ----------------------------------------
+   L'année en 80 px recouvrait la moitié du globe, et le text-align:right
+   hérité du bloc paysage la décalait de 11 px. Tout paysage bas, tactile
+   ou non : année réduite et centrée, le globe reprend sa place. */
+@media (max-height:500px) and (orientation:landscape) {
+  #globe-dock > #timeline, body.pret #globe-dock > #timeline {
+    left:50%; right:auto; transform:translateX(-50%); width:140px; text-align:center;
+    bottom:calc(10px + env(safe-area-inset-bottom));
+  }
+  #globe-dock #timeline .an { font-size:40px; text-align:center }
+  #globe-dock #timeline .an-distance { text-align:center }
+}
+
+/* ---- cartes de risque : l'unité passe à la ligne au lieu de déborder
+   (« 28.73 De Martonne » chevauchait la jauge à 768 px) ---- */
+#dossier .risk-reading { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:3px; white-space:normal; min-width:0 }
+#dossier .risk-reading small { margin-left:0; white-space:nowrap }
+
+/* ---- « Got it » et « Save as JPEG » : la pastille gardait la police mono
+   et le trait souligné de sa première version ---- */
+.entree-pedago { font:400 13px/1.4 var(--police); letter-spacing:0; text-transform:none }
+.entree-pedago::after { content:none }
+
+/* ---- champ de recherche : le curseur-point laisse place au caret ----- */
+body.curseur-verre :is(input:not([type=range],[type=radio],[type=checkbox]),textarea) { cursor:text !important }
+
+/* ---- curseur : positionné par transform (glass-cursor.mjs), matière au
+   tempo de la taille, et deux états nouveaux ---- */
+.glass-cursor { left:0; top:0; will-change:transform; transition-duration:.22s }
+/* au-dessus d'un champ texte, le point s'efface : le caret natif le remplace */
+.glass-cursor.texte { opacity:0; transition:opacity .12s }
+/* sur un contrôle désactivé : un anneau éteint, pas un bouton qui invite */
+.glass-cursor.point.eteint { background:transparent; border-color:#fffde260; box-shadow:none; opacity:.55 }

@@ -213,6 +213,7 @@
 </dialog>
 <link rel="stylesheet" href="./earth-letter.css">
 <link rel="stylesheet" href="./premium.css">
+<link rel="stylesheet" href="./finitions.css">
 <script type="module" src="./premium.mjs"></script>
 <script type="module" src="./earth-letter.js"></script>
 <canvas id="scene"></canvas>
@@ -1008,7 +1009,7 @@ const uniformsGlobe = {
   uTemps:      { value: 0 },
   uProgression:{ value: 0 },                          // timeline 2026→2050 → 0..1
   uChange: { value: 1 },
-  uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },
+  uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },   // recalé sur la caméra à chaque image
   uChaleur:    { value: 0 },
   uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
   uDeclin: { value: 0 },
@@ -1078,6 +1079,11 @@ const matGlobe = new THREE.ShaderMaterial({
       float lambert = max(dot(vN, uSoleil), 0.0);
       vec3 vue = normalize(cameraPosition - vPm);
       float fresnel = pow(1.0 - max(dot(vN, vue), 0.0), 3.0);
+      // volume : un terminateur adouci et un reflet crème sur l'eau. Le soleil
+      // suit la caméra (en haut à gauche, comme les arêtes du verre) : la face
+      // regardée n'entre jamais dans la nuit, seul le limbe opposé s'assombrit
+      float jour = smoothstep(-0.25, 0.45, dot(vN, uSoleil));
+      float reflet = pow(max(dot(vN, normalize(uSoleil + vue)), 0.0), 70.0) * (1.0 - terre) * jour;
       
       vec3 col = base * (1.05 + 0.24 * lambert) + vec3(0.09, 0.25, 0.66) * fresnel * 0.50;
 
@@ -1197,6 +1203,10 @@ const matGlobe = new THREE.ShaderMaterial({
 
       
       
+      // la nuit est plus claire sous un calque : les données restent lisibles
+      float calque = clamp(uChaleur + uSecheresse + uMer + uStabilite + uDeclin + uCrue + uFeu, 0.0, 1.0);
+      col *= mix(mix(0.34, 0.62, calque), 1.0, jour);
+      col += vec3(1.0, 0.96, 0.86) * reflet * 0.28 * (1.0 - calque);
       col *= mix(0.24, 1.0, uEveil);
 
       gl_FragColor = vec4(col, 1.0);
@@ -1665,9 +1675,27 @@ function majContexteCalques(){
   document.getElementById('layer-method').textContent = [...notes, words[5]].join('\n');
   cadrerCarte();
 }
+/* cadrage : le centre optique suit l'espace libre. Fiche ouverte sur un écran
+   large, la ville visée se centre dans ce qui reste à gauche du panneau (à
+   768-1024 px elle finissait dessous). Le décalage glisse avec la fiche au
+   lieu de sauter. */
+const decalageVue = { x: 0, y: 0 };
+function appliquerDecalageVue(){
+  if (Math.abs(decalageVue.x) < .5 && Math.abs(decalageVue.y) < .5) camera.clearViewOffset();
+  else camera.setViewOffset(innerWidth, innerHeight, decalageVue.x, decalageVue.y, innerWidth, innerHeight);
+}
 function cadrerCarte(){
-  if (innerWidth <= 720 && innerHeight > 500 && !document.body.classList.contains('dossier-ouvert') && document.querySelector('.calque.actif')) camera.setViewOffset(innerWidth, innerHeight, 0, 64, innerWidth, innerHeight);
-  else camera.clearViewOffset();
+  const fiche = document.body.classList.contains('dossier-ouvert');
+  let x = 0, y = 0;
+  const panneau = document.getElementById('dossier');
+  if (innerWidth <= 720 && innerHeight > 500 && !fiche && document.querySelector('.calque.actif')) y = 64;
+  else if (innerWidth > 720 && fiche && panneau.offsetWidth){
+    const occupe = innerWidth - panneau.offsetLeft;
+    if (occupe > 0 && occupe < innerWidth * .6) x = occupe / 2;
+  }
+  if (x === decalageVue.x && y === decalageVue.y) return appliquerDecalageVue();
+  gsap.to(decalageVue, { x, y, duration: MOINS_ANIM ? 0 : .65, ease: 'expo.out',
+    overwrite: true, onUpdate: appliquerDecalageVue });
 }
 new MutationObserver(cadrerCarte).observe(document.body,{attributes:true,attributeFilter:['class']});
 function fermerChoixCarte(){
@@ -1765,6 +1793,27 @@ document.getElementById('accroche-x').addEventListener('click', e => {
   e.stopPropagation(); cacherAccroche(); SoundManager.play('ui_click');
 });
 let volEnCours = null, minuterieRepos = null;
+/* vol de caméra en arc : la direction tourne autour de la Terre (slerp) et
+   la distance suit une interpolation simple, plus une bosse d'altitude qui
+   grandit avec l'écart. En ligne droite, Paris -> Sydney passait à 0,58 du
+   centre, sous la surface. La durée suit l'angle parcouru. */
+const Q_IDENTITE = new THREE.Quaternion();
+function volCamera(cible, { duree, ease = EASE, ...suite } = {}){
+  const depart = camera.position.clone(), r0 = depart.length(), r1 = cible.length();
+  const u0 = depart.normalize(), u1 = cible.clone().normalize();
+  const angle = u0.angleTo(u1);
+  const rotation = new THREE.Quaternion().setFromUnitVectors(u0, u1), q = new THREE.Quaternion();
+  const bosse = Math.min(r0, r1) * 0.45 * (angle / Math.PI) ** 1.5;
+  const etat = { t: 0 };
+  return gsap.to(etat, { t: 1, ease,
+    duration: MOINS_ANIM ? 0 : (duree ?? 1.4 + 0.8 * angle / Math.PI),
+    onUpdate: () => {
+      q.slerpQuaternions(Q_IDENTITE, rotation, etat.t);
+      const r = r0 + (r1 - r0) * etat.t + bosse * Math.sin(Math.PI * etat.t);
+      camera.position.copy(u0).applyQuaternion(q).multiplyScalar(r);
+      camera.lookAt(0, 0, 0);
+    }, ...suite });
+}
 function arreterVolCamera(){
   volEnCours?.kill();
   gsap.killTweensOf(camera.position);
@@ -1805,8 +1854,11 @@ let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
 const etatListe = { anim: null };
 /* le carré reste soudé au champ à chaque frame : la barre bouge (déploiement,
    centrage sur la fiche, resize) et la liste suit, jamais de décrochage */
-// mobile : la liste s'elargit a gauche du champ pour que les noms restent lisibles
-const largeurListe = () => Math.max(champ.offsetWidth, innerWidth <= 720 ? Math.min(300, innerWidth - 80) : 0);
+// mobile : la liste s'élargit vers la gauche jusqu'à la gouttière du wordmark
+// (20 px), jamais au-delà : à 320 px elle touchait le bord de l'écran
+const GOUTTIERE_MOBILE = 20;
+const largeurListe = () => Math.max(champ.offsetWidth, innerWidth <= 720
+  ? Math.min(300, champ.offsetLeft + champ.offsetWidth - GOUTTIERE_MOBILE) : 0);
 function calerListe(){
   if (!liste.classList.contains('ouvert')) return;
   const lw = largeurListe();
@@ -1850,7 +1902,12 @@ const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '')
 
 function afficherResultats(){
   const q = normaliser(champ.value.trim());
+  // les lignes déjà affichées restent en place sans rejouer leur entrée :
+  // seules les nouvelles glissent, la liste ne clignote plus à chaque frappe
+  const avant = new Set(liste.classList.contains('ouvert')
+    ? [...liste.children].map(li => li.dataset.cle) : []);
   liste.innerHTML = ''; indiceChoisi = -1;
+  const marquer = (li, l) => { li.dataset.cle = l[0] + '|' + l[1]; if (avant.has(li.dataset.cle)) li.classList.add('reste'); };
   // une seule lettre cherche aussi : la recherche s'arretait au premier
   // caractere et laissait une boite vide, sans rien dire
   if (q.length < 1){
@@ -1867,6 +1924,7 @@ function afficherResultats(){
           li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
       li.id = 'res-' + resultatsActuels.indexOf(l);
           li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (T().ui.country) : nomPays(l[1])}</span>`;
+          marquer(li, l);
           li.addEventListener('click', () => choisirLieu(l));
           li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
           liste.appendChild(li);
@@ -1916,9 +1974,7 @@ function afficherResultats(){
       controles.autoRotate = false; SoundManager.play('camera_fly');
       const cible = latLonVersVec3(31, -24).multiplyScalar(2.6);   // plaine abyssale, au large des Acores
       arreterVolCamera();
-      volEnCours = gsap.to(camera.position, { x: cible.x, y: cible.y, z: cible.z,
-        duration: MOINS_ANIM ? 0 : 2.4, ease: EASE,
-        onUpdate: () => camera.lookAt(0, 0, 0),
+      volEnCours = volCamera(cible, { duree: 2.4,
         // kill() ne declenche pas onComplete : sans onInterrupt, une ville
         // choisie pendant le vol laissait la classe posee et l oeuf mort
         onInterrupt: () => document.body.classList.remove('atlantide'),
@@ -1930,6 +1986,7 @@ function afficherResultats(){
       li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
       li.id = 'res-' + resultatsActuels.indexOf(l);
       li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (T().ui.country) : nomPays(l[1])}</span>`;
+      marquer(li, l);
       li.addEventListener('click', () => choisirLieu(l));
       li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
       liste.appendChild(li);
@@ -1955,11 +2012,7 @@ function choisirLieu(l){
   controles.autoRotate = false;
   const cible = latLonVersVec3(l[2], l[3]).multiplyScalar(estPays(l) ? 3.1 : 2.45);
   arreterVolCamera();
-  volEnCours = gsap.to(camera.position, {
-    x: cible.x, y: cible.y, z: cible.z, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
-    onUpdate: () => camera.lookAt(0, 0, 0),
-    onComplete: reprendreRotation,
-  });
+  volEnCours = volCamera(cible, { onComplete: reprendreRotation });
 }
 champ.addEventListener('input', afficherResultats);
 // reprendre une recherche = tourner la page : le dossier ouvert se ferme et
@@ -2665,11 +2718,7 @@ function fermerDossier(depuisChamp){
   document.body.classList.remove('dossier-ouvert');
   CAMERA_ACCUEIL.setLength(distanceAccueil());
   controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
-  volEnCours = gsap.to(camera.position, {
-    ...CAMERA_ACCUEIL, duration: MOINS_ANIM ? 0 : 1.8, ease: EASE,
-    onUpdate: () => camera.lookAt(0, 0, 0),
-    onComplete: reprendreRotation,
-  });
+  volEnCours = volCamera(CAMERA_ACCUEIL, { onComplete: reprendreRotation });
   if (!depuisChamp){
     if (document.activeElement === champ) champ.blur();
     fermerListe();
@@ -3896,6 +3945,8 @@ function majEtiquettes(){
 }
 
 /* ---- boucle unique ---- */
+// direction du soleil dans le repère de la caméra : haut gauche, vers nous
+const SOLEIL_VUE = new THREE.Vector3(-0.55, 0.62, 0.56).normalize();
 const horloge = new THREE.Clock();
 let compteurImages = 0, fpsEMA = 60, dernierHUD = 0;
 function boucle(){
@@ -3910,6 +3961,8 @@ function boucle(){
 
 
   controles.update();
+  camera.updateMatrixWorld();
+  uniformsGlobe.uSoleil.value.copy(SOLEIL_VUE).transformDirection(camera.matrixWorld);
   indiceCible = 1 - indiceCible;
   moteur.setRenderTarget(cibles[indiceCible]);
   moteur.render(scene, camera);

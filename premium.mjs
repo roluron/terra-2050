@@ -2,10 +2,10 @@ const surfaces = '.language-content,#map-options,#map-inspector,#dossier,#city-c
 const enabled = matchMedia('(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)');
 let frame = 0, active;
 function clear() {
+  // la position reste écrite : la lumière (finitions.css) s'éteint en fondu
+  // là où elle était, au lieu de sauter au bord du panneau
   cancelAnimationFrame(frame);
   frame = 0;
-  active?.style.removeProperty('--light-x');
-  active?.style.removeProperty('--light-y');
   active = null;
 }
 document.addEventListener('pointermove', event => {

@@ -75,6 +75,13 @@ contraste.
 
 Ce sont eux qu'on remarque en premier : ils cassent l'effet « waouh ».
 
+**État : construite le 2026-09-28.** Le CSS est dans `finitions.css`
+(chargée après `premium.css`) ; le JS dans `index.html`, `glass-cursor.mjs`
+et `premium.mjs`. Contrôlée par captures Chromium (SwiftShader) à 1280×720,
+844×390, 768×1024 et 320×568, et par une sonde des états du curseur. Reste à
+faire sur un vrai GPU : sentir le ressort du curseur, la durée des vols et le
+reflet de l'océan.
+
 | # | Défaut | Où | Correctif |
 |---|---|---|---|
 | 1 | **Rectangle sombre à bords nets derrière « 2026 »**, sur toutes les captures | `premium.css:63` (lueur `text-shadow`) coupée par `.odo{overflow-y:clip}` à `terra-menus.css:147` | `overflow-clip-margin:40px`, ou lueur en `radial-gradient` sur `#timeline::before` |
