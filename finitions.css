@@ -151,8 +151,11 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
   block-size:0; overflow:clip; opacity:0;
   transition:block-size .38s var(--ease-sortie), opacity .25s var(--ease-sortie), content-visibility .38s allow-discrete;
 }
+/* à l'ouverture, le contenu est rendu tout de suite (content-visibility hors
+   de la transition) : seule la hauteur et l'opacité s'animent */
 :is(#dossier .fiche-methode, #map-method)[open]::details-content {
-  block-size:auto; opacity:1; transition-duration:.5s, .4s, .5s; transition-timing-function:var(--ease-entree);
+  block-size:auto; opacity:1;
+  transition:block-size .5s var(--ease-entree), opacity .4s var(--ease-entree);
 }
 
 /* ---- la fiche sort avec la courbe de sortie : elle reprenait la courbe
