@@ -4151,9 +4151,6 @@ function majEtiquettes(){
     if (presentes.has(i)) continue;
     etiquettesParVille.delete(i);
     b.style.opacity = '0'; b.style.pointerEvents = 'none'; b.tabIndex = -1;
-    // un nom qui s'éteint passe en fin de liste : l'ordre du DOM (et de la
-    // tabulation) reste celui des noms réellement affichés
-    etiquettesEl.appendChild(b);
     clearTimeout(b._masque);
     b._masque = setTimeout(() => { if (!b._ville) b.hidden = true; }, MOINS_ANIM ? 0 : 360);
     b._ville = null;
@@ -4174,6 +4171,11 @@ function majEtiquettes(){
     b.tabIndex = proximite > .2 ? 0 : -1;
     if (b.hidden) b.hidden = false;
   });
+  // l'ordre du DOM (et de la tabulation) suit le rang des villes affichées,
+  // les noms qui s'éteignent passent derrière ; on ne déplace que les nœuds
+  // mal placés (le rang change rarement pendant la rotation)
+  const ordre = places.map(p => etiquettesParVille.get(p[3])).filter(Boolean);
+  ordre.forEach((b, k) => { const la = etiquettesEl.children[k]; if (la !== b) etiquettesEl.insertBefore(b, la); });
 }
 
 /* ---- boucle unique ---- */
