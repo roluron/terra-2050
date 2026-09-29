@@ -178,3 +178,11 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
    emoji (✳ devenait une pastille verte sur iPhone). Filet de sécurité en plus
    du choix des signes dans earth-letter.js ---- */
 #earth-shell, #letter { font-variant-emoji:text }
+
+/* ---- règle des années au doigt : l'input natif laisse passer le toucher,
+   toute la bande de la règle répond (year-ruler.mjs). Un glissé vertical
+   continue de faire défiler la fiche ---- */
+@media (pointer:coarse) {
+  #curseur, #comparison-year { pointer-events:none }
+  #timeline, .compare-time { touch-action:pan-y }
+}
