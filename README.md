@@ -109,6 +109,7 @@ Quatre pièges rencontrés, à ne pas réintroduire :
 | `assets/` | Librairies vendorées, textures, sons, polices, icônes. |
 | `.agent/` | Contrat de complétion : objectif, critères d'acceptation, état, preuves. |
 | `PERF-REPORT.md` | Budget de performance mesuré et techniques employées. |
+| `AUDIT-APPAREILS.md` | Audit multi-appareils et multi-navigateurs (tablette, Mac, PC, Safari, Chrome, Firefox) : correctifs, reste à faire, plan. |
 
 ## Formats de données
 
