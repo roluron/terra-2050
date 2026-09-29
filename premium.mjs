@@ -66,6 +66,13 @@ window.addEventListener('blur', relacher);
 for (const id of ['city-comparison', 'language-dialog']) {
   const dialog = document.getElementById(id);
   dialog?.addEventListener('close', () => setTimeout(() => {
-    if (!dialog.open) dialog.getAnimations({subtree: true}).forEach(a => a.finish());
+    if (dialog.open) return;
+    // seulement les animations finies (une animation infinie lève
+    // InvalidStateError), et jamais d'exception vers la page
+    for (const animation of dialog.getAnimations({subtree: true})) {
+      const {iterations, endTime} = animation.effect?.getComputedTiming() || {};
+      if (iterations === Infinity || !Number.isFinite(endTime)) continue;
+      try { animation.finish(); } catch {}
+    }
   }, 450));
 }
