@@ -1980,6 +1980,29 @@ controles.addEventListener('end', () => {
     if (!volEnCours?.isActive()) reprendreRotation();
   }, 10000);
 });
+/* appuyer sur le nom d'une ville suspend la rotation comme appuyer sur le
+   globe : le nom ne file plus sous le doigt pendant qu'on le vise. Elle
+   reprend dix secondes après le relâchement. Un glissé parti d'un nom n'ouvre
+   pas la fiche. */
+let departEtiquette = null, ignorerClicJusqua = 0;
+document.getElementById('etiquettes').addEventListener('pointerdown', event => {
+  if (!event.target.closest('.etiquette')) return;
+  departEtiquette = [event.clientX, event.clientY];
+  contactsGlobe.add(event.pointerId);
+  controles.autoRotate = false;
+  clearTimeout(minuterieRepos); minuterieRepos = null;
+});
+window.addEventListener('pointercancel', () => { if (departEtiquette){ departEtiquette = null; controles.dispatchEvent({ type: 'end' }); } });
+window.addEventListener('pointerup', event => {
+  if (!departEtiquette) return;
+  controles.dispatchEvent({ type: 'end' });
+  if (Math.hypot(event.clientX - departEtiquette[0], event.clientY - departEtiquette[1]) > 6)
+    ignorerClicJusqua = performance.now() + 100;
+  departEtiquette = null;
+});
+document.getElementById('etiquettes').addEventListener('click', event => {
+  if (performance.now() < ignorerClicJusqua){ event.stopPropagation(); event.preventDefault(); }
+}, true);
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
 {
