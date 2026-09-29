@@ -3249,14 +3249,12 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
     u.uVerreRayon2.value = Math.min(parseFloat(style.borderTopLeftRadius) || 18,r.width/2,r.height/2) / innerHeight;
     // un panneau qui s'efface emporte sa réfraction avec lui (sinon il laisse
     // une lentille fantôme pendant sa sortie)
-    // la lentille atteint sa pleine force dès que le panneau est à moitié
-    // visible : elle suit son fondu sans traîner derrière lui
-    u.uVerreForce2.value = (panneau === verreMenu.panneau ? verreMenu.force : .9) * Math.min(1, Number(style.opacity) * 2);
+    u.uVerreForce2.value = panneau === verreMenu.panneau ? verreMenu.force : .9;
     let slot=0;
     for(const surface of document.querySelectorAll('#bouton-reglages,#map-inspector,#map-options,#dossier.ouvert,#city-comparison[open],.pedago-carte')){
       if(surface===panneau || slot===6) continue;
       const s=getComputedStyle(surface),box=surface.getBoundingClientRect();
-      if(s.visibility==='hidden'||s.display==='none'||box.width===0||box.height===0||Number(s.opacity)<.5) continue;
+      if(s.visibility==='hidden'||s.display==='none'||box.width===0||box.height===0||Number(s.opacity)===0) continue;
       u.uGlassRects.value[slot].set((box.left+box.width/2)/innerWidth,1-(box.top+box.height/2)/innerHeight,box.width/2/innerWidth,box.height/2/innerHeight);
       u.uGlassRadii.value[slot]=Math.min(parseFloat(s.borderTopLeftRadius)||24,box.width/2,box.height/2)/innerHeight;
       slot++;

@@ -119,9 +119,10 @@ Fait :
 
 Correctif au passage : la lumière de la phase 1 posait une `transition` sur
 les panneaux de verre et écrasait les leurs (la fiche ne glissait plus).
-L'allumage passe désormais par `premium.mjs` (WAAPI). Sur tous les verres
-WebGL, la force de la lentille suit l'opacité du panneau : pas de réfraction
-fantôme pendant une sortie.
+L'allumage passe désormais par `premium.mjs` (WAAPI). Une lentille WebGL
+indexée sur l'opacité des panneaux a été essayée puis retirée : sur une
+machine qui rend peu d'images (CI, SwiftShader), les fondus CSS restent
+figés à 0 et la réfraction disparaissait (`refraction.mjs`).
 
 Règle unique : **ce qui entre en s'animant sort en s'animant.** La sortie
 dure `--dur-exit` avec la courbe `--ease-exit`. Il existe déjà un modèle
