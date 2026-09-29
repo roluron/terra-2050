@@ -72,6 +72,10 @@ for (const [name, engine, options] of [
     const swapped = await page.locator('#city-comparison thead th').allTextContents();
     assert.equal(heads[1], swapped[2]); assert.equal(heads[2], swapped[1]);
     await page.locator('.compare-close').click();
+    // le comparateur se ferme en fondu (finitions.css, 380 ms) : il doit être
+    // fermé tout de suite, et invisible une fois sa sortie jouée
+    assert.equal(await page.locator('#city-comparison').evaluate(e => e.open), false);
+    await page.locator('#city-comparison').waitFor({state:'hidden', timeout:5000});
     assert.equal(await page.locator('#city-comparison').isVisible(), false);
     await page.locator('#dossier-comparer').click();
     await page.locator('#comparison-search').press('ArrowDown');
