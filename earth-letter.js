@@ -8,7 +8,9 @@ shell.addEventListener('keydown', event => event.stopPropagation());
 const letter = document.querySelector('#letter');
 const future = document.querySelector('#future');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const signs = Array.from('·✳+⋮✶⋅⊹✧');
+// aucun signe n'a de forme emoji : ✳ (U+2733) s'affichait sur iPhone en
+// pastille verte ✳️ ; ✱ (U+2731) reste un glyphe texte partout
+const signs = Array.from('·✱+⋮✶⋅⊹✧');
 const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
 let finished = 0, pointerReady = false;

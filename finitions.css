@@ -173,3 +173,8 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
    en 600 ms (le repère avait deux déclarations, 350 puis 650 ms) ---- */
 #dossier .risk-meter i { transition:top .6s var(--ease-entree) }
 @media (prefers-reduced-motion:reduce) { #dossier .risk-meter i { transition:none } }
+
+/* ---- lettre d'accueil : aucun glyphe de brouillage ne doit basculer en
+   emoji (✳ devenait une pastille verte sur iPhone). Filet de sécurité en plus
+   du choix des signes dans earth-letter.js ---- */
+#earth-shell, #letter { font-variant-emoji:text }
