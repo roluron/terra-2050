@@ -34,3 +34,27 @@ document.addEventListener('pointermove', event => {
 document.addEventListener('pointerleave',clear);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clear();});
 enabled.addEventListener('change',clear);
+
+/* appui : tout ce qui se touche s'enfonce de 3 % en 80 ms et revient en
+   souplesse. En WAAPI sur `scale` : les transitions propres à chaque
+   contrôle (fond, transform) restent intactes. */
+const APPUYABLES = 'button,summary,[role=button],[role=option],#resultats li,#language-options label,.calque';
+const douceur = matchMedia('(prefers-reduced-motion:no-preference)');
+let enfonce = null;
+function relacher() {
+  if (!enfonce) return;
+  const el = enfonce; enfonce = null;
+  const depart = getComputedStyle(el).scale;
+  el.getAnimations().forEach(a => { if (a.id === 'appui') a.cancel(); });
+  const retour = el.animate([{scale: depart === 'none' ? 1 : depart}, {scale: 1}], {duration: 220, easing: 'cubic-bezier(.34,1.56,.64,1)'});
+  retour.id = 'appui';
+}
+document.addEventListener('pointerdown', event => {
+  if (!douceur.matches || event.button > 0) return;
+  const el = event.target.closest?.(APPUYABLES);
+  if (!el || el.matches(':disabled,[aria-disabled=true],.etiquette') || el.getBoundingClientRect().width > 360) return;
+  relacher(); enfonce = el;
+  el.animate([{scale: 1}, {scale: .97}], {duration: 80, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards'}).id = 'appui';
+}, {passive: true});
+for (const type of ['pointerup', 'pointercancel', 'dragstart']) document.addEventListener(type, relacher, {passive: true});
+window.addEventListener('blur', relacher);

@@ -69,6 +69,21 @@ body.curseur-verre :is(input:not([type=range],[type=radio],[type=checkbox]),text
 .glass-cursor.texte { opacity:0; transition:opacity .12s }
 /* sur un contrôle désactivé : un anneau éteint, pas un bouton qui invite */
 .glass-cursor.point.eteint { background:transparent; border-color:#fffde260; box-shadow:none; opacity:.55 }
+/* phase 3 : la taille écrite en JS est la taille vue (bordure comprise),
+   le trait d'un lien et la capsule de la règle restent nets */
+.glass-cursor { box-sizing:border-box }
+/* bouton occupé (image en préparation) : un anneau crème qui tourne */
+.glass-cursor.point.occupe { background:transparent; border-color:#fffde230; box-shadow:none; overflow:visible }
+.glass-cursor.point.occupe::after { content:""; position:absolute; inset:-1px; border-radius:inherit;
+  border:1.5px solid transparent; border-top-color:#fffde2; border-right-color:#fffde2a0;
+  animation:curseur-tourne .8s linear infinite }
+@keyframes curseur-tourne { to { rotate:1turn } }
+@media (prefers-reduced-motion:reduce) { .glass-cursor.point.occupe::after { animation-duration:2.4s } }
+
+/* un seul langage de survol pour les rangées : fond #ffffff0e en 180 ms
+   (#resultats li était défini quatre fois, avec quatre fonds) */
+#resultats li { background:transparent; transition:background-color .18s var(--ease-sortie) }
+#resultats li:is(.choisi,:hover) { background:#ffffff0e }
 
 /* =====================================================================
    PHASE 2 — ce qui entre en s'animant sort en s'animant.
@@ -267,3 +282,18 @@ html:lang(vi) :is(#wordmark, #timeline .an, .compare-time output, #dossier-score
    ===================================================================== */
 :root { --glass-shadow:inset 1px 1px 0 #ffffff40, inset -1px -1px 0 #ffffff0c, 0 18px 64px #0007 }
 @media (prefers-reduced-transparency:reduce) { :root { --glass-shadow:inset 0 1px 0 #ffffff26, 0 18px 64px #0007 } }
+
+/* =====================================================================
+   PHASE 0 — un seul anneau de focus pour tout le site : crème, 1,5 px,
+   décalé de 3 px. Il y en avait huit, dont un bleu #416e9b peu lisible
+   sur le verre sombre du dossier. La lettre d'accueil garde ses décalages
+   larges, mais prend la même teinte.
+   ===================================================================== */
+:root { --focus-teinte:rgb(255 253 226 / .9); --focus:1.5px solid var(--focus-teinte) }
+:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content,#timeline,#accroche,#story-popup,#map-options)
+  :is(button,summary,a,input:not([type=range],#champ-recherche)):focus-visible,
+.calque:focus-visible, .bouton-ico:focus-visible, #story-partager:focus-visible, .compare-shell :focus-visible {
+  outline:var(--focus); outline-offset:3px }
+.etiquette:focus-visible { outline:var(--focus); outline-offset:3px; border-radius:6px }
+#language-options label:has(input:focus-visible), #language-continue:focus-visible,
+#earth-shell button:focus-visible, #earth-shell .word:focus-visible { outline-color:var(--focus-teinte) }

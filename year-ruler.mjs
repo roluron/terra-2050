@@ -8,6 +8,10 @@ export function createYearRuler(slider, ruler) {
     hover=Math.max(0,Math.min(24,Math.round((event.clientX-box.left)/box.width*24)));
   });
   slider.addEventListener('pointerleave',()=>{hover=null;});
+  // le pouce, c'est la barre de l'année : elle grandit tant qu'on appuie
+  let appui=false;
+  slider.addEventListener('pointerdown',()=>{appui=true;});
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])addEventListener(type,()=>{appui=false;},true);
 
   /* Au doigt, le curseur natif ne bougeait que si l'on attrapait sa poignée,
      invisible : taper la règle ne faisait rien, et un glissé était souvent
@@ -33,7 +37,7 @@ export function createYearRuler(slider, ruler) {
   let doigt=null,depart=0,glisse=false;
   zone.addEventListener('pointerdown',event=>{
     if(event.pointerType==='mouse'||slider.disabled||event.target.closest('button,a,summary')||!surLaRegle(event))return;
-    doigt=event.pointerId;depart=event.clientX;glisse=false;
+    doigt=event.pointerId;depart=event.clientX;glisse=false;appui=true;
     hover=Math.round((valeurAuPoint(event.clientX)-+slider.min));
   });
   zone.addEventListener('pointermove',event=>{
@@ -58,7 +62,7 @@ export function createYearRuler(slider, ruler) {
     const active=Number(slider.value)-2026;
     bars.forEach((bar,i)=>{
       const distance=i-active;
-      let height=i===active?3.1:1+1.6*Math.exp(-distance*distance/7);
+      let height=i===active?(appui?3.7:3.1):1+1.6*Math.exp(-distance*distance/7);
       let alpha=i===active?1:i<active?.55:.25;
       if(!reduced.matches&&hover!==null){height+=.9*Math.exp(-((i-hover)**2)/5);if(Math.abs(i-hover)<1)alpha=Math.max(alpha,.85);}
       const nextHeight=heights[i]+(height-heights[i])*k;

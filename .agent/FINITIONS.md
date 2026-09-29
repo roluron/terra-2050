@@ -69,6 +69,13 @@ contraste.
 - `controles.update()` sans `dt`, `index.html:3912` ;
 - le plafond de 32 ms dans `glass-cursor.mjs`.
 
+> **Statut — en partie.** Fait : l'anneau de focus unique (`--focus`, crème
+> 1,5 px, décalé de 3 px) remplace les huit anneaux ; la lettre d'accueil
+> garde ses décalages larges mais prend la même teinte. L'horloge est
+> traitée là où elle comptait (règle, contrôles, curseur). Restent : la
+> migration complète des durées, espacements et tailles vers les tokens —
+> un chantier de fond sans effet visible, laissé à une passe dédiée.
+
 ---
 
 ## Phase 1 — Défauts visibles (P1)
@@ -211,6 +218,17 @@ contexte.
   -1 px est réservé aux CTA. `#resultats li` est aujourd'hui défini quatre fois
   avec quatre fonds.
 
+> **Statut — construite.** Rendu par transform, ressort de taille, τ
+> interpolé, boucle qui s'arrête, lentille verrouillée pendant la rotation
+> (déjà livrés avec la phase 1), puis : trait 14×2 sur les liens, capsule
+> 16×6 sur la règle (20×5 à l'appui, et la barre de l'année grandit sous le
+> doigt), anneau qui tourne sur un bouton `aria-busy`, point aimanté par le
+> point d'une ville sous son nom, appui de 3 % en 80 ms sur tout ce qui se
+> touche (WAAPI sur `scale`, sans toucher aux transitions de chaque
+> contrôle), `#resultats li` défini une seule fois (#ffffff0e, 180 ms). Le
+> champ texte garde le caret natif plutôt qu'une barre dessinée (plus net,
+> et il clignote au bon endroit). Arc spéculaire et dispersion : phase 4.
+
 ---
 
 ## Phase 4 — Lumière : une seule source pour tout le site
@@ -336,6 +354,14 @@ ajout, pas une correction : accord explicite avant de la construire.
    lieu d'attendre la fin.
 5. **Poussière d'étoiles en parallaxe.** Environ 300 points à 0,25
    d'opacité, 0,1× la rotation. Désactivée en mouvement réduit.
+
+> **Statut — construite.** 1 : l'aube (soleil de derrière la Terre vers sa
+> place en 3,4 s, `aube.t`). 2 : jusqu'à 16 000 villes (8 000 au doigt),
+> un seul appel de rendu, en fondu à l'arrivée de l'annuaire, éteintes par
+> tout calque de données. 3 : le nom s'écrit, le score roule depuis 000.
+> 4 : le chrome se lève 0,35 s plus tôt. 5 : 300 étoiles, parallaxe à 10 %,
+> absentes en mouvement réduit. Rien ne dépend du temps : `motion.mjs`
+> continue de voir des pixels stables.
 
 ---
 
