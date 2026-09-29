@@ -58,3 +58,14 @@ document.addEventListener('pointerdown', event => {
 }, {passive: true});
 for (const type of ['pointerup', 'pointercancel', 'dragstart']) document.addEventListener(type, relacher, {passive: true});
 window.addEventListener('blur', relacher);
+
+/* sorties de boîtes modales (finitions.css) : `display` et `overlay` suivent
+   la transition de sortie. Si le rendu est suspendu (onglet en arrière-plan,
+   machine saturée), la transition ne progresse plus et la boîte fermée
+   resterait affichée : une minuterie la termine une fois sa durée passée. */
+for (const id of ['city-comparison', 'language-dialog']) {
+  const dialog = document.getElementById(id);
+  dialog?.addEventListener('close', () => setTimeout(() => {
+    if (!dialog.open) dialog.getAnimations({subtree: true}).forEach(a => a.finish());
+  }, 450));
+}
