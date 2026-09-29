@@ -4151,6 +4151,9 @@ function majEtiquettes(){
     if (presentes.has(i)) continue;
     etiquettesParVille.delete(i);
     b.style.opacity = '0'; b.style.pointerEvents = 'none'; b.tabIndex = -1;
+    // un nom qui s'éteint passe en fin de liste : l'ordre du DOM (et de la
+    // tabulation) reste celui des noms réellement affichés
+    etiquettesEl.appendChild(b);
     clearTimeout(b._masque);
     b._masque = setTimeout(() => { if (!b._ville) b.hidden = true; }, MOINS_ANIM ? 0 : 360);
     b._ville = null;
