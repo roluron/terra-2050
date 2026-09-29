@@ -2000,6 +2000,11 @@ window.addEventListener('pointerup', event => {
     ignorerClicJusqua = performance.now() + 100;
   departEtiquette = null;
 });
+// la molette sur un nom zoome le globe (OrbitControls n'écoute que la toile)
+document.getElementById('etiquettes').addEventListener('wheel', event => {
+  event.preventDefault();
+  toile.dispatchEvent(new WheelEvent('wheel', event));
+}, { passive: false });
 document.getElementById('etiquettes').addEventListener('click', event => {
   if (performance.now() < ignorerClicJusqua){ event.stopPropagation(); event.preventDefault(); }
 }, true);
