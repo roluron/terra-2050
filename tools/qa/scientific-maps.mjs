@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
 import { enter } from './entrance.cjs';
 
-const out = process.env.QA_SORTIE || '/Users/robinmahieux/Documents/Codex/2026-09-07/new-chat/outputs/scientific-maps';
+const out = process.env.QA_SORTIE || '/tmp/terra-scientific-maps';
 await fs.mkdir(out, { recursive: true });
 const result = { errors: [], failures: [], runtimeHashes: {}, method: 'Production materials, isolated globe renders; fixed camera/time/light, no atmosphere, markers, DOM or postprocessing. Separate real UI video.' };
 async function probe() {

@@ -18,7 +18,7 @@ for (const [name, engine, options] of [
   try {
     const page = await browser.newPage(options), errors = [];
     page.on('pageerror', error => { errors.push(error.message); console.error(error.stack); });
-    await page.goto((process.env.URL0 || 'http://127.0.0.1:8088/') + '?lang=en');
+    await page.goto((process.env.URL0||'http://127.0.0.1:8088/') + '?lang=en');
     await page.locator('#language-dialog').waitFor();
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(1800);

@@ -4,7 +4,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
  const browser=await engine.launch({headless:false});
  try{
   const page=await browser.newPage(options),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:8088/');await page.locator('#language-dialog[open]').waitFor();
+  await page.goto((process.env.URL0||'http://127.0.0.1:8088/'));await page.locator('#language-dialog[open]').waitFor();
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.equal(await page.locator('#language-continue').count(),0);
   await page.locator('#language-options input[value="it"]').hover();
