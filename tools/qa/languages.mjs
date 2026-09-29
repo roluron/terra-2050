@@ -40,7 +40,14 @@ for (const [name, engine, options] of [
       await page.locator(`#language-options input[value="${code}"]`).click();
       await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), code);
-      assert.equal(await page.locator('#earth-shell h1').textContent(), text.ui.letterTitle);
+      // Le titre est découpé en mots chiffrés (a9462fd) : chaque mot porte son texte
+      // lisible (.latin) et des signes décoratifs aria-hidden (.glyphs). On compare
+      // le texte que lit un humain ou un lecteur d'écran, sans les signes.
+      assert.equal(await page.locator('#earth-shell h1').evaluate(h1 => {
+        const copy = h1.cloneNode(true);
+        copy.querySelectorAll('[aria-hidden="true"]').forEach(el => el.remove());
+        return copy.textContent;
+      }), text.ui.letterTitle);
       await discover(page);
       await page.waitForFunction(() => Number(getComputedStyle(document.querySelector('#future')).opacity) > .99);
       await page.locator('#earth-shell h1').click();
