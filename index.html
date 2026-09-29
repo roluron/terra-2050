@@ -3249,7 +3249,9 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
     u.uVerreRayon2.value = Math.min(parseFloat(style.borderTopLeftRadius) || 18,r.width/2,r.height/2) / innerHeight;
     // un panneau qui s'efface emporte sa réfraction avec lui (sinon il laisse
     // une lentille fantôme pendant sa sortie)
-    u.uVerreForce2.value = (panneau === verreMenu.panneau ? verreMenu.force : .9) * Number(style.opacity);
+    // la lentille atteint sa pleine force dès que le panneau est à moitié
+    // visible : elle suit son fondu sans traîner derrière lui
+    u.uVerreForce2.value = (panneau === verreMenu.panneau ? verreMenu.force : .9) * Math.min(1, Number(style.opacity) * 2);
     let slot=0;
     for(const surface of document.querySelectorAll('#bouton-reglages,#map-inspector,#map-options,#dossier.ouvert,#city-comparison[open],.pedago-carte')){
       if(surface===panneau || slot===6) continue;
