@@ -146,7 +146,7 @@ body:not(.dossier-ouvert) #timeline .an {font-weight:300;letter-spacing:-.07em;t
 @media(max-height:650px) {.language-content{padding:18px 24px}.language-globe{width:36px;height:36px;margin-bottom:12px}#language-title{font-size:28px;margin-bottom:14px}#language-options label{min-height:44px}#language-continue{margin-top:12px;padding-top:8px}}
 @media(prefers-reduced-motion:reduce) {.language-content::before{animation:none}:is(#language-options label,#language-continue svg,#earth-shell #future::after,#dossier .actions button,.entree-pedago){transition:none;translate:none}}
 @media(prefers-reduced-transparency:reduce) {:root{--glass-tint:#111610}}
-@supports not (backdrop-filter:blur(1px)) {:root{--glass-tint:#111610}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {:root{--glass-tint:#111610}}
 body #recherche,body.dossier-ouvert #recherche {padding-right:100px}
 #resultats {right:100px}
 #loupe {right:112px;z-index:3}
