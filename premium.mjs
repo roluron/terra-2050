@@ -1,17 +1,27 @@
 const surfaces = '.language-content,#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages';
 const enabled = matchMedia('(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)');
 let frame = 0, active;
+/* la lumière (finitions.css) s'allume au survol et s'éteint en fondu là où
+   elle était. --light-a est animé ici, pas par une transition CSS : une
+   transition sur ces panneaux remplacerait les leurs. */
+function allumer(surface, cible) {
+  if (!surface) return;
+  const depart = parseFloat(getComputedStyle(surface).getPropertyValue('--light-a')) || 0;
+  for (const animation of surface.getAnimations()) if (animation.id === 'lumiere') animation.cancel();
+  const animation = surface.animate([{'--light-a': depart}, {'--light-a': cible}],
+    {duration: cible ? 450 : 600, easing: 'cubic-bezier(.165,.84,.44,1)', fill: 'forwards'});
+  animation.id = 'lumiere';
+}
 function clear() {
-  // la position reste écrite : la lumière (finitions.css) s'éteint en fondu
-  // là où elle était, au lieu de sauter au bord du panneau
   cancelAnimationFrame(frame);
   frame = 0;
+  allumer(active, 0);
   active = null;
 }
 document.addEventListener('pointermove', event => {
   if (!enabled.matches || event.pointerType !== 'mouse') return;
   const surface = event.target.closest(surfaces);
-  if (surface !== active) {clear();active = surface;}
+  if (surface !== active) {clear();active = surface;allumer(surface, 1);}
   if (!surface || frame) return;
   const {clientX,clientY} = event;
   frame = requestAnimationFrame(() => {

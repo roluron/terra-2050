@@ -15,11 +15,9 @@
     radial-gradient(280px circle at var(--light-x,50%) var(--light-y,0%), rgb(255 253 226 / calc(var(--light-a) * .075)), transparent 70%),
     linear-gradient(135deg,#daeaff18 0%,#ffffff06 38%,#8faab508 100%),
     var(--glass-tint);
-  transition: --light-a .45s cubic-bezier(.165,.84,.44,1);
 }
-@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
-  :is(#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages):hover { --light-a:1 }
-}
+/* l'allumage (--light-a) est animé par premium.mjs : une transition CSS ici
+   remplacerait celles des panneaux (le glissement de la fiche, par exemple) */
 @media (prefers-reduced-transparency:reduce) {
   :is(#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages) { --glass-surface:var(--glass-tint) }
 }
@@ -71,3 +69,104 @@ body.curseur-verre :is(input:not([type=range],[type=radio],[type=checkbox]),text
 .glass-cursor.texte { opacity:0; transition:opacity .12s }
 /* sur un contrôle désactivé : un anneau éteint, pas un bouton qui invite */
 .glass-cursor.point.eteint { background:transparent; border-color:#fffde260; box-shadow:none; opacity:.55 }
+
+/* =====================================================================
+   PHASE 2 — ce qui entre en s'animant sort en s'animant.
+   Entrées : 600 ms, courbe expo (.16,1,.3,1). Sorties : 380 ms, courbe de
+   sortie (.4,0,.2,1). Les <dialog> utilisent @starting-style et la
+   transition discrète d'overlay/display : là où le navigateur ne la connaît
+   pas, la fermeture reste instantanée, comme avant.
+   ===================================================================== */
+:root { --ease-entree:cubic-bezier(.16,1,.3,1); --ease-sortie:cubic-bezier(.4,0,.2,1); --dur-entree:.6s; --dur-sortie:.38s }
+
+/* ---- comparateur : il s'ouvrait et se fermait d'un coup ---- */
+#city-comparison {
+  opacity:0; translate:0 14px; scale:.975;
+  transition:opacity var(--dur-sortie) var(--ease-sortie), translate var(--dur-sortie) var(--ease-sortie), scale var(--dur-sortie) var(--ease-sortie),
+    overlay var(--dur-sortie) allow-discrete, display var(--dur-sortie) allow-discrete;
+}
+#city-comparison[open] {
+  opacity:1; translate:0 0; scale:1;
+  transition-duration:var(--dur-entree); transition-timing-function:var(--ease-entree);
+}
+#city-comparison::backdrop { opacity:0; transition:opacity var(--dur-sortie) var(--ease-sortie), overlay var(--dur-sortie) allow-discrete, display var(--dur-sortie) allow-discrete }
+#city-comparison[open]::backdrop { opacity:1; transition-duration:.45s }
+@starting-style {
+  #city-comparison[open] { opacity:0; translate:0 16px; scale:.97 }
+  #city-comparison[open]::backdrop { opacity:0 }
+}
+
+/* ---- langue rouverte depuis les réglages : fondu au lieu d'un écran noir
+   posé d'un coup. Le premier passage (accueil) garde son noir immédiat. ---- */
+#language-dialog:not(.accueil) {
+  opacity:0;
+  transition:opacity .32s var(--ease-sortie), overlay .32s allow-discrete, display .32s allow-discrete;
+}
+#language-dialog:not(.accueil)[open] { opacity:1; transition-duration:.42s; transition-timing-function:var(--ease-entree) }
+#language-dialog:not(.accueil)::backdrop { opacity:0; transition:opacity .32s var(--ease-sortie), overlay .32s allow-discrete, display .32s allow-discrete }
+#language-dialog:not(.accueil)[open]::backdrop { opacity:1 }
+@starting-style {
+  #language-dialog:not(.accueil)[open], #language-dialog:not(.accueil)[open]::backdrop { opacity:0 }
+}
+
+/* ---- la fiche recule sous le comparateur, la story ou les réglages au lieu
+   de disparaître d'un coup (visibility:hidden) : elle s'efface et revient
+   avec ses propres transitions d'opacité et de transformation ---- */
+body:has(#city-comparison[open],#story-popup:not([hidden]),#menu-reglages.ouvert) #dossier.ouvert {
+  visibility:visible; opacity:0; transform:scale(.985); pointer-events:none;
+}
+
+/* ---- les filtres s'effacent quand la fiche s'ouvre (ils se cachaient net
+   pendant qu'elle glissait) et reviennent en fondu ---- */
+body.pret #map-inspector { transition:opacity .35s var(--ease-entree), visibility 0s }
+body.pret.dossier-ouvert #map-inspector { opacity:0; transition:opacity .25s var(--ease-sortie), visibility 0s .25s }
+body.dossier-ouvert #map-inspector * { visibility:inherit }
+
+/* ---- sélecteur d'indicateurs : il basculait display:none/grid sans
+   transition. Il s'ouvre depuis la pastille (coin bas gauche) et ses calques
+   arrivent en cascade ---- */
+#map-inspector #map-options {
+  transform-origin:0 100%;
+  transition:opacity .3s var(--ease-sortie), scale .3s var(--ease-sortie), translate .3s var(--ease-sortie), display .3s allow-discrete;
+}
+#map-inspector.choix-ouvert #map-options { transition-duration:.5s; transition-timing-function:var(--ease-entree) }
+/* le contenu reste affiché le temps que la vitre s'efface */
+#map-inspector :is(#calques, #model-notice) { transition:display .3s allow-discrete }
+#map-inspector:not(.choix-ouvert) #map-options { opacity:0; scale:.96; translate:0 8px }
+@starting-style { #map-inspector.choix-ouvert #map-options { opacity:0; scale:.96; translate:0 8px } }
+@keyframes calque-entree { from { opacity:0; translate:-8px 0 } }
+#map-inspector.choix-ouvert #calques .calque { animation:calque-entree .45s var(--ease-entree) backwards }
+#map-inspector.choix-ouvert #calques .calque:nth-child(2) { animation-delay:.03s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(3) { animation-delay:.06s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(4) { animation-delay:.09s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(5) { animation-delay:.12s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(6) { animation-delay:.15s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(7) { animation-delay:.18s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(n+8) { animation-delay:.21s }
+
+/* ---- « Méthode » et « Sources et lecture » : ils s'ouvraient en glissant
+   et se fermaient net. La hauteur s'anime dans les deux sens ---- */
+:is(#dossier .fiche-methode, #map-method) { interpolate-size:allow-keywords }
+:is(#dossier .fiche-methode, #map-method)::details-content {
+  block-size:0; overflow:clip; opacity:0;
+  transition:block-size .38s var(--ease-sortie), opacity .25s var(--ease-sortie), content-visibility .38s allow-discrete;
+}
+:is(#dossier .fiche-methode, #map-method)[open]::details-content {
+  block-size:auto; opacity:1; transition-duration:.5s, .4s, .5s; transition-timing-function:var(--ease-entree);
+}
+
+/* ---- la fiche sort avec la courbe de sortie : elle reprenait la courbe
+   expo de l'entrée et partait d'un coup ---- */
+#dossier:not(.ouvert) { transition:opacity .3s var(--ease-sortie), transform var(--dur-sortie) var(--ease-sortie), visibility var(--dur-sortie) }
+
+@media (prefers-reduced-motion:reduce) {
+  #city-comparison, #city-comparison::backdrop, #language-dialog, #language-dialog::backdrop,
+  #map-inspector, #map-inspector #map-options, #dossier:not(.ouvert),
+  :is(#dossier .fiche-methode, #map-method)::details-content { transition:none }
+  #map-inspector.choix-ouvert #calques .calque { animation:none }
+}
+
+/* ---- un seul tempo pour l'année : globe, compteur et repères des jauges
+   en 600 ms (le repère avait deux déclarations, 350 puis 650 ms) ---- */
+#dossier .risk-meter i { transition:top .6s var(--ease-entree) }
+@media (prefers-reduced-motion:reduce) { #dossier .risk-meter i { transition:none } }

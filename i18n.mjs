@@ -49,6 +49,9 @@ function syncLanguageDialog() {
 export function openLanguage(onClose, first = false) {
   if (languageDialog.open) return;
   afterLanguage = onClose; welcome = first; closingLanguage = false;
+  // le premier passage reste noir d'emblée ; rouvert depuis les réglages, il
+  // entre et sort en fondu (finitions.css)
+  languageDialog.classList.toggle('accueil', first);
   syncLanguageDialog(); languageDialog.showModal();
   document.getElementById('boot-screen').hidden = true;
   languageDialog.querySelector('input:checked').focus({preventScroll:true});

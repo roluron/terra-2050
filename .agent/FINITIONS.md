@@ -101,6 +101,28 @@ reflet de l'océan.
 
 ## Phase 2 — Transitions : chaque entrée a sa sortie
 
+**État : construite le 2026-09-29.**
+
+Fait :
+- 1, 2, 3, 4 (cascade déplacée à l'ouverture du sélecteur) et 6 ;
+- 7 pour « Méthode » et « Sources et lecture » ;
+- 8, 9 et 10 ;
+- 11 pour l'invitation ;
+- 12 et 13.
+
+Écarts :
+- **5 :** un fondu de retour de l'année dans le dock, pas GSAP Flip.
+- **7 :** les cartes de risque gardent leur fermeture nette, car elles
+  changent de colonne en s'ouvrant (animer la hauteur pendant ce
+  changement de grille saccade).
+- **11 :** « Lien copié » n'est pas traité.
+
+Correctif au passage : la lumière de la phase 1 posait une `transition` sur
+les panneaux de verre et écrasait les leurs (la fiche ne glissait plus).
+L'allumage passe désormais par `premium.mjs` (WAAPI). Sur tous les verres
+WebGL, la force de la lentille suit l'opacité du panneau : pas de réfraction
+fantôme pendant une sortie.
+
 Règle unique : **ce qui entre en s'animant sort en s'animant.** La sortie
 dure `--dur-exit` avec la courbe `--ease-exit`. Il existe déjà un modèle
 interne symétrique : `ouvrirPedago` / `fermerPedago` (`index.html:3239`).

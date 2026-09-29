@@ -1609,9 +1609,17 @@ const CALQUES = {
   declin:     { uniforme: uniformsGlobe.uDeclin,     son: 'layer_on' },
 };
 const etat = { progression: 0, annee: 2026, crise: false };
+let jeuCalquesAffiche = null;
 function majContexteCalques(){
   const el = document.getElementById('layer-context');
   const actifs = [...document.querySelectorAll('.calque.actif')].map(b => b.dataset.cle);
+  // la légende suit le fondu du shader quand le calque change (pas à chaque
+  // année : la règle appelle cette fonction à chaque cran)
+  const jeu = actifs.join();
+  if (jeuCalquesAffiche !== null && jeu !== jeuCalquesAffiche && actifs.length && !MOINS_ANIM)
+    el.animate([{ opacity: 0, translate: '0 3px' }, { opacity: 1, translate: '0 0' }],
+      { duration: 450, easing: 'cubic-bezier(.16,1,.3,1)' });
+  jeuCalquesAffiche = jeu;
   matAtmo.uniforms.uProgression.value = actifs.length ? 0 : etat.progression;
   const words = mapCopy[langue] || mapCopy.en;
   document.querySelector('#map-toggle span').textContent = actifs.length ? document.querySelector(`.calque[data-cle="${actifs[0]}"] .nom`).textContent : (mapPicker[langue] || mapPicker.en);
@@ -1772,12 +1780,17 @@ function montrerAccroche(txt, action, delai){
     document.getElementById('accroche-txt').textContent = txt; accrocheAction = action;
     accroche.hidden = false;
     gsap.fromTo(accroche, { opacity: 0, y: -6 },
-      { opacity: 1, y: 0, duration: 0.6, ease: EASE, clearProps: 'transform' });
+      { opacity: 1, y: 0, duration: 0.6, ease: EASE, clearProps: 'transform', overwrite: true });
   }, delai);
 }
 function cacherAccroche(){
   clearTimeout(minuterieAccroche);
-  accroche.hidden = true; accrocheAction = null;
+  accrocheAction = null;
+  // l'invitation entrait en fondu et disparaissait d'un coup
+  if (!accroche.hidden && !MOINS_ANIM){
+    gsap.to(accroche, { opacity: 0, y: -4, duration: 0.25, ease: 'power2.in', overwrite: true,
+      onComplete: () => { accroche.hidden = true; gsap.set(accroche, { clearProps: 'opacity,transform' }); } });
+  } else accroche.hidden = true;
   if (document.body.classList.contains('comparaison-active')) {
     document.body.classList.remove('comparaison-active');
     champ.placeholder = T().chercher.replace(/\s*—\s*⌘K$/, '');
@@ -2067,7 +2080,9 @@ curseur.addEventListener('input', () => {
   curseur.setAttribute('aria-valuetext', `${an} — ${T().distanceAn(an - 2026)}`);
   if (lieuDossier){ majDossier(); majLien(); clearTimeout(minuterieAnnonce); minuterieAnnonce = setTimeout(annoncer, 400); }
   gsap.to(etat, {
-    progression: (an - 2026) / 24, duration: 0.5, ease: EASE, overwrite: 'auto',
+    // même tempo que le compteur (DUREE.sfast) et les repères de la fiche :
+    // l'année, la carte et les jauges arrivent ensemble
+    progression: (an - 2026) / 24, duration: DUREE.sfast, ease: EASE, overwrite: 'auto',
     onUpdate: () => {
       uniformsGlobe.uProgression.value = etat.progression;
       matAtmo.uniforms.uProgression.value = document.querySelector('.calque.actif') ? 0 : etat.progression;
@@ -2692,6 +2707,9 @@ controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
 function fermerDossier(depuisChamp){
   arreterVolCamera();
   timelineRepere.after(timelineEl);
+  // l'année revient dans le dock en fondu au lieu de réapparaître d'un coup
+  if (!MOINS_ANIM) timelineEl.animate([{ opacity: 0, translate: '0 8px' }, { opacity: 1, translate: '0 0' }],
+    { duration: 600, delay: 120, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
   dossierEl.inert = true;
   document.getElementById('dossier-croix').inert = true;
   lieuDossier = null;
@@ -2988,6 +3006,8 @@ function ouvrirStory(){
   bp.textContent =
     (navigator.canShare && navigator.canShare({ files: [new File([new Blob()], 'x.jpg', { type: 'image/jpeg' })] }))
       ? t.storyPartager : t.storyEnregistrer;
+  gsap.killTweensOf([storyPopup, '.story-carte']);
+  storyPopup.style.pointerEvents = ''; gsap.set(storyPopup, { clearProps: 'opacity' });
   storyPopup.hidden = false; storyOuvert = true; storyOuvertA = performance.now();
   gsap.fromTo('.story-carte', { opacity: 0, scale: 0.94, y: 8 },
     { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)', clearProps: 'transform' });
@@ -2996,8 +3016,18 @@ function ouvrirStory(){
   SoundManager.play('ui_click');
 }
 function fermerStory(){
-  storyPopup.hidden = true; storyOuvert = false;
+  storyOuvert = false;
   if (rendreFocus){ rendreFocus(); rendreFocus = null; }
+  // même sortie que la carte pédagogique : elle entrait en ressort et
+  // disparaissait d'un coup
+  gsap.killTweensOf([storyPopup, '.story-carte']);
+  if (MOINS_ANIM){ storyPopup.hidden = true; return; }
+  storyPopup.style.pointerEvents = 'none';
+  gsap.to('.story-carte', { opacity: 0, y: 8, scale: 0.985, duration: 0.3, ease: 'power2.in' });
+  gsap.to(storyPopup, { opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: () => {
+    if (!storyOuvert) storyPopup.hidden = true;
+    storyPopup.style.pointerEvents = ''; gsap.set(storyPopup, { clearProps: 'opacity' });
+  } });
 }
 document.getElementById('dossier-story').addEventListener('click', ouvrirStory);
 storyPopup.addEventListener('click', e => {
@@ -3217,12 +3247,14 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
       (r.width / 2) / innerWidth,
       (r.height / 2) / innerHeight);
     u.uVerreRayon2.value = Math.min(parseFloat(style.borderTopLeftRadius) || 18,r.width/2,r.height/2) / innerHeight;
-    u.uVerreForce2.value = panneau === verreMenu.panneau ? verreMenu.force : .9;
+    // un panneau qui s'efface emporte sa réfraction avec lui (sinon il laisse
+    // une lentille fantôme pendant sa sortie)
+    u.uVerreForce2.value = (panneau === verreMenu.panneau ? verreMenu.force : .9) * Number(style.opacity);
     let slot=0;
     for(const surface of document.querySelectorAll('#bouton-reglages,#map-inspector,#map-options,#dossier.ouvert,#city-comparison[open],.pedago-carte')){
       if(surface===panneau || slot===6) continue;
       const s=getComputedStyle(surface),box=surface.getBoundingClientRect();
-      if(s.visibility==='hidden'||s.display==='none'||box.width===0||box.height===0||Number(s.opacity)===0) continue;
+      if(s.visibility==='hidden'||s.display==='none'||box.width===0||box.height===0||Number(s.opacity)<.5) continue;
       u.uGlassRects.value[slot].set((box.left+box.width/2)/innerWidth,1-(box.top+box.height/2)/innerHeight,box.width/2/innerWidth,box.height/2/innerHeight);
       u.uGlassRadii.value[slot]=Math.min(parseFloat(s.borderTopLeftRadius)||24,box.width/2,box.height/2)/innerHeight;
       slot++;
@@ -3667,16 +3699,21 @@ const CHROME_DEPART = [
   ['#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }],
   ['#map-inspector', { opacity: 0, y: 10 }],
 ];
-for (const [cible, depart] of CHROME_DEPART) gsap.set(cible, depart);
+// mouvement réduit : le chrome part seulement transparent, sans décalage
+for (const [cible, depart] of CHROME_DEPART) gsap.set(cible, MOINS_ANIM ? { opacity: 0 } : depart);
 function revelerChrome(){
   document.body.classList.add('entree-chrome');
   const tl = gsap.timeline({ delay: 0.55, onComplete: () => document.body.classList.remove('entree-chrome') });
+  // mouvement réduit : tout ce qui glissait arrive en simple fondu
+  const sansDeplacement = depart => MOINS_ANIM
+    ? Object.fromEntries(Object.entries(depart).filter(([k]) => k === 'opacity')) : depart;
   const entree = (cible, depart, position, extra = {}) =>
-    tl.fromTo(cible, depart,
+    tl.fromTo(cible, sansDeplacement(depart),
       { opacity: 1, x: 0, y: 0, duration: DUREE.fast, ease: EASE,
         clearProps: 'opacity,transform', ...extra }, position);
 
-  tl.fromTo('#wordmark .lettre', { yPercent: 115 },
+  if (MOINS_ANIM) tl.to('#wordmark .lettre', { opacity: 1, duration: DUREE.fast, ease: EASE, clearProps: 'opacity' }, 0);
+  else tl.fromTo('#wordmark .lettre', { yPercent: 115 },
     { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
   entree('#recherche', { opacity: 0, y: -10 }, 0.15);
   entree('#bouton-reglages', { opacity: 0, y: -8 }, 0.4);
