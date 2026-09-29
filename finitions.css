@@ -258,3 +258,12 @@ html:lang(vi) :is(#wordmark, #timeline .an, .compare-time output, #dossier-score
   #map-inspector { width:clamp(240px, 14vw, 300px) }
   #map-toggle { font-size:clamp(13px, .35vw + 7px, 15px) }
 }
+
+/* =====================================================================
+   PHASE 4 — une seule lumière. Le soleil du globe est fixé en haut à gauche
+   de la caméra (index.html, SOLEIL_VUE) ; les arêtes du verre WebGL, le halo
+   et la lentille du curseur viennent du même point. Les panneaux CSS
+   prennent la même direction : liseré haut-gauche plus vif, bas-droite éteint.
+   ===================================================================== */
+:root { --glass-shadow:inset 1px 1px 0 #ffffff40, inset -1px -1px 0 #ffffff0c, 0 18px 64px #0007 }
+@media (prefers-reduced-transparency:reduce) { :root { --glass-shadow:inset 0 1px 0 #ffffff26, 0 18px 64px #0007 } }

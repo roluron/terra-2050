@@ -248,6 +248,15 @@ directions différentes :
 9. **Rendu à la demande.** Ne pas redessiner quand rien ne bouge : gain de
    batterie mobile qui paie les ajouts de la phase 6.
 
+> **Statut — construite.** Faits : 1, 3, 4, 5, 7, 8. En plus : la lentille
+> du curseur reçoit une légère aberration chromatique et un arc de lumière
+> en haut à gauche (même direction que le soleil), et `--glass-shadow`
+> aligne les ombres CSS sur cette source. Le reflet océanique s'éteint en
+> vue rapprochée (il faisait brume sur les villes). Non faits : 2 (le liseré
+> CSS garde son éclairage par le haut, déjà cohérent avec le soleil caméra),
+> 6 (décision du propriétaire, 6d471a7 : pas d'étincelles en mode Évolution,
+> pour la lisibilité scientifique), 9 (trop risqué pour la QA visuelle).
+
 ---
 
 ## Phase 5 — Mise en page : centré, ou décentré exprès

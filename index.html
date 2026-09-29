@@ -785,13 +785,15 @@ camera.position.set(0.35, 0.55, 6.2);   // plan d'intro : la terre entière, con
 
 const controles = new OrbitControls(camera, toile);
 controles.enableDamping = true;
-controles.dampingFactor = 0.25;          // amorti signature de la référence
+const AMORTI_60HZ = 0.25;          // amorti signature de la référence, calé sur 60 images/s
+controles.dampingFactor = AMORTI_60HZ;
 controles.enablePan = false;
 controles.minDistance = 1.45;            // zoom borné
 controles.maxDistance = 6.4;   // laisse vivre le plan large de l'intro (z = 6,2)
 controles.rotateSpeed = 0.55;
 controles.autoRotate = !MOINS_ANIM;      // rotation lente par défaut
-controles.autoRotateSpeed = 0.35;
+const VITESSE_ROTATION = 0.35;
+controles.autoRotateSpeed = VITESSE_ROTATION;
 
 // conversion lat/lon → vecteur unitaire
 function latLonVersVec3(lat, lon, r = 1){
@@ -1045,7 +1047,7 @@ const matGlobe = new THREE.ShaderMaterial({
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
     uniform float uTemps, uProgression, uChange, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue, uFeu;
-    uniform vec3 uSoleil;
+    uniform vec3 uSoleil; uniform float uHaloP;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC, uD, uPays, uPopulation;
     uniform sampler2D uFireWeather;
     uniform sampler2D uScientific_heat, uScientific_aridity, uScientific_warming, uScientific_coast, uScientific_river;
@@ -1089,8 +1091,14 @@ const matGlobe = new THREE.ShaderMaterial({
       // regardée n'entre jamais dans la nuit, seul le limbe opposé s'assombrit
       float jour = smoothstep(-0.25, 0.45, dot(vN, uSoleil));
       float reflet = pow(max(dot(vN, normalize(uSoleil + vue)), 0.0), 70.0) * (1.0 - terre) * jour;
+      // de près, la courbure s'aplatit et le reflet s'étalait en brume : il
+      // s'efface quand la caméra s'approche
+      reflet *= smoothstep(2.2, 4.4, length(cameraPosition));
       
-      vec3 col = base * (1.05 + 0.24 * lambert) + vec3(0.09, 0.25, 0.66) * fresnel * 0.50;
+      // le liseré prend la teinte du halo : plus d'anneau bleu dans la
+      // couronne rouge de 2050
+      vec3 lisere = mix(vec3(0.09, 0.25, 0.66), vec3(0.62, 0.20, 0.08), smoothstep(0.12, 0.95, uHaloP));
+      vec3 col = base * (1.05 + 0.24 * lambert) + lisere * fresnel * 0.50;
 
       float P = uProgression;
       vec4 heatData = texture2D(uScientific_heat, vUv);
@@ -1236,17 +1244,24 @@ const matAtmo = new THREE.ShaderMaterial({
       float halo = pow(facing, 1.8) * 2.8;
       // l'atmosphère vire du bleu 2026 à la braise 2050 avec la projection
       vec3 froid = vec3(0.090, 0.251, 0.663);
-      vec3 chaud = vec3(0.760, 0.130, 0.045);
+      // braise moins saturée : la couronne de 2050 écrasait le globe
+      vec3 chaud = vec3(0.620, 0.200, 0.080);
       vec3 teinte = mix(froid, chaud, smoothstep(0.12, 0.95, uProgression));
       float chaleur = uProgression * uProgression;
-      float onde = sin(vP.y * 12.0 - uTemps * 1.3 + sin(vP.x * 5.0 + uTemps * 0.4) * 2.2);
-      float vagues = pow(0.5 + 0.5 * onde, 3.0);
-      halo *= 1.0 + chaleur * (vagues * 1.25 - 0.12);
+      // ondes de chaleur plus larges et plus douces (les bandes serrées se
+      // lisaient comme des langues de flamme)
+      float onde = sin(vP.y * 6.0 - uTemps * 0.9 + sin(vP.x * 3.0 + uTemps * 0.3) * 1.6);
+      float vagues = pow(0.5 + 0.5 * onde, 2.0);
+      halo *= 1.0 + chaleur * (vagues * 0.55 - 0.08);
+      // le halo est plus dense côté soleil (en haut à gauche, comme le globe)
+      halo *= 0.6 + 0.4 * smoothstep(-0.5, 0.7, dot(normalize(vN), normalize(vec3(-0.55, 0.62, 0.56))));
       vec3 emission = vec3(1.0) - exp(-teinte * halo);
       gl_FragColor = vec4(emission, 1.0) * uIntensite;
     }`,
 });
 scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 48), matAtmo));
+// le globe lit la même progression que le halo (0 quand un calque est actif)
+uniformsGlobe.uHaloP = matAtmo.uniforms.uProgression;
 
 /* ---- grille tactique discrète (méridiens/parallèles) ---- */
 {
@@ -1520,12 +1535,28 @@ const matPost = new THREE.ShaderMaterial({
         otherInside=max(otherInside,inside);
         otherEdge+=smoothstep(.0025,0.0,abs(sd))*inside*(.3+.7*max(0.0,dot(normal,normalize(vec2(-1,1)))));
       }
+      // lentille du curseur : réfraction, légère dispersion des couleurs sur le
+      // bord et un arc de reflet en haut à gauche (même soleil que le globe)
+      float lentille = 0.0; vec2 dirLentille = vec2(0.0); vec2 decalLentille = vec2(0.0);
       if(uCursor.z>0.0){
         vec2 offset=vUv-uCursor.xy;
         float distanceToCursor=length(offset*vec2(uRatio,1.0))/uCursor.z;
-        if(distanceToCursor<1.0) uv-=offset*.22*(1.0-distanceToCursor*distanceToCursor);
+        if(distanceToCursor<1.0){
+          decalLentille = offset*.22*(1.0-distanceToCursor*distanceToCursor);
+          uv-=decalLentille;
+          lentille = distanceToCursor;
+          dirLentille = normalize(offset*vec2(uRatio,1.0)+1e-6);
+        }
       }
       vec4 s = texture2D(tScene, uv);
+      if (lentille > 0.0){
+        float bordL = smoothstep(0.55, 1.0, lentille);
+        s.r = texture2D(tScene, uv - decalLentille * 0.08 * bordL).r;
+        s.b = texture2D(tScene, uv + decalLentille * 0.08 * bordL).b;
+        float arc = smoothstep(0.78, 0.93, lentille) * smoothstep(1.0, 0.95, lentille)
+                  * smoothstep(0.35, 1.0, dot(dirLentille, normalize(vec2(-1.0, 1.0))));
+        s.rgb += vec3(1.0, 0.99, 0.94) * arc * 0.35;
+      }
       vec3 col = mix(s.rgb, grade(clamp(s.rgb, 0.0, 1.0)), uQuantite);
       float d = distance(vUv, vec2(0.5));
       col *= 1.0 - 0.22 * smoothstep(0.42, 0.85, d);        // vignettage
@@ -1549,6 +1580,8 @@ const matPost = new THREE.ShaderMaterial({
         col += vec3(1.0) * bord2 * 0.48 * uVerreForce2;
       }
       col+=vec3(1.0)*otherEdge*.48;
+      // tramage d'un demi-niveau : le halo sombre ne montre plus de paliers
+      col += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
       gl_FragColor = vec4(col, 1.0);
     }`,
 });
@@ -1847,7 +1880,12 @@ const contactsGlobe = new Set();
 toile.addEventListener('pointerdown', event => contactsGlobe.add(event.pointerId));
 for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, event => contactsGlobe.delete(event.pointerId));
 function reprendreRotation(){
+  const avant = controles.autoRotate;
   controles.autoRotate = !MOINS_ANIM && !contactsGlobe.size && !minuterieRepos;
+  // la rotation reprend en douceur au lieu de repartir d'un coup (sauf pendant
+  // le relais de l'intro, qui cale déjà sa propre vitesse)
+  if (!avant && controles.autoRotate && !gsap.isTweening(controles))
+    gsap.fromTo(controles, { autoRotateSpeed: 0 }, { autoRotateSpeed: VITESSE_ROTATION, duration: 2.5, ease: 'power2.inOut' });
 }
 controles.addEventListener('start', () => {
   controles.autoRotate = false;
@@ -3934,7 +3972,7 @@ document.getElementById('recherche').addEventListener('focusin', () => {
   globeSurvole = true;
   revelerEtiquettes();
 });
-const ETIQUETTES_MAX = 36, etiquettes = [];
+const ETIQUETTES_MAX = 36, etiquettes = [], etiquettesParVille = new Map();
 for (let i = 0; i < ETIQUETTES_MAX; i++){
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'etiquette'; b.hidden = true;
@@ -3984,8 +4022,26 @@ function majEtiquettes(){
     const alpha = Math.min(1, (face - horizon) / (1 - horizon) / 0.22);
     places.push([x, y, w, i, alpha]);
   }
-  places.forEach((p, k) => {
-    const b = etiquettes[k], cle = p[3] + ':' + langue;
+  /* chaque ville garde son bouton tant qu'elle reste affichée : réaffecter
+     les boutons par rang faisait sauter les noms de l'un à l'autre pendant la
+     rotation. Une ville qui sort s'éteint en fondu avant d'être masquée. */
+  const presentes = new Set(places.map(p => p[3]));
+  for (const [i, b] of etiquettesParVille){
+    if (presentes.has(i)) continue;
+    etiquettesParVille.delete(i);
+    b.style.opacity = '0'; b.style.pointerEvents = 'none'; b.tabIndex = -1;
+    clearTimeout(b._masque);
+    b._masque = setTimeout(() => { if (!b._ville) b.hidden = true; }, MOINS_ANIM ? 0 : 360);
+    b._ville = null;
+  }
+  const libres = etiquettes.filter(b => !b._ville);
+  places.forEach(p => {
+    let b = etiquettesParVille.get(p[3]);
+    if (!b){
+      b = libres.shift(); if (!b) return;
+      etiquettesParVille.set(p[3], b); b._ville = p[3]; clearTimeout(b._masque);
+    }
+    const cle = p[3] + ':' + langue;
     if (b.dataset.i !== cle){ b.dataset.i = cle; b.textContent = nomVille(LIEUX[p[3]]); }
     b.style.transform = `translate3d(${p[0].toFixed(1)}px, ${p[1].toFixed(1)}px, 0) translate(-50%, -100%)`;
     const proximite = Math.max(0, Math.min(1, (rayon - Math.hypot(p[0] - fx, p[1] - fy)) / 60));
@@ -3994,7 +4050,6 @@ function majEtiquettes(){
     b.tabIndex = proximite > .2 ? 0 : -1;
     if (b.hidden) b.hidden = false;
   });
-  for (let k = places.length; k < ETIQUETTES_MAX; k++) if (!etiquettes[k].hidden) etiquettes[k].hidden = true;
 }
 
 /* ---- boucle unique ---- */
@@ -4013,7 +4068,11 @@ function boucle(){
   fleuvesUniforms.uCrue.value = uniformsGlobe.uCrue.value * 0.45;
 
 
-  controles.update();
+  // amorti et rotation indépendants de la fréquence d'affichage : à 120 Hz
+  // le globe tournait deux fois plus vite et son élan durait deux fois moins
+  const pas = Math.min(dt, 0.1);
+  controles.dampingFactor = 1 - Math.pow(1 - AMORTI_60HZ, pas * 60);
+  controles.update(pas);
   camera.updateMatrixWorld();
   uniformsGlobe.uSoleil.value.copy(SOLEIL_VUE).transformDirection(camera.matrixWorld);
   indiceCible = 1 - indiceCible;
