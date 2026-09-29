@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
-import {discover} from './entrance.cjs';
-const browser=await chromium.launch({headless:false});
+import {discover,chromeArgs} from './entrance.cjs';
+const browser=await chromium.launch({headless:false,args:chromeArgs});
 try{
  const page=await browser.newPage({viewport:{width:1280,height:900}});
  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');
@@ -20,6 +20,8 @@ try{
  await page.waitForTimeout(250);await page.mouse.move(700,420);await page.waitForTimeout(100);
  assert.equal(await page.locator('.glass-cursor').isVisible(),true,'Cursor resumes with mouse movement');
  await page.mouse.move(200,450);await page.waitForTimeout(500);
+ // taille lissée image par image : on attend l'état final (runner CI lent), puis on l'affirme
+ await page.waitForFunction(()=>{const e=document.querySelector('.glass-cursor');return e&&e.classList.contains('point')&&parseFloat(e.style.width)<8;},null,{timeout:30000}).catch(()=>{});
  assert.equal(await page.locator('.glass-cursor').evaluate(e=>e.classList.contains('point')&&parseFloat(e.style.width)<8),true,'Shrinks to a dot off the globe');
  await page.evaluate(()=>window.dispatchEvent(new Event('blur')));
  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'Cursor clears when window loses focus');
