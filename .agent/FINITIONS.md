@@ -252,6 +252,24 @@ directions différentes :
 
 ## Phase 5 — Mise en page : centré, ou décentré exprès
 
+**État : construite en partie le 2026-09-29.**
+
+Fait :
+- 2 : le globe est centré entre l'en-tête et l'année ;
+- 3 : la zone de sécurité est ajoutée aux marges au lieu de les remplacer ;
+- 5 : en paysage, l'année ne touche plus la croix ;
+- 8, 9 (plus de police mono système, SSP3‑7.0 insécable), 10, 11, 12 et 13 (titres équilibrés).
+
+Aussi réglé : le pied de page en paysage (pastille et année alignées en bas) et
+l'invitation masquée en paysage quand une fiche est ouverte.
+
+Reste à faire :
+- 1 : une gouttière unique partout ;
+- 4 : la ligne de base partagée en portrait ;
+- 6 : le contour du verre WebGL ;
+- 7 : les en-têtes collants ;
+- 14 : la consolidation des `@media`.
+
 1. **Gouttière unique** `--gutter`. Aujourd'hui le desktop mélange 40, 24 et
    24 px, et le mobile 20, 12, 13, 19, 8, 12, 19,2 et 0 px.
 2. **Globe centré dans l'espace libre,** entre le header et le dock, pas dans

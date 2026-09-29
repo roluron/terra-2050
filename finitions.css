@@ -196,4 +196,65 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
 #loupe { pointer-events:none }
 #accroche { pointer-events:auto; z-index:26; left:max(24px, env(safe-area-inset-left)) }
 @media (max-width:720px) { #accroche { top:auto; bottom:calc(116px + env(safe-area-inset-bottom)); left:12px } }
-@media (max-height:500px) and (orientation:landscape) { #accroche { top:auto; bottom:max(12px, env(safe-area-inset-bottom)); left:max(24px, env(safe-area-inset-left)) } }
+@media (max-height:500px) and (orientation:landscape) {
+  #accroche { top:auto; bottom:calc(84px + env(safe-area-inset-bottom)); left:max(24px, env(safe-area-inset-left)) }
+  /* fiche ouverte, il ne reste pas la place à sa gauche : l'invitation à
+     comparer s'efface comme en portrait (le bouton « Comparer » de la fiche
+     fait la même chose) */
+  body.dossier-ouvert #accroche { visibility:hidden }
+}
+
+/* =====================================================================
+   PHASE 5 — centré, ou décentré exprès.
+   ===================================================================== */
+
+/* ---- plus de monospace système : sous Linux ou Windows, « ANNÉE ·
+   2026–2050 », les sources et les notes tombaient en DejaVu ou Consolas.
+   Lausanne 500 en petites capitales, chiffres tabulaires ---- */
+:is(#dossier .fiche-temps-label, .pedago-source, .compare-eyebrow, .note-calques) {
+  font-family:var(--police); font-weight:500; font-variant-numeric:tabular-nums;
+  letter-spacing:.1em; text-transform:uppercase;
+}
+.pedago-source { font-size:10px; line-height:1.55; text-wrap:pretty }
+
+/* ---- marge de sécurité ajoutée, pas substituée : max(28px, inset)
+   collait l'année à l'indicateur d'accueil de l'iPhone (inset 34 px) ---- */
+#globe-dock > #timeline, body.pret #globe-dock > #timeline { bottom:calc(28px + env(safe-area-inset-bottom)) }
+#map-inspector { bottom:calc(66px + env(safe-area-inset-bottom)) }
+@media (max-width:720px) {
+  #globe-dock > #timeline, body.pret #globe-dock > #timeline { bottom:calc(20px + env(safe-area-inset-bottom)) }
+  #map-inspector { bottom:calc(42px + env(safe-area-inset-bottom)) }
+  /* pastille des filtres à la taille de son libellé : à 390 px, « Filtres »
+     et le chevron flottaient aux deux bouts d'une pastille trop large */
+  #map-inspector { width:auto; min-width:88px; max-width:calc(50% - 68px) }
+  #map-toggle { justify-content:flex-start; gap:10px }
+}
+@media (max-height:500px) and (orientation:landscape) {
+  #map-inspector { bottom:calc(12px + env(safe-area-inset-bottom)); left:max(24px, env(safe-area-inset-left)) }
+  #globe-dock > #timeline, body.pret #globe-dock > #timeline { bottom:calc(12px + env(safe-area-inset-bottom)) }
+  /* fiche en paysage : l'année s'arrêtait à 4 px de la croix */
+  #dossier-temps { padding-right:72px }
+}
+
+/* ---- boutons de la fiche : trois colonnes égales, libellés équilibrés
+   (« Comparer une ville » passait seul sur deux lignes) ---- */
+@media (min-width:721px) { #dossier .actions { grid-template-columns:repeat(3, minmax(0,1fr)) } }
+#dossier .actions button { text-wrap:balance; text-align:center; line-height:1.25 }
+
+/* ---- titres qui se coupaient trop tôt (« Select your / language ») ---- */
+:is(#language-title, .pedago-titre, .compare-shell h2, #dossier-nom) { text-wrap:balance }
+
+/* ---- vietnamien : la police de secours ne s'applique qu'au texte ; le
+   wordmark, l'année et les chiffres gardent Lausanne ---- */
+html:lang(vi) :is(#wordmark, #timeline .an, .compare-time output, #dossier-score, .risk-number) {
+  font-family:"TWK Lausanne", Arial, sans-serif;
+}
+
+/* ---- très grands écrans : l'année et la pastille grandissent avec la
+   fenêtre au lieu de rester à leur taille d'ordinateur portable ---- */
+@media (min-width:1800px) and (min-height:900px) {
+  #globe-dock > #timeline, body.pret #globe-dock > #timeline { width:clamp(200px, 13vh, 280px) }
+  #globe-dock #timeline .an { font-size:clamp(80px, 7.2vh, 112px) }
+  #map-inspector { width:clamp(240px, 14vw, 300px) }
+  #map-toggle { font-size:clamp(13px, .35vw + 7px, 15px) }
+}

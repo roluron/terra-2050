@@ -1700,6 +1700,12 @@ function cadrerCarte(){
   else if (innerWidth > 720 && fiche && panneau.offsetWidth){
     const occupe = innerWidth - panneau.offsetLeft;
     if (occupe > 0 && occupe < innerWidth * .6) x = occupe / 2;
+  } else if (!fiche && innerWidth > 720 && innerHeight > 500){
+    // sans fiche, le globe se centre entre l'en-tête et l'année (il était
+    // centré sur la fenêtre, 36 px trop bas à 1440×900)
+    const haut = document.getElementById('titre')?.getBoundingClientRect().bottom || 0;
+    const bas = document.getElementById('timeline')?.getBoundingClientRect().top || innerHeight;
+    if (haut > 0 && bas > haut) y = Math.round(Math.max(0, Math.min(60, innerHeight / 2 - (haut + bas) / 2)));
   }
   if (x === decalageVue.x && y === decalageVue.y) return appliquerDecalageVue();
   gsap.to(decalageVue, { x, y, duration: MOINS_ANIM ? 0 : .65, ease: 'expo.out',
@@ -3336,7 +3342,9 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
     pedago.querySelector('.pastille-pedago').style.background = c;
     document.getElementById('pedago-nom').textContent = t.calque[cle];
     document.getElementById('pedago-texte').textContent = t.infoplus[cle];
-    document.getElementById('pedago-source').textContent = t.infoSource[cle];
+    // trait d'union insécable dans les codes (SSP3‑7.0, CMIP6‑…) : ils se
+    // coupaient en fin de ligne
+    document.getElementById('pedago-source').textContent = t.infoSource[cle].replace(/([A-Z]+\d*)-(\d)/g, '$1\u2011$2');
     document.getElementById('pedago-fermer').textContent = t.pedagoOk;
     pedago.hidden = false;
     pedagoOuvert = true;
