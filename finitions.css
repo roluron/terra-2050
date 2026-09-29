@@ -186,3 +186,14 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
   #curseur, #comparison-year { pointer-events:none }
   #timeline, .compare-time { touch-action:pan-y }
 }
+
+/* ---- deux défauts de toucher relevés par la QA (correctifs repris de
+   bf1c95e, PR #10 jamais fusionnée) ----
+   La loupe n'est qu'un dessin : en téléphone paysage elle captait le tap et
+   la recherche ne s'ouvrait jamais. L'invitation sort du dock (index.html),
+   qui ne laissait passer aucun clic : elle redevient cliquable, au-dessus de
+   la fiche. */
+#loupe { pointer-events:none }
+#accroche { pointer-events:auto; z-index:26; left:max(24px, env(safe-area-inset-left)) }
+@media (max-width:720px) { #accroche { top:auto; bottom:calc(116px + env(safe-area-inset-bottom)); left:12px } }
+@media (max-height:500px) and (orientation:landscape) { #accroche { top:auto; bottom:max(12px, env(safe-area-inset-bottom)); left:max(24px, env(safe-area-inset-left)) } }

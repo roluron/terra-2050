@@ -2251,7 +2251,10 @@ champ.addEventListener('blur',  () => gsap.to(etatVerre, { force: 0.55, duration
 const dossierEl = document.getElementById('dossier');
 const scrimEl = document.getElementById('scrim-dossier');
 const timelineEl = document.getElementById('timeline');
-timelineEl.before(document.getElementById('accroche'));
+// l'invitation vit hors du dock : le dock ne laisse passer aucun clic
+// (pointer-events:none) et il est masqué dès qu'une fiche s'ouvre, justement
+// quand l'invitation à comparer s'affiche (repris de bf1c95e, PR #10)
+document.body.append(document.getElementById('accroche'));
 const timelineRepere = document.createComment('timeline');
 timelineEl.before(timelineRepere);
 document.getElementById('dossier-score').setAttribute('aria-hidden', 'true');
