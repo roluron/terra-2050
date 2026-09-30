@@ -1,3 +1,5 @@
+2026-09-30: le titre et la langue du sélecteur suivent la sélection au clavier avant confirmation (base 2a78404). Navigation des huit langues, quatre flèches, bouclage, Entrée/Espace, clic, réouverture et absence de changement de langue/URL/préférence avant confirmation vérifiés par language-click.mjs sur Chromium desktop et téléphone simulé. Log : /tmp/terra-language-preview.log. Schémas de traduction vérifiés. Publication via main selon la préférence de l’utilisateur ; Safari réel non vérifié.
+
 2026-09-30: recherche unifiée sur la base publiée b9b7589. Voir UNIFIED-SEARCH.md : invitation transformée en barre au même endroit, loupe retirée, ajustement de l'en-tête dans la fiche mobile. Suite feedback passée sur desktop, téléphone, compact et tablette simulés. Publication via main selon la préférence de l’utilisateur.
 
 2026-09-30: suivi souris corrigé sur la base publiée a894bbc. Voir POINTER-PERFORMANCE.md : position immédiate, transform composité, moins de recalculs de mise en page, cache des infobulles. Publication via main selon la préférence de l’utilisateur. Safari sur appareil réel non vérifié.

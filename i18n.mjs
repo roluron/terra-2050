@@ -38,12 +38,16 @@ document.getElementById('language-options').replaceChildren(...Object.entries(la
   label.style.setProperty('--row', index);
   input.type = 'radio'; input.name = 'language'; input.value = code;
   text.lang = code; text.textContent = name;
+  input.addEventListener('change', () => previewLanguageDialog(code));
   input.addEventListener('click', () => closeLanguage());
   label.append(input, text); return label;
 }));
+function previewLanguageDialog(code) {
+  languageDialog.lang = code;
+  document.getElementById('language-title').textContent = languagePrompts[code][0];
+}
 function syncLanguageDialog() {
-  languageDialog.lang = current;
-  document.getElementById('language-title').textContent = languagePrompts[current][0];
+  previewLanguageDialog(current);
   for (const input of languageDialog.querySelectorAll('input')) input.checked = input.value === current;
 }
 export function openLanguage(onClose, first = false) {
@@ -74,7 +78,7 @@ languageDialog.addEventListener('keydown', event => {
     const inputs = [...languageDialog.querySelectorAll('input')];
     const step = ['ArrowDown','ArrowRight'].includes(event.key) ? 1 : -1;
     const next = inputs[(inputs.indexOf(event.target) + step + inputs.length) % inputs.length];
-    next.checked = true; next.focus();
+    next.checked = true; previewLanguageDialog(next.value); next.focus();
   }
   if (event.key === 'Enter') { event.preventDefault(); closeLanguage(); }
 });
