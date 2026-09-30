@@ -1,3 +1,5 @@
+2026-09-30: suivi souris corrigé sur la base publiée a894bbc. Voir POINTER-PERFORMANCE.md : position immédiate, transform composité, moins de recalculs de mise en page, cache des infobulles. Publication via main selon la préférence de l’utilisateur. Safari sur appareil réel non vérifié.
+
 2026-09-30: retours Canva corrigés et vérifiés localement sur la base 869154f. Voir FEEDBACK.md. Aperçu : port 8080. Suite dédiée passée sur Chromium desktop et trois formats tactiles en émulation ; suite refinement passée sur desktop. Publication GitHub Pages demandée par l’utilisateur via main. Safari sur appareil réel non vérifié.
 
 Current design pass 2026-09-17 COMPLETE locally: PREMIUM.md. Preview8088, baseline6d471a7, final source hashes and observed tests in PREMIUM.md. No publication. Older state below is historical.

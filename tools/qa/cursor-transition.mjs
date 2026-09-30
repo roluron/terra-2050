@@ -20,7 +20,7 @@ try{
  await page.waitForTimeout(250);await page.mouse.move(700,420);await page.waitForTimeout(100);
  assert.equal(await page.locator('.glass-cursor').isVisible(),true,'Cursor resumes with mouse movement');
  await page.mouse.move(200,450);await page.waitForTimeout(500);
- assert.equal(await page.locator('.glass-cursor').evaluate(e=>e.classList.contains('point')&&parseFloat(e.style.width)<8),true,'Shrinks to a dot off the globe');
+ assert.equal(await page.locator('.glass-cursor').evaluate(e=>e.classList.contains('point')&&e.getBoundingClientRect().width<8),true,'Shrinks to a dot off the globe');
  await page.evaluate(()=>window.dispatchEvent(new Event('blur')));
  assert.equal(await page.locator('.glass-cursor').isVisible(),false,'Cursor clears when window loses focus');
  console.log('PASS language exit, underlined CTA, departure cleanup, resumed movement, blur');

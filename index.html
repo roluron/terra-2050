@@ -2102,7 +2102,7 @@ addEventListener('resize', () => {
     centre = st.textAlign === 'center';
   };
   const placer = () => {
-    mesure.textContent = champ.value;
+    if(mesure.textContent !== champ.value) mesure.textContent = champ.value;
     const largeurTexte = mesure.getBoundingClientRect().width;
     const utile = champ.clientWidth - padG - padD;
     // le champ est centré au repos, aligné à gauche au focus (cf. terra-menus.css)
@@ -3775,29 +3775,38 @@ const survolEl = document.getElementById('survol');
 const survolNom = survolEl.querySelector('.s-nom'), survolIndice = survolEl.querySelector('.s-indice'),
       survolSous = survolEl.querySelector('.s-sous');
 let survolLieu = null, survolFige = false;
+let survolContenu = null, survolLargeur = 0, survolHauteur = 0;
 function montrerSurvol(s, cx, cy, fige){
   const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
   const iso = s && s.iso;
   if (!l && !iso){ cacherSurvol(); return; }
   survolLieu = l; survolFige = !!fige;
   const an = etat.annee;
-  const indice = !l ? null : estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
-  survolNom.textContent = l ? nomVille(l) : nomPays(iso);
-  survolIndice.textContent = indice === null ? '' : indice;
-  survolIndice.style.color = indice === null ? '' : couleurNote(indice);
-  survolSous.textContent = l && !estPays(l) ? nomPays(l[1]) : (T().ui.country);
-  survolEl.classList.toggle('fige', survolFige);
-  const w = survolEl.offsetWidth, h = survolEl.offsetHeight;
+  // Un même lieu ne change pas de diagnostic avec chaque pixel de souris.
+  // Invalider aussi à l'arrivée des données, au changement d'année/langue
+  // et au resize pour conserver les valeurs et dimensions à jour.
+  if(!survolContenu || survolContenu.l!==l || survolContenu.iso!==iso || survolContenu.an!==an || survolContenu.langue!==langue || survolContenu.science!==SCIENCE || survolContenu.coverage!==l?.[7] || survolContenu.fige!==survolFige || survolContenu.width!==innerWidth || survolContenu.height!==innerHeight){
+    const indice = !l ? null : estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
+    survolNom.textContent = l ? nomVille(l) : nomPays(iso);
+    survolIndice.textContent = indice === null ? '' : indice;
+    survolIndice.style.color = indice === null ? '' : couleurNote(indice);
+    survolSous.textContent = l && !estPays(l) ? nomPays(l[1]) : (T().ui.country);
+    if(survolEl.classList.contains('fige')!==survolFige)survolEl.classList.toggle('fige',survolFige);
+    survolLargeur=survolEl.offsetWidth;survolHauteur=survolEl.offsetHeight;
+    survolContenu={l,iso,an,langue,science:SCIENCE,coverage:l?.[7],fige:survolFige,width:innerWidth,height:innerHeight};
+  }
+  const w = survolLargeur, h = survolHauteur;
   const x = cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16;
   const y = cy + 18 + h > innerHeight - 8 ? cy - 12 - h : cy + 18;
   survolEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-  survolEl.classList.add('visible');
-  document.body.classList.toggle('sur-lieu', !!l);
+  if(!survolEl.classList.contains('visible'))survolEl.classList.add('visible');
+  if(document.body.classList.contains('sur-lieu')!==!!l)document.body.classList.toggle('sur-lieu',!!l);
 }
 function cacherSurvol(){
   survolLieu = null; survolFige = false;
-  survolEl.classList.remove('visible', 'fige');
-  document.body.classList.remove('sur-lieu');
+  if(survolEl.classList.contains('visible')||survolEl.classList.contains('fige'))survolEl.classList.remove('visible', 'fige');
+  if(document.body.classList.contains('sur-lieu'))document.body.classList.remove('sur-lieu');
+  survolContenu=null;
 }
 {
   let presse = null;

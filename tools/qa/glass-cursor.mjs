@@ -21,7 +21,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   }
   await page.mouse.move(400,80);await page.waitForTimeout(400);
   assert.equal(await page.locator('.glass-cursor').isVisible(),true,'Dot over empty space');
-  assert.ok(await page.locator('.glass-cursor').evaluate(e=>parseFloat(e.style.width)<8),'Small dot over empty space');
+  assert.ok(await page.locator('.glass-cursor').evaluate(e=>e.getBoundingClientRect().width<8),'Small dot over empty space');
   assert.equal(await page.evaluate(async()=> (await import('./glass-cursor.mjs')).glassCursor.radius),3,'Refraction radius follows the dot on the canvas');
   await page.mouse.move(720,450);await page.waitForTimeout(200);
   await page.screenshot({path:'/Users/robinmahieux/Documents/Codex/2026-09-16/t/outputs/globe-only-cursor.png'});

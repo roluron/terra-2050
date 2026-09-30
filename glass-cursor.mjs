@@ -13,9 +13,14 @@ lens.className='glass-cursor point';lens.setAttribute('aria-hidden','true');lens
 document.body.append(lens);
 const POINT=6,POINT_CONTROLE=10,LENTILLE=50,LENTILLE_PRESSEE=36;
 const CONTROLES='a,button,summary,label,input,select,textarea,[role=button],[role=option],.etiquette,#survol.fige';
-let x=0,y=0,fx=0,fy=0,taille=POINT,pressed=false,frame=0,last=0;
+let x=0,y=0,taille=POINT,pressed=false,frame=0,last=0,onScene=false;
+function position(){
+ // La position suit l'événement immédiatement ; seule la taille est amortie.
+ lens.style.transform=`translate3d(${x-LENTILLE/2}px,${y-LENTILLE/2}px,0) scale(${taille/LENTILLE})`;
+ Object.assign(glassCursor,{x,y,radius:onScene?taille/2:0});
+}
 function hide(){
- glassCursor.radius=0;lens.hidden=true;taille=POINT;
+ glassCursor.radius=0;lens.hidden=true;taille=POINT;onScene=false;
  document.body.classList.remove('curseur-verre');lens.classList.add('point');
  cancelAnimationFrame(frame);frame=0;
 }
@@ -26,22 +31,25 @@ function draw(t){
  const surControle=!surGlobe&&!!sous.closest(CONTROLES);
  const cible=surGlobe?(pressed?LENTILLE_PRESSEE:LENTILLE):surControle?POINT_CONTROLE:pressed?POINT*.7:POINT;
  const dt=Math.min(32,t-last||16);last=t;
- const k=reduced.matches?1:1-Math.exp(-dt/55),ks=reduced.matches?1:1-Math.exp(-dt/85);
- fx+=(x-fx)*k;fy+=(y-fy)*k;taille+=(cible-taille)*ks;
+ const ks=reduced.matches?1:1-Math.exp(-dt/85);
+ const avant=taille;taille+=(cible-taille)*ks;
  if(Math.abs(cible-taille)<.05)taille=cible;
- Object.assign(lens.style,{left:fx-taille/2+'px',top:fy-taille/2+'px',width:taille+'px',height:taille+'px'});
- lens.classList.toggle('point',!surGlobe);
- lens.hidden=false;document.body.classList.add('curseur-verre');
+ const point=!surGlobe;
+ if(lens.classList.contains('point')!==point)lens.classList.toggle('point',point);
+ if(lens.hidden){lens.hidden=false;document.body.classList.add('curseur-verre');position();}
  /* la réfraction suit la taille réelle : elle s'éteint avec la lentille
     au lieu de sauter, et n'agit que sur la toile (rien à déformer sous un panneau) */
- Object.assign(glassCursor,{x:fx,y:fy,radius:sous===scene?taille/2:0});
+ onScene=sous===scene;
+ if(taille!==avant)position();
+ glassCursor.radius=onScene?taille/2:0;
  frame=requestAnimationFrame(draw);
 }
 document.addEventListener('pointermove',event=>{
  if(!fine.matches||event.pointerType!=='mouse'){hide();return;}
  x=event.clientX;y=event.clientY;
- if(!frame){fx=x;fy=y;last=0;frame=requestAnimationFrame(draw);}
-},{passive:true});
+ position();
+ if(!frame){last=0;frame=requestAnimationFrame(draw);}
+},{passive:true,capture:true});
 document.addEventListener('pointerdown',event=>{if(event.pointerType==='mouse')pressed=true});
 document.addEventListener('pointerup',()=>{pressed=false});
 document.addEventListener('pointercancel',()=>{pressed=false;hide()});
