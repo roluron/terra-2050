@@ -11,14 +11,29 @@ const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const signs = Array.from('·✳+⋮✶⋅⊹✧');
 const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
-let finished = 0, pointerReady = false;
+let finished = 0, pointerReady = false, letterReady = false, arrivalRevision = 0;
 const revealTimers = new Set();
-/* La lettre apparaît sous le pointeur, là où l'on vient de choisir la langue :
-   le premier geste décodait une diagonale de mots avant toute lecture. Le
-   pointeur est ignoré pendant la première seconde après son arrivée. */
-const POINTER_GRACE = 1000;
-let letterShownAt = Infinity;
-function armLetter() { letterShownAt = performance.now(); pointerReady = false; }
+/* Attendre toutes les lignes, pas un délai plus court que leur apparition.
+   Le pointeur déjà posé reste inactif jusqu'à un nouveau mouvement. */
+function armLetter() {
+  const revision = ++arrivalRevision;
+  letterReady = false; pointerReady = false;
+  shell.classList.remove('interaction-ready');
+  for (const item of words) if (!item.started) item.word.tabIndex = -1;
+  const main = document.getElementById('earth-letter-main');
+  if (main.hidden || !shell.open) return;
+  requestAnimationFrame(async () => {
+    if (revision !== arrivalRevision || main.hidden || !shell.open) return;
+    const lines = [shell.querySelector('h1'), ...letter.querySelectorAll('p')];
+    const arrivals = lines.flatMap(line => line.getAnimations()).filter(animation => animation.animationName === 'earth-arrive');
+    await Promise.allSettled(arrivals.map(animation => animation.finished));
+    if (revision !== arrivalRevision || main.hidden || !shell.open || departing) return;
+    if (lines.some(line => Number(getComputedStyle(line).opacity) < .999)) return;
+    letterReady = true;
+    shell.classList.add('interaction-ready');
+    for (const item of words) if (!item.started) item.word.tabIndex = 0;
+  });
+}
 openLanguage(() => {
   document.getElementById('earth-letter-main').hidden = false;
   document.getElementById('earth-letter-main').focus({preventScroll:true});
@@ -28,8 +43,8 @@ openLanguage(() => {
 function buildLetter() {
   for (const timer of revealTimers) clearInterval(timer);
   revealTimers.clear(); words.length = 0; finished = 0;
-  pointerReady = false;
-  shell.classList.remove('complete'); future.tabIndex = -1;
+  pointerReady = false; letterReady = false;
+  shell.classList.remove('complete', 'interaction-ready'); future.tabIndex = -1;
   const t = getText().ui;
   shell.lang = language(); shell.setAttribute('aria-label', t.letterLabel);
   shell.querySelector('h1').textContent = t.letterTitle;
@@ -56,7 +71,7 @@ for (const [line, paragraph] of [shell.querySelector('h1'), ...letter.querySelec
       if (!text.trim()) { fragment.append(text); continue; }
       const word = document.createElement('span');
       word.className = 'word';
-      word.tabIndex = 0;
+      word.tabIndex = -1;
       word.setAttribute('role', 'button');
       word.setAttribute('aria-label', message('revealWord', {word: text}));
       const latin = document.createElement('span');
@@ -91,7 +106,7 @@ function signsFor(index, length) {
 }
 
 function reveal(item) {
-  if (item.started) return;
+  if (!letterReady || item.started || departing) return;
   item.started = true;
   const { word, glyphs, text, index } = item;
   word.classList.add('revealing');
@@ -123,7 +138,7 @@ function finish({ word }) {
 }
 
 document.getElementById('earth-letter-main').addEventListener('pointermove', event => {
-  if (performance.now() - letterShownAt < POINTER_GRACE) return;
+  if (!letterReady) return;
   pointerReady = true;
   for (const item of words) {
     if (item.started) continue;
@@ -136,6 +151,7 @@ document.getElementById('earth-letter-main').addEventListener('pointermove', eve
 
 
 let departing = false, entered = false, stopOrb, recoveryTimer;
+motion.addEventListener('change', () => { if (shell.open && !departing) armLetter(); });
 const codeTimer = setInterval(() => {
   if (document.hidden || motion.matches || departing) return;
   const time = Math.floor(performance.now() / 900);

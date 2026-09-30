@@ -100,6 +100,7 @@ for (const [name, engine, configuration] of [
     assert.equal(await page.locator('#earth-shell .latin').evaluateAll(elements => elements.some(el => Number(getComputedStyle(el).opacity) > 0)), false, 'No readable words before interaction');
     assert.equal(await page.locator('#future').isVisible(), false);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
+    await page.waitForSelector('#earth-shell.interaction-ready');
     await page.locator('#earth-shell .word').first().focus();
     await page.waitForSelector('#earth-shell .word.revealed');
     assert.equal(await page.locator('#future').isVisible(), false);
