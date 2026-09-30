@@ -2037,10 +2037,13 @@ curseur.addEventListener('input', () => {
    il retrouve son invitation. La classe loupe reste l'état replié.
    ===================================================================== */
 const LARGEUR_INVITATION = 184;
-const etatRecherche = { w: LARGEUR_INVITATION };
+const etatRecherche = { w: largeurInvitation() };
 const invitationRecherche = document.getElementById('explore-city');
+function largeurInvitation(){
+  return innerWidth<=720 ? Math.min(LARGEUR_INVITATION,Math.max(96,innerWidth-212)) : LARGEUR_INVITATION;
+}
 function largeurBarre(){
-  return Math.min(360, innerWidth - 40);
+  return Math.min(360, innerWidth - (innerWidth<=720 ? 100 : 140));
 }
 let placerCaret = () => {};
 function appliquerLargeurRecherche(){
@@ -2064,7 +2067,7 @@ function replierRecherche(){
   champ.tabIndex=-1;champ.setAttribute('aria-hidden','true');
   invitationRecherche.tabIndex=0;invitationRecherche.removeAttribute('aria-hidden');
   fermerListe();
-  gsap.to(etatRecherche, { w: LARGEUR_INVITATION, duration: MOINS_ANIM ? 0 : 0.35, ease: EASE, overwrite:true,
+  gsap.to(etatRecherche, { w: largeurInvitation(), duration: MOINS_ANIM ? 0 : 0.35, ease: EASE, overwrite:true,
     onUpdate: appliquerLargeurRecherche });
 }
 document.body.classList.add('loupe');
@@ -2080,9 +2083,9 @@ champ.addEventListener('blur', () => setTimeout(() => {
   replierRecherche();
 }, 140));
 addEventListener('resize', () => {
-  if (!document.body.classList.contains('loupe')){
-    etatRecherche.w = largeurBarre(); appliquerLargeurRecherche();
-  }
+  gsap.killTweensOf(etatRecherche);
+  etatRecherche.w = document.body.classList.contains('loupe') ? largeurInvitation() : largeurBarre();
+  appliquerLargeurRecherche();
 });
 
 /* ---- caret bloc façon terminal DOS : le placeholder disparaît au focus,

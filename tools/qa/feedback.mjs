@@ -63,12 +63,14 @@ for(const [profile,engine,options] of profiles){
     }
     assert.equal(await page.locator('#loupe').count(),0,'one city-search control, without a separate icon');
     const invitation=await page.locator('#explore-city').boundingBox();
-    assert.ok(Math.abs(invitation.x+invitation.width/2-options.viewport.width/2)<1,'city invitation is centered');
+    const gear=await page.locator('#bouton-reglages').boundingBox();
+    assert.ok(Math.abs(gear.x-invitation.x-invitation.width-16)<1,'city invitation is immediately to the left of settings');
+    assert.ok(Math.abs(gear.y+gear.height/2-invitation.y-invitation.height/2)<1,'city invitation and settings share a row');
     await page.locator('#explore-city').click();
     assert.equal(await page.locator('#champ-recherche').evaluate(e=>e===document.activeElement),true);
-    await page.waitForFunction(()=>Math.abs(document.getElementById('champ-recherche').getBoundingClientRect().width-Math.min(360,innerWidth-40))<1);
+    await page.waitForFunction(()=>Math.abs(document.getElementById('champ-recherche').getBoundingClientRect().width-Math.min(360,innerWidth-(innerWidth<=720?100:140)))<1);
     const search=await page.locator('#champ-recherche').boundingBox();
-    assert.ok(Math.abs(search.x+search.width/2-invitation.x-invitation.width/2)<1,'the search expands in the invitation location');
+    assert.ok(Math.abs(search.x+search.width-invitation.x-invitation.width)<1,'the search expands leftward from the invitation, beside settings');
     assert.equal(search.y,invitation.y);
     assert.equal(await page.locator('#explore-city').getAttribute('aria-hidden'),'true');
     await page.screenshot({path:`${output}/${profile}-search.png`});
