@@ -1,5 +1,13 @@
 # Filter and timeline alignment — 2026-09-30
 
+Follow-up on d60c3cd: the main-globe ruler now spans 100% of the year block,
+rather than 72%. Its range input uses the same width and starts at left:0.
+Verified on Chromium at 1280×720, iPhone 15 Pro and 320×568 (touch emulation,
+reduced motion): year/ruler widths match at 200px desktop and 112px mobile,
+range geometry matches, filter bottoms stay aligned, year gap remains 4px,
+no mobile overlap, keyboard and touch endpoints remain 2026/2050.
+Desktop/mobile crops inspected: /tmp/terra-wide-timeline-{desktop,phone}.png.
+
 Baseline: 1c44c0fda572e2ccfdc1ebca5e4423c10fd76dbe.
 User requested a thinner mobile filter pill, a closer year/ruler pairing, and
 the ruler baseline aligned with the bottom of the filters on desktop/mobile.
