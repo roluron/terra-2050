@@ -162,7 +162,7 @@ body:has(#menu-reglages.ouvert) #dossier {visibility:hidden;pointer-events:none}
 
 #globe-dock {position:fixed;z-index:22;inset:0;pointer-events:none}
 body.dossier-ouvert #globe-dock {visibility:hidden}
-#globe-dock > #timeline,body.pret #globe-dock > #timeline {position:absolute;left:50%;right:auto;top:auto;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);width:200px;padding:0;pointer-events:auto}
+#globe-dock > #timeline,body.pret #globe-dock > #timeline {position:absolute;left:50%;right:auto;top:auto;bottom:calc(44px + env(safe-area-inset-bottom));transform:translateX(-50%);width:200px;padding:0;pointer-events:auto}
 #globe-dock #timeline .an {font-size:80px;line-height:1;text-align:center}
 #map-inspector {position:absolute;left:24px;right:auto;top:auto;bottom:66px;width:240px;min-width:0;display:flex;flex-direction:column;padding:6px 16px;border-radius:32px;max-height:none;overflow:visible;pointer-events:auto;backdrop-filter:none;-webkit-backdrop-filter:none}
 #map-inspector.choix-ouvert {border-radius:28px}
@@ -181,9 +181,9 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 #map-inspector #map-contact {display:flex;align-items:center;min-height:44px;margin-top:10px;padding:4px 4px 0;border-top:1px solid #ffffff16;font-size:12px;line-height:1.4;color:var(--glass-muted);text-decoration:underline;text-decoration-color:#ffffff35;text-underline-offset:3px;transition:color .18s}
 #map-inspector #map-contact:hover {color:var(--glass-text)}
 @media(max-width:720px) {
- #globe-dock > #timeline,body.pret #globe-dock > #timeline {width:112px;bottom:max(20px,env(safe-area-inset-bottom))}
+ #globe-dock > #timeline,body.pret #globe-dock > #timeline {left:auto;right:20px;transform:none;width:112px;bottom:calc(32px + env(safe-area-inset-bottom))}
  #globe-dock #timeline .an {font-size:48px}
- #map-inspector {left:12px;right:auto;top:auto;bottom:max(42px,env(safe-area-inset-bottom));width:calc(50% - 80px);padding:6px 8px;max-height:none}
+ #map-inspector {left:12px;right:auto;top:auto;bottom:calc(48px + env(safe-area-inset-bottom));width:min(240px,calc(100vw - 184px));padding:6px 8px;max-height:none}
  #map-inspector #map-options {width:calc(100vw - 32px);max-width:none;max-height:calc(100dvh - 210px);bottom:calc(100% + 24px)}
  #map-inspector #map-method summary {position:static;width:auto;height:auto;font-size:12px;display:flex;padding:8px 0;background:none;border:0}
  #map-inspector #map-method summary::after {content:none}
@@ -197,7 +197,8 @@ body.loupe #loupe {right:122px;animation:none}
 #bouton-reglages {display:grid;place-items:center;padding:0}
 #bouton-reglages .rouage {width:20px;height:20px;transform-origin:center;transform-box:fill-box}
 #timeline .regle,#timeline #curseur {width:72%}
-#timeline .regle {height:29px}
+#timeline .regle {height:44px;margin-top:12px}
+#timeline #curseur {height:44px;margin-top:-44px;padding:0;outline:none}
 #timeline .regle i {height:7px}
 .compare-time {display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center}
 .compare-time label {grid-area:1/1;margin:0}
@@ -206,17 +207,21 @@ body.loupe #loupe {right:122px;animation:none}
 .compare-time .regle {grid-area:3/1/4/3;display:flex;justify-content:space-between;align-items:flex-end;height:38px;width:100%;pointer-events:none}
 .compare-time .regle i {width:2px;height:10px;border-radius:1px;background:var(--texte);transform-origin:bottom;opacity:.25}
 .compare-time #comparison-year {grid-area:3/1/4/3;appearance:none;-webkit-appearance:none;position:relative;z-index:2;width:100%;height:44px;margin:0;padding:0;background:transparent;cursor:ew-resize}
-#comparison-year::-webkit-slider-runnable-track {background:transparent}
-#comparison-year::-moz-range-track {background:transparent}
-#comparison-year::-webkit-slider-thumb {opacity:0}
-#comparison-year::-moz-range-thumb {opacity:0}
+#curseur::-webkit-slider-runnable-track,#comparison-year::-webkit-slider-runnable-track {height:44px;border:0;background:transparent;box-shadow:none}
+#curseur::-moz-range-track,#comparison-year::-moz-range-track,#curseur::-moz-range-progress,#comparison-year::-moz-range-progress {border:0;background:transparent;box-shadow:none}
+#curseur::-webkit-slider-thumb,#curseur:hover::-webkit-slider-thumb,body.cale-annee #curseur::-webkit-slider-thumb,#comparison-year::-webkit-slider-thumb {appearance:none;-webkit-appearance:none;width:2px;height:44px;opacity:0;border:0;border-radius:0;background:transparent;box-shadow:none;transform:none}
+#curseur::-moz-range-thumb,#comparison-year::-moz-range-thumb {width:2px;height:44px;opacity:0;border:0;background:transparent;box-shadow:none}
+#timeline:has(#curseur:focus-visible) .regle {outline:1px solid var(--glass-muted);outline-offset:4px;border-radius:4px}
 #story-partager.entree-pedago {font:400 13px/1.4 var(--police)}
 :is(#champ-recherche,#bouton-reglages,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#map-inspector #map-options) {backdrop-filter:blur(2px) saturate(1.35);-webkit-backdrop-filter:blur(2px) saturate(1.35)}
 #city-comparison::backdrop,#story-popup,#pedago {background:#02060a66;backdrop-filter:none;-webkit-backdrop-filter:none}
 .language-content::before {display:none}
 #language-options label:has(input:checked),#map-inspector #calques .calque.actif,#map-reading button[aria-pressed=true],#resultats li:is(.choisi,:hover),#dossier .risque,#dossier .risque[open],#dossier .actions button,#dossier .actions #dossier-story,.compare-swap,.entree-pedago {background:#ffffff09}
 #dossier-croix,.compare-close,#story-fermer {background:#ffffff09!important}
-.compare-shell header,.story-carte .pedago-titre {background:#14171be6}
+.compare-shell header,.story-carte .pedago-titre,.compare-table-wrap thead {background:transparent}
+.compare-table-wrap thead {position:static}
+body:has(#city-comparison[open],#story-popup:not([hidden])) :is(#titre,#recherche,#util,#globe-dock) {visibility:hidden;pointer-events:none}
+body:has(#pedago:not([hidden]),#city-comparison[open],#story-popup:not([hidden]),#menu-reglages.ouvert) :is(#etiquettes,#survol) {visibility:hidden;pointer-events:none}
 /* Un seul curseur, deux etats : lentille de verre sur la Terre, point creme
    partout ailleurs (le meme point que sous les noms des villes). La taille
    est lissee en JS, ici seule la matiere change. */
@@ -227,3 +232,22 @@ body.curseur-verre, body.curseur-verre * {cursor:none!important}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content) :is(button,summary,input,a):focus-visible,#language-options label:has(input:focus-visible) {outline-color:#fff}
 @media(prefers-reduced-motion:reduce){.glass-cursor{transition:none}}
 @media(max-width:720px){body.loupe #loupe{right:102px}#map-toggle{gap:4px;font-size:12px}#map-toggle span{display:none}#map-toggle::before{content:attr(data-short-label)}#map-toggle svg{width:12px;height:12px}.compare-time output{font-size:48px}}
+
+/* Feedback pass: one visible control per action, with no opaque strips. */
+.entree-pedago::after {content:none}
+.pedago-details {margin-top:18px;font-size:12px;line-height:1.5;color:var(--glass-muted)}
+.pedago-details summary {min-height:44px;align-content:center;cursor:pointer}
+#pedago-details-text {font-size:12px;color:var(--glass-muted)}
+#dossier .actions {background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+#dossier .actions button,#dossier .actions #dossier-story,.compare-swap {background:transparent;border:0;border-bottom:1px solid #ffffff50;border-radius:0;box-shadow:none}
+#dossier .actions button:hover,.compare-swap:hover,.compare-swap:active {background:transparent}
+#comparison-year {outline:none}
+.compare-time:has(#comparison-year:focus-visible) .regle {outline:1px solid var(--glass-muted);outline-offset:4px;border-radius:4px}
+#layer-context {background:none;border-left:0;padding:0}
+#map-inspector .map-hint {display:block;font-size:12px;line-height:1.5;margin:12px 0}
+#explore-city {position:absolute;top:84px;left:50%;transform:translateX(-50%);pointer-events:auto;min-height:48px;padding:10px 0;border:0;border-bottom:1px solid #ffffff70;border-radius:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;color:var(--glass-text);font:400 14px var(--police);cursor:pointer;white-space:nowrap}
+body.pret #explore-city {transform:translateX(-50%)}
+body.dossier-ouvert #explore-city,body.recherche-active #explore-city {visibility:hidden;pointer-events:none}
+body.entree-chrome :is(#titre,#recherche,#bouton-reglages,#map-inspector,#explore-city,#timeline .an,#timeline .regle,#curseur) {transition:none}
+@media(hover:hover) {#explore-city:hover {border-bottom-color:transparent}}
+@media(max-height:500px) {#explore-city {top:68px}}

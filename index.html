@@ -254,6 +254,7 @@
 </div>
 
 <div id="globe-dock">
+<button id="explore-city" class="panneau" type="button"></button>
 <div id="timeline" class="panneau">
   <div id="accroche" hidden><button id="accroche-txt"></button><button id="accroche-x" aria-label="Fermer">×</button></div>
   <div class="micro" data-t="panelYear"></div>
@@ -334,6 +335,7 @@
   <div class="pedago-carte">
     <div class="pedago-titre"><span class="pastille-pedago"></span><span id="pedago-nom"></span></div>
     <p id="pedago-texte"></p>
+    <details class="pedago-details"><summary id="pedago-details-label"></summary><p id="pedago-details-text"></p></details>
     <div class="pedago-source" id="pedago-source"></div>
     <button class="entree-pedago" id="pedago-fermer"></button>
   </div>
@@ -406,7 +408,7 @@ import { loadFloodHazards } from './climate-data.mjs';
 import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { language, getText, message, languageControl } from './i18n.mjs';
-import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker } from './refinement-copy.mjs';
+import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
 import { createComparison } from './city-comparison.mjs';
 import { createYearRuler } from './year-ruler.mjs';
 import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
@@ -1611,7 +1613,9 @@ function majContexteCalques(){
   const changing = uniformsGlobe.uChange.value > 0.5;
   document.getElementById('model-notice').hidden = !actifs.length;
   document.querySelector('[data-map-mode="change"]').textContent = words[0];
-  document.querySelector('[data-map-mode="value"]').textContent = words[1];
+  const guide = experienceCopy(langue);
+  document.getElementById('explore-city').textContent = guide.journey;
+  document.querySelector('[data-map-mode="value"]').textContent = guide.value.replace('{year}',etat.annee);
   document.querySelector('#map-method summary').textContent = words[2];
   const notes = [`${etat.annee} · ${T().ui.model_indicators}`];
   if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(T().ui.wri_rcp85_100year_event_no);
@@ -1661,7 +1665,7 @@ function majContexteCalques(){
       row.append(unit);
     }
   }
-  const hint = document.createElement('p');hint.className='map-hint';hint.textContent = changing && etat.annee === 2026 ? words[4] : changing ? words[0] : refinementCopy(langue).period;el.append(hint);
+  const hint = document.createElement('p');hint.className='map-hint';hint.textContent = changing && etat.annee === 2026 ? words[4] : changing ? guide.change : guide.valueHint.replace('{year}',etat.annee);el.append(hint);
   document.getElementById('layer-method').textContent = [...notes, words[5]].join('\n');
   cadrerCarte();
 }
@@ -1678,6 +1682,7 @@ function fermerChoixCarte(){
 document.getElementById('map-toggle').addEventListener('click', () => {
   const open = document.getElementById('map-inspector').classList.toggle('choix-ouvert');
   document.getElementById('map-toggle').setAttribute('aria-expanded',String(open));
+  if(open)gsap.fromTo('#map-options',{opacity:0,y:10},{opacity:1,y:0,duration:MOINS_ANIM?0:DUREE.fast,ease:EASE,clearProps:'opacity,transform',overwrite:true});
 });
 document.addEventListener('pointerdown', event => {if (!event.target.closest('#map-inspector')) fermerChoixCarte();});
 document.addEventListener('keydown', event => {
@@ -1798,6 +1803,7 @@ controles.addEventListener('end', () => {
 
 /* ---- recherche de lieu : filtrage instantané + vol caméra ---- */
 const champ = document.getElementById('champ-recherche');
+document.getElementById('explore-city').addEventListener('click',()=>champ.focus());
 const liste = document.getElementById('resultats');
 let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
 /* la liste n'est pas une boîte sous la barre : c'est la barre elle-même qui
@@ -2158,6 +2164,14 @@ addEventListener('resize', () => {
 /* ---- verre liquide : la lentille du pass post suit le rect réel du champ ---- */
 const etatVerre = { force: 0.7 };
 let actualiserVerrePanneau = () => {};
+function surfaceOpacity(surface,cache){
+  if(!surface)return 1;
+  if(cache.has(surface))return cache.get(surface);
+  const style=getComputedStyle(surface);
+  const opacity=style.display==='none'||style.visibility==='hidden'?0:Number(style.opacity)*surfaceOpacity(surface.parentElement,cache);
+  cache.set(surface,opacity);
+  return opacity;
+}
 function majVerre(){
   // le rect du CHAMP, pas de #recherche : ce dernier englobe la liste de
   // résultats repliée, ce qui rendait la lentille bien plus haute que la barre
@@ -2172,8 +2186,9 @@ function majVerre(){
     (r.height / 2) / innerHeight);
   // le rayon reste celui de la pilule : ouvert, le verre devient un carré arrondi
   matPost.uniforms.uVerreRayon.value = Math.min(parseFloat(getComputedStyle(liste.classList.contains('ouvert') ? liste : champ).borderRadius) || 16, r.height / 2, r.width / 2) / innerHeight;
-  matPost.uniforms.uVerreForce.value = etatVerre.force;
-  actualiserVerrePanneau();
+  const opacityCache=new Map();
+  matPost.uniforms.uVerreForce.value = etatVerre.force*surfaceOpacity(champ,opacityCache);
+  actualiserVerrePanneau(opacityCache);
 }
 addEventListener('resize', majVerre);
 champ.addEventListener('focus', () => gsap.to(etatVerre, { force: 1, duration: DUREE.fast, ease: EASE, onUpdate: majVerre }));
@@ -3155,12 +3170,17 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
   ];
   /* la lentille de verre du pass post épouse le panneau ouvert */
   const verreMenu = { force: 0, panneau: null };
-  function majVerreMenu(){
+  function majVerreMenu(opacityCache=new Map()){
     const u = matPost.uniforms;
     u.uGlassRadii.value.fill(0);
+    // Child opacity alone misses a closed/fading parent and leaves floating glass.
+    const visible = surface => {
+      if(!surface?.getClientRects().length)return 0;
+      return surfaceOpacity(surface,opacityCache);
+    };
     const panneau = verreMenu.force > .001 && verreMenu.panneau || document.querySelector('#story-popup:not([hidden]) .story-carte') || document.querySelector('#city-comparison[open]') || document.querySelector('#dossier.ouvert') || document.getElementById('map-inspector');
     const style = getComputedStyle(panneau);
-    if (document.querySelector('#earth-shell[open],#language-dialog[open]') || style.visibility === 'hidden' || style.display === 'none') {u.uVerreForce2.value = 0;return;}
+    if (document.querySelector('#earth-shell[open],#language-dialog[open]') || !visible(panneau)) {u.uVerreForce2.value = 0;return;}
     const r = panneau.getBoundingClientRect();
     u.uVerre2.value.set(
       (r.left + r.width / 2) / innerWidth,
@@ -3168,19 +3188,19 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
       (r.width / 2) / innerWidth,
       (r.height / 2) / innerHeight);
     u.uVerreRayon2.value = Math.min(parseFloat(style.borderTopLeftRadius) || 18,r.width/2,r.height/2) / innerHeight;
-    u.uVerreForce2.value = panneau === verreMenu.panneau ? verreMenu.force : .9;
+    u.uVerreForce2.value = (panneau === verreMenu.panneau ? verreMenu.force : .9)*visible(panneau);
     let slot=0;
     for(const surface of document.querySelectorAll('#bouton-reglages,#map-inspector,#map-options,#dossier.ouvert,#city-comparison[open],.pedago-carte')){
       if(surface===panneau || slot===6) continue;
       const s=getComputedStyle(surface),box=surface.getBoundingClientRect();
-      if(s.visibility==='hidden'||s.display==='none'||box.width===0||box.height===0||Number(s.opacity)===0) continue;
+      if(!visible(surface)||box.width===0||box.height===0) continue;
       u.uGlassRects.value[slot].set((box.left+box.width/2)/innerWidth,1-(box.top+box.height/2)/innerHeight,box.width/2/innerWidth,box.height/2/innerHeight);
       u.uGlassRadii.value[slot]=Math.min(parseFloat(s.borderTopLeftRadius)||24,box.width/2,box.height/2)/innerHeight;
       slot++;
     }
   }
   actualiserVerrePanneau = majVerreMenu;
-  addEventListener('resize', majVerreMenu);
+  addEventListener('resize',()=>majVerreMenu());
   const fermer = m => {
     if (!m.panneau.classList.contains('ouvert')) return;
     m.panneau.classList.remove('ouvert');
@@ -3251,7 +3271,11 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
     const t = T(), c = CRITERES_COULEURS[cle] || 'var(--bleu)';
     pedago.querySelector('.pastille-pedago').style.background = c;
     document.getElementById('pedago-nom').textContent = t.calque[cle];
-    document.getElementById('pedago-texte').textContent = t.infoplus[cle];
+    const guide=experienceCopy(langue);
+    document.getElementById('pedago-texte').textContent = guide.indicators[cle];
+    document.getElementById('pedago-details-label').textContent = guide.details;
+    document.getElementById('pedago-details-text').textContent = t.infoplus[cle];
+    pedago.querySelector('.pedago-details').open=false;
     document.getElementById('pedago-source').textContent = t.infoSource[cle];
     document.getElementById('pedago-fermer').textContent = t.pedagoOk;
     pedago.hidden = false;
@@ -3469,7 +3493,7 @@ setTimeout(chargerAnnuaire, 30000);
 // tant que le voile est la, la tabulation ne doit pas atteindre le chrome
 // derriere lui : un clavier pouvait allumer un calque avant meme d entrer
 document.body.classList.add('villes-en-attente');
-const CHROME = ['titre', 'recherche', 'util', 'calques', 'timeline', 'dossier', 'dossier-croix', 'hud'];
+const CHROME = ['titre', 'recherche', 'util', 'calques', 'timeline', 'explore-city', 'dossier', 'dossier-croix', 'hud'];
 for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert = true; }
 document.getElementById('bouton-entree').addEventListener('click', () => {
   const voile = document.getElementById('voile');
@@ -3610,31 +3634,32 @@ if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
    lettre, et un fromTo posé là arrive après le premier rendu du chrome —
    le millésime se montrait un instant, fondait vers 0 puis rentrait. */
 const CHROME_DEPART = [
-  ['#wordmark .lettre', { yPercent: 115 }],
+  ['#titre', { opacity: 0 }],
   ['#recherche', { opacity: 0, y: -10 }],
   ['#bouton-reglages', { opacity: 0, y: -8 }],
   ['.calque', { opacity: 0, x: -12 }],
   ['#timeline .an', { opacity: 0, y: 18 }],
   ['#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }],
   ['#map-inspector', { opacity: 0, y: 10 }],
+  ['#explore-city', { opacity: 0 }],
 ];
 for (const [cible, depart] of CHROME_DEPART) gsap.set(cible, depart);
 function revelerChrome(){
   document.body.classList.add('entree-chrome');
-  const tl = gsap.timeline({ delay: 0.55, onComplete: () => document.body.classList.remove('entree-chrome') });
+  const tl = gsap.timeline({ delay: MOINS_ANIM ? 0 : 0.55, onComplete: () => document.body.classList.remove('entree-chrome') });
   const entree = (cible, depart, position, extra = {}) =>
     tl.fromTo(cible, depart,
-      { opacity: 1, x: 0, y: 0, duration: DUREE.fast, ease: EASE,
+      { opacity: 1, x: 0, y: 0, duration: MOINS_ANIM ? 0 : DUREE.normal, ease: EASE,
         clearProps: 'opacity,transform', ...extra }, position);
 
-  tl.fromTo('#wordmark .lettre', { yPercent: 115 },
-    { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
-  entree('#recherche', { opacity: 0, y: -10 }, 0.15);
-  entree('#bouton-reglages', { opacity: 0, y: -8 }, 0.4);
-  entree('.calque', { opacity: 0, x: -12 }, 0.15, { stagger: MOINS_ANIM ? 0 : 0.16, duration: MOINS_ANIM ? 0 : 0.9 });
-  entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
-  entree('#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }, 0.6);
-  entree('#map-inspector', { opacity: 0, y: 10 }, 0.5, { duration: DUREE.normal });
+  entree('#titre', { opacity: 0 }, 0);
+  entree('#recherche', { opacity: 0, y: -10 }, 0);
+  entree('#bouton-reglages', { opacity: 0, y: -8 }, 0);
+  entree('.calque', { opacity: 0, x: -12 }, 0);
+  entree('#timeline .an', { opacity: 0, y: 18 }, 0);
+  entree('#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }, 0);
+  entree('#map-inspector', { opacity: 0, y: 10 }, 0);
+  entree('#explore-city', { opacity: 0 }, 0);
   return tl;
 }
 

@@ -14,18 +14,20 @@ for (const [name, engine, options] of [
   ['desktop', chromium, {viewport:{width:1440,height:900},deviceScaleFactor:2}],
   ['phone', webkit, {...devices['iPhone 15 Pro'],reducedMotion:'reduce'}]
 ]) {
-  const browser = await engine.launch({executablePath:engine.executablePath(), headless:false});
+  if(process.env.TARGET&&process.env.TARGET!==name)continue;
+  const browser = await engine.launch({executablePath:engine===chromium&&process.env.QA_CHROMIUM_PATH||engine.executablePath(), headless:process.env.QA_HEADLESS==='1',...(engine===chromium&&process.env.QA_CHROMIUM_PATH?{args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']}: {})});
   try {
-    const page = await browser.newPage(options), errors = [];
+    const page = await browser.newPage({...options,...(process.env.QA_DPR?{deviceScaleFactor:Number(process.env.QA_DPR)}:{})}), errors = [];
     page.on('pageerror', error => { errors.push(error.message); console.error(error.stack); });
     await page.goto((process.env.URL0 || 'http://127.0.0.1:8088/') + '?lang=en');
     await page.locator('#language-dialog').waitFor();
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(1800);
-    assert.equal(await page.locator('#language-dialog').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(5, 6, 6)');
+    assert.equal(await page.locator('#language-dialog').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(5, 7, 7)');
     await page.screenshot({path:`${output}/${name}-language.png`});
     if (name === 'desktop') {
-      await page.locator('#language-options label').filter({hasText:'Français'}).hover();
+      await page.locator('#language-options input[value="fr"]').focus();
+      await page.keyboard.press('Space');
       await page.keyboard.press('Enter');
       await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), 'fr');
@@ -67,8 +69,14 @@ for (const [name, engine, options] of [
     await page.screenshot({path:`${output}/${name}-comparison.png`});
     const heads = await page.locator('#city-comparison thead th').allTextContents();
     await page.locator('.compare-swap').click();
-    const swapped = await page.locator('#city-comparison thead th').allTextContents();
-    assert.equal(heads[1], swapped[2]); assert.equal(heads[2], swapped[1]);
+    assert.equal(await page.locator('#comparison-search').inputValue(), '');
+    assert.equal(await page.locator('#comparison-search').evaluate(el=>el===document.activeElement), true);
+    assert.deepEqual(await page.locator('#city-comparison thead th').allTextContents(), heads);
+    await page.locator('#comparison-search').fill('Tokyo');
+    await page.locator('#comparison-search').press('ArrowDown');
+    await page.locator('#comparison-search').press('Enter');
+    const replaced = await page.locator('#city-comparison thead th').allTextContents();
+    assert.equal(replaced[1], heads[1]); assert.notEqual(replaced[2], heads[2]);
     await page.locator('.compare-close').click();
     assert.equal(await page.locator('#city-comparison').isVisible(), false);
     await page.locator('#dossier-comparer').click();
@@ -85,6 +93,6 @@ for (const [name, engine, options] of [
     assert.equal(await page.evaluate(() => window.Howler._muted), true);
     assert.equal(await page.locator('html').getAttribute('lang'), locale);
     assert.deepEqual(errors, []);
-    console.log(`PASS ${name}: entrance, input, letter, transition, muted globe, New York coverage, comparison, timeline, swap`);
+    console.log(`PASS ${name}: entrance, input, letter, transition, muted globe, New York coverage, comparison, timeline, replacement place`);
   } finally { await browser.close(); }
 }
