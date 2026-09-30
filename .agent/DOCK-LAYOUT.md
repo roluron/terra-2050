@@ -1,5 +1,19 @@
 # Filter and timeline alignment — 2026-09-30
 
+Follow-up on ebc2531: filter pill uses max-content instead of a fixed width,
+with 12px between the label and chevron. Desktop vertical padding removed;
+both formats retain a 44px button inside a 46px pill. Horizontal padding is
+16px desktop / 12px mobile. The expanded options menu remains independently
+sized, absolutely positioned above the pill.
+
+Focused Chromium checks passed on desktop 1280×720, iPhone 15 Pro and 320×568
+with reduced motion, plus phone landscape 852×393. Initial French pill sizes:
+187.6×46px desktop (Choisir un indicateur), 82.5×46px mobile (Filtres).
+Checked all eight language labels fit, menu opening does not stretch the pill,
+options remain on screen, Escape closes, a selected indicator fits, and ruler
+baseline alignment/no overlap are preserved. No runtime errors. Captures
+inspected: /tmp/terra-compact-filter-{desktop,phone}.png. git diff --check passed.
+
 Follow-up on d2c31bd: desktop timeline moved from center to bottom-right,
 24px from the right edge (mobile keeps its 20px inset). Full-width graduations,
 year gap and filter-bottom alignment are preserved. Logo hover distortion,
