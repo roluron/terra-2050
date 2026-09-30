@@ -46,10 +46,14 @@ for(const [profile,engine,options] of profiles){
     await page.screenshot({path:`${output}/${profile}-globe.png`});
     const timeline=await page.locator('#timeline').boundingBox();
     assert.ok(timeline.y+timeline.height<options.viewport.height-25,'timeline has breathing room above the bottom');
+    const filter=await page.locator('#map-inspector').boundingBox(),ruler=await page.locator('#timeline .regle').boundingBox(),year=await page.locator('#an').boundingBox();
+    assert.ok(Math.abs(filter.y+filter.height-ruler.y-ruler.height)<1,'ruler baseline aligns with the bottom of filters');
+    assert.ok(Math.abs(ruler.y-year.y-year.height-4)<1,'ruler sits closely below the year');
     if(options.viewport.width<=720){
       assert.ok(timeline.x>options.viewport.width/2,'mobile timeline is on the right');
-      const filter=await page.locator('#map-inspector').boundingBox();
       assert.ok(filter.x+filter.width<timeline.x,'filter and timeline do not overlap');
+      assert.ok(filter.height<=48,'mobile filter pill is slim');
+      assert.ok((await page.locator('#map-toggle').boundingBox()).height>=44,'filter still has a 44px touch target');
     }
     const slider=page.locator('#curseur');
     await slider.focus();await slider.press('End');
