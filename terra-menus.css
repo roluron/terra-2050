@@ -184,23 +184,8 @@ body { background: var(--encre); color: var(--texte); }
   -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255, 253, 226, 0.12); }
 #resultats li:first-child { border-top: none; }
 
-/* =====================================================================
-   Wordmark irisé : la déformation vit dans les lettres. Au passage du
-   pointeur chaque lettre monte, s'étire et se dédouble en cyan/ambre —
-   effet de film mince, sans halo qui déborde du texte.
-   ===================================================================== */
+/* Wordmark statique. */
 #wordmark { position: relative; display: inline-block; cursor: default; }
-#wordmark .lettre {
-  --iris: 0; --decal: 0px;
-  display: inline-block; will-change: transform;
-  text-shadow:
-    calc(var(--decal) * -1.6) 0 0 rgba(47, 208, 255, calc(var(--iris) * 0.85)),
-    var(--decal) 0 0 rgba(255, 154, 60, calc(var(--iris) * 0.7)),
-    0 0 calc(var(--iris) * 14px) rgba(23, 64, 169, calc(var(--iris) * 0.55));
-}
-#wordmark .lettre.barre { color: var(--bleu); }
-#wordmark.irise .lettre.barre { color: #2FD0FF; transition: color 0.4s var(--ease); }
-@media (prefers-reduced-motion: reduce) { #wordmark .lettre { text-shadow: none !important; } }
 
 /* =====================================================================
    Curseur DOS : au focus le placeholder s'efface et un trait fin clignote

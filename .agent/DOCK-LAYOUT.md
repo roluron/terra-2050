@@ -1,5 +1,21 @@
 # Filter and timeline alignment — 2026-09-30
 
+Follow-up on d2c31bd: desktop timeline moved from center to bottom-right,
+24px from the right edge (mobile keeps its 20px inset). Full-width graduations,
+year gap and filter-bottom alignment are preserved. Logo hover distortion,
+chromatic shadows and per-letter animation setup were removed; the static
+wordmark retains its blue separator.
+
+Focused Chromium verification passed at 1280×720 with normal motion, iPhone
+15 Pro and 320×568 with reduced motion, plus phone landscape at 852×393.
+Checked logo DOM/styles unchanged under pointer movement, blue separator,
+right inset, ruler/year width, filter alignment, no overlap, keyboard/touch
+endpoints, city-sheet ownership and return of the timeline to its main dock,
+and absence of runtime errors. Desktop and phone screenshots inspected:
+/tmp/terra-right-timeline-{desktop,phone}.png. Existing unified-ui expectation
+updated from centered year to right inset; its full historical suite was not
+run for this change. git diff --check and updated QA script syntax passed.
+
 Follow-up on d60c3cd: the main-globe ruler now spans 100% of the year block,
 rather than 72%. Its range input uses the same width and starts at left:0.
 Verified on Chromium at 1280×720, iPhone 15 Pro and 320×568 (touch emulation,
