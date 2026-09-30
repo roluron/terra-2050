@@ -62,6 +62,14 @@ for(const [profile,engine,options] of profiles){
       await slider.tap({position:{x:1,y:range.height/2}});assert.equal(await slider.inputValue(),'2026');
     }
     assert.equal(await page.locator('#loupe').count(),0,'one city-search control, without a separate icon');
+    assert.equal(await page.locator('.city-search-icon').isVisible(),options.viewport.width<=720,'magnifier on smartphone, text on desktop/tablet');
+    assert.equal(await page.locator('#explore-city').getAttribute('aria-label'),experienceCopy('en').journey,'the icon keeps a localized accessible name');
+    if(profile==='phone'){
+      await page.setViewportSize({width:852,height:393});
+      await page.waitForFunction(()=>Math.abs(document.querySelector('#explore-city').getBoundingClientRect().width-48)<1);
+      assert.equal(await page.locator('.city-search-icon').isVisible(),true,'smartphone landscape keeps the icon');
+      await page.setViewportSize(options.viewport);
+    }
     const invitation=await page.locator('#explore-city').boundingBox();
     const gear=await page.locator('#bouton-reglages').boundingBox();
     assert.ok(Math.abs(gear.x-invitation.x-invitation.width-16)<1,'city invitation is immediately to the left of settings');

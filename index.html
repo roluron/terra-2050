@@ -243,7 +243,10 @@
 </header>
 
 <div id="recherche" class="panneau">
-  <button id="explore-city" type="button" aria-controls="champ-recherche"></button>
+  <button id="explore-city" type="button" aria-controls="champ-recherche">
+    <span class="city-search-label"></span>
+    <svg class="city-search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m12.5 12.5 4.5 4.5"/></svg>
+  </button>
   <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
     autocomplete="off" spellcheck="false" tabindex="-1" aria-hidden="true" aria-label="Rechercher un lieu" role="combobox" aria-expanded="false" aria-controls="resultats" aria-autocomplete="list">
   <span id="mesure-recherche" aria-hidden="true"></span>
@@ -1611,7 +1614,9 @@ function majContexteCalques(){
   document.getElementById('model-notice').hidden = !actifs.length;
   document.querySelector('[data-map-mode="change"]').textContent = words[0];
   const guide = experienceCopy(langue);
-  document.getElementById('explore-city').textContent = guide.journey;
+  const searchInvitation=document.getElementById('explore-city');
+  searchInvitation.querySelector('.city-search-label').textContent = guide.journey;
+  searchInvitation.setAttribute('aria-label',guide.journey);
   document.querySelector('[data-map-mode="value"]').textContent = guide.value.replace('{year}',etat.annee);
   document.querySelector('#map-method summary').textContent = words[2];
   const notes = [`${etat.annee} · ${T().ui.model_indicators}`];
@@ -2037,10 +2042,11 @@ curseur.addEventListener('input', () => {
    il retrouve son invitation. La classe loupe reste l'état replié.
    ===================================================================== */
 const LARGEUR_INVITATION = 184;
+const RECHERCHE_SMARTPHONE = matchMedia('(max-width:720px), (pointer:coarse) and (max-height:500px)');
 const etatRecherche = { w: largeurInvitation() };
 const invitationRecherche = document.getElementById('explore-city');
 function largeurInvitation(){
-  return innerWidth<=720 ? Math.min(LARGEUR_INVITATION,Math.max(96,innerWidth-212)) : LARGEUR_INVITATION;
+  return RECHERCHE_SMARTPHONE.matches ? 48 : LARGEUR_INVITATION;
 }
 function largeurBarre(){
   return Math.min(360, innerWidth - (innerWidth<=720 ? 100 : 140));

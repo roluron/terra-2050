@@ -243,6 +243,7 @@ body.curseur-verre, body.curseur-verre * {cursor:none!important}
 #map-inspector .map-hint {display:block;font-size:12px;line-height:1.5;margin:12px 0}
 #explore-city {position:absolute;inset:0;z-index:4;pointer-events:auto;min-height:48px;padding:12px 16px;border:0;border-radius:16px;background:none;color:var(--glass-text);font:400 14px var(--police);cursor:pointer;white-space:nowrap;transition:opacity .2s var(--ease)}
 #explore-city::after {content:'';position:absolute;bottom:7px;left:24px;right:24px;height:1px;background:#ffffff70;transform-origin:center;transition:transform .25s var(--ease)}
+.city-search-icon {display:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
 body #recherche,body.pret #recherche,body.dossier-ouvert #recherche {position:fixed;z-index:31;top:calc(10px + env(safe-area-inset-top,0px));left:auto;right:calc(100px + env(safe-area-inset-right,0px));transform:none;height:48px;max-width:calc(100vw - 140px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));padding:0;display:block;align-items:initial}
 #recherche #champ-recherche {width:100%;height:48px;min-height:48px;padding:12px 18px;border-radius:16px;text-align:left;transition:opacity .2s var(--ease),border-color .25s,box-shadow .25s}
 body.recherche-active #recherche #champ-recherche::placeholder {color:var(--glass-muted)}
@@ -254,8 +255,11 @@ body.entree-chrome :is(#titre,#recherche,#bouton-reglages,#map-inspector,#explor
 @media(hover:hover) {#explore-city:hover::after {transform:scaleX(.7)}}
 @media(max-width:720px) {
  body #recherche,body.pret #recherche,body.dossier-ouvert #recherche {right:calc(80px + env(safe-area-inset-right,0px));max-width:calc(100vw - 100px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))}
- #explore-city {padding:4px 8px;font-size:13px;line-height:1.3;white-space:normal}
- #explore-city::after {bottom:3px;left:16px;right:16px}
  body:not(.loupe) #titre {visibility:hidden;pointer-events:none}
+}
+@media(max-width:720px),(pointer:coarse) and (max-height:500px) {
+ #explore-city {display:grid;place-items:center;padding:0;border:1px solid var(--glass-edge);border-radius:50%;background:var(--glass-surface);box-shadow:var(--glass-shadow)}
+ #explore-city::after,#explore-city .city-search-label {display:none}
+ #explore-city .city-search-icon {display:block}
 }
 @media(prefers-reduced-motion:reduce) {#explore-city,#explore-city::after,#recherche #champ-recherche {transition:none}}
