@@ -1,3 +1,5 @@
+2026-09-30: recherche unifiée sur la base publiée b9b7589. Voir UNIFIED-SEARCH.md : invitation transformée en barre au même endroit, loupe retirée, ajustement de l'en-tête dans la fiche mobile. Suite feedback passée sur desktop, téléphone, compact et tablette simulés. Publication via main selon la préférence de l’utilisateur.
+
 2026-09-30: suivi souris corrigé sur la base publiée a894bbc. Voir POINTER-PERFORMANCE.md : position immédiate, transform composité, moins de recalculs de mise en page, cache des infobulles. Publication via main selon la préférence de l’utilisateur. Safari sur appareil réel non vérifié.
 
 2026-09-30: retours Canva corrigés et vérifiés localement sur la base 869154f. Voir FEEDBACK.md. Aperçu : port 8080. Suite dédiée passée sur Chromium desktop et trois formats tactiles en émulation ; suite refinement passée sur desktop. Publication GitHub Pages demandée par l’utilisateur via main. Safari sur appareil réel non vérifié.

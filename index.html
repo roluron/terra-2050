@@ -243,18 +243,15 @@
 </header>
 
 <div id="recherche" class="panneau">
+  <button id="explore-city" type="button" aria-controls="champ-recherche"></button>
   <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
-    autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu" role="combobox" aria-expanded="false" aria-controls="resultats" aria-autocomplete="list">
-  <svg id="loupe" viewBox="0 0 20 20" aria-hidden="true">
-    <circle cx="8.6" cy="8.6" r="5.4"/><path d="M12.8 12.8 L17.2 17.2"/>
-  </svg>
+    autocomplete="off" spellcheck="false" tabindex="-1" aria-hidden="true" aria-label="Rechercher un lieu" role="combobox" aria-expanded="false" aria-controls="resultats" aria-autocomplete="list">
   <span id="mesure-recherche" aria-hidden="true"></span>
   <span id="caret-dos" aria-hidden="true"></span>
   <ul id="resultats" role="listbox" aria-label="Résultats"></ul>
 </div>
 
 <div id="globe-dock">
-<button id="explore-city" class="panneau" type="button"></button>
 <div id="timeline" class="panneau">
   <div id="accroche" hidden><button id="accroche-txt"></button><button id="accroche-x" aria-label="Fermer">×</button></div>
   <div class="micro" data-t="panelYear"></div>
@@ -2035,21 +2032,19 @@ curseur.addEventListener('input', () => {
 });
 
 /* =====================================================================
-   LOUPE -> BARRE : au repos la recherche est une loupe de verre (la même
-   lentille WebGL, en cercle). Le clic la déploie en pilule, un balayage de
-   lumière passe sur le placeholder. Elle se replie vide, hors dossier.
+   INVITATION -> BARRE : un seul emplacement pour trouver une ville.
+   Le clic ou ⌘K transforme l'invitation en champ ; vide et sans focus,
+   il retrouve son invitation. La classe loupe reste l'état replié.
    ===================================================================== */
-const LARGEUR_LOUPE = 44;
-const etatRecherche = { w: LARGEUR_LOUPE };
-const loupe = document.getElementById('loupe');
+const LARGEUR_INVITATION = 184;
+const etatRecherche = { w: LARGEUR_INVITATION };
+const invitationRecherche = document.getElementById('explore-city');
 function largeurBarre(){
-  // mobile : le champ deploye ne doit pas couvrir le wordmark (~136 px + marges)
-  return innerWidth <= 720 ? Math.min(220, innerWidth - 215)
-                           : Math.min(252, innerWidth * 0.37);
+  return Math.min(360, innerWidth - 40);
 }
 let placerCaret = () => {};
 function appliquerLargeurRecherche(){
-  champ.style.width = etatRecherche.w + 'px';
+  document.getElementById('recherche').style.width = etatRecherche.w + 'px';
   // le carré de verre reste collé au champ pendant le déploiement
   if (liste.classList.contains('ouvert')) liste.style.width = largeurListe() + 'px';
   majVerre(); placerCaret();
@@ -2057,22 +2052,24 @@ function appliquerLargeurRecherche(){
 function deployerRecherche(){
   if (!document.body.classList.contains('loupe')) return;
   document.body.classList.remove('loupe');
-  gsap.to(etatRecherche, { w: largeurBarre(), duration: 0.7, ease: 'back.out(1.6)',
+  champ.tabIndex=0;champ.removeAttribute('aria-hidden');
+  invitationRecherche.tabIndex=-1;invitationRecherche.setAttribute('aria-hidden','true');
+  gsap.to(etatRecherche, { w: largeurBarre(), duration: MOINS_ANIM ? 0 : 0.45, ease: EASE, overwrite:true,
     onUpdate: appliquerLargeurRecherche });
-  gsap.to(loupe, { opacity: 0, scale: 0.6, duration: 0.3, ease: EASE });
 }
 function replierRecherche(){
   if (document.body.classList.contains('loupe')) return;
   if (champ.value || lieuDossier || document.activeElement === champ) return;
   document.body.classList.add('loupe');
+  champ.tabIndex=-1;champ.setAttribute('aria-hidden','true');
+  invitationRecherche.tabIndex=0;invitationRecherche.removeAttribute('aria-hidden');
   fermerListe();
-  gsap.to(etatRecherche, { w: LARGEUR_LOUPE, duration: 0.55, ease: EASE,
+  gsap.to(etatRecherche, { w: LARGEUR_INVITATION, duration: MOINS_ANIM ? 0 : 0.35, ease: EASE, overwrite:true,
     onUpdate: appliquerLargeurRecherche });
-  gsap.to(loupe, { opacity: 0.8, scale: 1, duration: 0.4, delay: 0.15, ease: EASE });
 }
 document.body.classList.add('loupe');
 // au boot, seulement la largeur : la lentille (etatVerre) n'existe pas encore
-champ.style.width = etatRecherche.w + 'px';
+document.getElementById('recherche').style.width = etatRecherche.w + 'px';
 champ.addEventListener('focus', deployerRecherche);
 champ.addEventListener('blur', () => setTimeout(() => {
   // on a ouvert la recherche puis renonce : l URL ne doit plus nommer la ville
@@ -2675,7 +2672,7 @@ function fermerDossier(depuisChamp){
   }
   if (!depuisChamp){ lieuVs = null; defiLien = null; cacherAccroche(); }
 
-  if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
+  if (!depuisChamp) champ.value = '';   // la barre se vide et l'invitation revient
   // la terre reprend son cadrage d'arrivée
   document.body.classList.remove('dossier-ouvert');
   CAMERA_ACCUEIL.setLength(distanceAccueil());
@@ -3493,7 +3490,7 @@ setTimeout(chargerAnnuaire, 30000);
 // tant que le voile est la, la tabulation ne doit pas atteindre le chrome
 // derriere lui : un clavier pouvait allumer un calque avant meme d entrer
 document.body.classList.add('villes-en-attente');
-const CHROME = ['titre', 'recherche', 'util', 'calques', 'timeline', 'explore-city', 'dossier', 'dossier-croix', 'hud'];
+const CHROME = ['titre', 'recherche', 'util', 'calques', 'timeline', 'dossier', 'dossier-croix', 'hud'];
 for (const id of CHROME){ const e = document.getElementById(id); if (e) e.inert = true; }
 document.getElementById('bouton-entree').addEventListener('click', () => {
   const voile = document.getElementById('voile');
@@ -3641,7 +3638,6 @@ const CHROME_DEPART = [
   ['#timeline .an', { opacity: 0, y: 18 }],
   ['#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }],
   ['#map-inspector', { opacity: 0, y: 10 }],
-  ['#explore-city', { opacity: 0 }],
 ];
 for (const [cible, depart] of CHROME_DEPART) gsap.set(cible, depart);
 function revelerChrome(){
@@ -3659,7 +3655,6 @@ function revelerChrome(){
   entree('#timeline .an', { opacity: 0, y: 18 }, 0);
   entree('#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }, 0);
   entree('#map-inspector', { opacity: 0, y: 10 }, 0);
-  entree('#explore-city', { opacity: 0 }, 0);
   return tl;
 }
 

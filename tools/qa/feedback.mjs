@@ -61,9 +61,23 @@ for(const [profile,engine,options] of profiles){
       await slider.tap({position:{x:range.width-1,y:range.height/2}});assert.equal(await slider.inputValue(),'2050');
       await slider.tap({position:{x:1,y:range.height/2}});assert.equal(await slider.inputValue(),'2026');
     }
+    assert.equal(await page.locator('#loupe').count(),0,'one city-search control, without a separate icon');
+    const invitation=await page.locator('#explore-city').boundingBox();
+    assert.ok(Math.abs(invitation.x+invitation.width/2-options.viewport.width/2)<1,'city invitation is centered');
     await page.locator('#explore-city').click();
     assert.equal(await page.locator('#champ-recherche').evaluate(e=>e===document.activeElement),true);
-    await page.locator('#champ-recherche').fill('');await page.locator('#champ-recherche').blur();
+    await page.waitForFunction(()=>Math.abs(document.getElementById('champ-recherche').getBoundingClientRect().width-Math.min(360,innerWidth-40))<1);
+    const search=await page.locator('#champ-recherche').boundingBox();
+    assert.ok(Math.abs(search.x+search.width/2-invitation.x-invitation.width/2)<1,'the search expands in the invitation location');
+    assert.equal(search.y,invitation.y);
+    assert.equal(await page.locator('#explore-city').getAttribute('aria-hidden'),'true');
+    await page.screenshot({path:`${output}/${profile}-search.png`});
+    await page.locator('#champ-recherche').fill('');await page.locator('#champ-recherche').press('Escape');
+    await page.waitForFunction(()=>document.body.classList.contains('loupe')&&document.querySelector('#explore-city').tabIndex===0);
+    await page.keyboard.press('Control+k');
+    assert.equal(await page.locator('#champ-recherche').evaluate(e=>e===document.activeElement),true,'keyboard shortcut expands the same search');
+    await page.locator('#champ-recherche').blur();
+    await page.waitForFunction(()=>document.body.classList.contains('loupe'));
     await page.locator('#map-toggle').click();
     await page.locator('.calque[data-cle="chaleur"]').click();
     await page.locator('#pedago').waitFor({state:'visible'});
@@ -87,6 +101,11 @@ for(const [profile,engine,options] of profiles){
     await page.locator('#bouton-son').click();assert.equal(await page.evaluate(()=>window.Howler._muted),true);
     await page.locator('#bouton-reglages').click();
     await page.locator('#champ-recherche').fill('Paris');await page.getByRole('option').filter({hasText:'Paris'}).first().click();
+    if(options.viewport.width<=720){
+      const citySearch=await page.locator('#champ-recherche').boundingBox(),close=await page.locator('#dossier-croix').boundingBox();
+      assert.ok(citySearch.y+citySearch.height<=close.y||citySearch.x+citySearch.width<=close.x,'city search leaves the close button accessible');
+      await page.screenshot({path:`${output}/${profile}-city-search.png`});
+    }
     await page.locator('#dossier-comparer').click();
     await page.locator('#comparison-search').fill('Tokyo');await page.locator('#comparison-search').press('ArrowDown');await page.locator('#comparison-search').press('Enter');
     const before=await page.locator('#city-comparison thead th').allTextContents();

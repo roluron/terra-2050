@@ -545,17 +545,12 @@ body.cale-annee #timeline .an { opacity: 0.92; }
 }
 
 /* =====================================================================
-   LOUPE DE VERRE — la recherche au repos est un cercle de la même lentille
-   WebGL ; le déploiement est animé par GSAP (largeur du champ).
+   RECHERCHE REPLIÉE — la classe loupe conserve l'état compact historique ;
+   premium.css présente désormais l'invitation à la place du champ.
    ===================================================================== */
 #champ-recherche { transition: none; }   /* la largeur appartient à GSAP */
 body.loupe #champ-recherche { cursor: pointer; color: transparent; }
 body.loupe #champ-recherche::placeholder { color: transparent; }
-#loupe { position: absolute; left: auto; right: calc(78px + 23px); top: 50%;
-  width: 19px; height: 19px;
-  transform: translate(50%, -50%); pointer-events: none; opacity: 0.8;
-  stroke: var(--texte); stroke-width: 1.4; fill: none; stroke-linecap: round; }
-body:not(.loupe) #loupe { opacity: 0; }
 
 /* la roue ne garde plus de rotation CSS : tout passe par GSAP */
 #bouton-reglages .rouage { transition: none; }
@@ -565,8 +560,8 @@ body:not(.loupe) #loupe { opacity: 0; }
 .calque[data-cle="declin"].actif .pastille { background: #9A8FB8; }
 
 /* =====================================================================
-   RECHERCHE À DROITE — la loupe vit à côté de l'engrenage et se déploie
-   vers la gauche ; la liste ne déborde jamais le cadre de la barre.
+   ALIGNEMENT HISTORIQUE — premium.css centre désormais la recherche ;
+   la liste suit toujours le cadre du champ pendant son déploiement.
    ===================================================================== */
 #recherche { align-items: flex-end; padding-right: 78px; }
 #resultats { left: auto; right: 78px; transform: translateY(-6px);
@@ -577,18 +572,9 @@ body:not(.loupe) #loupe { opacity: 0; }
 #resultats li .type-lieu { flex: none; max-width: 45%; overflow: hidden;
   text-overflow: ellipsis; white-space: nowrap; }
 
-/* brillance qui respire sur la loupe repliée — pour qu'on la remarque */
-@keyframes loupe-souffle {
-  0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 0 rgba(255, 253, 226, 0)); }
-  50% { opacity: 0.95; filter: drop-shadow(0 0 7px rgba(255, 253, 226, 0.5)); }
-}
-body.loupe #loupe { animation: loupe-souffle 3.8s var(--ease) infinite; }
-@media (prefers-reduced-motion: reduce) { body.loupe #loupe { animation: none; } }
-
 @media (max-width: 720px) {
   #recherche { padding-right: 60px; }
   #resultats { right: 60px; width: min(220px, 60vw); }
-  #loupe { right: calc(60px + 23px); }
 }
 
 /* le caret DOS n'existe qu'en barre déployée — replié en loupe, rien */
@@ -847,9 +833,7 @@ body.calques-en-attente .calque .pastille { animation: attente-calque 1.6s ease-
 @keyframes attente-calque { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.9; } }
 @media (prefers-reduced-motion: reduce) { body.calques-en-attente .calque .pastille { animation: none; } }
 
-/* l'annuaire des villes arrive apres le globe : la loupe respire tant qu'il
-   n'est pas la, et la liste le dit si l'on cherche trop tot */
-body.villes-en-attente #loupe { opacity: 0.45; }
+/* La liste signale que l'annuaire arrive si l'on cherche avant son chargement. */
 
 /* les rangees de resultats faisaient 41 px sous le doigt, sous le seuil de 44 */
 @media (pointer: coarse) {
@@ -1146,7 +1130,7 @@ body:not(.pret) #model-notice { display: none; }
 
 @media(max-width:720px), (max-height:500px) { #model-notice #layer-context { max-height: 1.4em; overflow: hidden; } #model-notice:has(details[open]) { max-width: min(300px,calc(100vw - 20px)); width: 300px; } #model-notice:has(details[open]) #layer-context { max-height: none; } #model-notice summary { min-height: 44px; } }
 
-@media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #loupe, #resultats.ouvert { pointer-events: auto; } }
+@media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #explore-city, #resultats.ouvert { pointer-events: auto; } }
 html:lang(ja){--police:'Hiragino Kaku Gothic ProN','Yu Gothic',Meiryo,sans-serif;--herbik:'Hiragino Mincho ProN','Yu Mincho',serif;--mono:'Hiragino Kaku Gothic ProN',sans-serif}
 html:lang(zh){--police:'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif;--herbik:'Songti SC','Noto Serif CJK SC',serif;--mono:'PingFang SC','Microsoft YaHei',sans-serif}
 html:lang(vi){--police:Arial,sans-serif;--herbik:Georgia,serif}
