@@ -858,7 +858,8 @@ body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
    la planète. Sous le chrome, au-dessus de la toile.
    ===================================================================== */
 #survol { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none;
-  padding: 7px 11px 8px; border-radius: 9px; white-space: nowrap;
+  padding: 9px 11px; border-radius: 9px; white-space: normal;
+  width: max-content; max-width: min(300px, calc(100vw - 16px)); box-sizing: border-box;
   background: rgba(2, 4, 10, 0.66); border: 1px solid rgba(255, 253, 226, 0.16);
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   color: var(--texte); font-family: var(--police); font-size: 13px; line-height: 1.25;
@@ -869,8 +870,11 @@ body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
 #survol .s-nom { font-weight: 600; }
 #survol .s-indice { margin-left: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
 #survol .s-indice:empty { display: none; }
-#survol .s-sous { display: block; margin-top: 2px; font-size: 9.5px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--muter); }
+#survol .s-sous { display: block; margin-top: 4px; font-size: 11px; color: var(--muter); }
+#survol .s-detail { display: block; margin-top: 5px; font-size: 11px; font-variant-numeric: tabular-nums; }
+#survol .s-note { display: block; margin-top: 6px; font-size: 10px; line-height: 1.4; color: var(--muter); }
+#survol .s-detail:empty, #survol .s-note:empty { display: none; }
+#survol:focus-visible { outline: 2px solid var(--texte); outline-offset: 3px; }
 body.sur-lieu #scene { cursor: pointer; }
 #etiquettes { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
 body:not(.pret) #etiquettes { display: none; }

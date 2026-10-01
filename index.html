@@ -286,7 +286,7 @@
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
 <div id="etiquettes"></div>
-<div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span></div>
+<div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span><span class="s-detail"></span><span class="s-note"></span></div>
 
 <div id="util" class="panneau">
   <div class="menu-groupe">
@@ -411,6 +411,7 @@ import { language, getText, message, languageControl } from './i18n.mjs';
 import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
 import { createComparison } from './city-comparison.mjs';
 import { createYearRuler } from './year-ruler.mjs';
+import { hoverCopy, hoverMetricKey, populationHover, physicalHover } from './hover-diagnostic.mjs';
 import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
@@ -993,12 +994,13 @@ function chargerGrillesCalques(){
       texture.wrapS = THREE.RepeatWrapping; texture.needsUpdate = true;
       uniformsGlobe.uFireWeather.value = texture;
       return true;
-    }).catch(error => { scienceLoadFailed = true; if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
+    }).catch(error => { scienceLoadFailed = true; rafraichirSurvol(); if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
   ]).then(async r => {
     if (SCIENCE){
       const textures = await buildScientificTextures(THREE, SCIENCE.climate, r[0], moteur.extensions.has('OES_texture_float_linear'));
       for (const [key, texture] of Object.entries(textures)) uniformsGlobe['uScientific_' + key].value = texture;
     }
+    rafraichirSurvol();
     if (lieuDossier) majDossier(); const ok = r.every(Boolean); resoudreCalques(ok); return ok;
   }).catch(error => { console.error('Scientific layers unavailable', error); resoudreCalques(false); return false; });
   return calquesCharges;
@@ -1601,6 +1603,7 @@ const CALQUES = {
   declin:     { uniforme: uniformsGlobe.uDeclin,     son: 'layer_on' },
 };
 const etat = { progression: 0, annee: 2026, crise: false };
+let filtreSurvol = null, rafraichirSurvol = () => {};
 function majContexteCalques(){
   const el = document.getElementById('layer-context');
   const actifs = [...document.querySelectorAll('.calque.actif')].map(b => b.dataset.cle);
@@ -1670,6 +1673,8 @@ function majContexteCalques(){
   const hint = document.createElement('p');hint.className='map-hint';hint.textContent = changing && etat.annee === 2026 ? words[4] : changing ? guide.change : guide.valueHint.replace('{year}',etat.annee);el.append(hint);
   document.getElementById('layer-method').textContent = [...notes, words[5]].join('\n');
   cadrerCarte();
+  filtreSurvol = actifs[0] || null;
+  rafraichirSurvol();
 }
 function cadrerCarte(){
   if (innerWidth <= 720 && innerHeight > 500 && !document.body.classList.contains('dossier-ouvert') && document.querySelector('.calque.actif')) camera.setViewOffset(innerWidth, innerHeight, 0, 64, innerWidth, innerHeight);
@@ -2038,7 +2043,7 @@ curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 addEventListener('pointercancel', () => document.body.classList.remove('cale-annee'));
 curseur.addEventListener('input', () => {
-  cacherSurvol();
+  if (!survolFige) cacherSurvol();
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
   odoAn.set(an); calerTimeline(); majDistanceAn(); majContexteCalques();
@@ -3308,6 +3313,8 @@ boutonSon.addEventListener('click', () => {
    ===================================================================== */
 function traduire(){
   document.getElementById('survol').classList.remove('visible', 'fige');
+  document.getElementById('survol').tabIndex = -1;
+  document.getElementById('survol').setAttribute('aria-hidden', 'true');
   document.body.classList.remove('sur-lieu');
   document.documentElement.lang = langue;
   document.title = T().ui.terra2050_will_your_city_still;
@@ -3383,7 +3390,7 @@ function chargerAnnuaire(){
   }),
   charger('./data/population-annual.json', 'json').then(j => {
     if (!Object.keys(j).length || !Object.values(j).every(a => Array.isArray(a) && a.length === 26 && a.every(n => Number.isSafeInteger(n) && n > 0))) throw new Error('Invalid annual population data');
-    PAYS_POP = j; preparerPopulation();
+    PAYS_POP = j; preparerPopulation(); rafraichirSurvol();
   }),
 ]).then(() => {
   for (let i = 0; i < LIEUX.length; i++) LIEUX[i][7] = SCIENCE?.coverage[i] === 63 ? { science: true } : null;
@@ -3406,6 +3413,7 @@ function chargerAnnuaire(){
               PAYS_POP[iso][0], 2, nomEn, null];
     });
   indexerVilles();
+  rafraichirSurvol();
   calquesPrets.then(chargerPays);   // 50 Ko, après les grilles : jamais sur le chemin critique
   document.body.classList.add('donnees-pretes');
   document.body.classList.remove('villes-en-attente');
@@ -3760,42 +3768,82 @@ function sousPointeur(cx, cy){
   return { ville, iso };
 }
 const ligneDePays = iso => PAYS_LIGNES.find(p => p[1] === iso) || null;
+// Country boundaries determine the globe diagnostic; city labels keep their own sheets.
+const lieuSousPointeur = s => s && (s.iso ? ligneDePays(s.iso) : s.ville);
 const survolEl = document.getElementById('survol');
 const survolNom = survolEl.querySelector('.s-nom'), survolIndice = survolEl.querySelector('.s-indice'),
-      survolSous = survolEl.querySelector('.s-sous');
-let survolLieu = null, survolFige = false;
+      survolSous = survolEl.querySelector('.s-sous'), survolDetail = survolEl.querySelector('.s-detail'),
+      survolNote = survolEl.querySelector('.s-note');
+let survolLieu = null, survolFige = false, survolPoint = null;
 let survolContenu = null, survolLargeur = 0, survolHauteur = 0;
+// A first touch reveals city labels. Its compatibility click must not open
+// a label (or tooltip) that appeared underneath it after pointerdown.
+let cibleAppuiDiagnostic = null;
+document.addEventListener('pointerdown', e => { cibleAppuiDiagnostic = e.target; }, true);
+document.addEventListener('pointercancel', () => { cibleAppuiDiagnostic = null; }, true);
 function montrerSurvol(s, cx, cy, fige){
-  const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
-  const iso = s && s.iso;
+  const l = lieuSousPointeur(s), iso = s && s.iso;
   if (!l && !iso){ cacherSurvol(); return; }
-  survolLieu = l; survolFige = !!fige;
-  const an = etat.annee;
-  // Un même lieu ne change pas de diagnostic avec chaque pixel de souris.
-  // Invalider aussi à l'arrivée des données, au changement d'année/langue
-  // et au resize pour conserver les valeurs et dimensions à jour.
-  if(!survolContenu || survolContenu.l!==l || survolContenu.iso!==iso || survolContenu.an!==an || survolContenu.langue!==langue || survolContenu.science!==SCIENCE || survolContenu.coverage!==l?.[7] || survolContenu.fige!==survolFige || survolContenu.width!==innerWidth || survolContenu.height!==innerHeight){
-    const indice = !l ? null : estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
-    survolNom.textContent = l ? nomVille(l) : nomPays(iso);
-    survolIndice.textContent = indice === null ? '' : indice;
-    survolIndice.style.color = indice === null ? '' : couleurNote(indice);
-    survolSous.textContent = l && !estPays(l) ? nomPays(l[1]) : (T().ui.country);
-    if(survolEl.classList.contains('fige')!==survolFige)survolEl.classList.toggle('fige',survolFige);
-    survolLargeur=survolEl.offsetWidth;survolHauteur=survolEl.offsetHeight;
-    survolContenu={l,iso,an,langue,science:SCIENCE,coverage:l?.[7],fige:survolFige,width:innerWidth,height:innerHeight};
+  survolLieu = l; survolFige = !!fige; survolPoint = {s,cx,cy};
+  const an = etat.annee, filter = filtreSurvol, changing = uniformsGlobe.uChange.value > .5;
+  const signature = [iso, an, langue, filter, changing, scienceLoadFailed, fige, innerWidth, innerHeight].join('|');
+  // Reuse country aggregates and layout while only the pointer position changes.
+  if (!survolContenu || survolContenu.signature !== signature || survolContenu.l !== l || survolContenu.science !== SCIENCE || survolContenu.population !== PAYS_POP){
+    const copy = refinementCopy(langue), scope = hoverCopy[langue] || hoverCopy.en;
+    let diagnostic = null, note = '', label, color = '';
+    if (filter){
+      label = filter === 'declin' ? copy.population : T().critere[hoverMetricKey[filter]];
+      if (filter === 'declin') diagnostic = populationHover(PAYS_POP[iso], an, changing, langue);
+      else {
+        // A country may have partial readings even when its overall score is unavailable.
+        const country = iso ? l || [nomPays(iso), iso, 0, 0, 0, 2] : l;
+        const reading = mesuresLieu(country, an)?.[hoverMetricKey[filter]];
+        diagnostic = physicalHover(reading, an, changing, langue, uniteLocale(reading?.unit));
+        if (diagnostic){
+          note = iso ? scope[0] : reading?.regionalFallback ? copy.regional : copy.nativeCell;
+          note += ' ' + (filter === 'mer' || filter === 'fleuves' ? scope[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
+        }
+      }
+    } else {
+      label = T().panelIndex;
+      const indice = iso ? indicePays(iso, an) : l?.[7] ? indiceHabitabilite(l, an) : null;
+      if (Number.isFinite(indice)){
+        diagnostic = {value: `${indice}/100`, detail: ''}; color = couleurNote(indice);
+        note = iso ? scope[2] : '';
+      }
+    }
+    survolNom.textContent = iso ? nomPays(iso) : nomVille(l);
+    survolIndice.textContent = diagnostic?.value || '';
+    survolIndice.style.color = color;
+    survolSous.textContent = `${label} · ${an}`;
+    survolDetail.textContent = diagnostic?.detail || (diagnostic ? '' : filter === 'declin' ? T().ui.no_estimate : unavailableScienceText().title);
+    survolNote.textContent = note;
+    survolEl.classList.toggle('fige', survolFige);
+    const actionable = survolFige && !!l;
+    survolEl.setAttribute('role', actionable ? 'button' : 'tooltip');
+    survolEl.tabIndex = actionable ? 0 : -1;
+    survolLargeur = survolEl.offsetWidth; survolHauteur = survolEl.offsetHeight;
+    survolContenu = {signature,l,science:SCIENCE,population:PAYS_POP};
   }
   const w = survolLargeur, h = survolHauteur;
-  const x = cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16;
-  const y = cy + 18 + h > innerHeight - 8 ? cy - 12 - h : cy + 18;
+  const x = Math.max(8, Math.min(innerWidth - w - 8, cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16));
+  const y = Math.max(8, Math.min(innerHeight - h - 8, cy + 18 + h > innerHeight - 8 ? cy - 12 - h : cy + 18));
   survolEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-  if(!survolEl.classList.contains('visible'))survolEl.classList.add('visible');
-  if(document.body.classList.contains('sur-lieu')!==!!l)document.body.classList.toggle('sur-lieu',!!l);
+  if (!survolEl.classList.contains('visible')) { survolEl.classList.add('visible'); survolEl.setAttribute('aria-hidden', 'false'); }
+  if (document.body.classList.contains('sur-lieu') !== !!l) document.body.classList.toggle('sur-lieu', !!l);
 }
+rafraichirSurvol = () => {
+  if (survolPoint && survolEl.classList.contains('visible')){
+    const {s,cx,cy} = survolPoint; montrerSurvol(s,cx,cy,survolFige);
+  }
+};
+addEventListener('resize', rafraichirSurvol);
 function cacherSurvol(){
-  survolLieu = null; survolFige = false;
-  if(survolEl.classList.contains('visible')||survolEl.classList.contains('fige'))survolEl.classList.remove('visible', 'fige');
-  if(document.body.classList.contains('sur-lieu'))document.body.classList.remove('sur-lieu');
-  survolContenu=null;
+  survolLieu = null; survolFige = false; survolPoint = null;
+  if (survolEl.classList.contains('visible') || survolEl.classList.contains('fige')) survolEl.classList.remove('visible', 'fige');
+  survolEl.tabIndex = -1; survolEl.setAttribute('aria-hidden', 'true');
+  if (document.body.classList.contains('sur-lieu')) document.body.classList.remove('sur-lieu');
+  survolContenu = null;
 }
 {
   let presse = null;
@@ -3824,14 +3872,18 @@ function cacherSurvol(){
     if (!p || p.id !== e.pointerId || pointeurs.size || p.bouge || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6 || performance.now() - p.t > 500) return;
     const s = sousPointeur(e.clientX, e.clientY);
     if (e.pointerType === 'mouse'){
-      const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
+      const l = lieuSousPointeur(s);
       if (l){ cacherSurvol(); choisirLieu(l); }
     } else {
       // au doigt : un tap pose l'étiquette, un tap sur l'étiquette ouvre la fiche
       montrerSurvol(s, e.clientX, e.clientY, true);
     }
   });
-  survolEl.addEventListener('click', () => {
+  survolEl.addEventListener('keydown', e => {
+    if (survolFige && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); survolEl.click(); }
+  });
+  survolEl.addEventListener('click', e => {
+    if (e.detail && !survolEl.contains(cibleAppuiDiagnostic)) return;
     if (!survolLieu) return;
     const l = survolLieu; cacherSurvol(); choisirLieu(l);
   });
@@ -3859,7 +3911,11 @@ const ETIQUETTES_MAX = 36, etiquettes = [];
 for (let i = 0; i < ETIQUETTES_MAX; i++){
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'etiquette'; b.hidden = true;
-  b.addEventListener('click', () => { const l = LIEUX[parseInt(b.dataset.i, 10)]; if (l){ cacherSurvol(); choisirLieu(l); } });
+  b.addEventListener('click', e => {
+    if (e.detail && !b.contains(cibleAppuiDiagnostic)) return;
+    const l = LIEUX[parseInt(b.dataset.i, 10)];
+    if (l){ cacherSurvol(); choisirLieu(l); }
+  });
   etiquettesEl.appendChild(b); etiquettes.push(b);
 }
 let foyerEtiquettes = null;
