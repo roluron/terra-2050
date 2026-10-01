@@ -6,6 +6,7 @@ import {pathToFileURL, fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 import {enter, welcome, chooseLanguage} from './entrance.cjs';
 import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
+import {warmingCopy} from '../../hover-diagnostic.mjs';
 import {mapCopy, refinementCopy} from '../../refinement-copy.mjs';
 
 // Browser integration checks. Numeric expectations use raw packaged fields,
@@ -82,8 +83,9 @@ function expectedDisplay(filter,year,mode,s,locale) {
   }
   const unit=ex.unit==='days/year'?dayUnits[locale]:ex.unit;
   const changing=mode==='change',displayUnit=changing&&['mer','fleuves'].includes(filter)?mapCopy[locale][8]:unit;
-  return {available:true,value:`${format(changing?ex.value-ex.baseline:ex.value,locale,changing)} ${displayUnit}`,
-    detail:changing?`2026: ${format(ex.baseline,locale)} ${unit} → ${year}: ${format(ex.value,locale)} ${unit}`:'',resolution:ex.resolution};
+  return {available:true,value:`${format(changing?ex.value-ex.baseline:ex.value,locale,changing||filter==='stabilite')} ${displayUnit}`,
+    detail:changing?`2026: ${format(ex.baseline,locale)} ${unit} → ${year}: ${format(ex.value,locale)} ${unit}`:
+      filter==='stabilite'?warmingCopy[locale].reference:'',resolution:ex.resolution};
 }
 const snapshotScript = () => {
   const el=document.getElementById('survol'), rect=el.getBoundingClientRect();
@@ -114,6 +116,7 @@ function validate(snapshot,filter,year,mode,s,locale,context) {
     }
   }
   if(mode==='change'&&filter!=='declin')assert.ok(snapshot.subtitle.includes(refinementCopy(locale).change),context+' reference label');
+  if(ex.available&&mode==='value'&&filter==='stabilite')assert.equal(snapshot.subtitle,`${warmingCopy[locale].label} · ${year}`,context+' estimated warming label');
   assert.equal(snapshot.horizontalOverflow,false,context+' horizontal page overflow');
   const b=snapshot.bounds,v=snapshot.viewport;
   assert.ok(b.x>=7&&b.y>=7&&b.x+b.width<=v.width-7&&b.y+b.height<=v.height-7,context+' tooltip viewport containment');
@@ -253,7 +256,7 @@ try {
     // NoData stays unavailable, while an actual covered zero stays numeric.
     await show({iso:'PG',lat:0,lon:-140});const missing=await snapshot();
     assert.equal(missing.value,'');assert.ok(missing.detail);assert.equal(missing.note,'');
-    await filter('mer');await show({iso:'FR',lat:48.85,lon:2.35});const zero=await snapshot();
+    await filter('mer');await mode('value');await show({iso:'FR',lat:48.85,lon:2.35});const zero=await snapshot();
     assert.equal(zero.value,'0 %');assert.ok(zero.note.startsWith('Maille du modèle'));
     await mode('change');await show(samples[1]);const small=await snapshot();
     assert.match(small.value,/0 < Δ < 0,01 points de pourcentage/);assert.notEqual(small.value,'0 points de pourcentage');

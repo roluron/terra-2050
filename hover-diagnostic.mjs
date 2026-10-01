@@ -11,6 +11,18 @@ export const hoverCopy = {
 };
 export const hoverMetricKey = { chaleur: 'thermique', secheresse: 'eau', feux: 'feux', mer: 'mer', fleuves: 'fleuves', stabilite: 'stabilite' };
 
+// The stored warming level is already an anomaly from this historical mean.
+export const warmingCopy = {
+  fr: { label: 'Réchauffement local estimé', reference: 'Par rapport à la moyenne 1970–2000', value: 'Réchauffement total', hint: 'Réchauffement local estimé par rapport à la moyenne 1970–2000.' },
+  en: { label: 'Estimated local warming', reference: 'Compared with the 1970–2000 average', value: 'Total warming', hint: 'Estimated local warming relative to the 1970–2000 average.' },
+  it: { label: 'Riscaldamento locale stimato', reference: 'Rispetto alla media 1970–2000', value: 'Riscaldamento totale', hint: 'Riscaldamento locale stimato rispetto alla media 1970–2000.' },
+  es: { label: 'Calentamiento local estimado', reference: 'Respecto a la media de 1970–2000', value: 'Calentamiento total', hint: 'Calentamiento local estimado respecto a la media de 1970–2000.' },
+  vi: { label: 'Ước tính mức nóng lên tại địa phương', reference: 'So với trung bình giai đoạn 1970–2000', value: 'Mức nóng lên tổng cộng', hint: 'Ước tính mức nóng lên tại địa phương so với trung bình giai đoạn 1970–2000.' },
+  ja: { label: '地域の温暖化の推計', reference: '1970～2000年の平均との比較', value: '温暖化の総量', hint: '1970～2000年の平均に対する地域の温暖化の推計。' },
+  zh: { label: '当地变暖估计', reference: '相对于1970–2000年平均值', value: '总变暖幅度', hint: '相对于1970–2000年平均值的当地变暖估计。' },
+  'zh-Hant': { label: '當地暖化估計', reference: '相對於1970–2000年平均值', value: '總暖化幅度', hint: '相對於1970–2000年平均值的當地暖化估計。' },
+};
+
 export function formatHoverNumber(value, locale, signed = false, digits = 1) {
   if (!Number.isFinite(value)) return null;
   const rounded = Number(value.toFixed(digits));
@@ -35,6 +47,6 @@ export function physicalHover(reading, year, changing, locale, unit, changeUnit 
   if (!reading?.available || !Number.isFinite(reading.value) || !Number.isFinite(reading.baseline)) return null;
   // Derive the displayed delta from the same weighted level and reference.
   const value = changing ? reading.value - reading.baseline : reading.value;
-  return { value: `${formatHoverNumber(value, locale, changing, 2)} ${changing ? changeUnit : unit}`.trim(),
+  return { value: `${formatHoverNumber(value, locale, changing || reading.filter === 'stabilite', 2)} ${changing ? changeUnit : unit}`.trim(),
     detail: changing ? `2026: ${formatHoverNumber(reading.baseline, locale, false, 2)} ${unit} → ${year}: ${formatHoverNumber(reading.value, locale, false, 2)} ${unit}` : '' };
 }
