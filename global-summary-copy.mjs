@@ -91,6 +91,17 @@ export const summaryCopy = {
   },
 };
 
+const averageReference = {
+  en: 'Compared with the {period} average',
+  fr: 'Par rapport à la moyenne {period}',
+  it: 'Rispetto alla media {period}',
+  es: 'Respecto a la media de {period}',
+  vi: 'So với trung bình giai đoạn {period}',
+  ja: '{period}年の平均との比較',
+  zh: '相对于{period}年平均值',
+  'zh-Hant': '相對於{period}年平均值',
+};
+
 export function summarizeText(filter, reading, locale, year) {
   const copy = summaryCopy[locale] || summaryCopy.en;
   if (!reading?.available || !Number.isFinite(reading.value)) return { headline: '', detail: copy.unavailable };
@@ -107,10 +118,13 @@ export function summarizeText(filter, reading, locale, year) {
   const n = formatHoverNumber(reading.value, locale, signed, ['mer', 'fleuves'].includes(filter) ? 2 : 1);
   const period = reading.referencePeriod.join('–');
   const scope = filter === 'feux' ? copy.burnable : ['mer', 'fleuves'].includes(filter) ? copy.domain : copy.land;
-  const details = [copy.estimate.replace('{year}', year), scope, copy.compared.replace('{period}', period), reading.scenario];
+  const details = [copy.estimate.replace('{year}', year), scope, reading.scenario];
   if (filter === 'chaleur') details.push(copy.heatDefinition);
   if (filter === 'secheresse') details.push(copy.aridityDefinition);
   if (filter === 'feux') details.push(copy.fireThreshold);
   if (['mer', 'fleuves'].includes(filter)) details.push(copy.percentagePoints, copy.flood);
-  return { headline: copy[key].replace('{n}', n), detail: details.join(' · ') };
+  const reference = ['chaleur', 'stabilite', 'feux'].includes(filter)
+    ? (averageReference[locale] || averageReference.en).replace('{period}', period)
+    : copy.compared.replace('{period}', period);
+  return { headline: copy[key].replace('{n}', n), reference, detail: details.join(' · ') };
 }

@@ -217,12 +217,12 @@ let copyChecks = 0;
 for (const locale of Object.keys(summaryCopy)) for (const filter of filters) for (const year of [2026, 2050]) {
   const reading = real.reading(filter, year), text = summarizeText(filter, reading, locale, year);
   assert.ok(text.headline.length && text.detail.includes(String(year)));
-  assert.ok(!/[{}]|undefined|NaN/.test(text.headline + text.detail));
+  assert.ok(!/[{}]|undefined|NaN/.test(text.headline + (text.reference || '') + text.detail));
   if (filter === 'declin') {
     assert.ok(text.detail.includes('237')); assert.ok(!text.detail.includes('SSP'));
     if (['ja', 'zh', 'zh-Hant'].includes(locale)) assert.ok(/亿|億/.test(text.headline));
   } else {
-    assert.ok(text.detail.includes(reading.referencePeriod.join('–'))); assert.ok(text.detail.includes(reading.scenario));
+    assert.ok(text.reference.includes(reading.referencePeriod.join('–'))); assert.ok(text.detail.includes(reading.scenario));
     if (filter === 'chaleur') assert.ok(text.detail.includes(summaryCopy[locale].heatDefinition));
     if (filter === 'secheresse') assert.ok(text.detail.includes(summaryCopy[locale].aridityDefinition));
     if (filter === 'feux') assert.ok(text.detail.includes('1850'));

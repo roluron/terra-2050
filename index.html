@@ -265,7 +265,7 @@
   <div class="bornes micro"><span>2026</span><span>2050</span></div>
 </div>
 
-<aside id="filter-summary" hidden aria-live="polite"><p class="summary-headline"></p><p class="summary-detail"></p></aside>
+<aside id="filter-summary" hidden aria-live="polite"><p class="summary-headline"></p><p class="summary-reference" hidden></p><p class="summary-detail"></p></aside>
 <section id="map-inspector">
 <button id="map-toggle" type="button" aria-expanded="false" aria-controls="map-options"><span></span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
 <div id="map-options">
@@ -555,7 +555,11 @@ function majSyntheseGlobale(){
   el.hidden = !filter || !globalSummary;
   if (el.hidden) return;
   const copy = summarizeText(filter, globalSummary.reading(filter, etat.annee), langue, etat.annee);
+  el.classList.toggle('summary-unavailable', !copy.headline);
   el.querySelector('.summary-headline').textContent = copy.headline;
+  const reference = el.querySelector('.summary-reference');
+  reference.textContent = copy.reference || '';
+  reference.hidden = !copy.reference;
   el.querySelector('.summary-detail').textContent = copy.detail;
 }
 function preparerSyntheseGlobale(){
@@ -1054,6 +1058,7 @@ const uniformsGlobe = {
   uProgression:{ value: 0 },                          // timeline 2026→2050 → 0..1
   uChange: { value: 1 },
   uReference: { value: 0 },
+  uCountryOpacity: { value: MOINS_ANIM ? 0.1 : 0 },
   uCountryStep: { value: new THREE.Vector2(0, 0) },
   uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },
   uChaleur:    { value: 0 },
@@ -1087,7 +1092,7 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChange, uReference, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue, uFeu;
+    uniform float uTemps, uProgression, uChange, uReference, uCountryOpacity, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue, uFeu;
     uniform vec2 uCountryStep;
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC, uD, uPays, uPopulation;
@@ -1270,7 +1275,7 @@ const matGlobe = new THREE.ShaderMaterial({
           texture2D(uPays, vUv - vec2(0.0, uCountryStep.y)).r) * 255.0 + 0.5);
         vec4 different = step(vec4(0.5), abs(neighbours - country)) * step(vec4(0.5), neighbours);
         float border = max(max(different.r, different.g), max(different.b, different.a)) * step(0.5, country);
-        col = mix(col, vec3(0.68, 0.73, 0.77), border * selected * 0.38);
+        col = mix(col, vec3(0.68, 0.73, 0.77), border * selected * uCountryOpacity);
       }
       col *= mix(0.24, 1.0, uEveil);
 
@@ -3808,7 +3813,7 @@ function chargerPays(){
     tex.generateMipmaps = false; tex.needsUpdate = true;
     uniformsGlobe.uPays.value = tex;
     tex.wrapS = THREE.RepeatWrapping;
-    uniformsGlobe.uCountryStep.value.set(1 / c.width, 1 / c.height);
+    uniformsGlobe.uCountryStep.value.set(0.5 / c.width, 0.5 / c.height);
     preparerPopulation();
   }).catch(e => console.warn('grille des pays indisponible :', e && e.message));
 }
@@ -4101,6 +4106,8 @@ function boucle(){
   if (dt > 0) fpsEMA += ((1 / dt) - fpsEMA) * 0.04;
 
   uniformsGlobe.uTemps.value = MOINS_ANIM ? 0 : t;
+  // Eight-second breath, 0–20%; reduced motion keeps a quiet 10% outline.
+  uniformsGlobe.uCountryOpacity.value = MOINS_ANIM ? 0.1 : 0.1 * (1 - Math.cos(t * Math.PI / 4));
   marqueurUniforms.uTemps.value = t;
   fleuvesUniforms.uTemps.value = MOINS_ANIM ? 0 : t;
   fleuvesUniforms.uCrue.value = uniformsGlobe.uCrue.value * 0.45;

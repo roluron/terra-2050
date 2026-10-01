@@ -121,10 +121,10 @@ try {
     const mode = async key => { await openMenu(); await act(`[data-map-mode="${key}"]`); await closeMenu(); };
     const year = async value => { await page.locator('#curseur').fill(String(value)); await page.evaluate(() => __summaryAudit.frames()); };
     const snapshot = () => page.evaluate(() => {
-      const summary = document.getElementById('filter-summary'), headline = summary.querySelector('.summary-headline'), detail = summary.querySelector('.summary-detail');
+      const summary = document.getElementById('filter-summary'), headline = summary.querySelector('.summary-headline'), reference = summary.querySelector('.summary-reference'), detail = summary.querySelector('.summary-detail');
       const rect = el => {const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};};
-      return { headline: headline.textContent, detail: detail.textContent, hidden: summary.hidden,
-        bounds: rect(summary), headlineBounds: rect(headline), detailBounds: rect(detail),
+      return { headline: headline.textContent, reference: reference.textContent, referenceHidden: reference.hidden, detail: detail.textContent, hidden: summary.hidden,
+        bounds: rect(summary), headlineBounds: rect(headline), referenceBounds: rect(reference), detailBounds: rect(detail),
         filterBounds: rect(document.getElementById('map-inspector')), timelineBounds: rect(document.getElementById('timeline')),
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         headlineOverflow: headline.scrollWidth > headline.clientWidth + 1, detailOverflow: detail.scrollWidth > detail.clientWidth + 1,
@@ -135,7 +135,11 @@ try {
       report.lastSnapshot = { context, ...actual };
       assert.equal(await summary.isVisible(), true, context + ' headline visible');
       assert.equal(actual.headline, expected.headline, context + ' headline value');
+      assert.equal(actual.reference, expected.reference || '', context + ' visible historical reference');
+      assert.equal(actual.referenceHidden, !expected.reference, context + ' reference visibility');
       assert.equal(actual.detail, expected.detail, context + ' historical definition');
+      assert.ok(actual.detailBounds.width <= actual.headlineBounds.width + 1, context + ' detail wraps within headline width');
+      if (expected.reference) assert.ok(actual.referenceBounds.width <= actual.headlineBounds.width + 1, context + ' reference wraps within headline width');
       assert.equal(actual.overflow, false, context + ' page overflow');
       assert.equal(actual.headlineOverflow, false, context + ' headline overflow');
       assert.equal(actual.detailOverflow, false, context + ' detail overflow');
