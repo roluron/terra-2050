@@ -1,5 +1,23 @@
 # Filter and timeline alignment — 2026-09-30
 
+2026-10-01 follow-up on ed6dd56: the ruler fits the year glyphs rather than
+the wider 200px/112px timeline container. The year block uses max-content;
+existing resize/font measurement now preserves fractional pixel widths.
+The first/last odometer digit text ranges and canvas ink bounds determine
+the ruler's width and left offset, excluding the font's side bearings.
+The 44px range input follows the same geometry. Recalibration runs on year
+input and city-sheet moves as well as resize/font readiness.
+
+Focused Chromium checks passed on desktop 1280×720, iPhone 15 Pro and 320×568,
+with reduced motion, plus phone landscape 852×393. Checked all ten final
+digits, keyboard/touch endpoints, the 4px year gap, filter baseline, 44px input
+and city round-trip; no runtime errors. For 2026, ruler widths are 174.453px
+desktop / 105.063px mobile, compared with 200px / 112px outer containers.
+2026/2050 crops visually inspected and bright glyph/tick pixel extents sampled:
+/tmp/terra-ink-timeline-{desktop,phone}-{2026,2050}.png. Syntax and diff checks
+passed. Updated historical unified-ui check uses the outer timeline's right
+inset, since the year itself now fits its content. Actual Safari not verified.
+
 Follow-up on ebc2531: filter pill uses max-content instead of a fixed width,
 with 12px between the label and chevron. Desktop vertical padding removed;
 both formats retain a 44px button inside a 46px pill. Horizontal padding is

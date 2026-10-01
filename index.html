@@ -1796,11 +1796,33 @@ controles.addEventListener('end', () => {
 });
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
+let calerTimeline = () => {};
 {
   const an = document.getElementById('an'), tl = document.getElementById('timeline');
-  const caler = () => tl.style.setProperty('--l-an', an.offsetWidth + 'px');
-  new ResizeObserver(caler).observe(an);
-  caler(); document.fonts.ready.then(caler);
+  const mesure = document.createElement('canvas').getContext('2d');
+  calerTimeline = () => {
+    tl.style.setProperty('--l-an', an.getBoundingClientRect().width + 'px');
+    const colonnes = an.querySelectorAll('.odo');
+    if (!an.closest('#globe-dock') || colonnes.length !== 4 || !mesure) return;
+    const style = getComputedStyle(an);
+    mesure.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    const chiffres = document.getElementById('curseur').value;
+    const bord = (colonne, chiffre, gauche) => {
+      const element = colonne.querySelectorAll('.js-number')[Number(chiffre)];
+      const range = document.createRange(); range.selectNodeContents(element);
+      const avance = range.getBoundingClientRect().left;
+      const encre = mesure.measureText(chiffre);
+      return avance + (gauche ? -encre.actualBoundingBoxLeft : encre.actualBoundingBoxRight);
+    };
+    // Les colonnes du compteur incluent les approches de la police : la règle
+    // suit l'encre du premier et du dernier chiffre, sans ces marges.
+    const gauche = bord(colonnes[0], chiffres[0], true);
+    const droite = bord(colonnes[3], chiffres[3], false);
+    tl.style.setProperty('--l-an', (droite - gauche) + 'px');
+    tl.style.setProperty('--an-ink-left', (gauche - tl.getBoundingClientRect().left) + 'px');
+  };
+  new ResizeObserver(calerTimeline).observe(an);
+  calerTimeline(); document.fonts.ready.then(calerTimeline);
 }
 
 /* ---- recherche de lieu : filtrage instantané + vol caméra ---- */
@@ -2002,6 +2024,7 @@ document.addEventListener('click', e => {
 /* ---- timeline 2026 → 2050 ---- */
 const curseur = document.getElementById('curseur'), affichageAn = document.getElementById('an');
 const odoAn = new Odometre(affichageAn, 4); odoAn.set(2026, true);
+calerTimeline();
 /* la règle : un trait par année, 2026 → 2050. Une vague liquide se
    soulève autour de l'année active et anticipe le survol ; l'année
    courante est une aiguille pleine. Ressort par trait, rien d'instantané. */
@@ -2018,7 +2041,7 @@ curseur.addEventListener('input', () => {
   cacherSurvol();
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
-  odoAn.set(an); majDistanceAn(); majContexteCalques();
+  odoAn.set(an); calerTimeline(); majDistanceAn(); majContexteCalques();
   curseur.setAttribute('aria-valuetext', `${an} — ${T().distanceAn(an - 2026)}`);
   if (lieuDossier){ majDossier(); majLien(); clearTimeout(minuterieAnnonce); minuterieAnnonce = setTimeout(annoncer, 400); }
   gsap.to(etat, {
@@ -2593,6 +2616,7 @@ function ouvrirDossier(l){
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
+  calerTimeline();
   annoncer();
   majCentreDossier();
   setTimeout(majCentreDossier, 600);   // re-mesure après l'entrée de la fiche
@@ -2635,6 +2659,7 @@ function fermerDossier(depuisChamp){
     // retombait alors sur un globe vide)
     dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
     document.body.classList.remove('dossier-ouvert');
+    calerTimeline();
     clearTimeout(minuterieLien);
     return;
   }
@@ -2643,6 +2668,7 @@ function fermerDossier(depuisChamp){
   if (!depuisChamp) champ.value = '';   // la barre se vide et l'invitation revient
   // la terre reprend son cadrage d'arrivée
   document.body.classList.remove('dossier-ouvert');
+  calerTimeline();
   CAMERA_ACCUEIL.setLength(distanceAccueil());
   controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
   volEnCours = gsap.to(camera.position, {
