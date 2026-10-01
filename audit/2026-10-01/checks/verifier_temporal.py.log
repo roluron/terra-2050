@@ -1,0 +1,32 @@
+{"command": ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "/workspace/terra-2050/tools/verifier_temporal.py"], "exit_code": 0}
+PASS: real Dhaka, grid epochs/fractions, paired mean/spread/sign, matched model availability, native zero/masked cells, coordinate hashes
+{
+  "status": "PASS",
+  "availability": {
+    "count": 34099,
+    "baselineYear": 2026,
+    "futureYear": 2050,
+    "allSix": 31202,
+    "perAxis": {
+      "thermique": 33338,
+      "eau": 33337,
+      "feux": 31600,
+      "mer": 34097,
+      "fleuves": 33977,
+      "stabilite": 33338
+    },
+    "byAvailableAxisCount": [
+      2,
+      40,
+      330,
+      389,
+      72,
+      2064,
+      31202
+    ]
+  },
+  "zeroFloods": 61446,
+  "durationMs": 6437,
+  "test": "/workspace/terra-2050/tools/qa/science-metrics.mjs"
+}
+{"pass": true, "population": {"countries": 237, "annual_values": 6162, "years": [2025, 2050]}, "scope": "Shipped readers, native city coverage, paired flood epochs and annual population integrity; raw-source reconstruction requires explicit importer audit."}

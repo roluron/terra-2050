@@ -9,9 +9,9 @@
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_color_2048.webp">
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_mask_4320.webp">
 <link rel="preload" as="image" href="./data/grille_c.png">
-<meta property="og:title" content="TERRA／2050 — Will your city still be livable in 2050?">
+<meta property="og:title" content="TERRA／2050 — Explore climate projections">
 <meta property="og:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
-<meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
+<meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
 <meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TERRA／2050">
@@ -19,12 +19,12 @@
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Le globe TERRA／2050 en 2050, chaleur extreme allumee, avec la question : votre ville sera-t-elle encore vivable ?">
+<meta property="og:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="TERRA／2050 — Will your city still be livable in 2050?">
+<meta name="twitter:title" content="TERRA／2050 — Explore climate projections">
 <meta name="twitter:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
-<meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
-<meta name="twitter:image:alt" content="Le globe TERRA／2050 en 2050, chaleur extreme allumee, avec la question : votre ville sera-t-elle encore vivable ?">
+<meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
+<meta name="twitter:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
 <meta name="description" content="34 099 villes · un indice illustratif d’exposition climatique. Explorez les risques modélisés, hypothèses et limites des sources.">
 <meta name="theme-color" content="#070706">
 <meta name="color-scheme" content="dark">
@@ -37,7 +37,7 @@
 <link rel="icon" href="./assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>TERRA//2050 — Résilience Climatique</title>
+<title>TERRA／2050 — Explorer les projections climatiques</title>
 <!--
   TERRA//2050 — globe tactique des risques climatiques.
   Œuvre originale. Stack : Three.js r160 + GSAP 3 + Howler (vendord en local, rien d'autre).
@@ -201,6 +201,7 @@
       <p class="signature">Earth.</p>
     </div>
     <div class="invitation"><button id="future" type="button" tabindex="-1">See your future</button></div>
+    <p class="v-science" data-t="indicatorNotice"></p>
   </main>
   <div id="earth-recovery" role="status" hidden><p>The globe is taking longer to arrive.</p><button type="button" id="earth-retry">Try again</button></div>
 </dialog>
@@ -359,6 +360,7 @@
         <div class="score"><span class="valeur" id="dossier-score"></span><span class="score-sur">/100</span></div>
         <div><p data-t="panelIndex"></p><p class="fiche-secondaire" data-t="panelDirection"></p></div>
       </div>
+      <p class="score-method-note" data-t="scoreNotice"></p>
       <p id="dossier-evolution"></p>
       <button class="duel" id="dossier-duel" hidden></button>
     </section>
@@ -411,7 +413,9 @@ import { language, getText, message, languageControl } from './i18n.mjs';
 import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
 import { createComparison } from './city-comparison.mjs';
 import { createYearRuler } from './year-ruler.mjs';
-import { hoverCopy, hoverMetricKey, populationHover, physicalHover } from './hover-diagnostic.mjs';
+import { hoverCopy, hoverMetricKey, populationHover, physicalHover, formatHoverNumber } from './hover-diagnostic.mjs';
+import { mapDiagnosticReading } from './map-diagnostic.mjs';
+import { mapDiagnosticCopy } from './map-diagnostic-copy.mjs';
 import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
@@ -531,7 +535,7 @@ const nomPays = (() => {
 
 const GRILLES = {};
 let FIRE_WEATHER = null;
-let SCIENCE = null;
+let SCIENCE = null, FLOOD_HAZARDS = null;
 let scienceLoadFailed = false;
 const SOURCE_INDEX = new WeakMap();
 const SCORE_CACHE = new Map();
@@ -590,7 +594,7 @@ function texteCouverture(l){
 }
 function detailPhysique(key, reading){
   if (!reading?.available) return unavailableScienceText().detail;
-  const format = value => value.toLocaleString(langue, { maximumFractionDigits: 2 });
+  const format = value => formatHoverNumber(value, langue, false, 2);
   const unit = uniteLocale(reading.unit);
   return `${format(reading.value)} ${unit} · ${T().ui['2026_illustrative_estimate']}: ${format(reading.baseline)} · 2050: ${format(reading.future)}.`;
 }
@@ -662,7 +666,9 @@ function indicePays(iso, annee){
   let somme = 0, poids = 0;
   for (const v of (VILLES_PAR_PAYS[iso] || [])){
     if (!v[7]) continue;
-    somme += indiceHabitabiliteVille(v, annee) * v[4];
+    const score = indiceHabitabiliteVille(v, annee);
+    if (!Number.isFinite(score) || !Number.isFinite(v[4]) || v[4] <= 0) continue;
+    somme += score * v[4];
     poids += v[4];
   }
   const r = poids ? Math.round(somme / poids) : null;
@@ -977,6 +983,8 @@ function chargerGrillesCalques(){
     loadFloodHazards(),
     loadScientificMetrics().then(science => {
       SCIENCE = science;
+      SCORE_CACHE.clear();
+      _memoPays.clear();
       const grid = science.fire;
       FIRE_WEATHER = grid;
       const { width, height } = grid.metadata;
@@ -996,6 +1004,7 @@ function chargerGrillesCalques(){
       return true;
     }).catch(error => { scienceLoadFailed = true; rafraichirSurvol(); if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
   ]).then(async r => {
+    FLOOD_HAZARDS = r[0];
     if (SCIENCE){
       const textures = await buildScientificTextures(THREE, SCIENCE.climate, r[0], moteur.extensions.has('OES_texture_float_linear'));
       for (const [key, texture] of Object.entries(textures)) uniformsGlobe['uScientific_' + key].value = texture;
@@ -1021,7 +1030,8 @@ const uniformsGlobe = {
   uFireWeather: { value: texVide },
   uScientific_heat: { value: texVide }, uScientific_aridity: { value: texVide },
   uScientific_warming: { value: texVide }, uScientific_coast: { value: texVide }, uScientific_river: { value: texVide },
-  uCrue:   { value: 0 },     // calque « inondation fluviale » : carte JRC, la MEME que la fiche
+  uScientific_aridityTemperature: { value: texVide }, uScientific_aridityPrecipitation: { value: texVide },
+  uCrue:   { value: 0 },     // fraction locale Aqueduct ; les fiches gardent les profondeurs échantillonnées
   uIndice: { value: 1 },     // teinte ambiante de sévérité quand aucun calque
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
   uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
@@ -1046,7 +1056,7 @@ const matGlobe = new THREE.ShaderMaterial({
     uniform vec3 uSoleil;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC, uD, uPays, uPopulation;
     uniform sampler2D uFireWeather;
-    uniform sampler2D uScientific_heat, uScientific_aridity, uScientific_warming, uScientific_coast, uScientific_river;
+    uniform sampler2D uScientific_heat, uScientific_aridityTemperature, uScientific_aridityPrecipitation, uScientific_warming, uScientific_coast, uScientific_river;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
 
     
@@ -1087,14 +1097,21 @@ const matGlobe = new THREE.ShaderMaterial({
 
       float P = uProgression;
       vec4 heatData = texture2D(uScientific_heat, vUv);
-      vec4 aridityData = texture2D(uScientific_aridity, vUv);
+      vec4 aridityTemperature = texture2D(uScientific_aridityTemperature, vUv);
+      vec4 aridityPrecipitation = texture2D(uScientific_aridityPrecipitation, vUv);
+      float tReference = scientificValue(aridityTemperature, 0.0);
+      float tCurrent = scientificValue(aridityTemperature, P);
+      float aridityReady = min(aridityTemperature.a, aridityPrecipitation.a);
+      if (tReference <= -10.0 || tCurrent <= -10.0) aridityReady = 0.0;
+      float aridityReference = aridityReady > 0.0 ? scientificValue(aridityPrecipitation, 0.0) / (tReference + 10.0) : 0.0;
+      float aridityCurrent = aridityReady > 0.0 ? scientificValue(aridityPrecipitation, P) / (tCurrent + 10.0) : 0.0;
       vec4 warmingData = texture2D(uScientific_warming, vUv);
       vec4 coastData = texture2D(uScientific_coast, vUv);
       vec4 riverData = texture2D(uScientific_river, vUv);
 
       
-      vec3 a26 = vec3(clamp((scientificValue(heatData, 0.0) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(scientificValue(aridityData, 0.0) / 60.0, 0.0, 1.0)) * aridityData.a);
-      vec3 ga = vec3(clamp((scientificValue(heatData, P) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(scientificValue(aridityData, P) / 60.0, 0.0, 1.0)) * aridityData.a);
+      vec3 a26 = vec3(clamp((scientificValue(heatData, 0.0) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(aridityReference / 60.0, 0.0, 1.0)) * aridityReady);
+      vec3 ga = vec3(clamp((scientificValue(heatData, P) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(aridityCurrent / 60.0, 0.0, 1.0)) * aridityReady);
       vec3 b26 = vec3(0.0, scientificValue(coastData, 0.0) * coastData.a, scientificValue(riverData, 0.0) * riverData.a);
       vec3 gb = vec3(0.0, scientificValue(coastData, P) * coastData.a, scientificValue(riverData, P) * riverData.a);
       
@@ -1120,10 +1137,10 @@ const matGlobe = new THREE.ShaderMaterial({
       
       if (uSecheresse > 0.001){
         
-        float humidite = clamp(scientificValue(aridityData, P) / 60.0, 0.0, 1.0);
+        float humidite = clamp(aridityCurrent / 60.0, 0.0, 1.0);
         vec3 sol = mix(vec3(0.667, 0.522, 0.224), vec3(0.149, 0.220, 0.173), humidite);
-        col = mix(col, sol, uSecheresse * terre * aridityData.a * 0.85);
-        if (uChange > 0.5) col = changeColor(base, scientificValue(aridityData, 0.0) - scientificValue(aridityData, P), 10.0, uSecheresse * terre * aridityData.a);
+        col = mix(col, sol, uSecheresse * terre * aridityReady * 0.85);
+        if (uChange > 0.5) col = changeColor(base, aridityReference - aridityCurrent, 10.0, uSecheresse * terre * aridityReady);
       }
 
       if (uFeu > 0.001){
@@ -1623,6 +1640,10 @@ function majContexteCalques(){
   document.querySelector('[data-map-mode="value"]').textContent = guide.value.replace('{year}',etat.annee);
   document.querySelector('#map-method summary').textContent = words[2];
   const notes = [`${etat.annee} · ${T().ui.model_indicators}`];
+  const diagnosticWords = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
+  if (actifs.includes('fleuves')) notes.push(diagnosticWords[2].replace('{n}', '5'));
+  if (actifs.includes('feux')) notes.push(diagnosticWords[2].replace('{n}', '21'));
+  if (actifs.some(key => ['chaleur','secheresse','stabilite'].includes(key))) notes.push(diagnosticWords[3]);
   if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(T().ui.wri_rcp85_100year_event_no);
   if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(floodMapMeaning[langue] || floodMapMeaning.en);
   if (actifs.includes('fleuves')) notes.push(refinementCopy(langue).riverLines);
@@ -1632,7 +1653,7 @@ function majContexteCalques(){
   if (actifs.includes('declin')) notes.push(uniformsGlobe.uPopulation.value === texVide
     ? (T().ui.population_map_loading_or_unavailable)
     : changing ? `${refinementCopy(langue).population} · UN WPP · 2026 → ${etat.annee}` : T().ui.un_annual_medium_projection_decline);
-  if (actifs.some(c => !['fleuves','declin'].includes(c))) notes.push(T().ui.interpolated_estimates_not_annual_forecasts);
+  if (actifs.some(c => c !== 'declin')) notes.push(T().ui.interpolated_estimates_not_annual_forecasts);
   if (actifs.includes('feux')) {
     notes.push(refinementCopy(langue).summary[2]);
     notes.push(T().ui['21model_mean_ssp370_20162035_20412060']);
@@ -2290,7 +2311,7 @@ function finirRisques(nouveau){
     conteneur.append(...rangees);
   }
   const readings = mesuresLieu(lieuDossier, etat.annee);
-  const format = value => value.toLocaleString(langue, { maximumFractionDigits: 2 });
+  const format = value => formatHoverNumber(value, langue, false, 2);
   rangees.forEach(el => {
     const key = el.dataset.cle, sample = readings?.[key], available = sample?.available;
     const unit = uniteLocale(key === 'feux' ? 'days/year' : key === 'eau' ? 'De Martonne index' : sample?.unit);
@@ -2850,7 +2871,7 @@ async function genererStory(opts){
     g.fillText(r.nom, 120, y, 540);
     g.textAlign = 'right'; g.fillStyle = CREME; g.font = `400 36px ${sans}`;
     const unit = uniteLocale(r.reading.unit);
-    g.fillText(r.reading.value.toLocaleString(langue, { maximumFractionDigits: 2 }) + ' ' + unit, 960, y, 280);
+    g.fillText(formatHoverNumber(r.reading.value, langue, false, 2) + ' ' + unit, 960, y, 280);
     y += 88;
   }
   if (opts.population && PAYS_POP[l[1]]){
@@ -3668,7 +3689,7 @@ function revelerChrome(){
    l'intersection est analytique et chaque ville se projette à l'écran.
    Le pays vient d'une grille Natural Earth (data/pays.png, 10') : la ville
    la plus proche d'un point du Sahara peut être de l'autre côté d'une
-   frontière, la grille ne se trompe pas.
+   frontière ; la grille réduit cette ambiguïté avec une résolution de 10′.
    ===================================================================== */
 let PAYS_RASTER = null, PAYS_ISO = [];
 let VILLES_VEC = null, ORDRE_POP = null;
@@ -3764,8 +3785,10 @@ function sousPointeur(cx, cy){
   const d = camera.position.length();
   const [lat, lon] = versLatLon(v);
   const ville = villeProche(v, 16 * radParPixel(d), seuilPop(d) / 5);
-  const iso = paysSous(lat, lon) || (ville ? ville[1] : null);
-  return { ville, iso };
+  // An unassigned raster cell stays unknown; a nearby city cannot provide
+  // a reliable demographic-area boundary, especially on small islands.
+  const iso = paysSous(lat, lon);
+  return { ville, iso, lat, lon };
 }
 const ligneDePays = iso => PAYS_LIGNES.find(p => p[1] === iso) || null;
 // Country boundaries determine the globe diagnostic; city labels keep their own sheets.
@@ -3786,22 +3809,29 @@ function montrerSurvol(s, cx, cy, fige){
   if (!l && !iso){ cacherSurvol(); return; }
   survolLieu = l; survolFige = !!fige; survolPoint = {s,cx,cy};
   const an = etat.annee, filter = filtreSurvol, changing = uniformsGlobe.uChange.value > .5;
-  const signature = [iso, an, langue, filter, changing, scienceLoadFailed, fige, innerWidth, innerHeight].join('|');
-  // Reuse country aggregates and layout while only the pointer position changes.
-  if (!survolContenu || survolContenu.signature !== signature || survolContenu.l !== l || survolContenu.science !== SCIENCE || survolContenu.population !== PAYS_POP){
+  const resolution = filter === 'feux' ? 2.5 : .5;
+  const cell = filter && filter !== 'declin' ? `${Math.floor((90 - s.lat) / resolution)}:${Math.floor((s.lon + 180) / resolution)}` : '';
+  const signature = [iso, cell, an, langue, filter, changing, scienceLoadFailed, fige, innerWidth, innerHeight].join('|');
+  // Reuse the cell/country reading and layout while only the pointer position changes.
+  if (!survolContenu || survolContenu.signature !== signature || survolContenu.l !== l || survolContenu.science !== SCIENCE || survolContenu.floods !== FLOOD_HAZARDS || survolContenu.population !== PAYS_POP){
     const copy = refinementCopy(langue), scope = hoverCopy[langue] || hoverCopy.en;
     let diagnostic = null, note = '', label, color = '';
     if (filter){
       label = filter === 'declin' ? copy.population : T().critere[hoverMetricKey[filter]];
       if (filter === 'declin') diagnostic = populationHover(PAYS_POP[iso], an, changing, langue);
       else {
-        // A country may have partial readings even when its overall score is unavailable.
-        const country = iso ? l || [nomPays(iso), iso, 0, 0, 0, 2] : l;
-        const reading = mesuresLieu(country, an)?.[hoverMetricKey[filter]];
-        diagnostic = physicalHover(reading, an, changing, langue, uniteLocale(reading?.unit));
+        const reading = mapDiagnosticReading({filter, year: an, latitude: s.lat, longitude: s.lon,
+          climate: SCIENCE?.climate, fire: FIRE_WEATHER, floods: FLOOD_HAZARDS});
+        const isFlood = filter === 'mer' || filter === 'fleuves';
+        diagnostic = physicalHover(reading, an, changing, langue, uniteLocale(reading.unit),
+          isFlood ? (mapCopy[langue] || mapCopy.en)[8] : uniteLocale(reading.unit));
         if (diagnostic){
-          note = iso ? scope[0] : reading?.regionalFallback ? copy.regional : copy.nativeCell;
-          note += ' ' + (filter === 'mer' || filter === 'fleuves' ? scope[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
+          const words = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
+          note = words[0].replace('{size}', formatHoverNumber(reading.resolutionDegrees, langue))
+            .replace('{km}', String(Math.round(reading.resolutionDegrees * 111.2)));
+          note += ' ' + (isFlood ? words[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
+          if (reading.modelCount > 1) note += ' ' + words[2].replace('{n}', String(reading.modelCount));
+          else if (!isFlood && filter !== 'feux') note += ' ' + words[3];
         }
       }
     } else {
@@ -3815,7 +3845,7 @@ function montrerSurvol(s, cx, cy, fige){
     survolNom.textContent = iso ? nomPays(iso) : nomVille(l);
     survolIndice.textContent = diagnostic?.value || '';
     survolIndice.style.color = color;
-    survolSous.textContent = `${label} · ${an}`;
+    survolSous.textContent = `${label} · ${an}${filter && changing ? ` · ${copy.change}` : ''}`;
     survolDetail.textContent = diagnostic?.detail || (diagnostic ? '' : filter === 'declin' ? T().ui.no_estimate : unavailableScienceText().title);
     survolNote.textContent = note;
     survolEl.classList.toggle('fige', survolFige);
@@ -3823,7 +3853,7 @@ function montrerSurvol(s, cx, cy, fige){
     survolEl.setAttribute('role', actionable ? 'button' : 'tooltip');
     survolEl.tabIndex = actionable ? 0 : -1;
     survolLargeur = survolEl.offsetWidth; survolHauteur = survolEl.offsetHeight;
-    survolContenu = {signature,l,science:SCIENCE,population:PAYS_POP};
+    survolContenu = {signature,l,science:SCIENCE,floods:FLOOD_HAZARDS,population:PAYS_POP};
   }
   const w = survolLargeur, h = survolHauteur;
   const x = Math.max(8, Math.min(innerWidth - w - 8, cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16));

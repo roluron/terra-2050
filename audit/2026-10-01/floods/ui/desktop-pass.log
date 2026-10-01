@@ -1,0 +1,16 @@
+PASS desktop chaleur: two modes, five years, HCMC + PNG
+PASS desktop secheresse: two modes, five years, HCMC + PNG
+PASS desktop feux: two modes, five years, HCMC + PNG
+PASS desktop mer: two modes, five years, HCMC + PNG
+PASS desktop fleuves: two modes, five years, HCMC + PNG
+PASS desktop stabilite: two modes, five years, HCMC + PNG
+PASS desktop declin: two modes, five years, HCMC + PNG
+PASS desktop fr: seven filters, both modes, local-cell support and bounds
+PASS desktop en: seven filters, both modes, local-cell support and bounds
+PASS desktop it: seven filters, both modes, local-cell support and bounds
+PASS desktop es: seven filters, both modes, local-cell support and bounds
+PASS desktop vi: seven filters, both modes, local-cell support and bounds
+PASS desktop ja: seven filters, both modes, local-cell support and bounds
+PASS desktop zh: seven filters, both modes, local-cell support and bounds
+PASS desktop zh-Hant: seven filters, both modes, local-cell support and bounds
+PASS desktop: localized units/support, 8 languages, bounds, actual pointer/touch, NoData vs zero, tiny changes and cache

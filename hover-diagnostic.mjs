@@ -14,6 +14,11 @@ export const hoverMetricKey = { chaleur: 'thermique', secheresse: 'eau', feux: '
 export function formatHoverNumber(value, locale, signed = false, digits = 1) {
   if (!Number.isFinite(value)) return null;
   const rounded = Number(value.toFixed(digits));
+  if (value !== 0 && rounded === 0) {
+    const bound = new Intl.NumberFormat(locale, { maximumFractionDigits: digits }).format(10 ** -digits);
+    if (signed) return value > 0 ? `0 < Δ < ${bound}` : `−${bound} < Δ < 0`;
+    return value > 0 ? `< ${bound}` : `> −${bound}`;
+  }
   return new Intl.NumberFormat(locale, { maximumFractionDigits: digits,
     signDisplay: signed ? 'exceptZero' : 'auto' }).format(Object.is(rounded, -0) ? 0 : rounded).replace(/-/g, '−');
 }
@@ -26,10 +31,10 @@ export function populationHover(annual, year, changing, locale) {
     detail: `${formatHoverNumber(value, locale, false, 0)} · ${reference} → ${year}` };
 }
 
-export function physicalHover(reading, year, changing, locale, unit) {
+export function physicalHover(reading, year, changing, locale, unit, changeUnit = unit) {
   if (!reading?.available || !Number.isFinite(reading.value) || !Number.isFinite(reading.baseline)) return null;
   // Derive the displayed delta from the same weighted level and reference.
   const value = changing ? reading.value - reading.baseline : reading.value;
-  return { value: `${formatHoverNumber(value, locale, changing, 2)} ${unit}`.trim(),
+  return { value: `${formatHoverNumber(value, locale, changing, 2)} ${changing ? changeUnit : unit}`.trim(),
     detail: changing ? `2026: ${formatHoverNumber(reading.baseline, locale, false, 2)} ${unit} → ${year}: ${formatHoverNumber(reading.value, locale, false, 2)} ${unit}` : '' };
 }

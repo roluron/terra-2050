@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import {chromium} from 'playwright';
 import {enter, chooseLanguage} from './entrance.cjs';
 import {hoverCopy, populationHover, physicalHover, formatHoverNumber} from '../../hover-diagnostic.mjs';
+import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 const annual=JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json',import.meta.url)));
 for(const locale of Object.keys(hoverCopy)){
   assert.equal(hoverCopy[locale].length,3);
@@ -18,7 +19,10 @@ assert.equal(physicalHover({available:true,value:0,baseline:0},2026,true,'fr','m
 assert.equal(physicalHover({available:true,value:3,baseline:1},2050,true,'fr','°C').value,'+2 °C');
 assert.equal(physicalHover({available:true,value:1,baseline:3},2050,true,'en','m').value,'−2 m');
 assert.equal(physicalHover({available:false,value:0,baseline:0},2050,false,'en','m'),null);
-assert.equal(formatHoverNumber(-.001,'fr',true),'0');
+assert.equal(formatHoverNumber(-.001,'fr',true),'−0,1 < Δ < 0');
+assert.equal(formatHoverNumber(.00182,'en',true,2),'0 < Δ < 0.01');
+assert.equal(formatHoverNumber(0,'en',true,2),'0');
+assert.equal(physicalHover({available:true,value:20,baseline:18},2050,true,'fr','%','points de pourcentage').value,'+2 points de pourcentage');
 console.log('PASS numerical edge cases: population references, signs, missing/zero readings, locale rounding');
 const browser=await chromium.launch({headless:true,...(process.env.QA_CHROMIUM_PATH?{executablePath:process.env.QA_CHROMIUM_PATH}:{}),args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{
@@ -31,8 +35,8 @@ try{
    const body=(await response.text()).replace('</script>\n</body>',`
     globalThis.__hoverAudit={
      ready:()=>!!PAYS_RASTER && !!SCIENCE && PAYS_LIGNES.length>0,
-     show:(iso,x=100,y=150,pinned=false)=>montrerSurvol({iso},x,y,pinned),
-     readings:(iso)=>mesuresLieu(ligneDePays(iso),etat.annee),
+     show:(iso,x=100,y=150,pinned=false)=>montrerSurvol({iso,lat:iso==='ZZ'?undefined:35,lon:iso==='ZZ'?undefined:105},x,y,pinned),
+     readings:(iso)=>Object.fromEntries(Object.entries(hoverMetricKey).map(([filter,key])=>[key,mapDiagnosticReading({filter,year:etat.annee,latitude:35,longitude:105,climate:SCIENCE.climate,fire:FIRE_WEATHER,floods:FLOOD_HAZARDS})])),
      score:iso=>indicePays(iso,etat.annee),
      filter:key=>document.querySelector('.calque[data-cle="'+key+'"]').click(),
      point:()=>{camera.position.copy(latLonVersVec3(35,105,camera.position.length()));camera.lookAt(0,0,0);controles.update();camera.updateMatrixWorld();const v=latLonVersVec3(35,105).project(camera);const cx=(v.x+1)*innerWidth/2,cy=(1-v.y)*innerHeight/2;for(const dy of [0,-24,24,-48,48])for(const dx of [0,-24,24,-48,48]){const x=cx+dx,y=cy+dy;if(document.elementFromPoint(x,y)===toile && sousPointeur(x,y)?.iso==='CN')return {x,y};}throw Error('No exposed country canvas point');},
@@ -66,13 +70,13 @@ try{
   for(const key of ['chaleur','secheresse','feux','mer','fleuves','stabilite']){
    await filter(key);await show();console.log(`CHECK ${name} ${key}`);
    assert.ok(await field('.s-indice'),key+' value');
-   assert.match(await field('.s-note'),/pondérée/);
-   if(['mer','fleuves'].includes(key))assert.match(await field('.s-note'),/centennale.*surface/);
+   assert.match(await field('.s-note'),/Maille du modèle/);
+   if(['mer','fleuves'].includes(key))assert.match(await field('.s-note'),/cellules sources.*centennale/);
    await mode('change');await show();
    const readings=await page.evaluate(()=>__hoverAudit.readings('CN'));
    const mk={chaleur:'thermique',secheresse:'eau',feux:'feux',mer:'mer',fleuves:'fleuves',stabilite:'stabilite'}[key];
    const r=readings[mk],unit=r.unit==='days/year'?'jours/an':r.unit==='De Martonne index'?'De Martonne':r.unit;
-   assert.equal(await field('.s-indice'),physicalHover(r,2050,true,'fr',unit).value,key);
+   assert.equal(await field('.s-indice'),physicalHover(r,2050,true,'fr',unit,['mer','fleuves'].includes(key)?'points de pourcentage':unit).value,key);
    assert.match(await field('.s-detail'),/2026:.*2050:/);
    await year(2026);if(name==='desktop')await show();
    assert.match(await field('.s-indice'),/^0 /,key+' reference zero');
@@ -82,7 +86,7 @@ try{
   await show();
   for(const locale of Object.keys(hoverCopy)){
    await chooseLanguage(page,locale);await show();console.log(`CHECK ${name} ${locale}`);
-   assert.ok(await field('.s-sous'));assert.ok((await field('.s-note')).startsWith(hoverCopy[locale][0]),locale);
+   assert.ok(await field('.s-sous'));assert.ok((await field('.s-note')).startsWith(mapDiagnosticCopy[locale][0].split('{size}')[0]),locale);
   }
   await chooseLanguage(page,'fr');
   await filter('stabilite'); // no active filter

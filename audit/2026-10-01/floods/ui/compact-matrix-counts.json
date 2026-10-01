@@ -1,0 +1,27 @@
+{
+  "phase": "matrix-and-localization",
+  "profile": "compact",
+  "viewport": {
+    "width": 320,
+    "height": 568
+  },
+  "numericStates": 140,
+  "localizedStates": 112,
+  "filters": 7,
+  "modes": 2,
+  "years": [
+    2026,
+    2028,
+    2030,
+    2040,
+    2050
+  ],
+  "samples": [
+    "HCMC",
+    "PNG"
+  ],
+  "shaderChecks": 7,
+  "sourceLog": "compact-matrix-pass.log",
+  "fullRunSucceeded": false,
+  "note": "Matrix/localization assertions passed. That full run failed only at the later native target-selection check. The separate compact-pointer-results.json records the subsequent native-input pass; no complete compact rerun is claimed."
+}

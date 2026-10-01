@@ -1,0 +1,15 @@
+PASS compact chaleur: two modes, five years, HCMC + PNG
+PASS compact secheresse: two modes, five years, HCMC + PNG
+PASS compact feux: two modes, five years, HCMC + PNG
+PASS compact mer: two modes, five years, HCMC + PNG
+PASS compact fleuves: two modes, five years, HCMC + PNG
+PASS compact stabilite: two modes, five years, HCMC + PNG
+PASS compact declin: two modes, five years, HCMC + PNG
+PASS compact fr: seven filters, both modes, local-cell support and bounds
+PASS compact en: seven filters, both modes, local-cell support and bounds
+PASS compact it: seven filters, both modes, local-cell support and bounds
+PASS compact es: seven filters, both modes, local-cell support and bounds
+PASS compact vi: seven filters, both modes, local-cell support and bounds
+PASS compact ja: seven filters, both modes, local-cell support and bounds
+PASS compact zh: seven filters, both modes, local-cell support and bounds
+PASS compact zh-Hant: seven filters, both modes, local-cell support and bounds

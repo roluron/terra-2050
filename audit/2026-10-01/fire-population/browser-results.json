@@ -1,0 +1,17 @@
+{
+  "pass": true,
+  "annualValues": 6162,
+  "populationTexels": 6474,
+  "fireTexels": 10368,
+  "fireCityYears": 102297,
+  "paletteEntries": 249,
+  "samples": {
+    "GF": "GF",
+    "GP": "GP",
+    "RE": "RE",
+    "YT": "YT",
+    "GI": null
+  },
+  "browser": "Chromium",
+  "scope": "All city fire values at three years, all population annual readers and palette/year texture cells, all fire texture cells, and real loaded raster territory lookups."
+}

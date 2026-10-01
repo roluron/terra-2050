@@ -1,0 +1,287 @@
+{
+  "baseRevision": "57a0757d101a51206ba9758cfb59cbe45e0d35b2",
+  "languages": [
+    "fr",
+    "en",
+    "ja",
+    "zh",
+    "vi",
+    "es",
+    "it",
+    "zh-Hant"
+  ],
+  "inventory": [
+    {
+      "id": "habitability-intro",
+      "severity": "publication-claim",
+      "key": "sous2",
+      "render": "index.html:228, [data-t=sous2], initial loader; no scientific limitations shown there",
+      "proposed": "sous2",
+      "locales": {
+        "fr": {
+          "current": "Votre ville sera-t-elle encore vivable en 2050 ?",
+          "suggested": "Explorez les projections climatiques de votre ville."
+        },
+        "en": {
+          "current": "Will your city still be livable in 2050?",
+          "suggested": "Explore your city’s climate projections."
+        },
+        "ja": {
+          "current": "2050年、あなたの街はまだ暮らせる場所だろうか。",
+          "suggested": "あなたの街の気候予測シナリオを探る。"
+        },
+        "zh": {
+          "current": "到了2050年，你的城市还适合生活吗？",
+          "suggested": "探索你所在城市的气候情景预测。"
+        },
+        "vi": {
+          "current": "Đến năm 2050, thành phố của bạn còn là nơi có thể sống được không?",
+          "suggested": "Khám phá các dự báo theo kịch bản khí hậu cho thành phố của bạn."
+        },
+        "es": {
+          "current": "¿Seguirá siendo habitable tu ciudad en 2050?",
+          "suggested": "Explora las proyecciones climáticas de tu ciudad."
+        },
+        "it": {
+          "current": "La tua città sarà ancora vivibile nel 2050?",
+          "suggested": "Esplora le proiezioni climatiche della tua città."
+        },
+        "zh-Hant": {
+          "current": "到了2050年，你的城市還適合生活嗎？",
+          "suggested": "探索你所在城市的氣候情境推估。"
+        }
+      }
+    },
+    {
+      "id": "habitability-document-title",
+      "severity": "publication-claim",
+      "key": "ui.terra2050_will_your_city_still",
+      "render": "index.html:3320, traduire() document.title; also OG/Twitter hardcoded at lines 12 and 24",
+      "proposed": "title",
+      "locales": {
+        "fr": {
+          "current": "TERRA／2050 — Votre ville sera-t-elle encore vivable en 2050 ?",
+          "suggested": "TERRA／2050 — Explorer les projections climatiques"
+        },
+        "en": {
+          "current": "TERRA／2050 — Will your city still be livable in 2050?",
+          "suggested": "TERRA／2050 — Explore climate projections"
+        },
+        "ja": {
+          "current": "TERRA／2050 — 2050年、あなたの街はまだ暮らせる場所だろうか。",
+          "suggested": "TERRA／2050 — 気候予測シナリオを探る"
+        },
+        "zh": {
+          "current": "TERRA／2050 — 到了2050年，你的城市还适合生活吗？",
+          "suggested": "TERRA／2050 — 探索气候情景预测"
+        },
+        "vi": {
+          "current": "TERRA／2050 — Đến năm 2050, thành phố của bạn còn là nơi có thể sống được không?",
+          "suggested": "TERRA／2050 — Khám phá các kịch bản khí hậu"
+        },
+        "es": {
+          "current": "TERRA／2050 — ¿Seguirá siendo habitable tu ciudad en 2050?",
+          "suggested": "TERRA／2050 — Explora las proyecciones climáticas"
+        },
+        "it": {
+          "current": "TERRA／2050 — La tua città sarà ancora vivibile nel 2050?",
+          "suggested": "TERRA／2050 — Esplora le proiezioni climatiche"
+        },
+        "zh-Hant": {
+          "current": "TERRA／2050 — 到了2050年，你的城市還適合生活嗎？",
+          "suggested": "TERRA／2050 — 探索氣候情境推估"
+        }
+      }
+    },
+    {
+      "id": "wrong-country-indicator-population",
+      "severity": "active-incorrect-description",
+      "key": "ui.populationweighted_mean_of_listed_cities",
+      "render": "index.html:2315,2330 country per-axis cards; city-comparison.mjs:58 country cells. mesuresLieu() takes available cities independently for each axis, not only cities with all six.",
+      "proposed": "populationweighted_mean_of_listed_cities",
+      "locales": {
+        "fr": {
+          "current": " Moyenne pondérée des villes listées disposant des six mesures ; pas une évaluation nationale représentative.",
+          "suggested": " Moyenne des villes listées disposant de cet indicateur, pondérée par leur population. Ces villes et leurs périmètres ne constituent pas un échantillon national représentatif."
+        },
+        "en": {
+          "current": " Population-weighted mean of listed cities with all six metrics; not a representative national assessment.",
+          "suggested": " Population-weighted mean of listed cities with this indicator. These cities and their boundaries are not a representative national sample."
+        },
+        "ja": {
+          "current": " 6指標がそろった掲載都市の人口加重平均です。国全体を代表する評価ではありません。",
+          "suggested": " この指標のデータがある掲載都市の人口加重平均。これらの都市とその区域は、国全体を代表する標本ではありません。"
+        },
+        "zh": {
+          "current": " 所列具备全部六项指标的城市按人口加权的平均值；并非具有全国代表性的评估。",
+          "suggested": " 按人口加权计算有此指标数据的已列城市平均值。这些城市及其边界并不构成具有全国代表性的样本。"
+        },
+        "vi": {
+          "current": " Trung bình có trọng số theo dân số của các thành phố được liệt kê có đủ sáu chỉ số; không phải đánh giá đại diện cho cả nước.",
+          "suggested": " Trung bình có trọng số theo dân số của các thành phố trong danh sách có dữ liệu cho chỉ số này. Các thành phố và phạm vi địa lý của chúng không tạo thành mẫu đại diện cho cả nước."
+        },
+        "es": {
+          "current": " Media ponderada por población de las ciudades listadas con las seis medidas; no es una evaluación nacional representativa.",
+          "suggested": " Media ponderada por población de las ciudades listadas con este indicador. Estas ciudades y sus límites no constituyen una muestra nacional representativa."
+        },
+        "it": {
+          "current": " Media ponderata per popolazione delle città elencate con tutte e sei le misure; non è una valutazione nazionale rappresentativa.",
+          "suggested": " Media ponderata per popolazione delle città elencate con questo indicatore. Queste città e i loro confini non costituiscono un campione nazionale rappresentativo."
+        },
+        "zh-Hant": {
+          "current": " 所列具備全部六項指標的城市按人口加權的平均值；並非具有全國代表性的評估。",
+          "suggested": " 按人口加權計算有此指標資料的已列城市平均值。這些城市及其邊界並不構成具有全國代表性的樣本。"
+        }
+      }
+    },
+    {
+      "id": "old-population-source",
+      "severity": "active-attribution",
+      "key": "infoSource.declin",
+      "render": "index.html:3275, first-use pedagogical source line. Current population pipeline directly imports UN; Our World in Data is not current numeric provenance.",
+      "proposed": "infoSourceDeclin",
+      "locales": {
+        "fr": {
+          "current": "ONU WPP 2024 (médiane) · Our World in Data · Natural Earth",
+          "suggested": "ONU · World Population Prospects 2024 · variante moyenne · mise à jour Togo 2026"
+        },
+        "en": {
+          "current": "UN WPP 2024 (medium) · Our World in Data · Natural Earth",
+          "suggested": "UN · World Population Prospects 2024 · medium variant · 2026 Togo update"
+        },
+        "ja": {
+          "current": "UN WPP 2024（中位）· Our World in Data · Natural Earth",
+          "suggested": "国連 · World Population Prospects 2024 · 中位推計 · 2026年トーゴ更新"
+        },
+        "zh": {
+          "current": "UN WPP 2024（中方案）· Our World in Data · Natural Earth",
+          "suggested": "联合国 · World Population Prospects 2024 · 中位方案 · 2026年多哥更新"
+        },
+        "vi": {
+          "current": "UN WPP 2024 (phương án trung bình) · Our World in Data · Natural Earth",
+          "suggested": "Liên Hợp Quốc · World Population Prospects 2024 · phương án trung bình · cập nhật Togo năm 2026"
+        },
+        "es": {
+          "current": "UN WPP 2024 (medio) · Our World in Data · Natural Earth",
+          "suggested": "ONU · World Population Prospects 2024 · variante media · actualización de Togo de 2026"
+        },
+        "it": {
+          "current": "UN WPP 2024 (medio) · Our World in Data · Natural Earth",
+          "suggested": "ONU · World Population Prospects 2024 · variante media · aggiornamento Togo 2026"
+        },
+        "zh-Hant": {
+          "current": "UN WPP 2024（中方案）· Our World in Data · Natural Earth",
+          "suggested": "聯合國 · World Population Prospects 2024 · 中位方案 · 2026年多哥更新"
+        }
+      }
+    },
+    {
+      "id": "country-hover-vs-local-map",
+      "severity": "active-spatial-metric-mismatch",
+      "key": "hoverCopy[locale][0..1]",
+      "render": "index.html:3793–3804, country physicalHover; spatial scope differs for all six climate layers, and flood unit m differs from map fraction/pp.",
+      "proposed": null,
+      "locales": {
+        "fr": {
+          "current": [
+            "Moyenne des villes disponibles, pondérée par leur population.",
+            "Profondeur modélisée pour une crue centennale ; la carte représente une surface inondable."
+          ]
+        },
+        "en": {
+          "current": [
+            "Available-city mean, weighted by city population.",
+            "Modelled depth for a 1-in-100-year flood; the map shows flood-prone area."
+          ]
+        },
+        "ja": {
+          "current": [
+            "利用可能な都市の人口加重平均。",
+            "100年に1度の洪水のモデル浸水深。地図は浸水想定面積を示します。"
+          ]
+        },
+        "zh": {
+          "current": [
+            "有数据城市按人口加权的平均值。",
+            "百年一遇洪水的模拟水深；地图显示可能受淹的面积。"
+          ]
+        },
+        "vi": {
+          "current": [
+            "Trung bình các thành phố có dữ liệu, có trọng số theo dân số.",
+            "Độ sâu mô phỏng cho lũ chu kỳ 100 năm; bản đồ thể hiện diện tích có nguy cơ ngập."
+          ]
+        },
+        "es": {
+          "current": [
+            "Media de las ciudades disponibles, ponderada por población.",
+            "Profundidad modelizada para un evento centenario; el mapa muestra superficie inundable."
+          ]
+        },
+        "it": {
+          "current": [
+            "Media delle città disponibili, ponderata per popolazione.",
+            "Profondità modellizzata per un evento centennale; la mappa mostra la superficie inondabile."
+          ]
+        },
+        "zh-Hant": {
+          "current": [
+            "有資料城市按人口加權的平均值。",
+            "百年一遇洪水的模擬水深；地圖顯示可能受淹的面積。"
+          ]
+        }
+      }
+    }
+  ],
+  "disclosure": {
+    "fr": {
+      "panelMethodText": "Comparaison expérimentale, non validée comme mesure de risque ou d’habitabilité. Chaque axe est ramené entre 0 et 1 : chaleur (°C−20)/30 ; aridité 1−De Martonne/60 ; météo de feu jours/366 ; profondeur d’inondation mètres/3 ; réchauffement °C/5. Valeurs bornées à 0–1. Poids : chaleur22%, aridité18%, feu12%, côte20%, fleuve16%, réchauffement12%. Indice = 100×[1−(moyenne pondérée+maximum)/2]. Ces échelles et poids sont des choix de l’application. Les six mesures sont requises ; une donnée absente n’est jamais un zéro. Climat/feu : SSP3-7.0 ; inondations : RCP8.5, scénarios distincts. Aucune probabilité de catastrophe ou recommandation de déménagement.",
+      "panelScenario": "Les années interpolent des estimations entre périodes climatiques. Climat : un modèle CMIP6 ; météo de feu : moyenne de 21 modèles, SSP3-7.0. Inondations : RCP8.5, événement centennal sans protections, horizons historique, 2030 et 2050 ; cinq modèles fluviaux et projection côtière médiane. 2026 n’est pas une observation annuelle. Ce ne sont ni des prévisions annuelles ni une étude locale de danger.",
+      "panelDataLimits": "La couverture et la résolution varient selon la source. Les mesures au centre d’une ville ne décrivent pas chaque quartier. Une donnée manquante n’est pas un zéro ; zéro ne prouve pas l’absence de risque. L’indice expérimental n’est pas validé scientifiquement.",
+      "period": "Estimations issues de moyennes sur plusieurs années, pas des prévisions météo annuelles."
+    },
+    "en": {
+      "panelMethodText": "Experimental comparison, not validated as a risk or habitability measure. Each axis is scaled to 0–1: heat (°C−20)/30; aridity 1−De Martonne/60; fire-weather days/366; flood depth metres/3; warming °C/5. Values are clamped to 0–1. Weights: heat22%, aridity18%, fire12%, coast20%, river16%, warming12%. Index = 100×[1−(weighted mean+maximum)/2]. These scales and weights are app choices. All six measurements are required; missing data never become zero. Climate/fire: SSP3-7.0; floods: RCP8.5, distinct scenarios. No disaster probability or relocation recommendation.",
+      "panelScenario": "Years interpolate estimates between climate periods. Climate: one CMIP6 model; fire weather: a 21-model mean, SSP3-7.0. Floods: RCP8.5, unprotected 100-year event, historical, 2030 and 2050 horizons; five river models and a median coastal projection. 2026 is not an annual observation. These are neither annual forecasts nor a local hazard assessment.",
+      "panelDataLimits": "Coverage and resolution vary by source. Measurements at a city centre do not describe every neighbourhood. Missing data are not zero; zero does not prove no risk. The experimental index is not scientifically validated.",
+      "period": "Model estimates from multi-year averages, not an annual weather forecast."
+    },
+    "ja": {
+      "panelMethodText": "実験的な比較であり、リスクや居住適性を測る指標としては検証されていません。各軸を0–1に換算します。暑さ（°C−20）/30、乾燥度1−De Martonne/60、火災が起きやすい気象条件の日数/366、浸水深（m）/3、気温上昇°C/5。値は0–1の範囲に制限します。重みは暑さ22%、乾燥度18%、火災気象12%、沿岸20%、河川16%、気温上昇12%。指数 = 100×[1−（加重平均+最大値）/2]。これらの尺度と重みはアプリ独自の選択です。6項目すべての測定値が必要で、欠測値をゼロに置き換えることはありません。気候・火災気象はSSP3-7.0、洪水はRCP8.5で、異なるシナリオです。災害の発生確率や移住の推奨を示すものではありません。",
+      "panelScenario": "各年の推計値は、気候期間の間を補間したものです。気候はCMIP6の1モデル、火災気象は21モデルの平均で、SSP3-7.0を使用。洪水はRCP8.5、防護なしの100年確率事象（年間超過確率1%）で、過去・2030年・2050年の期間を使用し、河川は5モデル、沿岸は予測の中央値です。2026年はその年の観測値ではありません。年ごとの予報でも、地域の災害ハザード評価でもありません。",
+      "panelDataLimits": "対象範囲と解像度はデータの出典によって異なります。都市中心部の測定値が、すべての地区の状況を表すわけではありません。欠測値はゼロではなく、ゼロもリスクがないことの証明にはなりません。この実験的指数は科学的に検証されていません。",
+      "period": "複数年の平均に基づくモデル推計です。各年の天気予報ではありません。"
+    },
+    "zh": {
+      "panelMethodText": "本工具用于实验性比较，尚未被验证可衡量风险或宜居性。各维度换算至0–1：高温（°C−20）/30；干旱度1−De Martonne/60；利于火灾的天气日数/366；淹水深度（米）/3；升温°C/5。数值限制在0–1。权重：高温22%、干旱度18%、火灾天气12%、海岸20%、河流16%、升温12%。指数 = 100×[1−（加权平均值+最大值）/2]。这些量表与权重由本应用选定。六项测量缺一不可；缺失数据绝不会按零处理。气候/火灾天气采用SSP3-7.0，洪水采用RCP8.5，两者是不同情景。指数不表示灾害发生概率，也不构成迁居建议。",
+      "panelScenario": "各年份的估计值由不同气候时段之间的插值得出。气候：一个CMIP6模型；火灾天气：21个模型的平均值，SSP3-7.0。洪水：RCP8.5，无防护条件下的百年一遇事件（每年超越概率1%），涵盖历史、2030和2050时段；五个河流模型，以及海岸预估的中位值。2026并非年度观测值。这些结果既不是逐年预报，也不是当地灾害危险性评估。",
+      "panelDataLimits": "不同来源的覆盖范围和分辨率各异。城市中心的测量值不能描述每个街区的情况。缺失数据不等于零；零也不能证明没有风险。本实验性指数尚未经过科学验证。",
+      "period": "基于多年平均值的模型估算，并非逐年的天气预报。"
+    },
+    "vi": {
+      "panelMethodText": "Phép so sánh mang tính thử nghiệm, chưa được kiểm chứng để đo rủi ro hay mức độ phù hợp để sinh sống. Mỗi trục được quy về thang 0–1: nóng (°C−20)/30; khô hạn 1−De Martonne/60; số ngày có thời tiết thuận lợi cho cháy/366; độ sâu ngập tính bằng mét/3; mức nóng lên °C/5. Giá trị được giới hạn trong 0–1. Trọng số: nóng 22%, khô hạn 18%, thời tiết thuận lợi cho cháy 12%, ven biển 20%, sông 16%, nóng lên 12%. Chỉ số = 100×[1−(trung bình có trọng số+giá trị lớn nhất)/2]. Các thang đo và trọng số này do ứng dụng lựa chọn. Cần đủ cả sáu số đo; dữ liệu thiếu không bao giờ được thay bằng số không. Khí hậu/thời tiết thuận lợi cho cháy: SSP3-7.0; ngập lụt: RCP8.5, là hai kịch bản khác nhau. Không thể hiện xác suất thiên tai hay khuyến nghị chuyển nơi ở.",
+      "panelScenario": "Ước tính cho từng năm được nội suy giữa các giai đoạn khí hậu. Khí hậu: một mô hình CMIP6; thời tiết thuận lợi cho cháy: trung bình 21 mô hình, SSP3-7.0. Ngập lụt: RCP8.5, sự kiện có chu kỳ lặp lại 100 năm (xác suất vượt ngưỡng hằng năm 1%) khi không có công trình bảo vệ, gồm các mốc quá khứ, 2030 và 2050; năm mô hình sông và giá trị trung vị của dự tính ven biển. 2026 không phải là số liệu quan trắc của năm đó. Đây không phải dự báo từng năm hay đánh giá hiểm họa tại địa phương.",
+      "panelDataLimits": "Phạm vi bao phủ và độ phân giải khác nhau tùy nguồn. Số liệu tại trung tâm thành phố không mô tả mọi khu phố. Dữ liệu thiếu không phải là số không; số không cũng không chứng minh rằng không có rủi ro. Chỉ số thử nghiệm chưa được kiểm chứng khoa học.",
+      "period": "Ước tính từ mô hình dựa trên trung bình nhiều năm, không phải dự báo thời tiết từng năm."
+    },
+    "es": {
+      "panelMethodText": "Comparación experimental, no validada como medida de riesgo ni de habitabilidad. Cada eje se escala de 0 a 1: calor (°C−20)/30; aridez 1−De Martonne/60; días con condiciones meteorológicas favorables a incendios/366; profundidad de inundación en metros/3; calentamiento °C/5. Los valores se limitan a 0–1. Pesos: calor 22%, aridez 18%, incendios 12%, costa 20%, ríos 16%, calentamiento 12%. Índice = 100×[1−(media ponderada+máximo)/2]. Estas escalas y ponderaciones son decisiones de la aplicación. Se requieren las seis medidas; los datos ausentes nunca se convierten en cero. Clima/incendios: SSP3-7.0; inundaciones: RCP8.5, escenarios distintos. No expresa una probabilidad de desastre ni recomienda mudarse.",
+      "panelScenario": "Las estimaciones por año se obtienen interpolando entre períodos climáticos. Clima: un modelo CMIP6; meteorología de incendios: media de 21 modelos, SSP3-7.0. Inundaciones: RCP8.5, evento con período de retorno de 100 años (1% de probabilidad anual de excedencia), sin protección, horizontes histórico, 2030 y 2050; cinco modelos fluviales y una proyección costera basada en la mediana. 2026 no es una observación anual. No son pronósticos anuales ni una evaluación local de peligros.",
+      "panelDataLimits": "La cobertura y la resolución varían según la fuente. Las medidas en el centro de una ciudad no describen todos sus barrios. Los datos ausentes no son cero; un cero no demuestra ausencia de riesgo. El índice experimental no está validado científicamente.",
+      "period": "Estimaciones del modelo basadas en promedios de varios años, no un pronóstico meteorológico anual."
+    },
+    "it": {
+      "panelMethodText": "Confronto sperimentale, non validato come misura di rischio o abitabilità. Ogni asse è riportato su una scala 0–1: caldo (°C−20)/30; aridità 1−De Martonne/60; giorni con condizioni meteorologiche favorevoli agli incendi/366; profondità di allagamento in metri/3; riscaldamento °C/5. I valori sono limitati a 0–1. Pesi: caldo 22%, aridità 18%, incendi 12%, costa 20%, fiumi 16%, riscaldamento 12%. Indice = 100×[1−(media ponderata+massimo)/2]. Queste scale e questi pesi sono scelte dell’applicazione. Servono tutte e sei le misure; i dati mancanti non diventano mai zero. Clima/incendi: SSP3-7.0; alluvioni: RCP8.5, scenari distinti. Non esprime una probabilità di disastro né consiglia di trasferirsi.",
+      "panelScenario": "Le stime per ciascun anno si ottengono interpolando tra periodi climatici. Clima: un modello CMIP6; meteo favorevole agli incendi: media di 21 modelli, SSP3-7.0. Alluvioni: RCP8.5, evento con tempo di ritorno di 100 anni (probabilità annua di superamento dell’1%), senza protezioni, orizzonti storico, 2030 e 2050; cinque modelli fluviali e una proiezione costiera basata sulla mediana. Il 2026 non è un’osservazione annuale. Non sono previsioni annuali né una valutazione locale della pericolosità.",
+      "panelDataLimits": "Copertura e risoluzione variano secondo la fonte. Le misure al centro di una città non descrivono ogni quartiere. I dati mancanti non sono zero; zero non dimostra l’assenza di rischio. L’indice sperimentale non è validato scientificamente.",
+      "period": "Stime del modello basate su medie pluriennali, non previsioni meteorologiche annuali."
+    },
+    "zh-Hant": {
+      "panelMethodText": "本工具用於實驗性比較，尚未被驗證可衡量風險或宜居性。各維度換算至0–1：高溫（°C−20）/30；乾旱度1−De Martonne/60；利於火災的天氣日數/366；淹水深度（米）/3；升溫°C/5。數值限制在0–1。權重：高溫22%、乾旱度18%、火災天氣12%、海岸20%、河流16%、升溫12%。指數 = 100×[1−（加權平均值+最大值）/2]。這些量表與權重由本應用選定。六項測量缺一不可；缺失資料絕不會按零處理。氣候/火災天氣採用SSP3-7.0，洪水採用RCP8.5，兩者是不同情景。指數不表示災害發生機率，也不構成遷居建議。",
+      "panelScenario": "各年份的估計值由不同氣候時段之間的插值得出。氣候：一個CMIP6模型；火災天氣：21個模型的平均值，SSP3-7.0。洪水：RCP8.5，無防護條件下的百年一遇事件（每年超越機率1%），涵蓋歷史、2030和2050時段；五個河流模型，以及海岸預估的中位值。2026並非年度觀測值。這些結果既不是逐年預報，也不是當地災害危險性評估。",
+      "panelDataLimits": "不同來源的覆蓋範圍和解析度各異。城市中心的測量值不能描述每個街區的情況。缺失資料不等於零；零也不能證明沒有風險。本實驗性指數尚未經過科學驗證。",
+      "period": "基於多年平均值的模型估算，並非逐年的天氣預報。"
+    }
+  },
+  "scientificCaveat": "Read-only communication review. An accurate implementation does not validate local predictions or the custom composite index."
+}

@@ -1,0 +1,4 @@
+PASS desktop: arrival gate, fresh interaction, full reveal and globe entry
+PASS phone: arrival gate, fresh interaction, full reveal and globe entry
+PASS reduced: arrival gate, fresh interaction, full reveal and globe entry
+PASS: changing reduced-motion during arrival unlocks without decoding

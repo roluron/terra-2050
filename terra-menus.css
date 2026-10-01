@@ -1143,3 +1143,13 @@ body.comparaison-active #champ-recherche { caret-color: #b5cbea; }
   #dossier-comparer { grid-column: 1 / -1; min-height: 44px; }
 }
 @media(prefers-reduced-motion:reduce) { #model-notice details[open] { animation: none; } }
+
+/* Method limits are visible before exploration and beside the experimental index. */
+.v-science { max-width: 450px; margin: 14px auto 0; font-size: 11px; line-height: 1.6; color: var(--muter); letter-spacing: 0; text-transform: none; }
+#earth-shell .v-science { margin: 24px auto 0; font-style: normal; text-align: left; }
+.score-method-note { margin: 12px 0; font-size: 11px; line-height: 1.5; color: var(--fiche-secondaire); }
+
+/* A pinned model reading must leave the primary controls usable. Keep its
+   state while the filter picker is open, then show the updated reading. */
+body.pret #globe-dock { z-index: 31; }
+body:has(#map-inspector.choix-ouvert) #survol { visibility: hidden; pointer-events: none; }

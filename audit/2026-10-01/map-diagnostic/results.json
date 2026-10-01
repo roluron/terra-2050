@@ -1,0 +1,1617 @@
+{
+  "date": "2026-10-01",
+  "method": "Independent arithmetic on shipped binary payloads; no scientific validation claimed",
+  "grids": {
+    "chaleur": {
+      "testedCells": 259200,
+      "available": 89308,
+      "unavailable": 169892,
+      "zeroLevels": 6,
+      "increases": 89046,
+      "decreases": 262,
+      "unchanged": 0
+    },
+    "secheresse": {
+      "testedCells": 259200,
+      "available": 57269,
+      "unavailable": 201931,
+      "zeroLevels": 21,
+      "increases": 4921,
+      "decreases": 52327,
+      "unchanged": 21
+    },
+    "stabilite": {
+      "testedCells": 259200,
+      "available": 89308,
+      "unavailable": 169892,
+      "zeroLevels": 0,
+      "increases": 89308,
+      "decreases": 0,
+      "unchanged": 0
+    },
+    "feux": {
+      "testedCells": 10368,
+      "available": 2263,
+      "unavailable": 8105,
+      "zeroLevels": 0,
+      "increases": 2205,
+      "decreases": 58,
+      "unchanged": 0
+    },
+    "mer": {
+      "testedCells": 259200,
+      "available": 69991,
+      "unavailable": 189209,
+      "zeroLevels": 60961,
+      "increases": 5824,
+      "decreases": 481,
+      "unchanged": 63686
+    },
+    "fleuves": {
+      "testedCells": 259200,
+      "available": 64525,
+      "unavailable": 194675,
+      "zeroLevels": 31743,
+      "increases": 21446,
+      "decreases": 10309,
+      "unchanged": 32770
+    }
+  },
+  "anchors": [
+    {
+      "name": "Dhaka",
+      "latitude": 23.81,
+      "longitude": 90.41,
+      "readings2050": {
+        "chaleur": {
+          "available": true,
+          "filter": "chaleur",
+          "year": 2050,
+          "value": 33.81111145019531,
+          "baseline": 33.39562174479167,
+          "future": 33.81111145019531,
+          "change": 0.41548970540364394,
+          "unit": "°C",
+          "definition": "hottest-month-mean-daily-maximum-temperature",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 132,
+            "column": 540,
+            "latitudeCenter": 23.75,
+            "longitudeCenter": 90.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": null
+        },
+        "secheresse": {
+          "available": true,
+          "filter": "secheresse",
+          "year": 2050,
+          "value": 56.12864212752589,
+          "baseline": 56.93126549794969,
+          "future": 56.12864212752589,
+          "change": -0.8026233704237953,
+          "unit": "De Martonne index",
+          "definition": "de-martonne-index",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 132,
+            "column": 540,
+            "latitudeCenter": 23.75,
+            "longitudeCenter": 90.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "derived-from-illustratively-interpolated-temperature-and-precipitation",
+          "annualForecast": false,
+          "historicalReference": null,
+          "direction": "lower-is-drier",
+          "spatialAggregation": "ratio-of-grid-cell-mean-temperature-and-precipitation-ingredients"
+        },
+        "stabilite": {
+          "available": true,
+          "filter": "stabilite",
+          "year": 2050,
+          "value": 0.7113304138183594,
+          "baseline": 0.17820510864257955,
+          "future": 0.7113304138183594,
+          "change": 0.5331253051757798,
+          "unit": "°C",
+          "definition": "annual-mean-temperature-anomaly-from-historical-climatology",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 132,
+            "column": 540,
+            "latitudeCenter": 23.75,
+            "longitudeCenter": 90.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": [
+            1970,
+            2000
+          ]
+        },
+        "feux": {
+          "available": true,
+          "filter": "feux",
+          "year": 2050,
+          "value": 11.449999809265137,
+          "baseline": 9.861905097961426,
+          "future": 11.449999809265137,
+          "change": 1.588094711303711,
+          "unit": "days/year",
+          "definition": "annual-days-above-local-preindustrial-fwi-95th-percentile",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 2.5,
+          "cell": {
+            "row": 26,
+            "column": 108,
+            "latitudeCenter": 23.75,
+            "longitudeCenter": 91.25
+          },
+          "modelCount": 21,
+          "agreement": 0.6190476417541504,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -1.7999999523162842,
+          "p90": 6.349999904632568,
+          "sourcePeriods": {
+            "historical": [
+              1995,
+              2014
+            ],
+            "near": [
+              2016,
+              2035
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "ssp370",
+          "thresholdReference": "1850–1899 (as recorded in source NetCDF)",
+          "coverage": 0.9226188659667969,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "10th–90th percentiles of paired model changes; model spread, not a confidence interval"
+        },
+        "mer": {
+          "available": true,
+          "filter": "mer",
+          "year": 2050,
+          "value": 18.74822974205017,
+          "baseline": 17.56721863995737,
+          "future": 18.74822974205017,
+          "change": 1.1810111020927994,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-coastal-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 132,
+            "column": 540,
+            "latitudeCenter": 23.75,
+            "longitudeCenter": 90.25
+          },
+          "modelCount": 1,
+          "models": [
+            "coastal-median"
+          ],
+          "agreement": null,
+          "agreementReference": null,
+          "p10": null,
+          "p90": null,
+          "sourcePeriods": {
+            "historical": [
+              1979,
+              2014
+            ],
+            "near": null,
+            "future": null
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1996.5,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 0.9808333516120911,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Single median sea-level scenario; no ensemble uncertainty provided"
+        },
+        "fleuves": {
+          "available": true,
+          "filter": "fleuves",
+          "year": 2050,
+          "value": 28.64444494247437,
+          "baseline": 24.756222033500674,
+          "future": 28.64444494247437,
+          "change": 3.888222908973693,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-river-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 132,
+            "column": 540,
+            "latitudeCenter": 23.75,
+            "longitudeCenter": 90.25
+          },
+          "modelCount": 5,
+          "models": [
+            "NorESM1-M",
+            "GFDL-ESM2M",
+            "HadGEM2-ES",
+            "IPSL-CM5A-LR",
+            "MIROC-ESM-CHEM"
+          ],
+          "agreement": 0.8,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": 0.253777945041655,
+          "p90": 7.707334482669831,
+          "sourcePeriods": {
+            "historical": [
+              1960,
+              1999
+            ],
+            "near": [
+              2010,
+              2049
+            ],
+            "future": [
+              2030,
+              2069
+            ]
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1980,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 1,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Descriptive spread of matched models; p10/p90 describe paired changes from the 2026 estimate, not confidence intervals"
+        }
+      }
+    },
+    {
+      "name": "Paris",
+      "latitude": 48.86,
+      "longitude": 2.35,
+      "readings2050": {
+        "chaleur": {
+          "available": true,
+          "filter": "chaleur",
+          "year": 2050,
+          "value": 27.94444465637207,
+          "baseline": 26.29832657708062,
+          "future": 27.94444465637207,
+          "change": 1.6461180792914512,
+          "unit": "°C",
+          "definition": "hottest-month-mean-daily-maximum-temperature",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 82,
+            "column": 364,
+            "latitudeCenter": 48.75,
+            "longitudeCenter": 2.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": null
+        },
+        "secheresse": {
+          "available": true,
+          "filter": "secheresse",
+          "year": 2050,
+          "value": 27.05412125141113,
+          "baseline": 28.739581601501307,
+          "future": 27.05412125141113,
+          "change": -1.6854603500901781,
+          "unit": "De Martonne index",
+          "definition": "de-martonne-index",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 82,
+            "column": 364,
+            "latitudeCenter": 48.75,
+            "longitudeCenter": 2.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "derived-from-illustratively-interpolated-temperature-and-precipitation",
+          "annualForecast": false,
+          "historicalReference": null,
+          "direction": "lower-is-drier",
+          "spatialAggregation": "ratio-of-grid-cell-mean-temperature-and-precipitation-ingredients"
+        },
+        "stabilite": {
+          "available": true,
+          "filter": "stabilite",
+          "year": 2050,
+          "value": 1.6898126602172852,
+          "baseline": 0.9182795630560978,
+          "future": 1.6898126602172852,
+          "change": 0.7715330971611873,
+          "unit": "°C",
+          "definition": "annual-mean-temperature-anomaly-from-historical-climatology",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 82,
+            "column": 364,
+            "latitudeCenter": 48.75,
+            "longitudeCenter": 2.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": [
+            1970,
+            2000
+          ]
+        },
+        "feux": {
+          "available": true,
+          "filter": "feux",
+          "year": 2050,
+          "value": 36.371429443359375,
+          "baseline": 27.77857208251953,
+          "future": 36.371429443359375,
+          "change": 8.592857360839844,
+          "unit": "days/year",
+          "definition": "annual-days-above-local-preindustrial-fwi-95th-percentile",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 2.5,
+          "cell": {
+            "row": 16,
+            "column": 72,
+            "latitudeCenter": 48.75,
+            "longitudeCenter": 1.25
+          },
+          "modelCount": 21,
+          "agreement": 0.8571428656578064,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -2.450000047683716,
+          "p90": 13.100000381469727,
+          "sourcePeriods": {
+            "historical": [
+              1995,
+              2014
+            ],
+            "near": [
+              2016,
+              2035
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "ssp370",
+          "thresholdReference": "1850–1899 (as recorded in source NetCDF)",
+          "coverage": 0.9557196497917175,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "10th–90th percentiles of paired model changes; model spread, not a confidence interval"
+        },
+        "mer": {
+          "available": true,
+          "filter": "mer",
+          "year": 2050,
+          "value": 0,
+          "baseline": 0,
+          "future": 0,
+          "change": 0,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-coastal-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 82,
+            "column": 364,
+            "latitudeCenter": 48.75,
+            "longitudeCenter": 2.25
+          },
+          "modelCount": 1,
+          "models": [
+            "coastal-median"
+          ],
+          "agreement": null,
+          "agreementReference": null,
+          "p10": null,
+          "p90": null,
+          "sourcePeriods": {
+            "historical": [
+              1979,
+              2014
+            ],
+            "near": null,
+            "future": null
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1996.5,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 1,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Single median sea-level scenario; no ensemble uncertainty provided"
+        },
+        "fleuves": {
+          "available": true,
+          "filter": "fleuves",
+          "year": 2050,
+          "value": 3.0277778301388025,
+          "baseline": 3.782666629552841,
+          "future": 3.0277778301388025,
+          "change": -0.7548887994140385,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-river-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 82,
+            "column": 364,
+            "latitudeCenter": 48.75,
+            "longitudeCenter": 2.25
+          },
+          "modelCount": 5,
+          "models": [
+            "NorESM1-M",
+            "GFDL-ESM2M",
+            "HadGEM2-ES",
+            "IPSL-CM5A-LR",
+            "MIROC-ESM-CHEM"
+          ],
+          "agreement": 0.4,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -2.325111001729965,
+          "p90": 0.07422231845557682,
+          "sourcePeriods": {
+            "historical": [
+              1960,
+              1999
+            ],
+            "near": [
+              2010,
+              2049
+            ],
+            "future": [
+              2030,
+              2069
+            ]
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1980,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 1,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Descriptive spread of matched models; p10/p90 describe paired changes from the 2026 estimate, not confidence intervals"
+        }
+      }
+    },
+    {
+      "name": "HCMC",
+      "latitude": 10.78,
+      "longitude": 106.7,
+      "readings2050": {
+        "chaleur": {
+          "available": true,
+          "filter": "chaleur",
+          "year": 2050,
+          "value": 33.66666793823242,
+          "baseline": 33.366651153564455,
+          "future": 33.66666793823242,
+          "change": 0.30001678466796733,
+          "unit": "°C",
+          "definition": "hottest-month-mean-daily-maximum-temperature",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 158,
+            "column": 573,
+            "latitudeCenter": 10.75,
+            "longitudeCenter": 106.75
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": null
+        },
+        "secheresse": {
+          "available": true,
+          "filter": "secheresse",
+          "year": 2050,
+          "value": 51.649419999052355,
+          "baseline": 50.76098197480678,
+          "future": 51.649419999052355,
+          "change": 0.8884380242455734,
+          "unit": "De Martonne index",
+          "definition": "de-martonne-index",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 158,
+            "column": 573,
+            "latitudeCenter": 10.75,
+            "longitudeCenter": 106.75
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "derived-from-illustratively-interpolated-temperature-and-precipitation",
+          "annualForecast": false,
+          "historicalReference": null,
+          "direction": "lower-is-drier",
+          "spatialAggregation": "ratio-of-grid-cell-mean-temperature-and-precipitation-ingredients"
+        },
+        "stabilite": {
+          "available": true,
+          "filter": "stabilite",
+          "year": 2050,
+          "value": 1.2956809997558594,
+          "baseline": 0.720313856336805,
+          "future": 1.2956809997558594,
+          "change": 0.5753671434190544,
+          "unit": "°C",
+          "definition": "annual-mean-temperature-anomaly-from-historical-climatology",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 158,
+            "column": 573,
+            "latitudeCenter": 10.75,
+            "longitudeCenter": 106.75
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": [
+            1970,
+            2000
+          ]
+        },
+        "feux": {
+          "available": true,
+          "filter": "feux",
+          "year": 2050,
+          "value": 39.7976188659668,
+          "baseline": 34.94047546386719,
+          "future": 39.7976188659668,
+          "change": 4.857143402099609,
+          "unit": "days/year",
+          "definition": "annual-days-above-local-preindustrial-fwi-95th-percentile",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 2.5,
+          "cell": {
+            "row": 31,
+            "column": 114,
+            "latitudeCenter": 11.25,
+            "longitudeCenter": 106.25
+          },
+          "modelCount": 21,
+          "agreement": 0.7142857313156128,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -5.25,
+          "p90": 16.450000762939453,
+          "sourcePeriods": {
+            "historical": [
+              1995,
+              2014
+            ],
+            "near": [
+              2016,
+              2035
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "ssp370",
+          "thresholdReference": "1850–1899 (as recorded in source NetCDF)",
+          "coverage": 0.9213197231292725,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "10th–90th percentiles of paired model changes; model spread, not a confidence interval"
+        },
+        "mer": {
+          "available": true,
+          "filter": "mer",
+          "year": 2050,
+          "value": 9.974923729896545,
+          "baseline": 8.256155763989065,
+          "future": 9.974923729896545,
+          "change": 1.7187679659074806,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-coastal-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 158,
+            "column": 573,
+            "latitudeCenter": 10.75,
+            "longitudeCenter": 106.75
+          },
+          "modelCount": 1,
+          "models": [
+            "coastal-median"
+          ],
+          "agreement": null,
+          "agreementReference": null,
+          "p10": null,
+          "p90": null,
+          "sourcePeriods": {
+            "historical": [
+              1979,
+              2014
+            ],
+            "near": null,
+            "future": null
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1996.5,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 0.9969444274902344,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Single median sea-level scenario; no ensemble uncertainty provided"
+        },
+        "fleuves": {
+          "available": true,
+          "filter": "fleuves",
+          "year": 2050,
+          "value": 25.44946908950806,
+          "baseline": 23.077386879920958,
+          "future": 25.44946908950806,
+          "change": 2.372082209587101,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-river-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 158,
+            "column": 573,
+            "latitudeCenter": 10.75,
+            "longitudeCenter": 106.75
+          },
+          "modelCount": 5,
+          "models": [
+            "NorESM1-M",
+            "GFDL-ESM2M",
+            "HadGEM2-ES",
+            "IPSL-CM5A-LR",
+            "MIROC-ESM-CHEM"
+          ],
+          "agreement": 0.8,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -0.07816882133483971,
+          "p90": 5.052372562885284,
+          "sourcePeriods": {
+            "historical": [
+              1960,
+              1999
+            ],
+            "near": [
+              2010,
+              2049
+            ],
+            "future": [
+              2030,
+              2069
+            ]
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1980,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 0.9950000047683716,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Descriptive spread of matched models; p10/p90 describe paired changes from the 2026 estimate, not confidence intervals"
+        }
+      }
+    },
+    {
+      "name": "Port Moresby",
+      "latitude": -9.44,
+      "longitude": 147.18,
+      "readings2050": {
+        "chaleur": {
+          "available": true,
+          "filter": "chaleur",
+          "year": 2050,
+          "value": 32.099998474121094,
+          "baseline": 31.65821715460883,
+          "future": 32.099998474121094,
+          "change": 0.4417813195122626,
+          "unit": "°C",
+          "definition": "hottest-month-mean-daily-maximum-temperature",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 198,
+            "column": 654,
+            "latitudeCenter": -9.25,
+            "longitudeCenter": 147.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": null
+        },
+        "secheresse": {
+          "available": true,
+          "filter": "secheresse",
+          "year": 2050,
+          "value": 60.93566261556312,
+          "baseline": 57.524361340649676,
+          "future": 60.93566261556312,
+          "change": 3.4113012749134413,
+          "unit": "De Martonne index",
+          "definition": "de-martonne-index",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 198,
+            "column": 654,
+            "latitudeCenter": -9.25,
+            "longitudeCenter": 147.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "derived-from-illustratively-interpolated-temperature-and-precipitation",
+          "annualForecast": false,
+          "historicalReference": null,
+          "direction": "lower-is-drier",
+          "spatialAggregation": "ratio-of-grid-cell-mean-temperature-and-precipitation-ingredients"
+        },
+        "stabilite": {
+          "available": true,
+          "filter": "stabilite",
+          "year": 2050,
+          "value": 1.1403865814208984,
+          "baseline": 0.6584392547607436,
+          "future": 1.1403865814208984,
+          "change": 0.48194732666015483,
+          "unit": "°C",
+          "definition": "annual-mean-temperature-anomaly-from-historical-climatology",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 198,
+            "column": 654,
+            "latitudeCenter": -9.25,
+            "longitudeCenter": 147.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": [
+            1970,
+            2000
+          ]
+        },
+        "feux": {
+          "available": true,
+          "filter": "feux",
+          "year": 2050,
+          "value": 24.938095092773438,
+          "baseline": 24.738094329833984,
+          "future": 24.938095092773438,
+          "change": 0.20000076293945312,
+          "unit": "days/year",
+          "definition": "annual-days-above-local-preindustrial-fwi-95th-percentile",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 2.5,
+          "cell": {
+            "row": 39,
+            "column": 130,
+            "latitudeCenter": -8.75,
+            "longitudeCenter": 146.25
+          },
+          "modelCount": 21,
+          "agreement": 0.523809552192688,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -7.5,
+          "p90": 8.800000190734863,
+          "sourcePeriods": {
+            "historical": [
+              1995,
+              2014
+            ],
+            "near": [
+              2016,
+              2035
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "ssp370",
+          "thresholdReference": "1850–1899 (as recorded in source NetCDF)",
+          "coverage": 0.4145366847515106,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "10th–90th percentiles of paired model changes; model spread, not a confidence interval"
+        },
+        "mer": {
+          "available": true,
+          "filter": "mer",
+          "year": 2050,
+          "value": 0.17221583984792233,
+          "baseline": 0.16878865895542636,
+          "future": 0.17221583984792233,
+          "change": 0.0034271808924959783,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-coastal-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 198,
+            "column": 654,
+            "latitudeCenter": -9.25,
+            "longitudeCenter": 147.25
+          },
+          "modelCount": 1,
+          "models": [
+            "coastal-median"
+          ],
+          "agreement": null,
+          "agreementReference": null,
+          "p10": null,
+          "p90": null,
+          "sourcePeriods": {
+            "historical": [
+              1979,
+              2014
+            ],
+            "near": null,
+            "future": null
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1996.5,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 0.9677777886390686,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Single median sea-level scenario; no ensemble uncertainty provided"
+        },
+        "fleuves": {
+          "available": true,
+          "filter": "fleuves",
+          "year": 2050,
+          "value": 1.7430368065834045,
+          "baseline": 0.73794549703598,
+          "future": 1.7430368065834045,
+          "change": 1.0050913095474245,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-river-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 198,
+            "column": 654,
+            "latitudeCenter": -9.25,
+            "longitudeCenter": 147.25
+          },
+          "modelCount": 5,
+          "models": [
+            "NorESM1-M",
+            "GFDL-ESM2M",
+            "HadGEM2-ES",
+            "IPSL-CM5A-LR",
+            "MIROC-ESM-CHEM"
+          ],
+          "agreement": 0.2,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -0.73794549703598,
+          "p90": 4.491164922714234,
+          "sourcePeriods": {
+            "historical": [
+              1960,
+              1999
+            ],
+            "near": [
+              2010,
+              2049
+            ],
+            "future": [
+              2030,
+              2069
+            ]
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1980,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 0.9275000095367432,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Descriptive spread of matched models; p10/p90 describe paired changes from the 2026 estimate, not confidence intervals"
+        }
+      }
+    },
+    {
+      "name": "Beijing",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "readings2050": {
+        "chaleur": {
+          "available": true,
+          "filter": "chaleur",
+          "year": 2050,
+          "value": 32.011112213134766,
+          "baseline": 31.371564695570203,
+          "future": 32.011112213134766,
+          "change": 0.6395475175645622,
+          "unit": "°C",
+          "definition": "hottest-month-mean-daily-maximum-temperature",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 100,
+            "column": 592,
+            "latitudeCenter": 39.75,
+            "longitudeCenter": 116.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": null
+        },
+        "secheresse": {
+          "available": true,
+          "filter": "secheresse",
+          "year": 2050,
+          "value": 26.2318794194997,
+          "baseline": 25.691249642137553,
+          "future": 26.2318794194997,
+          "change": 0.5406297773621453,
+          "unit": "De Martonne index",
+          "definition": "de-martonne-index",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 100,
+            "column": 592,
+            "latitudeCenter": 39.75,
+            "longitudeCenter": 116.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "derived-from-illustratively-interpolated-temperature-and-precipitation",
+          "annualForecast": false,
+          "historicalReference": null,
+          "direction": "lower-is-drier",
+          "spatialAggregation": "ratio-of-grid-cell-mean-temperature-and-precipitation-ingredients"
+        },
+        "stabilite": {
+          "available": true,
+          "filter": "stabilite",
+          "year": 2050,
+          "value": 1.480621337890625,
+          "baseline": 0.6099987665812172,
+          "future": 1.480621337890625,
+          "change": 0.8706225713094078,
+          "unit": "°C",
+          "definition": "annual-mean-temperature-anomaly-from-historical-climatology",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 100,
+            "column": 592,
+            "latitudeCenter": 39.75,
+            "longitudeCenter": 116.25
+          },
+          "modelCount": 1,
+          "agreement": null,
+          "sourcePeriods": {
+            "historical": [
+              1970,
+              2000
+            ],
+            "near": [
+              2021,
+              2040
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "SSP3-7.0",
+          "model": "MPI-ESM1-2-HR",
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "historicalReference": [
+            1970,
+            2000
+          ]
+        },
+        "feux": {
+          "available": true,
+          "filter": "feux",
+          "year": 2050,
+          "value": 14.188095092773438,
+          "baseline": 14.369047164916992,
+          "future": 14.188095092773438,
+          "change": -0.1809520721435547,
+          "unit": "days/year",
+          "definition": "annual-days-above-local-preindustrial-fwi-95th-percentile",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 2.5,
+          "cell": {
+            "row": 20,
+            "column": 118,
+            "latitudeCenter": 38.75,
+            "longitudeCenter": 116.25
+          },
+          "modelCount": 21,
+          "agreement": 0.523809552192688,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -5.199999809265137,
+          "p90": 3.950000047683716,
+          "sourcePeriods": {
+            "historical": [
+              1995,
+              2014
+            ],
+            "near": [
+              2016,
+              2035
+            ],
+            "future": [
+              2041,
+              2060
+            ]
+          },
+          "scenario": "ssp370",
+          "thresholdReference": "1850–1899 (as recorded in source NetCDF)",
+          "coverage": 0.9951157569885254,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "10th–90th percentiles of paired model changes; model spread, not a confidence interval"
+        },
+        "mer": {
+          "available": true,
+          "filter": "mer",
+          "year": 2050,
+          "value": 0,
+          "baseline": 0,
+          "future": 0,
+          "change": 0,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-coastal-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 100,
+            "column": 592,
+            "latitudeCenter": 39.75,
+            "longitudeCenter": 116.25
+          },
+          "modelCount": 1,
+          "models": [
+            "coastal-median"
+          ],
+          "agreement": null,
+          "agreementReference": null,
+          "p10": null,
+          "p90": null,
+          "sourcePeriods": {
+            "historical": [
+              1979,
+              2014
+            ],
+            "near": null,
+            "future": null
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1996.5,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 1,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Single median sea-level scenario; no ensemble uncertainty provided"
+        },
+        "fleuves": {
+          "available": true,
+          "filter": "fleuves",
+          "year": 2050,
+          "value": 8.683333396911621,
+          "baseline": 8.776889020204544,
+          "future": 8.683333396911621,
+          "change": -0.09355562329292355,
+          "unit": "%",
+          "changeUnit": "percentage points",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-river-flood",
+          "baselineYear": 2026,
+          "spatialSupport": "containing-grid-cell",
+          "resolutionDegrees": 0.5,
+          "cell": {
+            "row": 100,
+            "column": 592,
+            "latitudeCenter": 39.75,
+            "longitudeCenter": 116.25
+          },
+          "modelCount": 5,
+          "models": [
+            "NorESM1-M",
+            "GFDL-ESM2M",
+            "HadGEM2-ES",
+            "IPSL-CM5A-LR",
+            "MIROC-ESM-CHEM"
+          ],
+          "agreement": 0.8,
+          "agreementReference": "sign-of-mean-paired-change-from-2026",
+          "p10": -0.365111213922501,
+          "p90": 0.19733338356018099,
+          "sourcePeriods": {
+            "historical": [
+              1960,
+              1999
+            ],
+            "near": [
+              2010,
+              2049
+            ],
+            "future": [
+              2030,
+              2069
+            ]
+          },
+          "scenario": "rcp8p5",
+          "anchorYears": [
+            1980,
+            2030,
+            2050
+          ],
+          "returnPeriodYears": 100,
+          "coverage": 1,
+          "thresholdMetres": 0.5,
+          "temporalMethod": "illustrative-linear-interpolation",
+          "annualForecast": false,
+          "uncertainty": "Descriptive spread of matched models; p10/p90 describe paired changes from the 2026 estimate, not confidence intervals"
+        }
+      }
+    },
+    {
+      "name": "Pacific",
+      "latitude": 0,
+      "longitude": -140,
+      "readings2050": {
+        "chaleur": {
+          "available": false,
+          "filter": "chaleur",
+          "year": 2050,
+          "value": null,
+          "baseline": null,
+          "future": null,
+          "change": null,
+          "unit": "°C",
+          "definition": "hottest-month-mean-daily-maximum-temperature",
+          "baselineYear": 2026,
+          "modelCount": 0,
+          "agreement": null,
+          "spatialSupport": null,
+          "resolutionDegrees": null,
+          "annualForecast": false,
+          "reason": "No matched climate data for the containing grid cell"
+        },
+        "secheresse": {
+          "available": false,
+          "filter": "secheresse",
+          "year": 2050,
+          "value": null,
+          "baseline": null,
+          "future": null,
+          "change": null,
+          "unit": "De Martonne index",
+          "definition": "de-martonne-index",
+          "baselineYear": 2026,
+          "modelCount": 0,
+          "agreement": null,
+          "spatialSupport": null,
+          "resolutionDegrees": null,
+          "annualForecast": false,
+          "reason": "No matched De Martonne ingredient data at all three display anchors"
+        },
+        "stabilite": {
+          "available": false,
+          "filter": "stabilite",
+          "year": 2050,
+          "value": null,
+          "baseline": null,
+          "future": null,
+          "change": null,
+          "unit": "°C",
+          "definition": "annual-mean-temperature-anomaly-from-historical-climatology",
+          "baselineYear": 2026,
+          "modelCount": 0,
+          "agreement": null,
+          "spatialSupport": null,
+          "resolutionDegrees": null,
+          "annualForecast": false,
+          "reason": "No matched climate data for the containing grid cell"
+        },
+        "feux": {
+          "available": false,
+          "filter": "feux",
+          "year": 2050,
+          "value": null,
+          "baseline": null,
+          "future": null,
+          "change": null,
+          "unit": "days/year",
+          "definition": "annual-days-above-local-preindustrial-fwi-95th-percentile",
+          "baselineYear": 2026,
+          "modelCount": 0,
+          "agreement": null,
+          "spatialSupport": null,
+          "resolutionDegrees": null,
+          "annualForecast": false,
+          "reason": "No fire-weather data for the containing grid cell"
+        },
+        "mer": {
+          "available": false,
+          "filter": "mer",
+          "year": 2050,
+          "value": null,
+          "baseline": null,
+          "future": null,
+          "change": null,
+          "unit": "%",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-coastal-flood",
+          "baselineYear": 2026,
+          "modelCount": 0,
+          "agreement": null,
+          "spatialSupport": null,
+          "resolutionDegrees": null,
+          "annualForecast": false,
+          "reason": "No source coverage in containing grid cell"
+        },
+        "fleuves": {
+          "available": false,
+          "filter": "fleuves",
+          "year": 2050,
+          "value": null,
+          "baseline": null,
+          "future": null,
+          "change": null,
+          "unit": "%",
+          "definition": "valid-source-cell-fraction-deeper-than-0.5m-in-100-year-river-flood",
+          "baselineYear": 2026,
+          "modelCount": 0,
+          "agreement": null,
+          "spatialSupport": null,
+          "resolutionDegrees": null,
+          "annualForecast": false,
+          "reason": "No source coverage in containing grid cell"
+        }
+      }
+    }
+  ]
+}

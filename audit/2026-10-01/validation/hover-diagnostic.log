@@ -1,0 +1,31 @@
+PASS numerical edge cases: population references, signs, missing/zero readings, locale rounding
+CHECK desktop chaleur
+CHECK desktop secheresse
+CHECK desktop feux
+CHECK desktop mer
+CHECK desktop fleuves
+CHECK desktop stabilite
+CHECK desktop fr
+CHECK desktop en
+CHECK desktop it
+CHECK desktop es
+CHECK desktop vi
+CHECK desktop ja
+CHECK desktop zh
+CHECK desktop zh-Hant
+PASS desktop: seven filters, both modes, eight languages, country boundaries, missing data, year updates and cache
+CHECK mobile chaleur
+CHECK mobile secheresse
+CHECK mobile feux
+CHECK mobile mer
+CHECK mobile fleuves
+CHECK mobile stabilite
+CHECK mobile fr
+CHECK mobile en
+CHECK mobile it
+CHECK mobile es
+CHECK mobile vi
+CHECK mobile ja
+CHECK mobile zh
+CHECK mobile zh-Hant
+PASS mobile: seven filters, both modes, eight languages, country boundaries, missing data, year updates and cache

@@ -1,0 +1,114 @@
+{
+  "phase": "pointer",
+  "profiles": [
+    {
+      "profile": "compact",
+      "options": {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "isMobile": true,
+        "hasTouch": true
+      },
+      "errors": [],
+      "shaderErrors": [],
+      "shaderChecks": [],
+      "overlappingMenuChecks": 0,
+      "pointerEvents": [
+        {
+          "type": "pointerdown",
+          "target": "scene",
+          "className": "",
+          "text": "",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 320,
+            "height": 568,
+            "top": 0,
+            "right": 320,
+            "bottom": 568,
+            "left": 0
+          },
+          "time": 12664.90000000596,
+          "x": 160,
+          "y": 220
+        },
+        {
+          "type": "pointerup",
+          "target": "scene",
+          "className": "",
+          "text": "",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 320,
+            "height": 568,
+            "top": 0,
+            "right": 320,
+            "bottom": 568,
+            "left": 0
+          },
+          "time": 12665.29999999702,
+          "x": 160,
+          "y": 220
+        }
+      ],
+      "realHit": {
+        "ville": null,
+        "iso": "CN",
+        "lat": 34.99999999999999,
+        "lon": 94.99999999999994
+      },
+      "realSnapshot": {
+        "name": "Chine",
+        "value": "+0,04 points de pourcentage",
+        "subtitle": "Inondation fluviale · 2050 · Évolution depuis 2026",
+        "detail": "2026: 0,47 % → 2050: 0,51 %",
+        "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+        "visible": true,
+        "role": "button",
+        "bounds": {
+          "x": 8,
+          "y": 238,
+          "width": 300,
+          "height": 136
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "horizontalOverflow": false
+      }
+    }
+  ],
+  "matrix": [],
+  "locales": [],
+  "checks": [],
+  "notices": [
+    {
+      "profile": "compact",
+      "kind": "startup",
+      "text": "Estimations de modèles sous des scénarios définis. Les années climatiques sont interpolées entre moyennes de périodes ; la population ONU est projetée annuellement. Ce projet ne mesure pas l’habitabilité et ne prédit pas une catastrophe locale.",
+      "bounds": {
+        "x": 24,
+        "y": 479.953125,
+        "width": 272,
+        "height": 87.96875
+      }
+    },
+    {
+      "profile": "compact",
+      "kind": "score",
+      "text": "Indice expérimental : six indicateurs, seuils et poids choisis par l’application. Les scénarios climatiques et d’inondation sont distincts ; cet indice n’a pas été validé scientifiquement.",
+      "bounds": {
+        "x": 17,
+        "y": 366.90625,
+        "width": 137,
+        "height": 115.5
+      }
+    }
+  ],
+  "limitations": "Chromium with mobile emulation; no physical iPhone/Safari test. Numeric UI expectations derive from shipped fields, not independent raw TIFF acquisition."
+}

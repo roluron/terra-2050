@@ -36,18 +36,20 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
     'historical_precipitation', 'near_precipitation', 'future_precipitation',
     'historical_summerMaximum', 'near_summerMaximum', 'future_summerMaximum']);
   const rivers = floodReader(floods.river, 'river'), coasts = floodReader(floods.coast, 'coast');
-  const names = ['heat', 'aridity', 'warming', 'coast', 'river'];
-  const buffers = names.map(name => name === 'aridity' ? new Float32Array(WIDTH * HEIGHT * 4) : new Uint16Array(WIDTH * HEIGHT * 4));
-  const validCells = [0, 0, 0, 0, 0], overflowCells = [0, 0, 0, 0, 0], displayCappedCells = [0, 0, 0, 0, 0];
+  const names = ['heat', 'aridity', 'warming', 'coast', 'river', 'aridityTemperature', 'aridityPrecipitation'];
+  const isFloat = name => name.startsWith('aridity');
+  const buffers = names.map(name => isFloat(name) ? new Float32Array(WIDTH * HEIGHT * 4) : new Uint16Array(WIDTH * HEIGHT * 4));
+  const validCells = names.map(() => 0), overflowCells = names.map(() => 0), displayCappedCells = names.map(() => 0);
   const half = THREE.DataUtils.toHalfFloat, halfOne = half(1);
   const values = climate.values, stride = climate.metadata.fields.length;
   let chunkStarted = performance.now(), maxChunkMs = chunkStarted - started, yields = 0;
   const store = (kind, offset, a, b, c) => {
     if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) return;
-    if (kind !== 1 && (Math.abs(a) > 65504 || Math.abs(b) > 65504 || Math.abs(c) > 65504)) { overflowCells[kind]++; return; }
+    const fullPrecision = isFloat(names[kind]);
+    if (!fullPrecision && (Math.abs(a) > 65504 || Math.abs(b) > 65504 || Math.abs(c) > 65504)) { overflowCells[kind]++; return; }
     const target = buffers[kind];
-    const encode = kind === 1 ? value => value : half;
-    target[offset] = encode(a); target[offset + 1] = encode(b); target[offset + 2] = encode(c); target[offset + 3] = kind === 1 ? 1 : halfOne;
+    const encode = fullPrecision ? value => value : half;
+    target[offset] = encode(a); target[offset + 1] = encode(b); target[offset + 2] = encode(c); target[offset + 3] = fullPrecision ? 1 : halfOne;
     validCells[kind]++;
   };
   const flood = (source, row, output, kind) => {
@@ -77,6 +79,16 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
     store(0, output, sh + (sn - sh) * 41 / 45, sn, sf);
     store(1, output, t26 > -10 ? p26 / (t26 + 10) : NaN, tn > -10 ? pn / (tn + 10) : NaN,
       tf > -10 ? pf / (tf + 10) : NaN);
+    // Transport the ingredients, not an interpolated nonlinear index. Both
+    // textures share one mask, including the domain after Float32 encoding.
+    const encodedT26 = Math.fround(t26), encodedP26 = Math.fround(p26);
+    if (Number.isFinite(encodedT26) && Number.isFinite(tn) && Number.isFinite(tf)
+        && encodedT26 > -10 && tn > -10 && tf > -10
+        && Number.isFinite(encodedP26) && Number.isFinite(pn) && Number.isFinite(pf)
+        && encodedP26 >= 0 && pn >= 0 && pf >= 0) {
+      store(5, output, encodedT26, tn, tf);
+      store(6, output, encodedP26, pn, pf);
+    }
     store(2, output, t26 - th, tn - th, tf - th);
     flood(coasts, row, output, 3); flood(rivers, row, output, 4);
     if ((row & 255) === 255 && performance.now() - chunkStarted >= 6) {
@@ -87,17 +99,23 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
   }
   maxChunkMs = Math.max(maxChunkMs, performance.now() - chunkStarted);
   const stats = { durationMs: performance.now() - started, maxChunkMs, yields, bytes: buffers.reduce((sum, buffer) => sum + buffer.byteLength, 0) };
-  const units = ['degC', 'De Martonne index', 'degC anomaly from historical', 'fraction of valid cells >0.5m', 'fraction of valid cells >0.5m'];
+  const units = ['degC', 'De Martonne index', 'degC anomaly from historical', 'fraction of valid cells >0.5m', 'fraction of valid cells >0.5m', 'degC', 'mm/year'];
   return Object.fromEntries(names.map((name, index) => {
-    const texture = new THREE.DataTexture(buffers[index], WIDTH, HEIGHT, THREE.RGBAFormat, name === 'aridity' ? THREE.FloatType : THREE.HalfFloatType);
+    const texture = new THREE.DataTexture(buffers[index], WIDTH, HEIGHT, THREE.RGBAFormat, isFloat(name) ? THREE.FloatType : THREE.HalfFloatType);
     texture.name = `science-${name}`;
-    texture.minFilter = texture.magFilter = name === 'aridity' && !linearFloat ? THREE.NearestFilter : THREE.LinearFilter;
+    texture.minFilter = texture.magFilter = isFloat(name) && !linearFloat ? THREE.NearestFilter : THREE.LinearFilter;
     texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.ClampToEdgeWrapping;
     texture.generateMipmaps = false; texture.flipY = false; texture.premultiplyAlpha = false;
     texture.colorSpace = THREE.NoColorSpace; texture.unpackAlignment = 1; texture.needsUpdate = true;
     texture.userData.scientific = { years: YEARS, unit: units[index], rowOrder: 'south-first',
       decode: 'RGB/alpha when alpha>0; RGB=2026,2030,2050. Alpha is matched validity, not risk.',
-      temporalMethod: 'Illustrative endpoint interpolation, not annual forecasts; intermediate De Martonne interpolation is a display approximation.',
+      temporalMethod: name.startsWith('aridity') && name !== 'aridity'
+        ? 'Interpolate temperature and precipitation between illustrative endpoints; derive precipitation/(temperature+10) only afterward. Not annual forecasts.'
+        : 'Illustrative endpoint interpolation, not annual forecasts; intermediate De Martonne interpolation is a display approximation.',
+      ...(index >= 5 ? { pairedWith: names[index === 5 ? 6 : 5],
+        validity: 'Identical matched mask: all three encoded temperatures finite and > -10 degC; all three encoded annual precipitations finite and >= 0.',
+        definition: name === 'aridityTemperature' ? 'Annual mean midpoint temperature from monthly minimum and maximum' : 'Annual sum of monthly precipitation',
+        derive: 'P/(T+10), only when T > -10 degC; do not interpolate the ratio' } : {}),
       displayCap: null,
       displayCapMeaning: null,
       displayCappedCells: displayCappedCells[index],

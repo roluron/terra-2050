@@ -29,8 +29,9 @@ const textures = await buildScientificTextures(THREE, climate, floods);
 clearInterval(timer);
 assert.ok(ticks > 0);
 const names = ['heat', 'aridity', 'warming', 'coast', 'river'];
-assert.deepEqual(Object.keys(textures), names);
-assert.equal(textures.heat.userData.scientific.stats.bytes, 12441600);
+const ingredientNames = ['aridityTemperature', 'aridityPrecipitation'];
+assert.deepEqual(Object.keys(textures), [...names, ...ingredientNames]);
+assert.equal(textures.heat.userData.scientific.stats.bytes, 20736000);
 function at(texture, lat, lon) {
   const x = Math.floor(((lon + 180) % 360 + 360) % 360 * 2), y = Math.min(359, Math.floor((90 - lat) * 2));
   const offset = ((359 - y) * 720 + x) * 4;

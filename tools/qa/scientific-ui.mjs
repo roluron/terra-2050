@@ -14,10 +14,12 @@ for (const [name, engine, options] of [
   if (process.env.QA_DEVICE && name !== process.env.QA_DEVICE) continue;
   const result = { name, started: new Date().toISOString(), failures: [], errors: [], checks: [], runtimeHashes: {} };
   const pending = [];
-  const browser = await engine.launch({ executablePath: engine.executablePath(), headless: process.env.QA_HEADED !== '1' });
+  const browser = await engine.launch({ executablePath: name === 'desktop' && process.env.QA_CHROMIUM_PATH || engine.executablePath(), headless: process.env.QA_HEADED !== '1',
+    ...(name === 'desktop' ? {args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']} : {}) });
   const context = await browser.newContext({ ...options, locale: 'en-US',
     ...(process.env.QA_VIDEO === '1' ? { recordVideo: { dir: out, size: { width: 720, height: 450 } } } : {}) });
   const page = await context.newPage();
+  if (process.env.QA_OFFLINE_FONTS === '1') await page.route('https://fonts.googleapis.com/**', route => route.fulfill({contentType:'text/css',body:''}));
   page.setDefaultTimeout(20000);
   const check = (condition, description, evidence) => {
     if (!condition) result.failures.push({ description, evidence });
@@ -70,9 +72,8 @@ for (const [name, engine, options] of [
           const box = await slider.boundingBox();
           await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
         } else {
-          await slider.focus();
-          await page.keyboard.press('Home');
-          for (let i = 2026; i < year; i++) await page.keyboard.press('ArrowRight');
+          await slider.press('Home');
+          for (let i = 2026; i < year; i++) await slider.press('ArrowRight');
         }
         await page.waitForFunction(year => document.querySelector('#curseur').value === String(year)
           && document.querySelector('#dossier-annee').textContent === String(year), year);
@@ -101,7 +102,9 @@ for (const [name, engine, options] of [
           if (sample.available) {
             const unit = row.key === 'eau' ? 'De Martonne' : sample.unit;
             check(row.unit === unit, `${label}: unit`, { expected: unit, row });
-            const fmt = value => value.toLocaleString('en', { maximumFractionDigits: 2 });
+            const fmt = value => value !== 0 && Math.abs(value) < .005
+              ? value > 0 ? '< 0.01' : '> −0.01'
+              : value.toLocaleString('en', { maximumFractionDigits: 2 }).replace(/-/g, '−');
             check(row.number === fmt(sample.value), `${label}: displayed rounded value`, row);
             check(row.changeLabel.startsWith(`2026: ${fmt(sample.baseline)} · `) && row.changeLabel.endsWith(unit), `${label}: fixed baseline label`, row);
             const direction = row.key === 'eau' ? sample.change < 0 ? 'Drier' : 'Wetter' : sample.change > 0 ? 'Increase' : 'Decrease';

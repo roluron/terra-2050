@@ -1,0 +1,2 @@
+{"command": ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "/workspace/terra-2050/tools/verifier_fire_weather.py", "--autotest"], "exit_code": 0}
+{"pass": true, "rejectedMutations": ["truncated", "hash", "change", "quantiles", "missing to zero", "coverage", "unpaired realization"]}
