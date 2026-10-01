@@ -7,6 +7,7 @@ import {chromium} from 'playwright';
 import {enter, welcome, chooseLanguage} from './entrance.cjs';
 import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 import {warmingCopy} from '../../hover-diagnostic.mjs';
+import {mapValueContext} from '../../map-value-context.mjs';
 import {mapCopy, refinementCopy} from '../../refinement-copy.mjs';
 
 // Browser integration checks. Numeric expectations use raw packaged fields,
@@ -85,7 +86,7 @@ function expectedDisplay(filter,year,mode,s,locale) {
   const changing=mode==='change',displayUnit=changing&&['mer','fleuves'].includes(filter)?mapCopy[locale][8]:unit;
   return {available:true,value:`${format(changing?ex.value-ex.baseline:ex.value,locale,changing||filter==='stabilite')} ${displayUnit}`,
     detail:changing?`2026: ${format(ex.baseline,locale)} ${unit} → ${year}: ${format(ex.value,locale)} ${unit}`:
-      filter==='stabilite'?warmingCopy[locale].reference:'',resolution:ex.resolution};
+      mapValueContext(filter,locale,year).reference,resolution:ex.resolution};
 }
 const snapshotScript = () => {
   const el=document.getElementById('survol'), rect=el.getBoundingClientRect();
@@ -96,7 +97,7 @@ const snapshotScript = () => {
     horizontalOverflow:document.documentElement.scrollWidth>innerWidth};
 };
 const pointerOnly=process.env.QA_POINTER_ONLY==='1';
-const report={phase:pointerOnly?'pointer':'full',profiles:[],matrix:[],locales:[],checks:[],notices:[],limitations:'Chromium with mobile emulation; no physical iPhone/Safari test. Numeric UI expectations derive from shipped fields, not independent raw TIFF acquisition.'};
+const report={phase:pointerOnly?'pointer':'full',profiles:[],defaults:[],matrix:[],locales:[],checks:[],notices:[],limitations:'Chromium with mobile emulation; no physical iPhone/Safari test. Numeric UI expectations derive from shipped fields, not independent raw TIFF acquisition.'};
 function validate(snapshot,filter,year,mode,s,locale,context) {
   const ex=expectedDisplay(filter,year,mode,s,locale);
   assert.equal(snapshot.value,ex.value,context+' headline');
@@ -117,6 +118,7 @@ function validate(snapshot,filter,year,mode,s,locale,context) {
   }
   if(mode==='change'&&filter!=='declin')assert.ok(snapshot.subtitle.includes(refinementCopy(locale).change),context+' reference label');
   if(ex.available&&mode==='value'&&filter==='stabilite')assert.equal(snapshot.subtitle,`${warmingCopy[locale].label} · ${year}`,context+' estimated warming label');
+  if(ex.available&&mode==='value'&&filter==='declin')assert.equal(snapshot.note,mapValueContext(filter,locale,year).hint,context+' annual population reference and decline-only colours');
   assert.equal(snapshot.horizontalOverflow,false,context+' horizontal page overflow');
   const b=snapshot.bounds,v=snapshot.viewport;
   assert.ok(b.x>=7&&b.y>=7&&b.x+b.width<=v.width-7&&b.y+b.height<=v.height-7,context+' tooltip viewport containment');
@@ -168,7 +170,8 @@ try {
           shader:s=>{const row=Math.min(359,Math.floor((90-s.lat)*2))*720+Math.floor(((s.lon+180)%360+360)%360*2),off=((359-Math.floor(row/720))*720+row%720)*4;
             const textures=Object.fromEntries(['aridityTemperature','aridityPrecipitation'].map(key=>{const texture=uniformsGlobe['uScientific_'+key].value;return [key,{width:texture.image.width,height:texture.image.height,float32:texture.image.data instanceof Float32Array,anchors:Array.from(texture.image.data.slice(off,off+4))}];}));
             return {textures,error:moteur.getContext().getError(),failedPrograms:moteur.info.programs.filter(p=>p.diagnostics&&!p.diagnostics.runnable).map(p=>({name:p.name,diagnostics:p.diagnostics})),programs:moteur.info.programs.length};},
-          state:()=>({filter:filtreSurvol,year:etat.annee,mode:uniformsGlobe.uChange.value>.5?'change':'value',langue})
+          state:()=>({filter:filtreSurvol,year:etat.annee,mode:uniformsGlobe.uChange.value>.5?'change':'value',langue,
+            controls:Object.fromEntries([...document.querySelectorAll('[data-map-mode]')].map(b=>[b.dataset.mapMode,b.getAttribute('aria-pressed')]))})
         };
       </script>\n</body>`);
       await route.fulfill({response,body});
@@ -216,6 +219,18 @@ try {
     if(!pointerOnly){
     for(const f of filters) {
       await filter(f);
+      await year(2026);
+      const defaultState=await page.evaluate(()=>__dataIntegrityAudit.state());
+      assert.equal(defaultState.mode,'value',profile+'/'+f+' fresh filter default');
+      assert.equal(defaultState.controls.value,'true',profile+'/'+f+' value button selected');
+      assert.equal(defaultState.controls.change,'false',profile+'/'+f+' change button unselected');
+      const defaultContext=mapValueContext(f,'fr',2026);
+      assert.equal(await page.locator('[data-map-mode="value"]').textContent(),defaultContext.value,profile+'/'+f+' contextual value button');
+      assert.equal(await page.locator('.map-scale small').textContent(),defaultContext.reference,profile+'/'+f+' legend reference');
+      assert.equal(await page.locator('.map-hint').textContent(),defaultContext.hint,profile+'/'+f+' value hint');
+      await show(samples[0]);const defaultSnapshot=await snapshot();
+      validate(defaultSnapshot,f,2026,'value',samples[0],'fr',profile+'/'+f+' fresh default reading');
+      report.defaults.push({profile,filter:f,state:defaultState,...defaultSnapshot});
       await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
       const shader=await page.evaluate(s=>__dataIntegrityAudit.shader(s),samples[0]);
       assert.equal(shader.error,0,profile+'/'+f+' WebGL error');assert.deepEqual(shader.failedPrograms,[],profile+'/'+f+' shader compilation');
@@ -327,7 +342,7 @@ try {
     await page.close();activePage=null;
   }
   await writeFile(new URL('results.json',output),JSON.stringify(report,null,2)+'\n');
-  console.log(`PASS UI: ${report.matrix.length} numeric matrix states + ${report.locales.length} localized states across ${report.profiles.length} selected viewports`);
+  console.log(`PASS UI: ${report.defaults.length} fresh default readings + ${report.matrix.length} numeric matrix states + ${report.locales.length} localized states across ${report.profiles.length} selected viewports`);
 }catch(error) {
   if(activePage) {
     await activePage.screenshot({path:fileURLToPath(new URL('failure.png',output))}).catch(()=>{});

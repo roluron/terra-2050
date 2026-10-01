@@ -5,12 +5,14 @@ import {chromium} from 'playwright';
 import {enter, chooseLanguage} from './entrance.cjs';
 import {hoverCopy, warmingCopy, populationHover, physicalHover, formatHoverNumber} from '../../hover-diagnostic.mjs';
 import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
+import {mapValueContext} from '../../map-value-context.mjs';
 const annual=JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json',import.meta.url)));
 const climateMeta=JSON.parse(fs.readFileSync(new URL('../../data/climate-manifest.json',import.meta.url)));
 const climateBytes=gunzipSync(fs.readFileSync(new URL('../../data/climate-grid.bin',import.meta.url)));
 const climateValues=new Float32Array(climateBytes.buffer.slice(climateBytes.byteOffset,climateBytes.byteOffset+climateBytes.byteLength));
 const output=process.env.QA_SORTIE||'/tmp/terra-warming-reference/hover';
 const compactReferenceOnly=process.env.QA_COMPACT_REFERENCE_ONLY==='1';
+const filters=['chaleur','secheresse','feux','mer','fleuves','stabilite','declin'];
 fs.mkdirSync(output,{recursive:true});
 // Compute the anomaly from packaged temperature fields, independently of
 // mapDiagnosticReading/physicalHover. Keep the historical mean unchanged.
@@ -23,7 +25,13 @@ function warmingAt({lat,lon},year){
 }
 const signedTemperature=(value,locale)=>new Intl.NumberFormat(locale,{maximumFractionDigits:2,signDisplay:'exceptZero'})
  .format(Number(value.toFixed(2))).replace(/-/g,'−')+' °C';
-const report={profiles:[],languageNavigation:'Existing language navigation closes the tooltip. Mode selection is preserved; translated content is checked after a new pin. Pinned year changes are checked without another pin.',limitations:'Chromium desktop and mobile emulation; expected warming derives from shipped climate fields, not independently reacquired source files.'};
+function hottestMonthAt({lat,lon},year){
+ const row=Math.min(climateMeta.height-1,Math.floor((90-lat)/180*climateMeta.height));
+ const col=Math.floor(((lon+180)%360+360)%360/360*climateMeta.width),offset=(row*climateMeta.width+col)*climateMeta.fields.length;
+ const [historic,near,future]=[2,6,10].map(i=>climateValues[offset+i]);
+ return year<2030?historic+(near-historic)*(year-1985)/45:near+(future-near)*(year-2030)/20;
+}
+const report={profiles:[],compactContexts:[],languageNavigation:'Existing language navigation closes the tooltip. Mode selection is preserved; translated content is checked after a new pin. Pinned year changes are checked without another pin.',limitations:'Chromium desktop and mobile emulation; expected temperature/warming derives from shipped climate fields, not independently reacquired source files.'};
 for(const locale of Object.keys(hoverCopy)){
   assert.equal(hoverCopy[locale].length,3);
   assert.ok(populationHover(annual.CN,2050,true,locale).detail.includes('2026 → 2050'));
@@ -109,11 +117,17 @@ try{
   // A deliberate change view survives filter switches, year and language.
   await mode('change');await year(2026);if(name==='desktop')await showWarming();
   assert.equal(await field('.s-indice'),'0 °C');await assertMode('change');
-  await filter('chaleur');await assertMode('change');await mode('value');
+  await filter('chaleur');await assertMode('value');await mode('value');
   await filter('stabilite');await assertMode('change');await year(2030);await assertMode('change');
   await chooseLocale('en');await assertMode('change');
   await filter('chaleur');await assertMode('value');
   await filter('stabilite');await assertMode('change');await mode('value');
+  // Also remember a non-warming choice that differs from its fresh default.
+  await filter('chaleur');await mode('change');await assertMode('change');
+  await filter('stabilite');await assertMode('value');
+  await filter('chaleur');await assertMode('change');await year(2026);await assertMode('change');
+  await chooseLocale('fr');await assertMode('change');
+  await mode('value');await filter('stabilite');await assertMode('value');
   await showWarming();
   // Language navigation closes the tooltip by existing design. Keep the
   // deliberate mode choice, then reveal the newly translated reading.
@@ -137,22 +151,44 @@ try{
      await page.mouse.move(8,8);await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     }
     await showWarming();assert.equal(await page.locator('#survol').isVisible(),true,name+' capture reading visible');
+    await page.waitForFunction(()=>Number(getComputedStyle(document.getElementById('survol')).opacity)>.99);
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     await page.screenshot({path:`${output}/${name}-${locale}-warming-2026.png`});
+    await filter('chaleur');await assertMode('value');
+    if(name==='desktop')await page.mouse.move(8,8);
+    await showWarming();assert.equal(await page.locator('#survol').isVisible(),true,name+' heat capture visible');
+    const heatExpected=new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(Number(hottestMonthAt(warmingSample,2026).toFixed(2)))+' °C';
+    assert.equal(await field('.s-indice'),heatExpected,name+' hottest-month heat from raw packaged fields');
+    assert.equal(await field('.s-detail'),mapValueContext('chaleur',locale,2026).reference);
+    await page.waitForFunction(()=>Number(getComputedStyle(document.getElementById('survol')).opacity)>.99);
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    await page.screenshot({path:`${output}/${name}-${locale}-heat-2026.png`});
+    await filter('stabilite');await assertMode('value');await showWarming();
    }
    if(compactReferenceOnly){
-    await page.locator('#map-toggle').tap();
-    const legend=page.locator('.map-scale small');await legend.scrollIntoViewIfNeeded();
-    assert.equal(await legend.isVisible(),true,locale+' compact reference visible');
-    const bounds=await page.locator('#map-options').boundingBox();
-    assert.ok(bounds.x>=-1&&bounds.y>=-1&&bounds.x+bounds.width<=321&&bounds.y+bounds.height<=569,locale+' compact menu fits viewport');
-    assert.equal(await page.locator('#map-options').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,locale+' compact menu no horizontal overflow');
-    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,locale+' compact page no horizontal overflow');
-    if(['en','fr','vi'].includes(locale))await page.screenshot({path:`${output}/compact-${locale}-warming-menu.png`});
-    await page.locator('#map-toggle').tap();
+    for(const key of filters){
+     if((await state()).filter!==key)await filter(key);
+     await mode('value');await assertMode('value');
+     const context=mapValueContext(key,locale,2026);
+     assert.equal(await page.locator('[data-map-mode="value"]').textContent(),context.value,locale+'/'+key+' compact value control');
+     assert.equal(await page.locator('.map-scale small').textContent(),context.reference,locale+'/'+key+' compact legend reference');
+     assert.equal(await page.locator('.map-hint').textContent(),context.hint,locale+'/'+key+' compact contextual hint');
+     await page.locator('#map-toggle').tap();
+     const legend=page.locator('.map-scale small');await legend.scrollIntoViewIfNeeded();
+     assert.equal(await legend.isVisible(),true,locale+'/'+key+' compact reference visible');
+     const bounds=await page.locator('#map-options').boundingBox();
+     assert.ok(bounds.x>=-1&&bounds.y>=-1&&bounds.x+bounds.width<=321&&bounds.y+bounds.height<=569,locale+'/'+key+' compact menu fits viewport');
+     assert.equal(await page.locator('#map-options').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,locale+'/'+key+' compact menu no horizontal overflow');
+     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,locale+'/'+key+' compact page no horizontal overflow');
+     if(['en','fr'].includes(locale)||(locale==='vi'&&['feux','secheresse'].includes(key)))await page.screenshot({path:`${output}/compact-${locale}-${key}-menu.png`});
+     report.compactContexts.push({locale,filter:key,...context,bounds});
+     await page.locator('#map-toggle').tap();
+    }
+    await filter('stabilite');await assertMode('value');await showWarming();
    }
   }
   await chooseLanguage(page,'fr');await filter('stabilite');await year(2026);await show();
-  report.profiles.push({name,viewport:options.viewport,defaultReadings:snapshots,rememberedChoices:true,locales:Object.keys(warmingCopy),compactReferenceOnly});
+  report.profiles.push({name,viewport:options.viewport,defaultReadings:snapshots,rememberedChoices:true,rememberedNonWarmingChoice:'Heat: explicit change survives switching to warming value, returning, year change and language change.',locales:Object.keys(warmingCopy),compactReferenceOnly});
   console.log(`PASS ${name}: historical warming reference, independent raw-field values, remembered modes and eight translated references`);
   if(compactReferenceOnly){
    assert.deepEqual(errors,[]);fs.writeFileSync(`${output}/results.json`,JSON.stringify(report,null,2)+'\n');await page.close();continue;
@@ -163,7 +199,7 @@ try{
   await year(2050);
   if(name==='mobile'){assert.match(await field('.s-sous'),/2050/);assert.equal(await page.locator('#survol').getAttribute('role'),'button');}
   else await show();
-  await filter('declin');await show();
+  await filter('declin');await mode('change');await show();
   assert.equal(await field('.s-indice'),populationHover(annual.CN,2050,true,'fr').value);
   assert.equal(await field('.s-detail'),populationHover(annual.CN,2050,true,'fr').detail);
   await mode('value');
@@ -173,6 +209,7 @@ try{
   for(const key of ['chaleur','secheresse','feux','mer','fleuves','stabilite']){
    await filter(key);await mode('value');await show();console.log(`CHECK ${name} ${key}`);
    assert.ok(await field('.s-indice'),key+' value');
+   assert.equal(await field('.s-detail'),mapValueContext(key,'fr',2050).reference,key+' value reference');
    assert.match(await field('.s-note'),/Maille du modèle/);
    if(['mer','fleuves'].includes(key))assert.match(await field('.s-note'),/cellules sources.*centennale/);
    await mode('change');await show();

@@ -413,7 +413,8 @@ import { language, getText, message, languageControl } from './i18n.mjs';
 import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
 import { createComparison } from './city-comparison.mjs';
 import { createYearRuler } from './year-ruler.mjs';
-import { hoverCopy, hoverMetricKey, populationHover, physicalHover, formatHoverNumber, warmingCopy } from './hover-diagnostic.mjs';
+import { hoverCopy, hoverMetricKey, populationHover, physicalHover, formatHoverNumber } from './hover-diagnostic.mjs';
+import { mapValueContext } from './map-value-context.mjs';
 import { mapDiagnosticReading } from './map-diagnostic.mjs';
 import { mapDiagnosticCopy } from './map-diagnostic-copy.mjs';
 import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
@@ -1621,9 +1622,9 @@ const CALQUES = {
 };
 const etat = { progression: 0, annee: 2026, crise: false };
 let filtreSurvol = null, rafraichirSurvol = () => {};
-// Each indicator remembers explicit choices during this visit. Local warming
-// opens on the stored historical anomaly; other indicators keep their default.
-const modesCarte = new Map([['stabilite', 'value']]);
+// Each indicator opens on its contextual level/reference, and remembers
+// explicit mode choices during this visit.
+const modesCarte = new Map();
 function appliquerModeCarte(mode){
   uniformsGlobe.uChange.value = Number(mode === 'change');
   for (const item of document.querySelectorAll('[data-map-mode]')) item.setAttribute('aria-pressed', String(item.dataset.mapMode === mode));
@@ -1638,14 +1639,14 @@ function majContexteCalques(){
   toggle.dataset.shortLabel=({en:'Filters',fr:'Filtres',it:'Filtri',es:'Filtros',vi:'Bộ lọc',ja:'指標',zh:'指标','zh-Hant':'指標'})[langue]||'Filters';
   toggle.setAttribute('aria-label',`${toggle.dataset.shortLabel}: ${toggle.querySelector('span').textContent}`);
   const changing = uniformsGlobe.uChange.value > 0.5;
-  const warming = actifs.includes('stabilite'), warmingWords = warmingCopy[langue] || warmingCopy.en;
+  const valueContext = mapValueContext(actifs[0], langue, etat.annee);
   document.getElementById('model-notice').hidden = !actifs.length;
   document.querySelector('[data-map-mode="change"]').textContent = words[0];
   const guide = experienceCopy(langue);
   const searchInvitation=document.getElementById('explore-city');
   searchInvitation.querySelector('.city-search-label').textContent = guide.journey;
   searchInvitation.setAttribute('aria-label',guide.journey);
-  document.querySelector('[data-map-mode="value"]').textContent = warming ? warmingWords.value : guide.value.replace('{year}',etat.annee);
+  document.querySelector('[data-map-mode="value"]').textContent = valueContext.value;
   document.querySelector('#map-method summary').textContent = words[2];
   const notes = [`${etat.annee} · ${T().ui.model_indicators}`];
   const diagnosticWords = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
@@ -1693,9 +1694,9 @@ function majContexteCalques(){
     const ticks = document.createElement('span');
     for (const value of scales[key].slice(1)) {const tick = document.createElement('span');tick.textContent=value;ticks.append(tick);}
     row.append(title,bar,ticks);el.append(row);
-    if (key === 'stabilite' && !changing){
+    if (!changing){
       const reference = document.createElement('small');
-      reference.textContent = warmingWords.reference;
+      reference.textContent = valueContext.reference;
       row.append(reference);
     }
     if (changing && ['mer','fleuves','secheresse','declin'].includes(key)) {
@@ -1704,7 +1705,7 @@ function majContexteCalques(){
       row.append(unit);
     }
   }
-  const hint = document.createElement('p');hint.className='map-hint';hint.textContent = changing && etat.annee === 2026 ? words[4] : changing ? guide.change : warming ? warmingWords.hint : guide.valueHint.replace('{year}',etat.annee);el.append(hint);
+  const hint = document.createElement('p');hint.className='map-hint';hint.textContent = changing && etat.annee === 2026 ? words[4] : changing ? guide.change : valueContext.hint;el.append(hint);
   document.getElementById('layer-method').textContent = [...notes, words[5]].join('\n');
   cadrerCarte();
   filtreSurvol = actifs[0] || null;
@@ -1764,7 +1765,7 @@ for (const btn of document.querySelectorAll('.calque')){
     if (actif) for (const other of document.querySelectorAll('.calque.actif')) if (other !== btn) other.click();
     btn.classList.toggle('actif', actif);
     btn.setAttribute('aria-pressed', actif ? 'true' : 'false');
-    if (actif) appliquerModeCarte(modesCarte.get(btn.dataset.cle) || 'change');
+    if (actif) appliquerModeCarte(modesCarte.get(btn.dataset.cle) || 'value');
     fermerChoixCarte();
     majContexteCalques();
     if (actif) montrerPedago(btn.dataset.cle);
@@ -3833,23 +3834,26 @@ function montrerSurvol(s, cx, cy, fige){
     let diagnostic = null, note = '', label, color = '';
     if (filter){
       label = filter === 'declin' ? copy.population : T().critere[hoverMetricKey[filter]];
-      if (filter === 'declin') diagnostic = populationHover(PAYS_POP[iso], an, changing, langue);
+      if (filter === 'declin') {
+        diagnostic = populationHover(PAYS_POP[iso], an, changing, langue);
+        if (diagnostic && !changing) note = mapValueContext(filter, langue, an).hint;
+      }
       else {
         const reading = mapDiagnosticReading({filter, year: an, latitude: s.lat, longitude: s.lon,
           climate: SCIENCE?.climate, fire: FIRE_WEATHER, floods: FLOOD_HAZARDS});
         const isFlood = filter === 'mer' || filter === 'fleuves';
         diagnostic = physicalHover(reading, an, changing, langue, uniteLocale(reading.unit),
           isFlood ? (mapCopy[langue] || mapCopy.en)[8] : uniteLocale(reading.unit));
-        if (diagnostic && filter === 'stabilite' && !changing){
-          const warmingWords = warmingCopy[langue] || warmingCopy.en;
-          label = warmingWords.label;
-          diagnostic.detail = warmingWords.reference;
+        if (diagnostic && !changing){
+          const context = mapValueContext(filter, langue, an);
+          if (context.label) label = context.label;
+          diagnostic.detail = context.reference;
         }
         if (diagnostic){
           const words = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
           note = words[0].replace('{size}', formatHoverNumber(reading.resolutionDegrees, langue))
             .replace('{km}', String(Math.round(reading.resolutionDegrees * 111.2)));
-          note += ' ' + (isFlood ? words[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
+          if (changing || !['chaleur','secheresse','stabilite'].includes(filter)) note += ' ' + (isFlood ? words[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
           if (reading.modelCount > 1) note += ' ' + words[2].replace('{n}', String(reading.modelCount));
           else if (!isFlood && filter !== 'feux') note += ' ' + words[3];
         }
