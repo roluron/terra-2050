@@ -20,7 +20,7 @@ assert.equal(physicalHover({available:true,value:1,baseline:3},2050,true,'en','m
 assert.equal(physicalHover({available:false,value:0,baseline:0},2050,false,'en','m'),null);
 assert.equal(formatHoverNumber(-.001,'fr',true),'0');
 console.log('PASS numerical edge cases: population references, signs, missing/zero readings, locale rounding');
-const browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM_PATH||'/usr/bin/chromium',args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const browser=await chromium.launch({headless:true,...(process.env.QA_CHROMIUM_PATH?{executablePath:process.env.QA_CHROMIUM_PATH}:{}),args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{
  for(const [name,options] of [['desktop',{viewport:{width:1280,height:800}}],['mobile',{viewport:{width:393,height:852},isMobile:true,hasTouch:true}]]){
   const page=await browser.newPage({...options,reducedMotion:'reduce'}),errors=[];
