@@ -69,7 +69,7 @@ try{
      ready:()=>!!PAYS_RASTER && !!SCIENCE && PAYS_LIGNES.length>0,
      show:(iso,x=100,y=150,pinned=false)=>montrerSurvol({iso,lat:iso==='ZZ'?undefined:35,lon:iso==='ZZ'?undefined:105},x,y,pinned),
      showAt:(s,x=100,y=150,pinned=false)=>montrerSurvol(s,x,y,pinned),
-     state:()=>({filter:filtreSurvol,year:etat.annee,mode:uniformsGlobe.uChange.value>.5?'change':'value',controls:Object.fromEntries([...document.querySelectorAll('[data-map-mode]')].map(b=>[b.dataset.mapMode,b.getAttribute('aria-pressed')]))}),
+     state:()=>({filter:filtreSurvol,year:etat.annee,mode:uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value',controls:Object.fromEntries([...document.querySelectorAll('[data-map-mode]')].map(b=>[b.dataset.mapMode,b.getAttribute('aria-pressed')]))}),
      align:()=>{arreterVolCamera();controles.autoRotate=false;camera.position.copy(latLonVersVec3(25,45,camera.position.length()));camera.lookAt(0,0,0);controles.update();camera.updateMatrixWorld();},
      readings:(iso)=>Object.fromEntries(Object.entries(hoverMetricKey).map(([filter,key])=>[key,mapDiagnosticReading({filter,year:etat.annee,latitude:35,longitude:105,climate:SCIENCE.climate,fire:FIRE_WEATHER,floods:FLOOD_HAZARDS})])),
      score:iso=>indicePays(iso,etat.annee),
@@ -117,7 +117,7 @@ try{
   // A deliberate change view survives filter switches, year and language.
   await mode('change');await year(2026);if(name==='desktop')await showWarming();
   assert.equal(await field('.s-indice'),'0 °C');await assertMode('change');
-  await filter('chaleur');await assertMode('value');await mode('value');
+  await filter('chaleur');await assertMode('reference');await mode('value');
   await filter('stabilite');await assertMode('change');await year(2030);await assertMode('change');
   await chooseLocale('en');await assertMode('change');
   await filter('chaleur');await assertMode('value');

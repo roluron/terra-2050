@@ -46,7 +46,7 @@ function summarize(records, year, years, ensemble) {
   const baseline = records.map(values => interpolate(values, 2026, years));
   const changes = current.map((value, index) => value - baseline[index]);
   const change = mean(changes);
-  return { value: mean(current), baseline: mean(baseline), near: mean(records.map(values => values[1])),
+  return { value: mean(current), historical: mean(records.map(values => values[0])), baseline: mean(baseline), near: mean(records.map(values => values[1])),
     future: mean(records.map(values => values[2])), change,
     p10: ensemble ? quantile(changes, .1) : null, p90: ensemble ? quantile(changes, .9) : null,
     valueP10: ensemble ? quantile(current, .1) : null, valueP90: ensemble ? quantile(current, .9) : null,
@@ -66,7 +66,7 @@ function result(records, fractions, models, year, hazard, periods, support) {
     agreementReference: ensemble ? 'sign-of-mean-paired-change-from-2026' : null, ...support };
   if (fractions) {
     const fraction = summarize(fractions, year, years, ensemble);
-    Object.assign(output, { fraction: fraction.value, baselineFraction: fraction.baseline, nearFraction: fraction.near,
+    Object.assign(output, { fraction: fraction.value, historicalFraction: fraction.historical, baselineFraction: fraction.baseline, nearFraction: fraction.near,
       futureFraction: fraction.future, fractionChange: fraction.change, fractionP10: fraction.p10,
       fractionP90: fraction.p90, fractionAgreement: fraction.agreement,
       fractionMeaning: 'Fraction of valid source cells deeper than 0.5 m; not population exposure' });

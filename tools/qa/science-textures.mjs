@@ -30,8 +30,8 @@ clearInterval(timer);
 assert.ok(ticks > 0);
 const names = ['heat', 'aridity', 'warming', 'coast', 'river'];
 const ingredientNames = ['aridityTemperature', 'aridityPrecipitation'];
-assert.deepEqual(Object.keys(textures), [...names, ...ingredientNames]);
-assert.equal(textures.heat.userData.scientific.stats.bytes, 20736000);
+assert.deepEqual(Object.keys(textures), [...names, ...ingredientNames, 'historicalClimate', 'historicalFlood']);
+assert.equal(textures.heat.userData.scientific.stats.bytes, 29030400);
 function at(texture, lat, lon) {
   const x = Math.floor(((lon + 180) % 360 + 360) % 360 * 2), y = Math.min(359, Math.floor((90 - lat) * 2));
   const offset = ((359 - y) * 720 + x) * 4;
@@ -66,6 +66,32 @@ for (const [lat, lon] of [[48.85, 2.35], [23.81, 90.41], [10.78, 106.7], [12.37,
     const actual = at(textures[hazard], lat, lon);
     assert.equal(actual[3], Number(expected.every(value => value.available)));
     if (actual[3]) actual.slice(0, 3).forEach((value, i) => close(value, expected[i].fraction));
+    const history = at(textures.historicalFlood, lat, lon), component = hazard === 'coast' ? 0 : 1;
+    assert.equal(history[component + 2], Number(expected.every(value => value.available)));
+    if (history[component + 2]) close(history[component], expected[0].historicalFraction);
+  }
+  const x = Math.floor(((lon + 180) % 360 + 360) % 360 * 2), y = Math.min(359, Math.floor((90 - lat) * 2));
+  const o = (y * 720 + x) * 12, raw = climate.values;
+  const history = at(textures.historicalClimate, lat, lon);
+  const validHeat = [raw[o + 2], raw[o + 6], raw[o + 10]].every(Number.isFinite);
+  assert.equal(history[2], Number(validHeat));
+  if (validHeat) close(history[0], raw[o + 2]);
+  const ingredients = at(textures.aridityTemperature, lat, lon);
+  const validAridity = ingredients[3] === 1 && Number.isFinite(raw[o]) && raw[o] > -10 && Number.isFinite(raw[o + 1]) && raw[o + 1] >= 0;
+  assert.equal(history[3], Number(validAridity));
+  if (validAridity) close(history[1], raw[o + 1] / (raw[o] + 10));
+}
+for (const name of ['historicalClimate', 'historicalFlood']) {
+  const texture = textures[name];
+  assert.equal(texture.type, THREE.FloatType);
+  assert.match(texture.userData.scientific.decode, /decode R\/B and G\/A/);
+  for (let offset = 0; offset < texture.image.data.length; offset += 4) {
+    for (let component = 0; component < 2; component++) {
+      const value = texture.image.data[offset + component], valid = texture.image.data[offset + component + 2];
+      assert.ok(valid === 0 || valid === 1);
+      assert.ok(Number.isFinite(value));
+      if (!valid) assert.equal(value, 0);
+    }
   }
 }
 assert.equal(at(textures.heat, 89.75, -179.75)[3], 1);

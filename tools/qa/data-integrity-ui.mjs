@@ -7,7 +7,7 @@ import {chromium} from 'playwright';
 import {enter, welcome, chooseLanguage} from './entrance.cjs';
 import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 import {warmingCopy} from '../../hover-diagnostic.mjs';
-import {mapValueContext} from '../../map-value-context.mjs';
+import {mapValueContext,mapReferenceContext,historicalFilters,historicalPeriods} from '../../map-value-context.mjs';
 import {mapCopy, refinementCopy} from '../../refinement-copy.mjs';
 
 // Browser integration checks. Numeric expectations use raw packaged fields,
@@ -42,11 +42,12 @@ function expected(filter,year,s) {
     const anchors=[2026,2030,2050].map(y=>({t:at(0,y),p:at(1,y)}));
     const available=filter!=='secheresse'||anchors.every(({t,p})=>Number.isFinite(t)&&Math.fround(t)>-10&&Number.isFinite(p)&&Math.fround(p)>=0);
     const baseline=calc(2026),value=calc(year),future=calc(2050);
-    return {available:available&&[baseline,value,future].every(Number.isFinite),baseline,value,unit:filter==='secheresse'?'De Martonne':'°C',resolution:.5};
+    const historical=filter==='secheresse'?(climate.values[off]>-10?climate.values[off+1]/(climate.values[off]+10):NaN):climate.values[off+2];
+    return {available:available&&[baseline,value,future].every(Number.isFinite),baseline,value,historical,unit:filter==='secheresse'?'De Martonne':'°C',resolution:.5};
   }
   if (filter==='feux') {
     const off=rowAt(fire,s)*8, baseline=fire.values[off+1], future=fire.values[off+2];
-    return {available:[baseline,future].every(x=>Number.isFinite(x)&&x>=0&&x<=366),baseline,
+    return {available:[baseline,future].every(x=>Number.isFinite(x)&&x>=0&&x<=366),baseline,historical:fire.values[off],
       value:baseline+(future-baseline)*(year-2026)/24,unit:'days/year',resolution:2.5};
   }
   const hazard=filter==='mer'?'coast':'river',grid=floods[hazard],fields=grid.metadata.fields,off=rowAt(grid,s)*fields.length;
@@ -59,7 +60,7 @@ function expected(filter,year,s) {
     .map(rows=>rows.map(r=>r[1]));
   if (!records.length) return {available:false};
   const hy=hazard==='river'?1980:1996.5;
-  return {available:true,baseline:mean(records.map(r=>interp(...r,2026,hy)))*100,
+  return {available:true,historical:mean(records.map(r=>r[0]))*100,baseline:mean(records.map(r=>interp(...r,2026,hy)))*100,
     value:mean(records.map(r=>interp(...r,year,hy)))*100,unit:'%',resolution:.5};
 }
 // Explicit bounded rounding is required: a nonzero small change must not be
@@ -76,13 +77,15 @@ function format(value,locale,signed=false,digits=2) {
 const dayUnits={fr:'jours/an',en:'days/year',it:'giorni/anno',es:'días/año',vi:'ngày/năm',ja:'日/年',zh:'天/年','zh-Hant':'天/年'};
 function expectedDisplay(filter,year,mode,s,locale) {
   const ex=expected(filter,year,s);
-  if (!ex.available) return {available:false,value:'',detail:null};
+  if (!ex.available || mode==='reference'&&!Number.isFinite(ex.historical)) return {available:false,value:'',detail:null};
   if (filter==='declin') {
     const reference=mode==='change'?2026:2025,a=ex.annual,level=a[year-2025],baseline=a[reference-2025];
     return {available:true,value:`${format((level/baseline-1)*100,locale,true,1)} %`,
       detail:`${format(level,locale,false,0)} · ${reference} → ${year}`};
   }
   const unit=ex.unit==='days/year'?dayUnits[locale]:ex.unit;
+  if(mode==='reference')return {available:true,value:`${format(ex.value-ex.historical,locale,true)} ${['mer','fleuves'].includes(filter)?mapCopy[locale][8]:unit}`,
+    detail:`${historicalPeriods[filter]}: ${format(ex.historical,locale)} ${unit} → ${year}: ${format(ex.value,locale)} ${unit}`,resolution:ex.resolution};
   const changing=mode==='change',displayUnit=changing&&['mer','fleuves'].includes(filter)?mapCopy[locale][8]:unit;
   return {available:true,value:`${format(changing?ex.value-ex.baseline:ex.value,locale,changing||filter==='stabilite')} ${displayUnit}`,
     detail:changing?`2026: ${format(ex.baseline,locale)} ${unit} → ${year}: ${format(ex.value,locale)} ${unit}`:
@@ -111,12 +114,13 @@ function validate(snapshot,filter,year,mode,s,locale,context) {
     assert.ok(snapshot.note.startsWith(prefix),context+' local-cell support');
     if (['mer','fleuves'].includes(filter)) {
       assert.ok(snapshot.note.includes(mapDiagnosticCopy[locale][1]),context+' flood meaning');
-      if(mode==='change')assert.ok(snapshot.value.endsWith(mapCopy[locale][8]),context+' percentage points');
+      if(mode==='change'||mode==='reference')assert.ok(snapshot.value.endsWith(mapCopy[locale][8]),context+' percentage points');
       else assert.ok(snapshot.value.endsWith('%'),context+' percentage');
       assert.ok(!snapshot.value.endsWith(' m'),context+' fraction is not metres');
     }
   }
   if(mode==='change'&&filter!=='declin')assert.ok(snapshot.subtitle.includes(refinementCopy(locale).change),context+' reference label');
+  if(mode==='reference')assert.ok(snapshot.subtitle.includes(mapReferenceContext(filter,locale).value),context+' historical reference label');
   if(ex.available&&mode==='value'&&filter==='stabilite')assert.equal(snapshot.subtitle,`${warmingCopy[locale].label} · ${year}`,context+' estimated warming label');
   if(ex.available&&mode==='value'&&filter==='declin')assert.equal(snapshot.note,mapValueContext(filter,locale,year).hint,context+' annual population reference and decline-only colours');
   assert.equal(snapshot.horizontalOverflow,false,context+' horizontal page overflow');
@@ -170,7 +174,7 @@ try {
           shader:s=>{const row=Math.min(359,Math.floor((90-s.lat)*2))*720+Math.floor(((s.lon+180)%360+360)%360*2),off=((359-Math.floor(row/720))*720+row%720)*4;
             const textures=Object.fromEntries(['aridityTemperature','aridityPrecipitation'].map(key=>{const texture=uniformsGlobe['uScientific_'+key].value;return [key,{width:texture.image.width,height:texture.image.height,float32:texture.image.data instanceof Float32Array,anchors:Array.from(texture.image.data.slice(off,off+4))}];}));
             return {textures,error:moteur.getContext().getError(),failedPrograms:moteur.info.programs.filter(p=>p.diagnostics&&!p.diagnostics.runnable).map(p=>({name:p.name,diagnostics:p.diagnostics})),programs:moteur.info.programs.length};},
-          state:()=>({filter:filtreSurvol,year:etat.annee,mode:uniformsGlobe.uChange.value>.5?'change':'value',langue,
+          state:()=>({filter:filtreSurvol,year:etat.annee,mode:uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value',langue,
             controls:Object.fromEntries([...document.querySelectorAll('[data-map-mode]')].map(b=>[b.dataset.mapMode,b.getAttribute('aria-pressed')]))})
         };
       </script>\n</body>`);
@@ -221,15 +225,16 @@ try {
       await filter(f);
       await year(2026);
       const defaultState=await page.evaluate(()=>__dataIntegrityAudit.state());
-      assert.equal(defaultState.mode,'value',profile+'/'+f+' fresh filter default');
-      assert.equal(defaultState.controls.value,'true',profile+'/'+f+' value button selected');
+      const defaultMode=historicalFilters.has(f)?'reference':'value';
+      assert.equal(defaultState.mode,defaultMode,profile+'/'+f+' fresh filter default');
+      assert.equal(defaultState.controls[defaultMode],'true',profile+'/'+f+' default button selected');
       assert.equal(defaultState.controls.change,'false',profile+'/'+f+' change button unselected');
-      const defaultContext=mapValueContext(f,'fr',2026);
-      assert.equal(await page.locator('[data-map-mode="value"]').textContent(),defaultContext.value,profile+'/'+f+' contextual value button');
-      assert.equal(await page.locator('.map-scale small').textContent(),defaultContext.reference,profile+'/'+f+' legend reference');
+      const defaultContext=defaultMode==='reference'?mapReferenceContext(f,'fr'):mapValueContext(f,'fr',2026);
+      assert.equal(await page.locator('[data-map-mode="'+defaultMode+'"]').textContent(),defaultContext.value,profile+'/'+f+' contextual default button');
+      assert.equal(await page.locator('.map-scale small').first().textContent(),defaultContext.reference,profile+'/'+f+' legend reference');
       assert.equal(await page.locator('.map-hint').textContent(),defaultContext.hint,profile+'/'+f+' value hint');
       await show(samples[0]);const defaultSnapshot=await snapshot();
-      validate(defaultSnapshot,f,2026,'value',samples[0],'fr',profile+'/'+f+' fresh default reading');
+      validate(defaultSnapshot,f,2026,defaultMode,samples[0],'fr',profile+'/'+f+' fresh default reading');
       report.defaults.push({profile,filter:f,state:defaultState,...defaultSnapshot});
       await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
       const shader=await page.evaluate(s=>__dataIntegrityAudit.shader(s),samples[0]);
@@ -242,7 +247,7 @@ try {
         anchors.forEach((expected,i)=>assert.ok(Math.abs(t.anchors[i]-expected)<=1e-6*Math.max(1,Math.abs(expected)),profile+'/'+f+'/'+key+' ingredient anchor'));
       }
       shaderChecks.push({filter:f,...shader});
-      for(const m of ['value','change']) {
+      for(const m of historicalFilters.has(f)?['reference','value','change']:['value','change']) {
         await mode(m);
         for(const y of years) {
           await year(y);
@@ -253,7 +258,7 @@ try {
           }
         }
       }
-      console.log(`PASS ${profile} ${f}: two modes, five years, HCMC + PNG`);
+      console.log(`PASS ${profile} ${f}: contextual/reference modes, five years, HCMC + PNG`);
     }
     // Same-country movements must be cached only within the same model cell.
     await filter('fleuves');await mode('value');await year(2050);
@@ -284,7 +289,7 @@ try {
     await year(2050);
     for(const locale of Object.keys(mapDiagnosticCopy)) {
       await chooseLanguage(page,locale);await closeSettings();
-      for(const f of filters)for(const m of ['value','change']) {
+      for(const f of filters)for(const m of historicalFilters.has(f)?['reference','value','change']:['value','change']) {
         await page.evaluate(({f,m})=>{__dataIntegrityAudit.filter(f);__dataIntegrityAudit.mode(m);},{f,m});
         lastContext=`${profile}/${locale}/${f}/${m}`;await show(samples[1],options.viewport.width-2,options.viewport.height-2);
         const snap=await snapshot();validate(snap,f,2050,m,samples[1],locale,lastContext);report.locales.push({context:lastContext,...snap});

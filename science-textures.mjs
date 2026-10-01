@@ -36,8 +36,8 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
     'historical_precipitation', 'near_precipitation', 'future_precipitation',
     'historical_summerMaximum', 'near_summerMaximum', 'future_summerMaximum']);
   const rivers = floodReader(floods.river, 'river'), coasts = floodReader(floods.coast, 'coast');
-  const names = ['heat', 'aridity', 'warming', 'coast', 'river', 'aridityTemperature', 'aridityPrecipitation'];
-  const isFloat = name => name.startsWith('aridity');
+  const names = ['heat', 'aridity', 'warming', 'coast', 'river', 'aridityTemperature', 'aridityPrecipitation', 'historicalClimate', 'historicalFlood'];
+  const isFloat = name => name.startsWith('aridity') || name.startsWith('historical');
   const buffers = names.map(name => isFloat(name) ? new Float32Array(WIDTH * HEIGHT * 4) : new Uint16Array(WIDTH * HEIGHT * 4));
   const validCells = names.map(() => 0), overflowCells = names.map(() => 0), displayCappedCells = names.map(() => 0);
   const half = THREE.DataUtils.toHalfFloat, halfOne = half(1);
@@ -55,7 +55,7 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
   const flood = (source, row, output, kind) => {
     const offset = row * source.stride, data = source.values;
     if (!(data[offset + source.coverage] > 0 && data[offset + source.coverage] <= 1)) return;
-    let baseline = 0, near = 0, future = 0, count = 0;
+    let historical = 0, baseline = 0, near = 0, future = 0, count = 0;
     for (const indices of source.indices) {
       let valid = true;
       for (let i = 0; i < 6; i++) {
@@ -64,9 +64,15 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
       }
       if (!valid) continue;
       const a = data[offset + indices[3]], b = data[offset + indices[4]], c = data[offset + indices[5]];
-      baseline += a + (b - a) * source.progress; near += b; future += c; count++;
+      historical += a; baseline += a + (b - a) * source.progress; near += b; future += c; count++;
     }
-    if (count) store(kind, output, baseline / count, near / count, future / count);
+    if (count) {
+      store(kind, output, baseline / count, near / count, future / count);
+      const component = kind === 3 ? 0 : 1;
+      buffers[8][output + component] = historical / count;
+      buffers[8][output + component + 2] = 1;
+      validCells[8]++;
+    }
   };
   for (let row = 0; row < WIDTH * HEIGHT; row++) {
     const offset = row * stride;
@@ -77,6 +83,9 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
     const p26 = ph + (pn - ph) * 41 / 45;
     const sh = values[offset + ci[6]], sn = values[offset + ci[7]], sf = values[offset + ci[8]];
     store(0, output, sh + (sn - sh) * 41 / 45, sn, sf);
+    if ([sh, sn, sf].every(Number.isFinite)) {
+      buffers[7][output] = sh; buffers[7][output + 2] = 1; validCells[7]++;
+    }
     store(1, output, t26 > -10 ? p26 / (t26 + 10) : NaN, tn > -10 ? pn / (tn + 10) : NaN,
       tf > -10 ? pf / (tf + 10) : NaN);
     // Transport the ingredients, not an interpolated nonlinear index. Both
@@ -88,6 +97,9 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
         && encodedP26 >= 0 && pn >= 0 && pf >= 0) {
       store(5, output, encodedT26, tn, tf);
       store(6, output, encodedP26, pn, pf);
+      if (Number.isFinite(th) && th > -10 && Number.isFinite(ph) && ph >= 0) {
+        buffers[7][output + 1] = ph / (th + 10); buffers[7][output + 3] = 1;
+      }
     }
     store(2, output, t26 - th, tn - th, tf - th);
     flood(coasts, row, output, 3); flood(rivers, row, output, 4);
@@ -99,7 +111,7 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
   }
   maxChunkMs = Math.max(maxChunkMs, performance.now() - chunkStarted);
   const stats = { durationMs: performance.now() - started, maxChunkMs, yields, bytes: buffers.reduce((sum, buffer) => sum + buffer.byteLength, 0) };
-  const units = ['degC', 'De Martonne index', 'degC anomaly from historical', 'fraction of valid cells >0.5m', 'fraction of valid cells >0.5m', 'degC', 'mm/year'];
+  const units = ['degC', 'De Martonne index', 'degC anomaly from historical', 'fraction of valid cells >0.5m', 'fraction of valid cells >0.5m', 'degC', 'mm/year', 'historical heat / De Martonne', 'historical coast / river fractions'];
   return Object.fromEntries(names.map((name, index) => {
     const texture = new THREE.DataTexture(buffers[index], WIDTH, HEIGHT, THREE.RGBAFormat, isFloat(name) ? THREE.FloatType : THREE.HalfFloatType);
     texture.name = `science-${name}`;
@@ -112,14 +124,16 @@ export async function buildScientificTextures(THREE, climate, floods, linearFloa
       temporalMethod: name.startsWith('aridity') && name !== 'aridity'
         ? 'Interpolate temperature and precipitation between illustrative endpoints; derive precipitation/(temperature+10) only afterward. Not annual forecasts.'
         : 'Illustrative endpoint interpolation, not annual forecasts; intermediate De Martonne interpolation is a display approximation.',
-      ...(index >= 5 ? { pairedWith: names[index === 5 ? 6 : 5],
+      ...(index === 5 || index === 6 ? { pairedWith: names[index === 5 ? 6 : 5],
         validity: 'Identical matched mask: all three encoded temperatures finite and > -10 degC; all three encoded annual precipitations finite and >= 0.',
         definition: name === 'aridityTemperature' ? 'Annual mean midpoint temperature from monthly minimum and maximum' : 'Annual sum of monthly precipitation',
         derive: 'P/(T+10), only when T > -10 degC; do not interpolate the ratio' } : {}),
       displayCap: null,
       displayCapMeaning: null,
       displayCappedCells: displayCappedCells[index],
-      validCells: validCells[index], halfFloatOverflowCells: overflowCells[index], stats };
+      validCells: validCells[index], halfFloatOverflowCells: overflowCells[index], stats,
+      ...(index >= 7 ? {decode: 'RG are independent historical values; BA are their respective validity masks. After spatial sampling decode R/B and G/A only when the respective mask is positive.',
+        years: index === 7 ? ['1970–2000'] : [floods.coast.metadata.historical_period, floods.river.metadata.historical_period]} : {}) };
     return [name, texture];
   }));
 }

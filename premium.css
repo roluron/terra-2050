@@ -169,6 +169,11 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 #map-toggle[aria-expanded=true] svg {transform:none}
 #map-inspector:not(.choix-ouvert) #calques,body.pret #map-inspector:not(.choix-ouvert) #calques,#map-inspector:not(.choix-ouvert) #model-notice {display:none}
 #map-inspector #map-options {position:absolute;bottom:calc(100% + 16px);left:0;width:460px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 220px);overflow:auto;overscroll-behavior:contain;padding:12px;box-sizing:border-box;border-radius:28px;border:1px solid var(--glass-edge);background:var(--glass-surface);box-shadow:var(--glass-shadow);backdrop-filter:blur(12px) saturate(1.5);-webkit-backdrop-filter:blur(12px) saturate(1.5)}
+#filter-summary {position:absolute;left:24px;bottom:calc(var(--dock-bottom) + 64px);width:min(580px,calc(100vw - 300px));color:var(--glass-text);pointer-events:none;text-align:left}
+#filter-summary[hidden],body:not(.pret) #filter-summary {display:none}
+#filter-summary .summary-headline {font:400 clamp(24px,2.5vw,36px)/1.12 var(--police);letter-spacing:-.035em;text-wrap:balance}
+#filter-summary .summary-detail {max-width:560px;margin-top:8px;font:11px/1.4 var(--police);color:var(--glass-muted);text-wrap:pretty}
+#globe-dock:has(#map-inspector.choix-ouvert) #filter-summary {visibility:hidden}
 #map-inspector:not(.choix-ouvert) #map-options {display:none}
 #map-inspector.choix-ouvert #calques,body.pret #map-inspector.choix-ouvert #calques {display:grid;grid-template-columns:1fr 1fr;gap:4px}
 #map-inspector #calques .calque {min-height:48px;background:none;border-color:transparent}
@@ -179,6 +184,9 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 #map-inspector #map-contact {display:flex;align-items:center;min-height:44px;margin-top:10px;padding:4px 4px 0;border-top:1px solid #ffffff16;font-size:12px;line-height:1.4;color:var(--glass-muted);text-decoration:underline;text-decoration-color:#ffffff35;text-underline-offset:3px;transition:color .18s}
 #map-inspector #map-contact:hover {color:var(--glass-text)}
 @media(max-width:720px) {
+ #filter-summary {left:12px;bottom:calc(var(--dock-bottom) + 96px);width:calc(100vw - 24px)}
+ #filter-summary .summary-headline {font-size:25px;max-width:100%}
+ #filter-summary .summary-detail {font-size:10px;line-height:1.3;margin-top:6px}
  #globe-dock {--dock-bottom:calc(32px + env(safe-area-inset-bottom))}
  #globe-dock > #timeline,body.pret #globe-dock > #timeline {left:auto;right:20px;transform:none;width:112px}
  #globe-dock #timeline .an {font-size:48px}
@@ -188,6 +196,7 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
  #map-inspector #map-method summary {position:static;width:auto;height:auto;font-size:12px;display:flex;padding:8px 0;background:none;border:0}
  #map-inspector #map-method summary::after {content:none}
 }
+@media(max-height:500px) {#filter-summary {left:12px;bottom:calc(var(--dock-bottom) + 64px);width:40vw}#filter-summary .summary-headline{font-size:20px}#filter-summary .summary-detail{font-size:9px;line-height:1.2}}
 @media(max-height:500px) {#map-inspector #map-options{max-height:calc(100dvh - 170px)}}
 @media(prefers-reduced-motion:reduce) {#map-toggle svg {transition:none}}
 
@@ -221,7 +230,7 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 .compare-shell header,.story-carte .pedago-titre,.compare-table-wrap thead {background:transparent}
 .compare-table-wrap thead {position:static}
 body:has(#city-comparison[open],#story-popup:not([hidden])) :is(#titre,#recherche,#util,#globe-dock) {visibility:hidden;pointer-events:none}
-body:has(#pedago:not([hidden]),#city-comparison[open],#story-popup:not([hidden]),#menu-reglages.ouvert) :is(#etiquettes,#survol) {visibility:hidden;pointer-events:none}
+body:has(#pedago:not([hidden]),#city-comparison[open],#story-popup:not([hidden]),#menu-reglages.ouvert) :is(#etiquettes,#survol,#filter-summary) {visibility:hidden;pointer-events:none}
 /* Un seul curseur, deux etats : lentille de verre sur la Terre, point creme
    partout ailleurs (le meme point que sous les noms des villes). La taille
    est lissee en JS, ici seule la matiere change. */

@@ -50,3 +50,11 @@ export function physicalHover(reading, year, changing, locale, unit, changeUnit 
   return { value: `${formatHoverNumber(value, locale, changing || reading.filter === 'stabilite', 2)} ${changing ? changeUnit : unit}`.trim(),
     detail: changing ? `2026: ${formatHoverNumber(reading.baseline, locale, false, 2)} ${unit} → ${year}: ${formatHoverNumber(reading.value, locale, false, 2)} ${unit}` : '' };
 }
+
+export function historicalHover(reading, year, locale, unit, changeUnit = unit) {
+  if (!reading?.available || !Number.isFinite(reading.value) || !Number.isFinite(reading.historical)
+      || !Array.isArray(reading.historicalPeriod)) return null;
+  const period = reading.historicalPeriod.join('–');
+  return { value: `${formatHoverNumber(reading.value - reading.historical, locale, true, 2)} ${changeUnit}`.trim(),
+    detail: `${period}: ${formatHoverNumber(reading.historical, locale, false, 2)} ${unit} → ${year}: ${formatHoverNumber(reading.value, locale, false, 2)} ${unit}` };
+}

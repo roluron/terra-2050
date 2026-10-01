@@ -79,3 +79,20 @@ export function mapValueContext(filter, locale, year) {
   return { value: guide.value.replace('{year}', year), reference: reference || '',
     hint: guide.valueHint.replace('{year}', year) };
 }
+
+export const historicalFilters = new Set(['chaleur', 'secheresse', 'feux', 'mer', 'fleuves']);
+export const historicalPeriods = {chaleur:'1970–2000', secheresse:'1970–2000', feux:'1995–2014', mer:'1979–2014', fleuves:'1960–1999'};
+const historicalCopy = {
+  en:['Compared with {period}', 'Historical model reference · {period}', 'Colours show the change from this historical model reference.'],
+  fr:['Par rapport à {period}', 'Référence historique du modèle · {period}', 'Les couleurs indiquent l’évolution par rapport à cette référence historique du modèle.'],
+  it:['Rispetto al {period}', 'Riferimento storico del modello · {period}', 'I colori mostrano la variazione rispetto a questo riferimento storico del modello.'],
+  es:['Respecto a {period}', 'Referencia histórica del modelo · {period}', 'Los colores muestran el cambio respecto a esta referencia histórica del modelo.'],
+  vi:['So với {period}', 'Mốc lịch sử của mô hình · {period}', 'Màu thể hiện thay đổi so với mốc lịch sử này của mô hình.'],
+  ja:['{period}年との比較', 'モデルの過去の基準 · {period}年', '色はこのモデルの過去の基準からの変化を示します。'],
+  zh:['相对于{period}年', '模型历史基准 · {period}年', '颜色表示相对于此模型历史基准的变化。'],
+  'zh-Hant':['相對於{period}年', '模型歷史基準 · {period}年', '顏色表示相對於此模型歷史基準的變化。'],
+};
+export function mapReferenceContext(filter, locale) {
+  const words = historicalCopy[locale] || historicalCopy.en, period = historicalPeriods[filter];
+  return { value: words[0].replace('{period}', period), reference: words[1].replace('{period}', period), hint: words[2] };
+}

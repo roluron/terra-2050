@@ -47,7 +47,13 @@ function climateReading(filter, year, latitude, longitude, climate) {
   const [baseline, value, future] = readings.map(reading => reading?.[key]);
   if (![baseline, value, future].every(Number.isFinite)) return unavailable(filter, year, 'No matched climate data for the containing grid cell');
   const periods = climate.metadata.periods ?? [];
+  const source = readings[1];
+  const historical = filter === 'chaleur' ? source.historical_summerMaximum
+    : filter === 'stabilite' ? 0
+    : source.historical_temperature > -10 && source.historical_precipitation >= 0
+      ? source.historical_precipitation / (source.historical_temperature + 10) : null;
   return { available: true, filter, year, value, baseline, future, change: value - baseline,
+    historical: Number.isFinite(historical) ? historical : null, historicalPeriod: periods[0]?.years ?? [1970, 2000],
     unit: definitions[filter][1], definition: definitions[filter][0], baselineYear: 2026,
     spatialSupport: 'containing-grid-cell', resolutionDegrees: 360 / climate.metadata.width, cell,
     modelCount: 1, agreement: null, sourcePeriods: {
@@ -73,6 +79,8 @@ function fireReading(year, latitude, longitude, fire) {
   const agreement = Number.isFinite(sample.signAgreement) && sample.signAgreement >= 0 && sample.signAgreement <= 1
     ? year === 2026 ? 1 : sample.signAgreement : null;
   return { available: true, filter, year, value: sample.value, baseline: sample.near,
+    historical: Number.isFinite(sample.historical) ? sample.historical : null,
+    historicalPeriod: fire.metadata.historicalPeriod,
     future: sample.future, change: sample.value - sample.near,
     unit: definitions[filter][1], definition: definitions[filter][0], baselineYear: 2026,
     spatialSupport: 'containing-grid-cell', resolutionDegrees: 360 / fire.metadata.width, cell,
@@ -99,6 +107,8 @@ function floodReading(filter, year, latitude, longitude, floods) {
   // The map encodes the fraction of valid native cells above 0.5 m, not mean
   // flood depth, exact land area, population exposure or daily river height.
   return { available: true, filter, year, value: reading.fraction * 100,
+    historical: Number.isFinite(reading.historicalFraction) ? reading.historicalFraction * 100 : null,
+    historicalPeriod: reading.sourcePeriods.historical,
     baseline: reading.baselineFraction * 100, future: reading.futureFraction * 100,
     change: (reading.fraction - reading.baselineFraction) * 100,
     unit: '%', changeUnit: 'percentage points', definition: definitions[filter][0], baselineYear: 2026,
