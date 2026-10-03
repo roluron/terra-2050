@@ -1,6 +1,6 @@
 import {language, getText} from './i18n.mjs';
 import {createYearRuler} from './year-ruler.mjs';
-import {refinementCopy, moistureBand, moistureSource} from './refinement-copy.mjs';
+import {refinementCopy, moistureBand, moistureSource, experienceCopy} from './refinement-copy.mjs';
 
 export function createComparison({places, name, country, measures, criteria, population, normalize, onPair, onYear}) {
   const dialog = document.createElement('dialog');
@@ -21,7 +21,7 @@ export function createComparison({places, name, country, measures, criteria, pop
     dialog.querySelector('.compare-picker label').textContent = c.search;
     dialog.querySelector('.compare-time label').textContent = c.year;
     dialog.querySelector('output').textContent = year;
-    dialog.querySelector('.compare-swap').textContent = c.swap;
+    dialog.querySelector('.compare-swap').textContent = experienceCopy(language()).replace;
     dialog.querySelector('.compare-swap').disabled = !second;
     dialog.querySelector('.compare-period').textContent = c.period;
     const heading = document.createElement('tr');
@@ -96,7 +96,10 @@ export function createComparison({places, name, country, measures, criteria, pop
     } else if(event.key === 'Enter' && results.length) {event.preventDefault();select(results[Math.max(0,active)]);}
   });
   slider.addEventListener('input',()=>{onYear(+slider.value);render();});
-  dialog.querySelector('.compare-swap').addEventListener('click',()=>{[first,second]=[second,first];search.value=name(second);clearResults();onPair(first,second);render();});
+  dialog.querySelector('.compare-swap').addEventListener('click',()=>{
+    // Keep the current comparison until a replacement has actually been chosen.
+    search.value='';clearResults();search.focus();
+  });
   dialog.querySelector('.compare-close').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('close',()=>trigger?.focus());
   dialog.addEventListener('keydown',event=>event.stopPropagation());

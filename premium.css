@@ -13,7 +13,7 @@ html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK T
 #earth-shell:lang(zh-Hant) h1,#earth-shell:lang(zh-Hant) .signature {font-family:'Songti TC','Noto Serif CJK TC',serif}
 ::selection {background:#c9cbce45;color:#fff}
 #titre h1 {font-weight:400;letter-spacing:-.055em}
-#titre h1 em {color:#c0c2c5}
+#titre h1 em {color:var(--bleu)}
 :is(#map-inspector,#dossier,#city-comparison,.pedago-carte,.language-content) {border-radius:28px}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,.language-content,#calque-bulle,#survol,#accroche) {backdrop-filter:blur(8px) saturate(1.5);-webkit-backdrop-filter:blur(8px) saturate(1.5)}
 :is(button,summary,label,a) {-webkit-tap-highlight-color:transparent}
@@ -52,7 +52,6 @@ body.dossier-ouvert #map-inspector * {visibility:hidden}
 #champ-recherche {border:1px solid #ffffff23;border-radius:16px;padding:12px 38px 12px 14px;background:linear-gradient(135deg,#ffffff0a,#ffffff02),#0c110fe6;box-shadow:inset 0 1px #e1e3e620;caret-color:#d2d4d7;transition:border-color .25s,box-shadow .25s}
 #champ-recherche:focus {border-color:#d2d4d760;box-shadow:inset 0 1px #e1e3e630,0 0 0 4px #ced0d30b}
 #caret-dos {display:none}
-#loupe {right:13px}
 #resultats li {border:0;border-radius:12px;transition:background .2s}
 #resultats li:is(.choisi,:hover) {background:linear-gradient(110deg,#ccced11c,#ffffff07)}
 #resultats li .type-lieu {color:#b4b6b9;letter-spacing:.035em;font-size:10px}
@@ -149,7 +148,6 @@ body:not(.dossier-ouvert) #timeline .an {font-weight:300;letter-spacing:-.07em;t
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {:root{--glass-tint:#111610}}
 body #recherche,body.dossier-ouvert #recherche {padding-right:100px}
 #resultats {right:100px}
-#loupe {right:112px;z-index:3}
 #champ-recherche {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px) saturate(1.5);-webkit-backdrop-filter:blur(2px) saturate(1.5)}
 #menu-reglages {min-width:184px;padding:6px}
 #menu-reglages .bouton-ico {font:400 12px/1.4 var(--police);letter-spacing:0;text-transform:none;min-height:44px;padding:10px 12px}
@@ -157,20 +155,27 @@ body #recherche,body.dossier-ouvert #recherche {padding-right:100px}
 #menu-reglages {--glass-tint:#17171799;backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6)}
 body:has(#menu-reglages.ouvert) #dossier {visibility:hidden;pointer-events:none}
 #bouton-reglages {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-@media(max-width:720px) {body #recherche,body.dossier-ouvert #recherche{padding-right:80px}#resultats{right:80px}#loupe{right:92px}#menu-reglages .bouton-ico{font-size:12px}}
+@media(max-width:720px) {body #recherche,body.dossier-ouvert #recherche{padding-right:80px}#resultats{right:80px}#menu-reglages .bouton-ico{font-size:12px}}
 @media(prefers-reduced-transparency:reduce) {:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#champ-recherche){background:#111610}}
 
-#globe-dock {position:fixed;z-index:22;inset:0;pointer-events:none}
+#globe-dock {--dock-bottom:calc(44px + env(safe-area-inset-bottom));position:fixed;z-index:22;inset:0;pointer-events:none}
 body.dossier-ouvert #globe-dock {visibility:hidden}
-#globe-dock > #timeline,body.pret #globe-dock > #timeline {position:absolute;left:50%;right:auto;top:auto;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);width:200px;padding:0;pointer-events:auto}
-#globe-dock #timeline .an {font-size:80px;line-height:1;text-align:center}
-#map-inspector {position:absolute;left:24px;right:auto;top:auto;bottom:66px;width:240px;min-width:0;display:flex;flex-direction:column;padding:6px 16px;border-radius:32px;max-height:none;overflow:visible;pointer-events:auto;backdrop-filter:none;-webkit-backdrop-filter:none}
+#globe-dock > #timeline,body.pret #globe-dock > #timeline {position:absolute;left:auto;right:24px;top:auto;bottom:var(--dock-bottom);transform:none;width:200px;padding:0;pointer-events:auto}
+#globe-dock #timeline .an {display:block;width:max-content;margin:0 auto;font-size:80px;line-height:1;text-align:center}
+#map-inspector {position:absolute;left:24px;right:auto;top:auto;bottom:var(--dock-bottom);width:max-content;max-width:calc(100vw - 48px);min-width:0;display:flex;flex-direction:column;padding:0 16px;border-radius:24px;max-height:none;overflow:visible;pointer-events:auto;backdrop-filter:none;-webkit-backdrop-filter:none}
 #map-inspector.choix-ouvert {border-radius:28px}
-#map-toggle {display:flex;order:3;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:8px 4px;border-radius:22px;background:none;border:0;color:var(--glass-text);font:400 13px/1.4 var(--police);text-align:left;touch-action:manipulation;cursor:pointer}
+#map-toggle {display:flex;order:3;align-items:center;justify-content:flex-start;gap:12px;width:auto;min-height:44px;padding:0;border-radius:22px;background:none;border:0;color:var(--glass-text);font:400 13px/1.4 var(--police);text-align:left;white-space:nowrap;touch-action:manipulation;cursor:pointer}
 #map-toggle svg {width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.4;transform:rotate(180deg);transition:transform .2s}
 #map-toggle[aria-expanded=true] svg {transform:none}
 #map-inspector:not(.choix-ouvert) #calques,body.pret #map-inspector:not(.choix-ouvert) #calques,#map-inspector:not(.choix-ouvert) #model-notice {display:none}
 #map-inspector #map-options {position:absolute;bottom:calc(100% + 16px);left:0;width:460px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 220px);overflow:auto;overscroll-behavior:contain;padding:12px;box-sizing:border-box;border-radius:28px;border:1px solid var(--glass-edge);background:var(--glass-surface);box-shadow:var(--glass-shadow);backdrop-filter:blur(12px) saturate(1.5);-webkit-backdrop-filter:blur(12px) saturate(1.5)}
+#filter-summary {position:absolute;left:24px;bottom:calc(var(--dock-bottom) + 64px);width:max-content;max-width:min(580px,calc(100vw - 300px));color:var(--glass-text);pointer-events:none;text-align:left}
+#filter-summary[hidden],body:not(.pret) #filter-summary {display:none}
+#filter-summary.summary-unavailable {width:200px}
+#filter-summary .summary-headline {font:400 clamp(24px,2.5vw,36px)/1.12 var(--police);letter-spacing:-.035em;text-wrap:balance}
+#filter-summary .summary-reference {contain:inline-size;margin-top:8px;font:400 13px/1.4 var(--police);color:var(--glass-text);text-wrap:pretty}
+#filter-summary .summary-detail {contain:inline-size;margin-top:6px;font:11px/1.4 var(--police);color:var(--glass-muted);text-wrap:pretty}
+#globe-dock:has(#map-inspector.choix-ouvert) #filter-summary {visibility:hidden}
 #map-inspector:not(.choix-ouvert) #map-options {display:none}
 #map-inspector.choix-ouvert #calques,body.pret #map-inspector.choix-ouvert #calques {display:grid;grid-template-columns:1fr 1fr;gap:4px}
 #map-inspector #calques .calque {min-height:48px;background:none;border-color:transparent}
@@ -181,24 +186,32 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 #map-inspector #map-contact {display:flex;align-items:center;min-height:44px;margin-top:10px;padding:4px 4px 0;border-top:1px solid #ffffff16;font-size:12px;line-height:1.4;color:var(--glass-muted);text-decoration:underline;text-decoration-color:#ffffff35;text-underline-offset:3px;transition:color .18s}
 #map-inspector #map-contact:hover {color:var(--glass-text)}
 @media(max-width:720px) {
- #globe-dock > #timeline,body.pret #globe-dock > #timeline {width:112px;bottom:max(20px,env(safe-area-inset-bottom))}
+ #filter-summary {left:12px;bottom:calc(var(--dock-bottom) + 96px);max-width:calc(100vw - 24px)}
+ #filter-summary .summary-headline {font-size:25px;max-width:100%}
+ #filter-summary .summary-detail {font-size:10px;line-height:1.3;margin-top:6px}
+ #filter-summary .summary-reference {font-size:12px;margin-top:6px}
+ #globe-dock {--dock-bottom:calc(32px + env(safe-area-inset-bottom))}
+ #globe-dock > #timeline,body.pret #globe-dock > #timeline {left:auto;right:20px;transform:none;width:112px}
  #globe-dock #timeline .an {font-size:48px}
- #map-inspector {left:12px;right:auto;top:auto;bottom:max(42px,env(safe-area-inset-bottom));width:calc(50% - 80px);padding:6px 8px;max-height:none}
+ #map-inspector {left:12px;right:auto;top:auto;width:max-content;max-width:calc(100vw - 184px);padding:0 12px;border-radius:24px;max-height:none}
+ #map-toggle {min-height:44px;padding:6px 0}
  #map-inspector #map-options {width:calc(100vw - 32px);max-width:none;max-height:calc(100dvh - 210px);bottom:calc(100% + 24px)}
  #map-inspector #map-method summary {position:static;width:auto;height:auto;font-size:12px;display:flex;padding:8px 0;background:none;border:0}
  #map-inspector #map-method summary::after {content:none}
 }
+@media(max-height:500px) {#filter-summary {left:12px;bottom:calc(var(--dock-bottom) + 64px);max-width:40vw}#filter-summary .summary-headline{font-size:20px}#filter-summary .summary-reference{font-size:11px}#filter-summary .summary-detail{font-size:9px;line-height:1.2}}
 @media(max-height:500px) {#map-inspector #map-options{max-height:calc(100dvh - 170px)}}
 @media(prefers-reduced-motion:reduce) {#map-toggle svg {transition:none}}
 
-body.loupe #champ-recherche {height:44px;min-height:44px;padding:0;border-radius:50%}
-body.loupe #loupe {right:122px;animation:none}
 #bouton-reglages {color:var(--glass-text)}
 #bouton-reglages {display:grid;place-items:center;padding:0}
 #bouton-reglages .rouage {width:20px;height:20px;transform-origin:center;transform-box:fill-box}
 #timeline .regle,#timeline #curseur {width:72%}
-#timeline .regle {height:29px}
+#timeline .regle {height:44px;margin-top:12px}
+#timeline #curseur {height:44px;margin-top:-44px;padding:0;outline:none}
 #timeline .regle i {height:7px}
+#globe-dock #timeline .regle {width:var(--l-an,100%);height:24px;margin:4px 0 0 var(--an-ink-left,0px)}
+#globe-dock #timeline #curseur {position:absolute;left:var(--an-ink-left,0px);bottom:-20px;width:var(--l-an,100%);height:44px;margin:0;transform:none}
 .compare-time {display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center}
 .compare-time label {grid-area:1/1;margin:0}
 .compare-time .compare-swap {grid-area:1/2}
@@ -206,36 +219,70 @@ body.loupe #loupe {right:122px;animation:none}
 .compare-time .regle {grid-area:3/1/4/3;display:flex;justify-content:space-between;align-items:flex-end;height:38px;width:100%;pointer-events:none}
 .compare-time .regle i {width:2px;height:10px;border-radius:1px;background:var(--texte);transform-origin:bottom;opacity:.25}
 .compare-time #comparison-year {grid-area:3/1/4/3;appearance:none;-webkit-appearance:none;position:relative;z-index:2;width:100%;height:44px;margin:0;padding:0;background:transparent;cursor:ew-resize}
-#comparison-year::-webkit-slider-runnable-track {background:transparent}
-#comparison-year::-moz-range-track {background:transparent}
-#comparison-year::-webkit-slider-thumb {opacity:0}
-#comparison-year::-moz-range-thumb {opacity:0}
+#curseur::-webkit-slider-runnable-track,#comparison-year::-webkit-slider-runnable-track {height:44px;border:0;background:transparent;box-shadow:none}
+#curseur::-moz-range-track,#comparison-year::-moz-range-track,#curseur::-moz-range-progress,#comparison-year::-moz-range-progress {border:0;background:transparent;box-shadow:none}
+#curseur::-webkit-slider-thumb,#curseur:hover::-webkit-slider-thumb,body.cale-annee #curseur::-webkit-slider-thumb,#comparison-year::-webkit-slider-thumb {appearance:none;-webkit-appearance:none;width:2px;height:44px;opacity:0;border:0;border-radius:0;background:transparent;box-shadow:none;transform:none}
+#curseur::-moz-range-thumb,#comparison-year::-moz-range-thumb {width:2px;height:44px;opacity:0;border:0;background:transparent;box-shadow:none}
+#timeline:has(#curseur:focus-visible) .regle {outline:1px solid var(--glass-muted);outline-offset:4px;border-radius:4px}
 #story-partager.entree-pedago {font:400 13px/1.4 var(--police)}
 :is(#champ-recherche,#bouton-reglages,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#map-inspector #map-options) {backdrop-filter:blur(2px) saturate(1.35);-webkit-backdrop-filter:blur(2px) saturate(1.35)}
 #city-comparison::backdrop,#story-popup,#pedago {background:#02060a66;backdrop-filter:none;-webkit-backdrop-filter:none}
 .language-content::before {display:none}
 #language-options label:has(input:checked),#map-inspector #calques .calque.actif,#map-reading button[aria-pressed=true],#resultats li:is(.choisi,:hover),#dossier .risque,#dossier .risque[open],#dossier .actions button,#dossier .actions #dossier-story,.compare-swap,.entree-pedago {background:#ffffff09}
 #dossier-croix,.compare-close,#story-fermer {background:#ffffff09!important}
-.compare-shell header,.story-carte .pedago-titre {background:#14171be6}
+.compare-shell header,.story-carte .pedago-titre,.compare-table-wrap thead {background:transparent}
+.compare-table-wrap thead {position:static}
+body:has(#city-comparison[open],#story-popup:not([hidden])) :is(#titre,#recherche,#util,#globe-dock) {visibility:hidden;pointer-events:none}
+body:has(#pedago:not([hidden]),#city-comparison[open],#story-popup:not([hidden]),#menu-reglages.ouvert) :is(#etiquettes,#survol,#filter-summary) {visibility:hidden;pointer-events:none}
 /* Un seul curseur, deux etats : lentille de verre sur la Terre, point creme
    partout ailleurs (le meme point que sous les noms des villes). La taille
    est lissee en JS, ici seule la matiere change. */
-.glass-cursor {position:fixed;z-index:2147483647;pointer-events:none!important;border:1px solid #ffffff60;border-radius:999px;box-shadow:inset 0 1px 2px #ffffff40,inset 0 -1px 2px #ffffff12;background:#ffffff03;overflow:hidden;contain:layout style;transition:background-color .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease);}
+.glass-cursor {position:fixed;left:0;top:0;width:50px;height:50px;will-change:transform;z-index:2147483647;pointer-events:none!important;border:1px solid #ffffff60;border-radius:999px;box-shadow:inset 0 1px 2px #ffffff40,inset 0 -1px 2px #ffffff12;background:#ffffff03;overflow:hidden;contain:layout style;transition:background-color .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease);}
 .glass-cursor.point {background:rgba(255,253,226,.92);border-color:transparent;box-shadow:0 0 8px rgba(255,253,226,.5)}
 .glass-cursor[hidden] {display:none}
 body.curseur-verre, body.curseur-verre * {cursor:none!important}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content) :is(button,summary,input,a):focus-visible,#language-options label:has(input:focus-visible) {outline-color:#fff}
 @media(prefers-reduced-motion:reduce){.glass-cursor{transition:none}}
-@media(max-width:720px){body.loupe #loupe{right:102px}#map-toggle{gap:4px;font-size:12px}#map-toggle span{display:none}#map-toggle::before{content:attr(data-short-label)}#map-toggle svg{width:12px;height:12px}.compare-time output{font-size:48px}}
+@media(max-width:720px){#map-toggle{gap:12px;font-size:12px}#map-toggle span{display:none}#map-toggle::before{content:attr(data-short-label)}#map-toggle svg{width:12px;height:12px}.compare-time output{font-size:48px}}
+
+/* Feedback pass: one visible control per action, with no opaque strips. */
+.entree-pedago::after {content:none}
+.pedago-details {margin-top:18px;font-size:12px;line-height:1.5;color:var(--glass-muted)}
+.pedago-details summary {min-height:44px;align-content:center;cursor:pointer}
+#pedago-details-text {font-size:12px;color:var(--glass-muted)}
+#dossier .actions {background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+#dossier .actions button,#dossier .actions #dossier-story,.compare-swap {background:transparent;border:0;border-bottom:1px solid #ffffff50;border-radius:0;box-shadow:none}
+#dossier .actions button:hover,.compare-swap:hover,.compare-swap:active {background:transparent}
+#comparison-year {outline:none}
+.compare-time:has(#comparison-year:focus-visible) .regle {outline:1px solid var(--glass-muted);outline-offset:4px;border-radius:4px}
+#layer-context {background:none;border-left:0;padding:0}
+#map-inspector .map-hint {display:block;font-size:12px;line-height:1.5;margin:12px 0}
+#explore-city {position:absolute;inset:0;z-index:4;pointer-events:auto;min-height:48px;padding:12px 16px;border:0;border-radius:16px;background:none;color:var(--glass-text);font:400 14px var(--police);cursor:pointer;white-space:nowrap;transition:opacity .2s var(--ease)}
+#explore-city::after {content:'';position:absolute;bottom:7px;left:24px;right:24px;height:1px;background:#ffffff70;transform-origin:center;transition:transform .25s var(--ease)}
+.city-search-icon {display:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+body #recherche,body.pret #recherche,body.dossier-ouvert #recherche {position:fixed;z-index:31;top:calc(10px + env(safe-area-inset-top,0px));left:auto;right:calc(100px + env(safe-area-inset-right,0px));transform:none;height:48px;max-width:calc(100vw - 140px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));padding:0;display:block;align-items:initial}
+#recherche #champ-recherche {width:100%;height:48px;min-height:48px;padding:12px 18px;border-radius:16px;text-align:left;transition:opacity .2s var(--ease),border-color .25s,box-shadow .25s}
+body.recherche-active #recherche #champ-recherche::placeholder {color:var(--glass-muted)}
+body.loupe #champ-recherche {opacity:0;pointer-events:none}
+body:not(.loupe) #explore-city {opacity:0;pointer-events:none}
+#recherche #resultats {right:auto;top:0;max-width:calc(100vw - 40px)}
+body.loupe #resultats {visibility:hidden}
+body.entree-chrome :is(#titre,#recherche,#bouton-reglages,#map-inspector,#explore-city,#timeline .an,#timeline .regle,#curseur) {transition:none}
+@media(hover:hover) {#explore-city:hover::after {transform:scaleX(.7)}}
+@media(max-width:720px) {
+ body #recherche,body.pret #recherche,body.dossier-ouvert #recherche {right:calc(80px + env(safe-area-inset-right,0px));max-width:calc(100vw - 100px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))}
+ body:not(.loupe) #titre {visibility:hidden;pointer-events:none}
+}
+@media(max-width:720px),(pointer:coarse) and (max-height:500px) {
+ #explore-city {display:grid;place-items:center;padding:0;border:1px solid var(--glass-edge);border-radius:50%;background:var(--glass-surface);box-shadow:var(--glass-shadow)}
+ #explore-city::after,#explore-city .city-search-label {display:none}
+ #explore-city .city-search-icon {display:block}
+}
+@media(prefers-reduced-motion:reduce) {#explore-city,#explore-city::after,#recherche #champ-recherche {transition:none}}
 /* Passe de compatibilite multi-appareils (audit du 24 septembre 2026). */
-/* La bande #recherche couvre toute la largeur de l'en-tete : elle captait le
-   pointeur au-dessus du mot-symbole et du globe. Seuls le champ et la liste
-   ouverte recoivent les clics, sur tous les formats. */
+/* Seuls le champ, l'invitation et la liste ouverte recoivent les clics. */
 #recherche {pointer-events:none}
 #champ-recherche,#resultats.ouvert {pointer-events:auto}
-/* la loupe n'est qu'un dessin : en paysage bas elle captait le toucher et la
-   recherche ne s'ouvrait jamais */
-#loupe {pointer-events:none}
 /* L'invitation a comparer, visible par-dessus la fiche ouverte */
 #accroche {pointer-events:auto;z-index:26;left:max(24px,env(safe-area-inset-left))}
 @media(max-width:720px) {#accroche {top:auto;bottom:calc(84px + env(safe-area-inset-bottom));left:12px}}
@@ -244,7 +291,7 @@ body.curseur-verre, body.curseur-verre * {cursor:none!important}
 @media(max-width:720px) {#dossier {top:calc(88px + env(safe-area-inset-top))}}
 /* Fenetres basses (telephone paysage, portable Windows a 125-150 %) : le
    millesime de 80 px recouvrait le globe */
-@media(max-height:560px) {#globe-dock > #timeline,body.pret #globe-dock > #timeline {width:128px;bottom:max(14px,env(safe-area-inset-bottom))}#globe-dock #timeline .an {font-size:44px}}
+@media(max-height:560px) {#globe-dock > #timeline,body.pret #globe-dock > #timeline {width:128px}#globe-dock #timeline .an {font-size:44px}}
 /* Liste de resultats : toujours atteignable, meme clavier ouvert ou en paysage */
 #resultats.ouvert {max-height:calc(100dvh - 96px);overscroll-behavior:contain}
 /* Tablette portrait, Windows a 150 % : la fiche fait 46vw (340-500 px), trop

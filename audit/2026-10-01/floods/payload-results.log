@@ -1,0 +1,84 @@
+{
+  "grid": {
+    "coast": {
+      "cells": 259200,
+      "covered": 69991,
+      "missing": 189209,
+      "valid_zero_depth_2050": 59685,
+      "valid_positive_depth_2050": 10306,
+      "depth_2026_to_2050_increases": 9414,
+      "depth_2026_to_2050_decreases": 920,
+      "fraction_2026_to_2050_increases": 5824,
+      "fraction_2026_to_2050_decreases": 481,
+      "max_mean_depth_2050_m": 5.912472724914551,
+      "max_fraction_2050": 1.0,
+      "minimum_covered_fraction": 0.00027777778450399637,
+      "covered_fraction_below_10_percent": 4145,
+      "range_mask_quantiles_pass": true,
+      "baseline_anchor": 1996.5,
+      "baseline_2026_interpolation_fraction": 0.8805970149253731
+    },
+    "river": {
+      "cells": 259200,
+      "covered": 64525,
+      "missing": 194675,
+      "valid_zero_depth_2050": 3836,
+      "valid_positive_depth_2050": 60689,
+      "depth_2026_to_2050_increases": 42522,
+      "depth_2026_to_2050_decreases": 18175,
+      "fraction_2026_to_2050_increases": 21446,
+      "fraction_2026_to_2050_decreases": 10309,
+      "max_mean_depth_2050_m": 4.159335374832153,
+      "max_fraction_2050": 1.0,
+      "minimum_covered_fraction": 0.00027777778450399637,
+      "covered_fraction_below_10_percent": 2436,
+      "range_mask_quantiles_pass": true,
+      "baseline_anchor": 1980,
+      "baseline_2026_interpolation_fraction": 0.92,
+      "fraction_model_disagreement": {
+        "numerical_deadzone_fraction": 1e-07,
+        "mean_increase_cells": 21430,
+        "mean_increase_fewer_than_three_models_increase": 9366,
+        "mean_increase_at_least_three_models_decrease": 1866,
+        "mean_decrease_at_least_three_models_increase": 1439,
+        "meaning": "Mean direction need not match model-majority direction; not predictive probabilities."
+      }
+    }
+  },
+  "cities": {
+    "coast": {
+      "count": 34099,
+      "native_available": 34057,
+      "native_zero_depth_2050": 33814,
+      "native_positive_depth_2050": 243,
+      "native_missing": 42,
+      "regional_fallback": 40,
+      "unavailable_after_fallback": 2,
+      "regional_zero_depth_2050": 16,
+      "regional_positive_depth_2050": 24,
+      "max_native_depth_2050_m": 5.8929572105407715,
+      "all_availability_fields_and_source_descriptors_pass": true
+    },
+    "river": {
+      "count": 34099,
+      "native_available": 32184,
+      "native_zero_depth_2050": 27540,
+      "native_positive_depth_2050": 4644,
+      "native_missing": 1915,
+      "regional_fallback": 1793,
+      "unavailable_after_fallback": 122,
+      "regional_zero_depth_2050": 44,
+      "regional_positive_depth_2050": 1749,
+      "max_native_depth_2050_m": 28.289395904541017,
+      "all_availability_fields_and_source_descriptors_pass": true
+    }
+  },
+  "PG-river": {
+    "baseline2026_m": 0.029665273770440957,
+    "future2050_m": 0.031485445413815885,
+    "change_m": 0.0018201716433749286,
+    "cities": 13,
+    "regional": 4,
+    "listed_city_population": 628855
+  }
+}

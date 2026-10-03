@@ -1,0 +1,43 @@
+{"year":2026,"cityCases":34099,"issues":0}
+{"year":2027,"cityCases":34099,"issues":0}
+{"year":2028,"cityCases":34099,"issues":0}
+{"year":2029,"cityCases":34099,"issues":1}
+{"year":2030,"cityCases":34099,"issues":2}
+{"year":2031,"cityCases":34099,"issues":3}
+{"year":2032,"cityCases":34099,"issues":4}
+{"year":2033,"cityCases":34099,"issues":5}
+{"year":2034,"cityCases":34099,"issues":6}
+{"year":2035,"cityCases":34099,"issues":7}
+{"year":2036,"cityCases":34099,"issues":8}
+{"year":2037,"cityCases":34099,"issues":9}
+{"year":2038,"cityCases":34099,"issues":10}
+{"year":2039,"cityCases":34099,"issues":11}
+{"year":2040,"cityCases":34099,"issues":12}
+{"year":2041,"cityCases":34099,"issues":13}
+{"year":2042,"cityCases":34099,"issues":14}
+{"year":2043,"cityCases":34099,"issues":15}
+{"year":2044,"cityCases":34099,"issues":16}
+{"year":2045,"cityCases":34099,"issues":17}
+{"year":2046,"cityCases":34099,"issues":18}
+{"year":2047,"cityCases":34099,"issues":19}
+{"year":2048,"cityCases":34099,"issues":20}
+{"year":2049,"cityCases":34099,"issues":21}
+{"year":2050,"cityCases":34099,"issues":22}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Loaded-data numerical invariants failed; see results.json
+
+22 !== 0
+
+    at file:///workspace/terra-2050/audit/2026-10-01/claims-score/exhaustive.mjs:110:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 22,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

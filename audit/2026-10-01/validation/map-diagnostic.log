@@ -1,0 +1,7 @@
+chaleur: 259200 cells checked; 89308 available, 169892 missing
+secheresse: 259200 cells checked; 57269 available, 201931 missing
+stabilite: 259200 cells checked; 89308 available, 169892 missing
+feux: 10368 cells checked; 2263 available, 8105 missing
+mer: 259200 cells checked; 69991 available, 189209 missing
+fleuves: 259200 cells checked; 64525 available, 194675 missing
+PASS: all six physical-filter grids, all 25 years at six anchors, units/support, payload hashes, valid zeros, masks, paired fraction spread, poles/dateline and population separation

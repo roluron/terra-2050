@@ -36,18 +36,8 @@ body:not(.dossier-ouvert) #timeline .an::before {
    entrée (index.html marque .reste), seules les nouvelles glissent ---- */
 #resultats li.reste { animation:none }
 
-/* ---- téléphone à l'horizontale ----------------------------------------
-   L'année en 80 px recouvrait la moitié du globe, et le text-align:right
-   hérité du bloc paysage la décalait de 11 px. Tout paysage bas, tactile
-   ou non : année réduite et centrée, le globe reprend sa place. */
-@media (max-height:500px) and (orientation:landscape) {
-  #globe-dock > #timeline, body.pret #globe-dock > #timeline {
-    left:50%; right:auto; transform:translateX(-50%); width:140px; text-align:center;
-    bottom:calc(10px + env(safe-area-inset-bottom));
-  }
-  #globe-dock #timeline .an { font-size:40px; text-align:center }
-  #globe-dock #timeline .an-distance { text-align:center }
-}
+/* (téléphone à l'horizontale : la timeline est désormais ancrée à droite
+   par main, ed6dd56/d221411 ; premium.css la réduit sous 560 px de haut) */
 
 /* ---- cartes de risque : l'unité passe à la ligne au lieu de déborder
    (« 28.73 De Martonne » chevauchait la jauge à 768 px) ---- */
@@ -194,11 +184,11 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
    du choix des signes dans earth-letter.js ---- */
 #earth-shell, #letter { font-variant-emoji:text }
 
-/* ---- règle des années au doigt : l'input natif laisse passer le toucher,
-   toute la bande de la règle répond (year-ruler.mjs). Un glissé vertical
-   continue de faire défiler la fiche ---- */
+/* ---- règle des années au doigt : toute la bande de la règle répond
+   (year-ruler.mjs), l'input compris : ses événements remontent à la bande.
+   Un glissé horizontal fait défiler les années, un glissé vertical continue
+   de faire défiler la fiche ---- */
 @media (pointer:coarse) {
-  #curseur, #comparison-year { pointer-events:none }
   #timeline, .compare-time { touch-action:pan-y }
 }
 
@@ -208,7 +198,6 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
    la recherche ne s'ouvrait jamais. L'invitation sort du dock (index.html),
    qui ne laissait passer aucun clic : elle redevient cliquable, au-dessus de
    la fiche. */
-#loupe { pointer-events:none }
 #accroche { pointer-events:auto; z-index:26; left:max(24px, env(safe-area-inset-left)) }
 @media (max-width:720px) { #accroche { top:auto; bottom:calc(116px + env(safe-area-inset-bottom)); left:12px } }
 @media (max-height:500px) and (orientation:landscape) {
@@ -232,21 +221,9 @@ body.dossier-ouvert #map-inspector * { visibility:inherit }
 }
 .pedago-source { font-size:10px; line-height:1.55; text-wrap:pretty }
 
-/* ---- marge de sécurité ajoutée, pas substituée : max(28px, inset)
-   collait l'année à l'indicateur d'accueil de l'iPhone (inset 34 px) ---- */
-#globe-dock > #timeline, body.pret #globe-dock > #timeline { bottom:calc(28px + env(safe-area-inset-bottom)) }
-#map-inspector { bottom:calc(66px + env(safe-area-inset-bottom)) }
-@media (max-width:720px) {
-  #globe-dock > #timeline, body.pret #globe-dock > #timeline { bottom:calc(20px + env(safe-area-inset-bottom)) }
-  #map-inspector { bottom:calc(42px + env(safe-area-inset-bottom)) }
-  /* pastille des filtres à la taille de son libellé : à 390 px, « Filtres »
-     et le chevron flottaient aux deux bouts d'une pastille trop large */
-  #map-inspector { width:auto; min-width:88px; max-width:calc(50% - 68px) }
-  #map-toggle { justify-content:flex-start; gap:10px }
-}
+/* (marges basses, pastille des filtres : le dock de main les gère avec
+   --dock-bottom, qui ajoute déjà la zone sûre) */
 @media (max-height:500px) and (orientation:landscape) {
-  #map-inspector { bottom:calc(12px + env(safe-area-inset-bottom)); left:max(24px, env(safe-area-inset-left)) }
-  #globe-dock > #timeline, body.pret #globe-dock > #timeline { bottom:calc(12px + env(safe-area-inset-bottom)) }
   /* fiche en paysage : l'année s'arrêtait à 4 px de la croix */
   #dossier-temps { padding-right:72px }
 }
@@ -265,12 +242,9 @@ html:lang(vi) :is(#wordmark, #timeline .an, .compare-time output, #dossier-score
   font-family:"TWK Lausanne", Arial, sans-serif;
 }
 
-/* ---- très grands écrans : l'année et la pastille grandissent avec la
-   fenêtre au lieu de rester à leur taille d'ordinateur portable ---- */
+/* ---- très grands écrans : le libellé des filtres grandit un peu (la
+   timeline garde la largeur de l'année, réglée par main) ---- */
 @media (min-width:1800px) and (min-height:900px) {
-  #globe-dock > #timeline, body.pret #globe-dock > #timeline { width:clamp(200px, 13vh, 280px) }
-  #globe-dock #timeline .an { font-size:clamp(80px, 7.2vh, 112px) }
-  #map-inspector { width:clamp(240px, 14vw, 300px) }
   #map-toggle { font-size:clamp(13px, .35vw + 7px, 15px) }
 }
 

@@ -1,0 +1,1059 @@
+{
+  "basis_commit": "57a0757",
+  "checks_passed": [
+    "grid compressed bytes/hash",
+    "grid decoded bytes/hash",
+    "coverage compressed bytes/hash",
+    "coverage decoded bytes/hash",
+    "points compressed bytes/hash",
+    "points decoded bytes/hash",
+    "places json bytes/hash",
+    "places coordinates bytes/hash",
+    "importer matches recorded hash",
+    "exact grid/point shape",
+    "coverage range 0..9",
+    "grid nodata exactly matches zero support",
+    "no infinite payload values",
+    "matched spatial support in all three periods",
+    "nonnegative precipitation",
+    "annual mean no greater than hottest-month maximum",
+    "stored De Martonne is nonnegative",
+    "annual mean no greater than hottest-month maximum",
+    "stored De Martonne is nonnegative",
+    "annual mean no greater than hottest-month maximum",
+    "stored De Martonne is nonnegative",
+    "nonnegative precipitation",
+    "annual mean no greater than hottest-month maximum",
+    "stored De Martonne is nonnegative",
+    "annual mean no greater than hottest-month maximum",
+    "stored De Martonne is nonnegative",
+    "annual mean no greater than hottest-month maximum",
+    "stored De Martonne is nonnegative"
+  ],
+  "independent_original_source_reconstruction": false,
+  "original_source_limitation": "WorldClim originals absent; proxy blocks www.worldclim.org and geodata.ucdavis.edu with HTTP403 CONNECT.",
+  "grid_fields": [
+    {
+      "period": "1970-2000",
+      "id": "annual_mean_temperature",
+      "finite": 89308,
+      "min": -54.66218185424805,
+      "max": 30.55409049987793,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -54.378409587860105,
+        -52.91770809173584,
+        -0.7702627182006836,
+        28.535361137390133,
+        29.676015672683715
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "id": "annual_precipitation",
+      "finite": 89308,
+      "min": 0.0,
+      "max": 6970.4443359375,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.0,
+        1.4444444179534912,
+        336.4444580078125,
+        3008.216948242184,
+        4137.341232910148
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "finite": 89308,
+      "min": -29.63216781616211,
+      "max": 47.53450012207031,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -29.186000875473024,
+        -27.486853427886963,
+        21.528624534606934,
+        43.24689990997313,
+        45.79297598648069
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "id": "de_martonne_aridity",
+      "finite": 55885,
+      "min": 0.0,
+      "max": 1797154.125,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.01359743519872427,
+        0.22864076495170596,
+        40.02021026611328,
+        1698.847109374984,
+        21534.76141406324
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "annual_mean_temperature",
+      "finite": 89308,
+      "min": -53.34397888183594,
+      "max": 31.439815521240234,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -53.01912692260742,
+        -51.68826488494873,
+        0.8048611283302307,
+        29.53842544555664,
+        30.62318516540527
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "annual_precipitation",
+      "finite": 89308,
+      "min": 0.0,
+      "max": 7476.68896484375,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.0,
+        1.4888888597488403,
+        342.1777801513672,
+        3020.97634765625,
+        4178.196713867182
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "finite": 89308,
+      "min": -28.600000381469727,
+      "max": 49.0,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -28.074366998672485,
+        -26.511110305786133,
+        22.811111450195312,
+        44.5444450378418,
+        47.24103435134887
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "de_martonne_aridity",
+      "finite": 55885,
+      "min": 0.0,
+      "max": 1474.9425048828125,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.016138455756008627,
+        0.22118671119213104,
+        37.69342803955078,
+        203.90658935546864,
+        439.95678247071004
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "annual_mean_temperature",
+      "finite": 89308,
+      "min": -52.763427734375,
+      "max": 32.15046310424805,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -52.41342544555664,
+        -50.93283664703369,
+        1.7578704357147217,
+        30.308172264099106,
+        31.374646209716794
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "annual_precipitation",
+      "finite": 89308,
+      "min": 0.0,
+      "max": 7544.81103515625,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.0,
+        1.4888888597488403,
+        343.3111114501953,
+        3042.784497070311,
+        4249.55874072265
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "finite": 89308,
+      "min": -27.77777671813965,
+      "max": 49.96666717529297,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -27.233333587646484,
+        -25.700000762939453,
+        23.677778244018555,
+        45.400001525878906,
+        48.18547710037231
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "de_martonne_aridity",
+      "finite": 55885,
+      "min": 0.0,
+      "max": 1062.8382568359375,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.01579728813841939,
+        0.2169593209028244,
+        35.742855072021484,
+        161.16736755371073,
+        337.0782891845766
+      ]
+    }
+  ],
+  "point_fields": [
+    {
+      "period": "1970-2000",
+      "id": "annual_mean_temperature",
+      "finite": 34096,
+      "min": -12.091083526611328,
+      "max": 30.72864532470703,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -3.5288757050037383,
+        1.6970890402793883,
+        17.364572525024414,
+        28.540014266967777,
+        29.613393383026118
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "id": "annual_precipitation",
+      "finite": 34096,
+      "min": 0.0,
+      "max": 6907.0,
+      "quantiles_p001_p01_p50_p99_p999": [
+        1.0,
+        48.0,
+        926.0,
+        3291.1500000000087,
+        4459.0
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "finite": 34096,
+      "min": 6.528571605682373,
+      "max": 46.575897216796875,
+      "quantiles_p001_p01_p50_p99_p999": [
+        15.064794273376465,
+        19.253437519073486,
+        30.469124794006348,
+        42.79762592315677,
+        45.653171005248986
+      ]
+    },
+    {
+      "period": "1970-2000",
+      "id": "de_martonne_aridity",
+      "finite": 34093,
+      "min": 0.0,
+      "max": 1659.9925537109375,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.03040396422147751,
+        1.724388041496277,
+        37.74074172973633,
+        98.6319808959961,
+        130.98321533203125
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "annual_mean_temperature",
+      "finite": 30192,
+      "min": -9.941666603088379,
+      "max": 31.545833587646484,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -1.8595040736198425,
+        3.299999952316284,
+        17.929166793823242,
+        29.083708877563478,
+        30.453558677673367
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "annual_precipitation",
+      "finite": 30192,
+      "min": 0.0,
+      "max": 7216.69970703125,
+      "quantiles_p001_p01_p50_p99_p999": [
+        1.0,
+        54.5819987487793,
+        925.75,
+        3218.300048828125,
+        4268.140325683608
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "finite": 30192,
+      "min": 7.199999809265137,
+      "max": 47.79999923706055,
+      "quantiles_p001_p01_p50_p99_p999": [
+        16.21910047149658,
+        20.200000762939453,
+        31.5,
+        43.29999923706055,
+        46.780899528503525
+      ]
+    },
+    {
+      "period": "2021-2040",
+      "id": "de_martonne_aridity",
+      "finite": 30192,
+      "min": 0.0,
+      "max": 5808.00341796875,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.029318347573280334,
+        1.7251585721969604,
+        36.19154357910156,
+        96.11973403930665,
+        128.56564331054688
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "annual_mean_temperature",
+      "finite": 30192,
+      "min": -8.904166221618652,
+      "max": 32.25833511352539,
+      "quantiles_p001_p01_p50_p99_p999": [
+        -0.7944291839003563,
+        4.237125196456909,
+        18.612499237060547,
+        29.65833282470703,
+        31.215262258529695
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "annual_precipitation",
+      "finite": 30192,
+      "min": 0.0,
+      "max": 7249.39990234375,
+      "quantiles_p001_p01_p50_p99_p999": [
+        1.0,
+        54.48199993133545,
+        914.6000061035156,
+        3244.39990234375,
+        4290.556279296897
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "hottest_month_mean_daily_maximum_temperature",
+      "finite": 30192,
+      "min": 7.5,
+      "max": 48.70000076293945,
+      "quantiles_p001_p01_p50_p99_p999": [
+        17.019100072860716,
+        20.899999618530273,
+        32.20000076293945,
+        43.900001525878906,
+        47.70000076293945
+      ]
+    },
+    {
+      "period": "2041-2060",
+      "id": "de_martonne_aridity",
+      "finite": 30192,
+      "min": 0.0,
+      "max": 313.4600524902344,
+      "quantiles_p001_p01_p50_p99_p999": [
+        0.028684116899967194,
+        1.681004881858826,
+        34.946773529052734,
+        93.81692504882812,
+        127.37118470001235
+      ]
+    }
+  ],
+  "grid_heat_warming_matched_valid_cells": 89308,
+  "native_cities_future_valid": 30192,
+  "dm_map_valid_cells": 57269,
+  "dm2026_cells_temperature_minus10_to_minus9": 1030,
+  "dm2026_cells_above_half_float_limit": 5,
+  "native_de_martonne_formula_errors": [
+    {
+      "period": "1970-2000",
+      "max_absolute_error_after_float32_packing": 0.002059003657223002,
+      "p99_absolute_error_after_float32_packing": 4.023652866180805e-06,
+      "max_relative_error_after_float32_packing": 1.2403692128739188e-06
+    },
+    {
+      "period": "2021-2040",
+      "max_absolute_error_after_float32_packing": 0.00995744264946552,
+      "p99_absolute_error_after_float32_packing": 5.366699035391775e-06,
+      "max_relative_error_after_float32_packing": 1.7144347089499417e-06
+    },
+    {
+      "period": "2041-2060",
+      "max_absolute_error_after_float32_packing": 0.00010374930150192085,
+      "p99_absolute_error_after_float32_packing": 5.022183785285961e-06,
+      "max_relative_error_after_float32_packing": 3.309809357769858e-07
+    }
+  ],
+  "stored_mean_native_dm_and_runtime_ratio_support_differ": {
+    "ratio_available_but_stored_native_mean_absent": 1515,
+    "stored_native_mean_available_but_ratio_absent": 131,
+    "temperature_and_dm_coverage_counts_differ": 34479,
+    "meaning": "Stored metric is mean of native ratios with its own support. Runtime computes ratio of mean temperature/precipitation using their common support; these are different spatial definitions."
+  },
+  "heat2050_below2026_grid_count": 262,
+  "warming2050_negative_grid_count": 0,
+  "dm_interpolation_errors": [
+    {
+      "year": 2026,
+      "max_absolute_index_error": 0.0,
+      "p99_absolute_index_error": 0.0,
+      "max_error_temperature_above_0C": 0.0
+    },
+    {
+      "year": 2027,
+      "max_absolute_index_error": 247034.42254291303,
+      "p99_absolute_index_error": 8.043782191706029,
+      "max_error_temperature_above_0C": 0.0046809053912681975
+    },
+    {
+      "year": 2028,
+      "max_absolute_index_error": 166391.78081229058,
+      "p99_absolute_index_error": 10.03476790740073,
+      "max_error_temperature_above_0C": 0.006200896946396028
+    },
+    {
+      "year": 2029,
+      "max_absolute_index_error": 83483.50775302383,
+      "p99_absolute_index_error": 7.011694676727031,
+      "max_error_temperature_above_0C": 0.004620828051351111
+    },
+    {
+      "year": 2030,
+      "max_absolute_index_error": 0.0,
+      "p99_absolute_index_error": 0.0,
+      "max_error_temperature_above_0C": 0.0
+    },
+    {
+      "year": 2031,
+      "max_absolute_index_error": 1154.8165498738094,
+      "p99_absolute_index_error": 16.04586437399144,
+      "max_error_temperature_above_0C": 0.040042502903958166
+    },
+    {
+      "year": 2032,
+      "max_absolute_index_error": 1687.410508437919,
+      "p99_absolute_index_error": 28.5031211782017,
+      "max_error_temperature_above_0C": 0.07556932982956255
+    },
+    {
+      "year": 2033,
+      "max_absolute_index_error": 2068.72264222168,
+      "p99_absolute_index_error": 37.697849301742366,
+      "max_error_temperature_above_0C": 0.10663395623052452
+    },
+    {
+      "year": 2034,
+      "max_absolute_index_error": 2288.05764547401,
+      "p99_absolute_index_error": 44.60114798478792,
+      "max_error_temperature_above_0C": 0.13328901652585046
+    },
+    {
+      "year": 2035,
+      "max_absolute_index_error": 2396.950887278198,
+      "p99_absolute_index_error": 49.63585432635654,
+      "max_error_temperature_above_0C": 0.15558632056905708
+    },
+    {
+      "year": 2036,
+      "max_absolute_index_error": 2427.171719833337,
+      "p99_absolute_index_error": 53.073167761406,
+      "max_error_temperature_above_0C": 0.1735768697324147
+    },
+    {
+      "year": 2037,
+      "max_absolute_index_error": 2399.370722020822,
+      "p99_absolute_index_error": 54.913290430975394,
+      "max_error_temperature_above_0C": 0.19108913959991014
+    },
+    {
+      "year": 2038,
+      "max_absolute_index_error": 2327.5525841903336,
+      "p99_absolute_index_error": 55.307192246894985,
+      "max_error_temperature_above_0C": 0.213686596441363
+    },
+    {
+      "year": 2039,
+      "max_absolute_index_error": 2221.550546432327,
+      "p99_absolute_index_error": 54.54639904735542,
+      "max_error_temperature_above_0C": 0.2194431251735125
+    },
+    {
+      "year": 2040,
+      "max_absolute_index_error": 2088.471899165846,
+      "p99_absolute_index_error": 52.70389351443596,
+      "max_error_temperature_above_0C": 0.22073698707725953
+    },
+    {
+      "year": 2041,
+      "max_absolute_index_error": 1933.5813633312737,
+      "p99_absolute_index_error": 50.04842236205838,
+      "max_error_temperature_above_0C": 0.21762368329603987
+    },
+    {
+      "year": 2042,
+      "max_absolute_index_error": 1760.861854865034,
+      "p99_absolute_index_error": 46.78659259868232,
+      "max_error_temperature_above_0C": 0.21015779843332894
+    },
+    {
+      "year": 2043,
+      "max_absolute_index_error": 1573.3822048011396,
+      "p99_absolute_index_error": 42.72623379355498,
+      "max_error_temperature_above_0C": 0.1983930193941319
+    },
+    {
+      "year": 2044,
+      "max_absolute_index_error": 1373.545159887276,
+      "p99_absolute_index_error": 37.971883475846106,
+      "max_error_temperature_above_0C": 0.18238215376422318
+    },
+    {
+      "year": 2045,
+      "max_absolute_index_error": 1163.2587968011505,
+      "p99_absolute_index_error": 32.685520635968444,
+      "max_error_temperature_above_0C": 0.16217714773901548
+    },
+    {
+      "year": 2046,
+      "max_absolute_index_error": 944.0575921989719,
+      "p99_absolute_index_error": 27.050800341081768,
+      "max_error_temperature_above_0C": 0.1460224981176026
+    },
+    {
+      "year": 2047,
+      "max_absolute_index_error": 717.1895939633489,
+      "p99_absolute_index_error": 20.90350691068059,
+      "max_error_temperature_above_0C": 0.14156887408903174
+    },
+    {
+      "year": 2048,
+      "max_absolute_index_error": 483.68027328858784,
+      "p99_absolute_index_error": 14.316112983744409,
+      "max_error_temperature_above_0C": 0.09944509790510381
+    },
+    {
+      "year": 2049,
+      "max_absolute_index_error": 244.38002476129373,
+      "p99_absolute_index_error": 7.338068112212593,
+      "max_error_temperature_above_0C": 0.052230961840905366
+    },
+    {
+      "year": 2050,
+      "max_absolute_index_error": 2.2737367544323206e-13,
+      "p99_absolute_index_error": 0.0,
+      "max_error_temperature_above_0C": 0.0
+    }
+  ],
+  "largest_dm_interpolation_error": {
+    "year": 2027,
+    "row": 37,
+    "column": 547,
+    "latitude": 71.25,
+    "longitude": 93.75,
+    "exact_ratio": 6927.827070980935,
+    "texture_interpolated_index": 253962.24961389398,
+    "error": 247034.42254291303,
+    "temperature": -9.947457631429037
+  },
+  "city_examples": [
+    {
+      "name": "Paris",
+      "index": 191,
+      "iso": "FR",
+      "latitude": 48.85,
+      "longitude": 2.35,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            12.35335178375244,
+            26.715933015611437,
+            28.73285331045154,
+            0.9052268981933587
+          ],
+          "regional_temperature_heat_dm_warming": [
+            11.99189272986518,
+            26.29832657708062,
+            28.739581601501307,
+            0.9182795630560978
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            12.441666603088379,
+            26.899999618530273,
+            28.62532608543684,
+            0.9935417175292969
+          ],
+          "regional_temperature_heat_dm_warming": [
+            12.081480979919434,
+            26.488889694213867,
+            28.617747232877996,
+            1.0078678131103516
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            13.129166603088379,
+            28.399999618530273,
+            26.974600301022292,
+            1.6810417175292969
+          ],
+          "regional_temperature_heat_dm_warming": [
+            12.763425827026367,
+            27.94444465637207,
+            27.05412125141113,
+            1.6898126602172852
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dhaka",
+      "index": 18,
+      "iso": "BD",
+      "latitude": 23.71,
+      "longitude": 90.41,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            26.093737199571397,
+            33.61262088351779,
+            58.138683286880095,
+            0.1923108842637795
+          ],
+          "regional_temperature_heat_dm_warming": [
+            25.74326286315918,
+            33.39562174479167,
+            56.93126549794969,
+            0.17820510864257955
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            26.112499237060547,
+            33.599998474121094,
+            57.98269825466703,
+            0.2110729217529297
+          ],
+          "regional_temperature_heat_dm_warming": [
+            25.760648727416992,
+            33.377777099609375,
+            56.829072714160674,
+            0.19559097290039062
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            26.641666412353516,
+            34.0,
+            57.03070181511574,
+            0.7402400970458984
+          ],
+          "regional_temperature_heat_dm_warming": [
+            26.27638816833496,
+            33.81111145019531,
+            56.12864212752589,
+            0.7113304138183594
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Phoenix",
+      "index": 278,
+      "iso": "US",
+      "latitude": 33.45,
+      "longitude": -112.07,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            23.612312232123482,
+            42.204199133978946,
+            5.651897281028621,
+            1.240468894110787
+          ],
+          "regional_temperature_heat_dm_warming": [
+            23.155592812432182,
+            42.39398896959093,
+            5.60664403439833,
+            1.2381523980034714
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            23.733333587646484,
+            42.29999923706055,
+            5.596837992937005,
+            1.361490249633789
+          ],
+          "regional_temperature_heat_dm_warming": [
+            23.27638816833496,
+            42.488887786865234,
+            5.549814457540866,
+            1.35894775390625
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            24.387500762939453,
+            42.79999923706055,
+            5.493274873295478,
+            2.015657424926758
+          ],
+          "regional_temperature_heat_dm_warming": [
+            23.919906616210938,
+            42.988887786865234,
+            5.43862886447216,
+            2.0024662017822266
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Singapore",
+      "index": 51,
+      "iso": "SG",
+      "latitude": 1.29,
+      "longitude": 103.85,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "regional_temperature_heat_dm_warming": [
+            27.105020565456815,
+            31.09125230577257,
+            66.17644208082137,
+            0.51442722744412
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "regional_temperature_heat_dm_warming": [
+            27.155208587646484,
+            31.125,
+            66.46510667591374,
+            0.5646152496337891
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "regional_temperature_heat_dm_warming": [
+            27.696874618530273,
+            31.69999885559082,
+            65.93450856326338,
+            1.1062812805175781
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sydney",
+      "index": 50,
+      "iso": "AU",
+      "latitude": -33.87,
+      "longitude": 151.21,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "regional_temperature_heat_dm_warming": [
+            18.07104034423828,
+            26.99986457824707,
+            40.26346375759391,
+            0.8520500183105462
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "regional_temperature_heat_dm_warming": [
+            18.15416717529297,
+            27.059999465942383,
+            39.97560906210817,
+            0.9351768493652344
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "regional_temperature_heat_dm_warming": [
+            18.718334197998047,
+            27.600000381469727,
+            39.468862387838804,
+            1.4993438720703125
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Yakutsk",
+      "index": 2578,
+      "iso": "RU",
+      "latitude": 62.03,
+      "longitude": 129.72,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            -7.774206532372369,
+            26.57988950941298,
+            114.73860312596071,
+            1.871033297644721
+          ],
+          "regional_temperature_heat_dm_warming": [
+            -8.305226559109158,
+            25.944326655069986,
+            153.59727407883446,
+            1.861554866366916
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            -7.5916666984558105,
+            26.700000762939453,
+            106.42214166479067,
+            2.0535731315612793
+          ],
+          "regional_temperature_heat_dm_warming": [
+            -8.123611450195312,
+            26.066667556762695,
+            139.19172813102276,
+            2.0431699752807617
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            -6.587499618530273,
+            27.0,
+            74.95969947454996,
+            3.0577402114868164
+          ],
+          "regional_temperature_heat_dm_warming": [
+            -7.124536991119385,
+            26.344444274902344,
+            90.84527542073896,
+            3.0422444343566895
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ho Chi Minh City",
+      "index": 7,
+      "iso": "VN",
+      "latitude": 10.82,
+      "longitude": 106.63,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            28.247265667385527,
+            33.790176984998915,
+            48.86931597413129,
+            0.7113693661159957
+          ],
+          "regional_temperature_heat_dm_warming": [
+            27.94824392530653,
+            33.366651153564455,
+            50.76098197480678,
+            0.720313856336805
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            28.316667556762695,
+            33.79999923706055,
+            49.02044062091987,
+            0.7807712554931641
+          ],
+          "regional_temperature_heat_dm_warming": [
+            28.018518447875977,
+            33.39999771118164,
+            50.90940097136091,
+            0.79058837890625
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            28.820833206176758,
+            34.20000076293945,
+            49.66663042356233,
+            1.2849369049072266
+          ],
+          "regional_temperature_heat_dm_warming": [
+            28.523611068725586,
+            33.66666793823242,
+            51.649419999052355,
+            1.2956809997558594
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Shanghai",
+      "index": 0,
+      "iso": "CN",
+      "latitude": 31.22,
+      "longitude": 121.46,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            16.811567899915907,
+            31.765443674723308,
+            39.763766794857226,
+            0.39393293592664946
+          ],
+          "regional_temperature_heat_dm_warming": [
+            16.609561199612088,
+            31.661357922024198,
+            38.904427498835915,
+            0.4625484890407989
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            16.850000381469727,
+            31.799999237060547,
+            39.76908877681272,
+            0.43236541748046875
+          ],
+          "regional_temperature_heat_dm_warming": [
+            16.654687881469727,
+            31.712499618530273,
+            38.91763914201438,
+            0.5076751708984375
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            17.516666412353516,
+            32.400001525878906,
+            38.48576655799285,
+            1.0990314483642578
+          ],
+          "regional_temperature_heat_dm_warming": [
+            17.34375,
+            32.32500076293945,
+            37.83497321428572,
+            1.196737289428711
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ulaanbaatar",
+      "index": 675,
+      "iso": "MN",
+      "latitude": 47.91,
+      "longitude": 106.88,
+      "years": [
+        {
+          "year": 2026,
+          "native_temperature_heat_dm_warming": [
+            -0.32564625839392347,
+            25.047511884901258,
+            28.800777086901864,
+            1.1170412530501683
+          ],
+          "regional_temperature_heat_dm_warming": [
+            -0.3424010935756896,
+            25.16969829135471,
+            26.912729684347365,
+            1.122690373327997
+          ]
+        },
+        {
+          "year": 2030,
+          "native_temperature_heat_dm_warming": [
+            -0.21666662395000458,
+            25.200000762939453,
+            28.446339055749323,
+            1.2260208874940872
+          ],
+          "regional_temperature_heat_dm_warming": [
+            -0.23287032544612885,
+            25.322221755981445,
+            26.580082701094195,
+            1.2322211414575577
+          ]
+        },
+        {
+          "year": 2050,
+          "native_temperature_heat_dm_warming": [
+            0.8416666388511658,
+            26.600000381469727,
+            24.56264587183113,
+            2.2843541502952576
+          ],
+          "regional_temperature_heat_dm_warming": [
+            0.8180555701255798,
+            26.72222137451172,
+            22.999614841810896,
+            2.2831470370292664
+          ]
+        }
+      ]
+    }
+  ]
+}

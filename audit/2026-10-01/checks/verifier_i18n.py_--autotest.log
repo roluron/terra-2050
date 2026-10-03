@@ -1,0 +1,3 @@
+{"command": ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "/workspace/terra-2050/tools/verifier_i18n.py", "--autotest"], "exit_code": 0}
+PASS missing keys, placeholders and invalid functions are rejected
+PASS complete locale schemas, UI references, interpolation and scientific scenario identifiers: fr, en, ja, zh, vi, es, it, zh-Hant

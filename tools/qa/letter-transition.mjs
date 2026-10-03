@@ -21,6 +21,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   assert.equal(await page.locator('#earth-shell .latin').evaluateAll(es=>es.some(e=>Number(getComputedStyle(e).opacity)>0)),false);
   await page.screenshot({path:(process.env.QA_SORTIE||(await import('node:os')).tmpdir())+'/'+name+'-mystery.png'});
   await page.waitForFunction(()=>window.terraIntro?.ready(),null,{timeout:30000}).catch(async error=>{console.error(await page.evaluate(()=>({ready:window.terraIntro?.ready(),progress:document.querySelector('#jauge')?.textContent,resources:performance.getEntriesByType('resource').filter(r=>r.duration>3000).map(r=>r.name)})));throw error});
+  await page.waitForSelector('#earth-shell.interaction-ready');
   for(const word of await page.locator('#earth-shell .word').all())await word.focus();
   await page.waitForSelector('#earth-shell.complete');
   await page.evaluate(()=>{window.transitionFrames=[];let last=performance.now();function sample(now){window.transitionFrames.push({dt:now-last,veil:Number(getComputedStyle(document.querySelector('#earth-shell')).getPropertyValue('--earth-veil')||1)});last=now;if(document.querySelector('#earth-shell').open)requestAnimationFrame(sample)}requestAnimationFrame(sample);const shell=document.querySelector('#earth-shell');new MutationObserver((m,o)=>{if(!shell.open){window.transitionFrames.push({dt:performance.now()-last,veil:Number(getComputedStyle(shell).getPropertyValue('--earth-veil')||1)});o.disconnect();}}).observe(shell,{attributes:true,attributeFilter:['open']})});

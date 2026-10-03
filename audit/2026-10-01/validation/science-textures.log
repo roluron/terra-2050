@@ -1,0 +1,10 @@
+(node:26421) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/terra-2050/assets/lib/three.module.min.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/terra-2050/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS: physical endpoints, independent masks, matched flood models, HalfFloat bounds, row reversal, event-loop yielding {
+  durationMs: 92.14511899999997,
+  maxChunkMs: 6.384154999999993,
+  yields: 12,
+  bytes: 20736000
+}

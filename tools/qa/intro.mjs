@@ -100,6 +100,7 @@ for (const [name, engine, configuration] of [
     assert.equal(await page.locator('#earth-shell .latin').evaluateAll(elements => elements.some(el => Number(getComputedStyle(el).opacity) > 0)), false, 'No readable words before interaction');
     assert.equal(await page.locator('#future').isVisible(), false);
     assert.equal(await page.locator('#etiquettes').evaluate(el => getComputedStyle(el).opacity), '0');
+    await page.waitForSelector('#earth-shell.interaction-ready');
     await page.locator('#earth-shell .word').first().focus();
     await page.waitForSelector('#earth-shell .word.revealed');
     assert.equal(await page.locator('#future').isVisible(), false);
@@ -159,11 +160,10 @@ for (const [name, engine, configuration] of [
       await page.waitForFunction(() => window.__filterReveal.every(Number.isFinite));
       const revealed = await page.evaluate(() => window.__filterReveal);
       assert.ok(revealed[0] > result.duration, 'Filters appear after the Earth transition');
-      assert.ok(revealed.every((time, i) => !i || time >= revealed[i - 1]), 'Filters enter in order: ' + JSON.stringify(revealed));
-      // sur un runner lent (~1,5 image/s) sept filtres tombent sur 3 images : l'étalement se
-      // juge à l'ordre et à la durée (≥ 700 ms) ; le nombre d'images distinctes suit la cadence
-      assert.ok(new Set(revealed).size >= 3 && revealed.at(-1) - revealed[0] >= 700,
-        'Filter reveal remains visibly staggered across sampled frames: ' + JSON.stringify(revealed));
+      // fondu simultané du titre, des contrôles, des filtres et de l'année
+      // (.agent/FEEDBACK.md, retour n° 8) : les filtres arrivent ensemble
+      assert.ok(revealed.at(-1) - Math.min(...revealed) <= 400,
+        'Filters fade in together: ' + JSON.stringify(revealed));
       result.filterRevealTimes = revealed;
     }
     if (name === 'desktop') await page.mouse.move(viewport.width / 2, viewport.height / 2);

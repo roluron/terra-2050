@@ -1,0 +1,48 @@
+{"year":2026,"cityCases":34099,"issues":0}
+{"year":2027,"cityCases":34099,"issues":0}
+{"year":2028,"cityCases":34099,"issues":0}
+{"year":2029,"cityCases":34099,"issues":0}
+{"year":2030,"cityCases":34099,"issues":0}
+{"year":2031,"cityCases":34099,"issues":0}
+{"year":2032,"cityCases":34099,"issues":0}
+{"year":2033,"cityCases":34099,"issues":0}
+{"year":2034,"cityCases":34099,"issues":0}
+{"year":2035,"cityCases":34099,"issues":0}
+{"year":2036,"cityCases":34099,"issues":0}
+{"year":2037,"cityCases":34099,"issues":0}
+{"year":2038,"cityCases":34099,"issues":0}
+{"year":2039,"cityCases":34099,"issues":0}
+{"year":2040,"cityCases":34099,"issues":0}
+{"year":2041,"cityCases":34099,"issues":0}
+{"year":2042,"cityCases":34099,"issues":0}
+{"year":2043,"cityCases":34099,"issues":0}
+{"year":2044,"cityCases":34099,"issues":0}
+{"year":2045,"cityCases":34099,"issues":0}
+{"year":2046,"cityCases":34099,"issues":0}
+{"year":2047,"cityCases":34099,"issues":0}
+{"year":2048,"cityCases":34099,"issues":0}
+{"year":2049,"cityCases":34099,"issues":0}
+{"year":2050,"cityCases":34099,"issues":0}
+{
+  "status": "PASS_LOADED_DATA",
+  "cases": 852475,
+  "completeCases": 780050,
+  "unavailableCases": 72425,
+  "obsoletePositiveBoundPrefixCounts": {
+    "thermique": 2912,
+    "eau": 4817,
+    "feux": 596,
+    "mer": 705,
+    "fleuves": 42611,
+    "stabilite": 2213
+  },
+  "results": "/workspace/terra-2050/audit/2026-10-01/claims-score/results.json",
+  "invariantProbe": {
+    "cityScore": null,
+    "countryScore": null,
+    "expected": null,
+    "note": "This is a defensive failure-path issue, not observed in the complete loaded dataset."
+  }
+}
+
+Formatter diagnostic correction: startsWith('0 ') treated positive bounded text as literal zero. These historical prefix counts are obsolete, not remaining defects. The independent /^0 (?!<)/ recalculation in rounding-statistics.json finds zero literal-zero failures across all 852475 cases.

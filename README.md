@@ -2,15 +2,15 @@
 
 Un globe présentant un **indice climatique expérimental de 0 à 100** entre
 2026 et 2050. Les valeurs climatiques intermédiaires sont des interpolations,
-pas des prévisions annuelles. La provenance complète des fichiers actuels et
-leur validation scientifique locale restent incomplètes ; cet indice ne
-mesure pas l'habitabilité d'une ville.
+pas des prévisions annuelles. Les fichiers livrés, calculs et affichages ont été audités ; la reconstruction
+depuis les sources originales et la validation scientifique restent ouvertes.
+Cet indice ne mesure pas l'habitabilité d'une ville. Voir [DATA-AUDIT.md](DATA-AUDIT.md).
 
 En ligne : **https://roluron.github.io/terra-2050/**
 
-34 099 villes, six critères pondérés (stress thermique, stress hydrique, feux,
-submersion marine, inondation fluviale, dérive climatique) plus le déclin de
-population. Aucun compte, aucun paywall, FR/EN, partage par lien profond et par
+34 099 villes, six critères pondérés (chaleur, aridité De Martonne, météo de feu,
+submersion marine, inondation fluviale, réchauffement local) plus le déclin de
+population. Aucun compte, aucun paywall, huit langues, partage par lien profond et par
 image story.
 
 ---
@@ -51,11 +51,16 @@ Tout le reste arrive **après** :
 
 | Après | Quoi | Pourquoi |
 |---|---|---|
-| textures prêtes | l'annuaire des 34 099 villes (1,1 Mo), les marées, la calibration | la recherche affiche « chargement » si on va plus vite qu'elle |
-| textures prêtes | les 4 grilles de calques et `grille_d` (3 Mo) | aucun calque n'est allumé à l'arrivée ; un texel noir tient leur place |
-| grilles prêtes | `rivers.json` | sert au seul calque des fleuves |
-| grilles prêtes | `pays.png` + `pays_index.json` (50 Ko) | le nom du pays sous le pointeur ; sans elle, le survol ne dit que la ville |
-| clic Explorer | les sons, les foyers de feu | rien de tout cela ne sert avant le geste |
+| textures prêtes / entrée | l’annuaire des villes et les lecteurs scientifiques | la recherche attend l’annuaire ; les valeurs absentes restent indisponibles |
+| chargement différé des couches | climat, météo de feu, crues et points de villes | textures scientifiques construites en mémoire depuis les binaires et métadonnées |
+| couches prêtes | `rivers.json` | tracés de fleuves comme repères géographiques, sans mesure de débit |
+| annuaire prêt | `pays.png` + `pays_index.json`, population annuelle | unités démographiques des territoires et filtre ONU |
+| clic Explorer | les sons | chargement après un geste utilisateur |
+
+Les temps et budgets qui suivent sont des mesures historiques, pas une mesure
+du volume des nouvelles couches scientifiques. L’aridité corrigée utilise deux
+textures d’ingrédients Float32 ; les sept textures produites par
+`science-textures.mjs` occupent 20 736 000 octets avant les autres ressources GPU.
 
 Mesures historiques (avant la passe du 7 septembre 2026 ; les mesures de la
 version publiée et les limites de vérification sont dans
@@ -103,92 +108,93 @@ Quatre pièges rencontrés, à ne pas réintroduire :
 |---|---|
 | `index.html` | Tout l'applicatif : shaders GLSL, scène Three.js, interface, dictionnaires FR/EN, partage, story. ~3 200 lignes, un seul `<script type="module">`. |
 | `terra-menus.css` | Couche de design par-dessus les styles de base inline dans `index.html`. Les règles tardives gagnent : le fichier se lit du haut vers le bas comme une suite de passes. |
-| `tools/pipeline.py` | Pipeline hors-ligne : sources climatiques brutes → `data/`. Ne tourne jamais dans le navigateur. |
-| `tools/pays_raster.py` | Grille des pays (`data/pays.png`, `data/pays_index.json`) depuis Natural Earth 50 m, pour le survol du globe. Autonome, ~1 s. |
+| `tools/pipeline.py` | Générateur historique ; ne reconstruit pas les produits scientifiques actuels. Voir les importeurs spécialisés. |
+| `tools/pays_raster.py` | Grille des pays (`data/pays.png`, `data/pays_index.json`) depuis les unités Natural Earth 50 m (Gibraltar 10 m), avec empreintes et provenance. |
 | `data/` | Sorties du pipeline (voir formats ci-dessous). |
 | `assets/` | Librairies vendorées, textures, sons, polices, icônes. |
 | `.agent/` | Contrat de complétion : objectif, critères d'acceptation, état, preuves. |
 | `PERF-REPORT.md` | Budget de performance mesuré et techniques employées. |
 | `AUDIT-APPAREILS.md` | Audit multi-appareils et multi-navigateurs (tablette, Mac, PC, Safari, Chrome, Firefox) : correctifs, reste à faire, plan. |
 
-## Formats de données
+## Données actuelles et reproduction
 
-Le pipeline produit des binaires à pas fixe, lus directement par `DataView`. Ce
-format est **porteur** : le modifier sans toucher au lecteur dans `index.html`
-corrompt silencieusement toutes les villes.
+Les lecteurs valident les formats et empreintes attendus. Ne pas régénérer un
+binaire scientifique depuis le pipeline historique `tools/pipeline.py` : il ne
+produit pas les données physiques actuellement utilisées.
 
-**`data/pays.png` — 2160 × 1080 en niveaux de gris**, un octet par texel de 10′ :
-0 = mer ou sans pays, n = position dans la liste `iso` de `data/pays_index.json`
-(`{"w":2160,"h":1080,"iso":["","US","NZ",…]}`). Produit par `tools/pays_raster.py`
-depuis Natural Earth admin-0 50 m, du plus grand pays au plus petit pour que
-les enclaves gagnent. Sert uniquement à nommer le pays sous le pointeur : à 18 km
-le texel, c'est la précision d'une étiquette, pas d'un cadastre.
-
-**`data/places.bin` — 24 octets par ville**, dans l'ordre de `data/places.json` :
-
-| Offset | Type | Contenu |
+| Produit | Lecteur / importeur | Mesure |
 |---|---|---|
-| 0-1, 2-3 | int16 LE | latitude ×100, longitude ×100 |
-| 4-9 | uint8 ×6 | pénalités 2026 ÷250 (thermique, eau, feux, mer, fleuves, stabilité) |
-| 10-15 | uint8 ×6 | pénalités 2050, même ordre |
-| 16, 17 | uint8 | fraction de terres sous la ligne de submersion, puis sous la ligne +1 m (÷250) |
-| 18-19 | uint16 LE | altitude médiane en décimètres, décalée de 500 m (permet les altitudes négatives) |
-| 20 | uint8 | subsidence ÷100 |
-| 21, 22 | uint8 | fraction inondable ÷250, profondeur p90 ÷10 |
-| 23 | uint8 | variation de population 2050 en points, décalée de 128 ; 255 = inconnue |
+| `climate-grid.bin`, `climate-coverage.bin`, `climate-points.bin`, `climate-manifest.json` | `climate-data.mjs`, `tools/import_climate.py` | WorldClim et MPI-ESM1-2-HR ; chaleur, température annuelle, pluie et De Martonne |
+| `fire-weather.bin`, `fire-weather.json` | `climate-data.mjs`, `tools/import_fire_weather.py` | Moyenne et changements appariés de 21 modèles de météo de feu |
+| `flood-coast.bin`, `flood-river.bin`, `flood-cities.bin`, métadonnées associées | `flood-data.mjs`, `tools/import_floods.py` | Profondeurs et fractions au-dessus de 0,5 m pour un événement centennal |
+| `population-annual.json`, `population-provenance.json` | `tools/import_population.py` | 237 séries annuelles 2025–2050, personnes au 1er juillet, ONU WPP 2024 variante moyenne et révision Togo janvier 2026 |
+| `pays.png`, `pays_index.json`, `pays-provenance.json` | `tools/pays_raster.py` | Unités Natural Earth distinguant les territoires démographiques ; grille 2160×1080, palette uint8, 0 = sans unité assignée |
+| `places.json`, `places.bin` | annuaire dans `index.html` | Noms, coordonnées et populations enregistrées ; anciens champs de pénalités conservés dans le format mais remplacés par les lecteurs scientifiques pour les scores |
 
-Le premier octet de pénalité à **255** est une sentinelle « données insuffisantes »
-(atolls et îles hors des grilles climatiques) : la ville n'affiche aucun score
-plutôt qu'un score inventé.
+La carte et son infobulle utilisent des mailles de 0,5° (2,5° pour le feu).
+Les couleurs sont lissées ; l’infobulle décrit la maille contenant le pointeur.
+Les fiches de ville utilisent des échantillons aux coordonnées enregistrées,
+avec repli régional déclaré. Une profondeur nulle au centre ne garantit pas
+l’absence de risque dans toute la ville. Les agrégats de pays sont des moyennes
+de villes disponibles ; ils ne sont pas un échantillon national représentatif.
 
-`data/thermo.bin` porte les valeurs thermiques exactes par ville (6 octets), et les
-`data/grille_*.png` encodent les grilles de risque en RGB, lues à la fois par les
-shaders du globe et par les fiches — même source pour l'image et pour le chiffre.
+Les années des six filtres physiques interpolent des moyennes de périodes,
+sans prévision annuelle. La population emploie directement chaque année ONU :
+niveau de déclin depuis 2025, évolution depuis 2026, plafond visuel de 30 %.
+Les séries sont nationales/territoriales, sans projection de population urbaine.
 
-La régénération par `tools/pipeline.py` est bloquée : ce générateur historique
-ne correspond pas au format actuel (altitudes, fractions côtières) et ne produit
-ni `thermo.bin`, ni `maree.bin`, ni `grille_d.png`. Récupérer les générateurs
-actuels, les fichiers sources et leur traçabilité avant toute régénération.
+Pour reconstruire la géographie, les sources Natural Earth sont téléchargées
+si absentes puis comparées à leurs SHA256 épinglés :
 
-La population utilise `data/population-annual.json` : 237 pays et territoires,
-26 valeurs annuelles 2025–2050 en personnes au 1er juillet, scénario médian
-ONU WPP 2024 et révision officielle Togo de janvier 2026. Le panneau, la carte
-et la story utilisent ces années directement. La carte code le déclin depuis
-2025, plafonné à 30 %, et les transitions visuelles interpolent entre deux
-années officielles. `data/population-provenance.json` conserve les URL, unités,
-versions et empreintes. Reproduction :
+```sh
+python3 tools/pays_raster.py
+python3 tools/pays_raster.py --verify-shipped
+```
 
-```bash
+La méthode teste l’appartenance des centres de pixels aux polygones et respecte
+les trous. Elle n’agrandit pas les microîles : 22 territoires avec une série ONU
+n’ont aucun pixel assigné à cette résolution. Le fichier de provenance liste
+ces absences et les limites des frontières simplifiées.
+
+Reconstruction démographique :
+
+```sh
 python3 tools/import_population.py WPP2024_Demographic_Indicators_Medium.csv.gz WPP2024_CSV_files_update.zip data/population-annual.json
 ```
 
-L'import refuse des sources dont les empreintes diffèrent de la version auditée.
-`tools/verifier_temporal.py` contrôle les formats, les 25 années affichables,
-les références fluviales fixes et le fichier démographique. Ces contrôles ne
-valident pas scientifiquement les indices climatiques locaux.
+L’import refuse les sources dont les empreintes diffèrent de la version enregistrée.
+Les autres importeurs documentent leurs arguments dans leur aide. Les sources
+scientifiques originales sont nécessaires pour vérifier les sorties par une
+reconstruction complète ; elles n’étaient pas accessibles pendant l’audit du
+1 octobre 2026. Contrôler des empreintes internes et des formules ne certifie
+pas les valeurs sources ou la pertinence scientifique de l’indice.
 
-## Limites assumées
+## Limites et provenance
 
-Elles sont **volontaires et affichées dans l'interface**, pas des bugs :
+La méthode complète, les contrôles, les erreurs corrigées et les points encore
+ouverts figurent dans [DATA-AUDIT.md](DATA-AUDIT.md). Les principales limites :
 
-- **Les défenses construites ne comptent pas.** Amsterdam ressort submersible parce
-  que le relief l'est ; les digues mobiles ne sont pas modélisées. C'est écrit dans
-  la fiche.
-- **Un seul modèle climatique** : CMIP6 MPI-ESM1-2-HR sous SSP3-7.0 (émissions
-  élevées). Pas d'ensemble multi-modèles, donc pas d'incertitude quantifiée.
-- **Profondeurs de crue écrêtées à 25,5 m** par l'octet de stockage.
-- **L'aridité de De Martonne perd son sens sous −9 °C** ; les villes très froides
-  gardent un stress hydrique peu signifiant.
-- **La carte d'inondation fluviale JRC est tenue constante jusqu'à 2050** : c'est la
-  géographie du risque qui est juste, pas son évolution.
+- Un seul modèle pour chaleur/aridité/réchauffement : MPI-ESM1-2-HR, SSP3-7.0.
+- Feu : météo favorable, 21 modèles sans correction de biais ; ni feux actifs,
+  ni surface brûlée. La dispersion des modèles n’est pas un intervalle de confiance.
+- Crues : WRI Aqueduct, RCP8.5, horizons réels 2030/2050, sans protections ;
+  côte sans affaissement. La carte affiche une fraction de cellules valides,
+  les fiches des profondeurs Float32 ; aucun écrêtage historique à 25,5 m.
+- Les scénarios climat/feu et inondations diffèrent ; leur combinaison n’est
+  pas une prévision sous un scénario commun.
+- De Martonne est indéfini à T ≤ −10°C et instable à proximité ; il n’est pas
+  une mesure de disponibilité d’eau.
+- L’indice 0–100 utilise des seuils et poids choisis par l’application, sans
+  validation empirique établie et sans mesure d’habitabilité.
 
-## Licences des données
+## Réutilisation des sources
 
-Toutes les sources sont librement téléchargeables. Une seule contrainte :
-**FABDEM est en CC BY-NC-SA** — gratuit tant que le site ne vend rien, à renégocier
-avec l'université de Bristol si le projet devient commercial. COAST-RP est en
-CC BY 4.0, libre y compris commercialement. WorldClim, CMIP6, GEBCO, JRC, GeoNames,
-Natural Earth et l'ONU sont libres sans condition.
+Consulter les conditions et attributions de **chaque** source enregistrée dans
+les métadonnées. Disponibilité au téléchargement ne signifie pas absence de
+conditions. La géographie Natural Earth est dans le domaine public ; GeoNames
+requiert une attribution. Les conditions actuelles des sources scientifiques
+restent à relire avec les documents originaux. Les anciennes mentions FABDEM,
+COAST-RP ou JRC ne décrivent pas les filtres de crue actuellement servis.
 
 ## Vérifier les textures avant de déployer
 

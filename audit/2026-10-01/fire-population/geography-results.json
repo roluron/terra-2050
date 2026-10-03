@@ -1,0 +1,64 @@
+{
+  "pass": true,
+  "palette_entries": 249,
+  "un_series_in_palette": 237,
+  "territories": {
+    "TK": {
+      "correctly_contained_pixels": 0,
+      "un_series_available": true
+    },
+    "BQ": {
+      "correctly_contained_pixels": 1,
+      "un_series_available": true
+    },
+    "YT": {
+      "correctly_contained_pixels": 2,
+      "un_series_available": true
+    },
+    "RE": {
+      "correctly_contained_pixels": 9,
+      "un_series_available": true
+    },
+    "MQ": {
+      "correctly_contained_pixels": 2,
+      "un_series_available": true
+    },
+    "GP": {
+      "correctly_contained_pixels": 8,
+      "un_series_available": true
+    },
+    "GF": {
+      "correctly_contained_pixels": 246,
+      "un_series_available": true
+    },
+    "GI": {
+      "correctly_contained_pixels": 0,
+      "un_series_available": true
+    }
+  },
+  "un_series_without_raster_cells": [
+    "AI",
+    "AS",
+    "AW",
+    "BL",
+    "BM",
+    "CK",
+    "GG",
+    "GI",
+    "KN",
+    "MO",
+    "MS",
+    "NR",
+    "PM",
+    "SC",
+    "SH",
+    "SX",
+    "TC",
+    "TK",
+    "TO",
+    "TV",
+    "VA",
+    "WF"
+  ],
+  "scope": "Every corrected territory pixel independently checked by point-in-polygon; shipped hashes and UN-code compatibility. Tiny areas are not enlarged."
+}

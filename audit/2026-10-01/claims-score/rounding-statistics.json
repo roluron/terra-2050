@@ -1,0 +1,169 @@
+{
+  "recalculatedAt": "2026-10-01T07:35:37.515Z",
+  "cases": 852475,
+  "method": "Raw scientific readings for all cities/years; literal-zero test /^0 (?!<)/. Only nonzero values that round numerically to zero require formatting; explicit bounds are not zeros.",
+  "priorDiagnostic": "The old startsWith('0 ') diagnostic is obsolete after bounded text. Its positive-bound counts were false positives, not remaining defects.",
+  "formatterSha256": "dc3fa4d00c88aa6310d0e6a5ead186d2fd544e365144f839f5879bf0b2936b5f",
+  "runtimeIndexSha256": "f960dc1b8fac9401c8d207cb4e88ce99f13d1617ee6a89effd5e286cc4ca2e93",
+  "stats": {
+    "thermique": {
+      "available": 833450,
+      "nonzeroChanges": 800112,
+      "nonzeroLevels": 833450,
+      "nonzeroDeltaRoundedToZeroInHover": 0,
+      "nonzeroLevelRoundedToZeroInHover": 0,
+      "boundedSmallPositiveDeltas": 2912,
+      "boundedSmallNegativeDeltas": 2032,
+      "boundedSmallLevels": 0
+    },
+    "eau": {
+      "available": 833425,
+      "nonzeroChanges": 799944,
+      "nonzeroLevels": 833275,
+      "nonzeroDeltaRoundedToZeroInHover": 0,
+      "nonzeroLevelRoundedToZeroInHover": 0,
+      "boundedSmallPositiveDeltas": 4817,
+      "boundedSmallNegativeDeltas": 7564,
+      "boundedSmallLevels": 225
+    },
+    "feux": {
+      "available": 790000,
+      "nonzeroChanges": 758400,
+      "nonzeroLevels": 790000,
+      "nonzeroDeltaRoundedToZeroInHover": 0,
+      "nonzeroLevelRoundedToZeroInHover": 0,
+      "boundedSmallPositiveDeltas": 596,
+      "boundedSmallNegativeDeltas": 275,
+      "boundedSmallLevels": 0
+    },
+    "mer": {
+      "available": 852425,
+      "nonzeroChanges": 6352,
+      "nonzeroLevels": 6605,
+      "nonzeroDeltaRoundedToZeroInHover": 0,
+      "nonzeroLevelRoundedToZeroInHover": 0,
+      "boundedSmallPositiveDeltas": 705,
+      "boundedSmallNegativeDeltas": 0,
+      "boundedSmallLevels": 201
+    },
+    "fleuves": {
+      "available": 849425,
+      "nonzeroChanges": 155348,
+      "nonzeroLevels": 160214,
+      "nonzeroDeltaRoundedToZeroInHover": 0,
+      "nonzeroLevelRoundedToZeroInHover": 0,
+      "boundedSmallPositiveDeltas": 42611,
+      "boundedSmallNegativeDeltas": 27391,
+      "boundedSmallLevels": 6794
+    },
+    "stabilite": {
+      "available": 833450,
+      "nonzeroChanges": 800112,
+      "nonzeroLevels": 833450,
+      "nonzeroDeltaRoundedToZeroInHover": 0,
+      "nonzeroLevelRoundedToZeroInHover": 0,
+      "boundedSmallPositiveDeltas": 2213,
+      "boundedSmallNegativeDeltas": 1947,
+      "boundedSmallLevels": 599
+    }
+  },
+  "boundedExamples": [
+    {
+      "name": "Shanghai",
+      "iso": "CN",
+      "axis": "eau",
+      "year": 2027,
+      "delta": 0.0013319253546839604,
+      "formatted": "0 < Δ < 0.01 De Martonne index"
+    },
+    {
+      "name": "Beijing",
+      "iso": "CN",
+      "axis": "eau",
+      "year": 2027,
+      "delta": -0.004782773347290714,
+      "formatted": "−0.01 < Δ < 0 De Martonne index"
+    },
+    {
+      "name": "Ho Chi Minh City",
+      "iso": "VN",
+      "axis": "thermique",
+      "year": 2027,
+      "delta": 0.002455563015409723,
+      "formatted": "0 < Δ < 0.01 °C"
+    },
+    {
+      "name": "Mumbai",
+      "iso": "IN",
+      "axis": "thermique",
+      "year": 2027,
+      "delta": 0.00478337605793655,
+      "formatted": "0 < Δ < 0.01 °C"
+    },
+    {
+      "name": "Mumbai",
+      "iso": "IN",
+      "axis": "feux",
+      "year": 2027,
+      "delta": 0.0015873114267979105,
+      "formatted": "0 < Δ < 0.01 days/year"
+    },
+    {
+      "name": "Karachi",
+      "iso": "PK",
+      "axis": "eau",
+      "year": 2027,
+      "delta": -0.0034205933853925785,
+      "formatted": "−0.01 < Δ < 0 De Martonne index"
+    },
+    {
+      "name": "Tianjin",
+      "iso": "CN",
+      "axis": "fleuves",
+      "year": 2027,
+      "delta": 0.0001438407897949301,
+      "formatted": "0 < Δ < 0.01 m"
+    },
+    {
+      "name": "Delhi",
+      "iso": "IN",
+      "axis": "thermique",
+      "year": 2027,
+      "delta": 0.004411146375872477,
+      "formatted": "0 < Δ < 0.01 °C"
+    },
+    {
+      "name": "Delhi",
+      "iso": "IN",
+      "axis": "stabilite",
+      "year": 2027,
+      "delta": 0.0021988338894303183,
+      "formatted": "0 < Δ < 0.01 °C"
+    },
+    {
+      "name": "Moscow",
+      "iso": "RU",
+      "axis": "fleuves",
+      "year": 2027,
+      "delta": -0.0015863897204398958,
+      "formatted": "−0.01 < Δ < 0 m"
+    },
+    {
+      "name": "Dhaka",
+      "iso": "BD",
+      "axis": "thermique",
+      "year": 2027,
+      "delta": -0.0031556023491745577,
+      "formatted": "−0.01 < Δ < 0 °C"
+    },
+    {
+      "name": "Dhaka",
+      "iso": "BD",
+      "axis": "stabilite",
+      "year": 2027,
+      "delta": 0.004690509372288432,
+      "formatted": "0 < Δ < 0.01 °C"
+    }
+  ],
+  "failures": []
+}

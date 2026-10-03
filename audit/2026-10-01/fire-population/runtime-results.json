@@ -1,0 +1,8 @@
+{
+  "pass": true,
+  "cells": 10368,
+  "validYears": 56575,
+  "missingYears": 202625,
+  "populationCases": 11850,
+  "scope": "Exhaustive shipped fire-grid indexing and all 25 displayed years, plus population formatting in both existing reference modes; not source reconstruction or scientific validation."
+}

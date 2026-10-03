@@ -26,14 +26,26 @@ const LIEN='a,.fa-lien',REGLE='input[type=range]',OCCUPE='[aria-busy=true]';
 const TRAIT=[14,2],CAPSULE=[16,6],CAPSULE_APPUI=[20,5],ANNEAU=14,AIMANT=8;
 /* taille : ressort amorti (raideur 380 s⁻², ζ ≈ 0,65) — la lentille s'ouvre
    avec un léger dépassement et s'écrase un peu à l'appui, comme une matière.
-   position : τ court en point (il colle à la souris), long en lentille
-   (elle garde son inertie de verre). */
-const RAIDEUR=380,AMORTI=2*.65*Math.sqrt(RAIDEUR),TAU_POINT=12,TAU_LENTILLE=55;
-let x=0,y=0,fx=0,fy=0,taille=POINT,vitesse=0,haut=POINT,vitesseH=0,coteH=-1,pressed=false,accroche=false,frame=0,last=0,cote=-1;
+   position : prise directement sur l'événement, sans aucun retard
+   (.agent/POINTER-PERFORMANCE.md) ; seule la taille est amortie. */
+const RAIDEUR=380,AMORTI=2*.65*Math.sqrt(RAIDEUR);
+let x=0,y=0,fx=0,fy=0,villeAimant=null,classe='',taille=POINT,vitesse=0,haut=POINT,vitesseH=0,coteH=-1,pressed=false,accroche=false,frame=0,last=0,cote=-1;
 function hide(){
  glassCursor.radius=0;lens.hidden=true;taille=haut=POINT;vitesse=vitesseH=0;accroche=false;
- document.body.classList.remove('curseur-verre');lens.className='glass-cursor point';
+ document.body.classList.remove('curseur-verre');villeAimant=null;
+ lens.className=classe='glass-cursor point';
  cancelAnimationFrame(frame);frame=0;
+}
+/* position, dans le même tour que l'événement : le centre est le pointeur,
+   ou, sous le nom d'une ville, un point aimanté vers le point de la ville */
+function placer(){
+ fx=x;fy=y;
+ if(villeAimant?.isConnected){
+  const b=villeAimant.getBoundingClientRect(),px=b.left+b.width/2,py=b.bottom-2;
+  if(Math.hypot(px-x,py-y)<24+b.width/2){fx=x+(px-x)*.7;fy=y+(py-y)*.7;}
+ }
+ lens.style.transform=`translate3d(${fx-taille/2}px,${fy-haut/2}px,0)`;
+ glassCursor.x=fx;glassCursor.y=fy;
 }
 function reveiller(){if(!frame&&!lens.hidden){last=0;frame=requestAnimationFrame(draw);}}
 function draw(t){
@@ -64,12 +76,10 @@ function draw(t){
   const b=ville.getBoundingClientRect(),px=b.left+b.width/2,py=b.bottom-2;
   if(Math.hypot(px-x,py-y)<24+b.width/2){tx=x+(px-x)*.7;ty=y+(py-y)*.7;}
  }
+ villeAimant=ville;
  const dt=Math.min(50,t-last||16);last=t;
- if(reduced.matches){fx=tx;fy=ty;taille=cible;haut=cibleH;vitesse=vitesseH=0;}
+ if(reduced.matches){taille=cible;haut=cibleH;vitesse=vitesseH=0;}
  else{
-  const ouverture=Math.min(1,Math.max(0,(taille-POINT_CONTROLE)/(LENTILLE-POINT_CONTROLE)));
-  const k=1-Math.exp(-dt/(TAU_POINT+(TAU_LENTILLE-TAU_POINT)*ouverture));
-  fx+=(tx-fx)*k;fy+=(ty-fy)*k;
   // ressorts intégrés en sous-pas : stables même quand une image dure 50 ms
   for(let reste=dt/1000;reste>0;reste-=.008){
    const h=Math.min(.008,reste);
@@ -84,24 +94,32 @@ function draw(t){
  /* transform plutôt que left/top : aucune mise en page par image, et la
     croissance part exactement du centre. La largeur ne s'écrit que si elle
     change (pas de scale() : le trait d'1 px grossirait avec la lentille). */
+ const change=Math.abs(taille-cote)>.01||Math.abs(haut-coteH)>.01;
  if(Math.abs(taille-cote)>.01){cote=taille;lens.style.width=taille+'px';}
  if(Math.abs(haut-coteH)>.01){coteH=haut;lens.style.height=haut+'px';}
- lens.style.transform=`translate3d(${fx-taille/2}px,${fy-haut/2}px,0)`;
- lens.className='glass-cursor'+(surGlobe?'':' point')+(texte?' texte':'')+(eteint?' eteint':'')+(occupe?' occupe':'');
- lens.hidden=false;document.body.classList.add('curseur-verre');
+ // les classes ne s'écrivent que si l'état change (pas de recalcul de style par image)
+ const nouvelle='glass-cursor'+(surGlobe?'':' point')+(texte?' texte':'')+(eteint?' eteint':'')+(occupe?' occupe':'');
+ if(nouvelle!==classe)lens.className=classe=nouvelle;
+ const montrer=lens.hidden;
+ if(change||montrer||Math.abs(tx-fx)>.01||Math.abs(ty-fy)>.01)placer();
+ if(montrer||!document.body.classList.contains('curseur-verre')){lens.hidden=false;document.body.classList.add('curseur-verre');}
  /* la réfraction suit la taille réelle : elle s'éteint avec la lentille
     au lieu de sauter, et n'agit que sur la toile (rien à déformer sous un panneau) */
- Object.assign(glassCursor,{x:fx,y:fy,radius:sous===scene?taille/2:0});
+ glassCursor.radius=sous===scene?taille/2:0;
  // au repos (souris immobile, taille posée), la boucle s'arrête ; un geste la relance
- const pose=Math.abs(tx-fx)<.1&&Math.abs(ty-fy)<.1&&taille===cible&&haut===cibleH;
+ const pose=taille===cible&&haut===cibleH;
  if(!pose)frame=requestAnimationFrame(draw);
 }
 document.addEventListener('pointermove',event=>{
  if(!fine.matches||event.pointerType!=='mouse'){hide();return;}
  x=event.clientX;y=event.clientY;
- if(lens.hidden){fx=x;fy=y;lens.hidden=false;}
- reveiller();
-},{passive:true});
+ // la position suit l'événement immédiatement (phase de capture) ; la
+ // boucle ne fait que la taille et l'état
+ placer();
+ // caché (première entrée, boîte modale…) : c'est la boucle qui décide de le montrer
+ if(lens.hidden){last=0;if(!frame)frame=requestAnimationFrame(draw);}
+ else reveiller();
+},{passive:true,capture:true});
 document.addEventListener('pointerdown',event=>{
  if(event.pointerType!=='mouse')return;
  pressed=true;
@@ -121,5 +139,5 @@ window.addEventListener('blur',()=>{pressed=false;hide()});
 window.addEventListener('pagehide',hide);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)hide()});
 fine.addEventListener('change',hide);hide();
-// un bouton qui passe « occupé » (ou le redevient) sous un point immobile
-new MutationObserver(reveiller).observe(document.body,{subtree:true,attributes:true,attributeFilter:['aria-busy','disabled']});
+// un bouton qui passe « occupé », ou une boîte modale qui s'ouvre, sous un point immobile
+new MutationObserver(reveiller).observe(document.body,{subtree:true,attributes:true,attributeFilter:['aria-busy','disabled','open']});

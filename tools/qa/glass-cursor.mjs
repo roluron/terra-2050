@@ -23,7 +23,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   // rayon et taille sont lissés image par image : on attend l'état final (CI plus lente), puis on l'affirme
   for(const fin=Date.now()+30000;Date.now()<fin;await page.waitForTimeout(100))if(await page.evaluate(async()=>(await import('./glass-cursor.mjs')).glassCursor.radius)===3)break;
   assert.equal(await page.locator('.glass-cursor').isVisible(),true,'Dot over empty space');
-  assert.ok(await page.locator('.glass-cursor').evaluate(e=>parseFloat(e.style.width)<8),'Small dot over empty space');
+  assert.ok(await page.locator('.glass-cursor').evaluate(e=>e.getBoundingClientRect().width<8),'Small dot over empty space');
   assert.equal(await page.evaluate(async()=> (await import('./glass-cursor.mjs')).glassCursor.radius),3,'Refraction radius follows the dot on the canvas');
   await page.mouse.move(720,450);await page.waitForTimeout(200);
   await page.screenshot({path:(process.env.QA_SORTIE||(await import('node:os')).tmpdir())+'/globe-only-cursor.png'});

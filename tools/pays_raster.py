@@ -1,157 +1,191 @@
-"""Grille des pays : quel pays sous chaque texel du globe -> data/pays.png.
+"""Pinned Natural Earth map-unit raster matched to UN demographic-area codes.
 
-    python3 tools/pays_raster.py                # lit raw/ne_50m_admin_0_countries.zip, le telecharge s il manque
-    python3 tools/pays_raster.py chemin.zip     # ou un zip Natural Earth admin-0 deja en main
-    python3 tools/pays_raster.py --autotest     # prouve que la grille dit vrai sur des points connus
+python tools/pays_raster.py --source-50m path.geojson --source-10m path.geojson
+python tools/pays_raster.py --autotest         # reconstruct without product writes
+python tools/pays_raster.py --verify-shipped   # shipped checks, no network
 
-Le survol du globe a besoin de savoir dans quel pays tombe le pointeur. Les
-34 099 villes ne suffisent pas : la ville la plus proche d un point du Sahara
-ou de la Siberie peut etre de l autre cote d une frontiere. On rasterise donc
-les polygones Natural Earth (50 m, frontieres a ~5 km) a la resolution des
-autres grilles, 2160 x 1080, soit 10 minutes d arc : un texel = 18 km. C est
-la precision honnete d une etiquette au survol, pas d un cadastre.
-
-Sorties :
-  data/pays.png          niveaux de gris 2160x1080 : 0 = mer ou sans pays,
-                         n = position dans la liste ci-dessous
-  data/pays_index.json   {"w", "h", "iso": ["", "FR", ...]} — la valeur n
-                         du PNG designe iso[n]
-
-Les pays sont peints du plus etendu au plus petit : une enclave (Lesotho,
-Saint-Marin) repeint par-dessus son voisin au lieu de disparaitre sous lui.
-Les anneaux interieurs sont peints comme l exterieur, ce que l ordre corrige
-pour les enclaves nommees ; un trou sans pays (lac) est plus petit qu un texel.
+50m map units separate French overseas areas and Caribbean Netherlands.
+Gibraltar alone uses the 10m source. Missing sources are downloaded and hashed.
+Classification uses cell centres and never artificially enlarges tiny islands.
 """
+import argparse
+from collections import Counter
+from datetime import datetime, timezone
+import hashlib
 import json
-import struct
-import sys
+import re
 import urllib.request
-import zipfile
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+import numpy as np
+from PIL import Image
 
-RACINE = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent
 W, H = 2160, 1080
-URL = 'https://naciscdn.org/naturalearth/50m/cultural/ne_50m_admin_0_countries.zip'
-ZIP = RACINE / 'raw' / 'ne_50m_admin_0_countries.zip'
-PNG = RACINE / 'data' / 'pays.png'
-INDEX = RACINE / 'data' / 'pays_index.json'
+COMMIT = 'ca96624a56bd078437bca8184e78163e5039ad19'
+SOURCE_BASE = f'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/{COMMIT}/geojson/'
+SOURCES = {
+    '50m': {'file': 'ne_50m_admin_0_map_units.geojson',
+            'sha256': 'b8d421aca6e9e08e8cdf09cc26af111cc3e0deba4fe915611d58ade71e8a4db0'},
+    '10m': {'file': 'ne_10m_admin_0_map_units.geojson',
+            'sha256': '57da82be755f4afccd8f3b14251bb2752f5df1395f47d2d86f817470c4a48862'},
+}
 
 
-def lire_dbf(dbf):
-    nrec = struct.unpack('<i', dbf[4:8])[0]
-    hlen = struct.unpack('<h', dbf[8:10])[0]
-    rlen = struct.unpack('<h', dbf[10:12])[0]
-    champs, off = [], 32
-    while dbf[off] != 0x0D:
-        champs.append((dbf[off:off + 11].split(b'\0')[0].decode(), dbf[off + 16]))
-        off += 32
-    attrs = []
-    for i in range(nrec):
-        pos, ligne = hlen + i * rlen + 1, {}
-        for nom, taille in champs:
-            ligne[nom] = dbf[pos:pos + taille].decode('utf8', 'replace').strip(' \x00\t')
-            pos += taille
-        attrs.append(ligne)
-    return attrs
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
 
 
-def iso2_de(a):
-    # ISO_A2_EH corrige les -99 de la colonne brute (France, Norvege...)
-    for cle in ('ISO_A2_EH', 'ISO_A2'):
-        v = a.get(cle, '')
-        if v and v != '-99' and len(v) == 2:
-            return v.upper()
-    return None
+def source(path, scale):
+    descriptor = SOURCES[scale]
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen(SOURCE_BASE + descriptor['file'], timeout=60) as response:
+            raw = response.read()
+        if sha(raw) != descriptor['sha256']:
+            raise ValueError('Downloaded Natural Earth source hash mismatch: ' + scale)
+        path.write_bytes(raw)
+    raw = path.read_bytes()
+    if sha(raw) != descriptor['sha256']:
+        raise ValueError('Cached Natural Earth source hash mismatch: ' + scale)
+    data = json.loads(raw)
+    if data.get('type') != 'FeatureCollection':
+        raise ValueError('Expected Natural Earth FeatureCollection')
+    return data['features']
 
 
-def formes(zip_path):
-    """Rend [(iso2, aire_bbox, [anneaux])] pour chaque enregistrement polygone."""
-    z = zipfile.ZipFile(zip_path)
-    base = next(n[:-4] for n in z.namelist() if n.endswith('.shp'))
-    attrs = lire_dbf(z.read(base + '.dbf'))
-    buf = z.read(base + '.shp')
-    sortie, pos, i = [], 100, 0
-    while pos + 8 <= len(buf):
-        _, longueur = struct.unpack('>ii', buf[pos:pos + 8])
-        corps = pos + 8
-        pos = corps + longueur * 2
-        (typ,) = struct.unpack('<i', buf[corps:corps + 4])
-        a = attrs[i]; i += 1
-        if typ != 5:
-            continue
-        x0, y0, x1, y1 = struct.unpack('<dddd', buf[corps + 4:corps + 36])
-        n_parts, n_pts = struct.unpack('<ii', buf[corps + 36:corps + 44])
-        parts = struct.unpack('<%di' % n_parts, buf[corps + 44:corps + 44 + n_parts * 4])
-        deb_pts = corps + 44 + n_parts * 4
-        pts = struct.unpack('<%dd' % (n_pts * 2), buf[deb_pts:deb_pts + n_pts * 16])
-        anneaux = []
-        for k in range(n_parts):
-            deb, fin = parts[k], parts[k + 1] if k + 1 < n_parts else n_pts
-            seg = [(pts[2 * j], pts[2 * j + 1]) for j in range(deb, fin)]
-            if len(seg) >= 3:
-                anneaux.append(seg)
-        sortie.append((iso2_de(a), (x1 - x0) * (y1 - y0), anneaux))
-    return sortie
+def iso2(feature):
+    value = feature['properties'].get('ISO_A2_EH')
+    return value if isinstance(value, str) and re.fullmatch('[A-Z]{2}', value) else None
 
 
-def rasteriser(zip_path):
-    isos = ['']
-    img = Image.new('L', (W, H), 0)
-    dess = ImageDraw.Draw(img)
-    # du plus etendu au plus petit : les enclaves repeignent par-dessus
-    for iso, aire, anneaux in sorted(formes(zip_path), key=lambda f: -f[1]):
-        if not iso:
-            continue
-        if iso not in isos:
-            isos.append(iso)
-        n = isos.index(iso)
-        if n > 255:
-            raise SystemExit('plus de 255 pays : la grille 8 bits ne suffit plus')
-        for seg in anneaux:
-            poly = [((x + 180.0) / 360.0 * W, (90.0 - y) / 180.0 * H) for x, y in seg]
-            dess.polygon(poly, fill=n, outline=n)
-    return img, isos
+def paint_polygon(raster, rings, index):
+    """Even-odd scanlines at pixel centres; interior rings remain holes."""
+    vertices = np.asarray([point for ring in rings for point in ring], dtype='float64')
+    if vertices.ndim != 2 or vertices.shape[1] != 2 or not np.isfinite(vertices).all():
+        raise ValueError('Invalid polygon coordinates')
+    if not ((vertices[:, 0] >= -180) & (vertices[:, 0] <= 180)
+            & (vertices[:, 1] >= -90) & (vertices[:, 1] <= 90)).all():
+        raise ValueError('Coordinate outside lon/lat bounds')
+    edge_groups = []
+    for ring in rings:
+        points = np.asarray(ring, dtype='float64')
+        if len(points) < 4 or not np.array_equal(points[0], points[-1]):
+            raise ValueError('Natural Earth ring must be closed')
+        edge_groups.append((points[:-1, 0], points[:-1, 1], points[1:, 0], points[1:, 1]))
+    x1, y1, x2, y2 = [np.concatenate([edges[i] for edges in edge_groups]) for i in range(4)]
+    first = max(0, int(np.ceil((90 - vertices[:, 1].max()) * H / 180 - .5)))
+    last = min(H, int(np.ceil((90 - vertices[:, 1].min()) * H / 180 - .5)))
+    for row in range(first, last):
+        latitude = 90 - (row + .5) * 180 / H
+        crossed = (y1 > latitude) != (y2 > latitude)
+        crossings = np.sort(x1[crossed] + (latitude - y1[crossed])
+                            * (x2[crossed] - x1[crossed]) / (y2[crossed] - y1[crossed]))
+        if len(crossings) % 2:
+            raise ValueError('Unpaired polygon scanline crossings')
+        for left, right in zip(crossings[::2], crossings[1::2]):
+            start = max(0, int(np.ceil((left + 180) * W / 360 - .5)))
+            end = min(W, int(np.ceil((right + 180) * W / 360 - .5)))
+            raster[row, start:end] = index
 
 
-def lire(img, isos, lat, lon):
-    x = min(W - 1, max(0, int((lon + 180.0) / 360.0 * W)))
-    y = min(H - 1, max(0, int((90.0 - lat) / 180.0 * H)))
-    return isos[img.getpixel((x, y))]
+def rasterise(features_50m, features_10m):
+    features = [feature for feature in features_50m if iso2(feature)]
+    gibraltar = [feature for feature in features_10m if iso2(feature) == 'GI']
+    if len(gibraltar) != 1 or any(iso2(feature) == 'GI' for feature in features):
+        raise ValueError('Unexpected Gibraltar source selection')
+    features.extend(gibraltar)
+    codes = [''] + sorted({iso2(feature) for feature in features})
+    if len(codes) > 256:
+        raise ValueError('Palette exceeds the one-byte / 256-column contract')
+    indices = {code: index for index, code in enumerate(codes)}
+    raster = np.zeros((H, W), dtype='uint8')
+    for feature in features:
+        geometry = feature['geometry']
+        if geometry['type'] not in {'Polygon', 'MultiPolygon'}:
+            raise ValueError('Unexpected map-unit geometry')
+        polygons = [geometry['coordinates']] if geometry['type'] == 'Polygon' else geometry['coordinates']
+        for rings in polygons:
+            paint_polygon(raster, rings, indices[iso2(feature)])
+    return Image.fromarray(raster), codes
 
 
-# points connus : (lat, lon, iso attendu). Enclaves et cotes compris.
-TEMOINS = [(48.85, 2.35, 'FR'), (40.71, -74.0, 'US'), (-29.31, 27.48, 'LS'),
-           (1.35, 103.82, 'SG'), (64.18, -51.72, 'GL'), (35.68, 139.69, 'JP'),
-           (-33.87, 151.21, 'AU'), (55.75, 37.62, 'RU'), (-23.55, -46.63, 'BR'),
-           (30.04, 31.24, 'EG'), (0.0, -160.0, ''), (43.73, 7.42, 'MC')]
+def read(image, codes, latitude, longitude):
+    x = min(W - 1, max(0, int((longitude + 180) * W / 360)))
+    y = min(H - 1, max(0, int((90 - latitude) * H / 180)))
+    return codes[image.getpixel((x, y))]
 
 
-def autotest(img, isos):
-    rates = [(lat, lon, att, lire(img, isos, lat, lon)) for lat, lon, att in TEMOINS
-             if lire(img, isos, lat, lon) != att]
-    for lat, lon, att, lu in rates:
-        print(f'ECHEC  {lat},{lon} : attendu {att or "mer"}, lu {lu or "mer"}')
-    print(f'{len(TEMOINS) - len(rates)} sur {len(TEMOINS)} temoins justes')
-    return not rates
+WITNESSES = [(48.85, 2.35, 'FR'), (40.71, -74, 'US'), (-29.533, 28.6, 'LS'),
+    (1.35, 103.82, 'SG'), (70, -45, 'GL'), (35.68, 139.69, 'JP'),
+    (-33.87, 151.21, 'AU'), (55.75, 37.62, 'RU'), (-23.55, -46.63, 'BR'),
+    (30.04, 31.24, 'EG'), (0, -160, ''), (43.73, 7.42, 'MC'),
+    (4, -53, 'GF'), (16.25, -61.5833333333333, 'GP'), (-21.12, 55.53, 'RE'),
+    (-12.82, 45.166, 'YT'), (36.14, -5.35, ''),
+    (-29.31, 27.48, 'ZA'), (64.18, -51.72, '')]
+
+
+def verify(image, codes):
+    if image.mode != 'L' or image.size != (W, H) or codes[0] != '' or len(codes) != len(set(codes)) or len(codes) > 256:
+        raise ValueError('Invalid raster dimensions, palette or sentinel')
+    if max(image.tobytes()) >= len(codes):
+        raise ValueError('Pixel outside the ISO palette')
+    for latitude, longitude, expected in WITNESSES:
+        actual = read(image, codes, latitude, longitude)
+        if actual != expected:
+            raise ValueError(f'Witness mismatch: {latitude}, {longitude}: {actual!r} != {expected!r}')
+    annual = json.loads((ROOT / 'data/population-annual.json').read_text())
+    if not set(annual).issubset(codes):
+        raise ValueError('Missing UN demographic-area code in palette')
+    return {'witnesses': len(WITNESSES), 'palette_entries': len(codes), 'un_series_codes': len(annual)}
 
 
 def main():
-    args = [a for a in sys.argv[1:] if a != '--autotest']
-    zip_path = Path(args[0]) if args else ZIP
-    if not zip_path.exists():
-        zip_path.parent.mkdir(parents=True, exist_ok=True)
-        print('telechargement', URL)
-        urllib.request.urlretrieve(URL, zip_path)
-    img, isos = rasteriser(zip_path)
-    if '--autotest' in sys.argv:
-        sys.exit(0 if autotest(img, isos) else 1)
-    img.save(PNG, optimize=True)
-    INDEX.write_text(json.dumps({'w': W, 'h': H, 'iso': isos}, separators=(',', ':')))
-    print(f'-> {PNG.relative_to(RACINE)} {PNG.stat().st_size // 1024} Ko, {len(isos) - 1} pays')
-    ok = autotest(img, isos)
-    sys.exit(0 if ok else 1)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--source-50m', type=Path, default=ROOT / 'raw' / SOURCES['50m']['file'])
+    parser.add_argument('--source-10m', type=Path, default=ROOT / 'raw' / SOURCES['10m']['file'])
+    parser.add_argument('--output-dir', type=Path, default=ROOT / 'data')
+    parser.add_argument('--autotest', action='store_true')
+    parser.add_argument('--verify-shipped', action='store_true')
+    args = parser.parse_args()
+    if args.verify_shipped:
+        image = Image.open(args.output_dir / 'pays.png')
+        codes = json.loads((args.output_dir / 'pays_index.json').read_text())['iso']
+        provenance = json.loads((args.output_dir / 'pays-provenance.json').read_text())
+        for name, descriptor in provenance['outputs'].items():
+            if sha((args.output_dir / name).read_bytes()) != descriptor['sha256']:
+                raise ValueError('Shipped raster hash mismatch: ' + name)
+        print(json.dumps({'pass': True, **verify(image, codes), 'scope': 'Shipped geographic witnesses and provenance hashes; source reconstruction requires pinned GeoJSON.'}))
+        return
+    image, codes = rasterise(source(args.source_50m, '50m'), source(args.source_10m, '10m'))
+    report = verify(image, codes)
+    if not args.autotest:
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        image.save(args.output_dir / 'pays.png', optimize=True)
+        index = {'w': W, 'h': H, 'iso': codes}
+        (args.output_dir / 'pays_index.json').write_text(json.dumps(index, separators=(',', ':')) + '\n')
+        counts = Counter(image.tobytes())
+        annual = json.loads((ROOT / 'data/population-annual.json').read_text())
+        provenance = {'dataset': 'Natural Earth admin-0 map units', 'repository': 'https://github.com/nvkelso/natural-earth-vector',
+            'source_commit': COMMIT, 'generated_utc_date': datetime.now(timezone.utc).date().isoformat(), 'license': 'Public domain',
+            'sources': {scale: {**descriptor, 'url': SOURCE_BASE + descriptor['file']} for scale, descriptor in SOURCES.items()},
+            'selection': 'All 50m map units with valid ISO_A2_EH; Gibraltar alone from 10m. Features sharing an ISO code use one palette entry. Unassigned ISO -99 units are not assigned an invented country.',
+            'raster': {'width': W, 'height': H, 'resolution_degrees': 1 / 6, 'orientation': 'north-first, west-first',
+                       'method': 'Even-odd polygon scanlines at cell centres; polygon holes excluded; no outline dilation or artificial enlargement of small islands.',
+                       'pixel_coordinate': 'longitude = -180 + (x+0.5)/6; latitude = 90 - (y+0.5)/6',
+                       'lookup': 'x=floor((lon+180)*6), y=floor((90-lat)*6), clamped to grid bounds',
+                       'encoding': 'uint8 grayscale; 0=no assigned map unit; nonzero value indexes pays_index.json iso',
+                       'palette_entries_including_zero': len(codes)},
+            'un_population_series_codes_in_palette': len(annual),
+            'un_population_series_without_raster_cells': sorted(code for code in annual if counts[codes.index(code)] == 0),
+            'limitations': ['Simplified Natural Earth geography, not a legal or property boundary.',
+                           'Demographic areas such as French overseas territories are distinct from sovereign-country population series.',
+                           'Areas smaller than a raster cell may have no sampled cell centres; annual series can be available while map coverage is incomplete.',
+                           'Codes and disputed boundaries follow the pinned Natural Earth source; this is not an independent political classification.'],
+            'outputs': {name: {'sha256': sha((args.output_dir / name).read_bytes()), 'bytes': (args.output_dir / name).stat().st_size}
+                        for name in ['pays.png', 'pays_index.json']}}
+        (args.output_dir / 'pays-provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
+    print(json.dumps({'pass': True, **report, 'scope': 'Reconstructed from checked official Natural Earth GeoJSON sources', 'writes': not args.autotest}))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,5657 @@
+{
+  "profiles": [
+    {
+      "profile": "mobile",
+      "options": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "isMobile": true,
+        "hasTouch": true
+      },
+      "errors": [],
+      "shaderErrors": [],
+      "shaderChecks": [
+        {
+          "filter": "chaleur",
+          "textures": {
+            "aridityTemperature": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                27.948244094848633,
+                28.018518447875977,
+                28.523611068725586,
+                1
+              ]
+            },
+            "aridityPrecipitation": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                1926.2901611328125,
+                1935.5,
+                1989.72216796875,
+                1
+              ]
+            }
+          },
+          "error": 0,
+          "failedPrograms": [],
+          "programs": 4
+        },
+        {
+          "filter": "secheresse",
+          "textures": {
+            "aridityTemperature": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                27.948244094848633,
+                28.018518447875977,
+                28.523611068725586,
+                1
+              ]
+            },
+            "aridityPrecipitation": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                1926.2901611328125,
+                1935.5,
+                1989.72216796875,
+                1
+              ]
+            }
+          },
+          "error": 0,
+          "failedPrograms": [],
+          "programs": 4
+        },
+        {
+          "filter": "feux",
+          "textures": {
+            "aridityTemperature": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                27.948244094848633,
+                28.018518447875977,
+                28.523611068725586,
+                1
+              ]
+            },
+            "aridityPrecipitation": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                1926.2901611328125,
+                1935.5,
+                1989.72216796875,
+                1
+              ]
+            }
+          },
+          "error": 0,
+          "failedPrograms": [],
+          "programs": 5
+        },
+        {
+          "filter": "mer",
+          "textures": {
+            "aridityTemperature": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                27.948244094848633,
+                28.018518447875977,
+                28.523611068725586,
+                1
+              ]
+            },
+            "aridityPrecipitation": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                1926.2901611328125,
+                1935.5,
+                1989.72216796875,
+                1
+              ]
+            }
+          },
+          "error": 0,
+          "failedPrograms": [],
+          "programs": 5
+        },
+        {
+          "filter": "fleuves",
+          "textures": {
+            "aridityTemperature": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                27.948244094848633,
+                28.018518447875977,
+                28.523611068725586,
+                1
+              ]
+            },
+            "aridityPrecipitation": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                1926.2901611328125,
+                1935.5,
+                1989.72216796875,
+                1
+              ]
+            }
+          },
+          "error": 0,
+          "failedPrograms": [],
+          "programs": 6
+        },
+        {
+          "filter": "stabilite",
+          "textures": {
+            "aridityTemperature": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                27.948244094848633,
+                28.018518447875977,
+                28.523611068725586,
+                1
+              ]
+            },
+            "aridityPrecipitation": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                1926.2901611328125,
+                1935.5,
+                1989.72216796875,
+                1
+              ]
+            }
+          },
+          "error": 0,
+          "failedPrograms": [],
+          "programs": 6
+        },
+        {
+          "filter": "declin",
+          "textures": {
+            "aridityTemperature": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                27.948244094848633,
+                28.018518447875977,
+                28.523611068725586,
+                1
+              ]
+            },
+            "aridityPrecipitation": {
+              "width": 720,
+              "height": 360,
+              "float32": true,
+              "anchors": [
+                1926.2901611328125,
+                1935.5,
+                1989.72216796875,
+                1
+              ]
+            }
+          },
+          "error": 0,
+          "failedPrograms": [],
+          "programs": 6
+        }
+      ],
+      "overlappingMenuChecks": 25,
+      "realHit": {
+        "ville": [
+          "Xining",
+          "CN",
+          36.63,
+          101.76,
+          1677177,
+          0,
+          "Xining",
+          {
+            "science": true
+          },
+          ""
+        ],
+        "iso": "CN",
+        "lat": 34.885850075127195,
+        "lon": 99.72542879345167
+      },
+      "realSnapshot": {
+        "name": "Chine",
+        "value": "0 points de pourcentage",
+        "subtitle": "Inondation fluviale · 2050 · Évolution depuis 2026",
+        "detail": "2026: 0 % → 2050: 0 %",
+        "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+        "visible": true,
+        "role": "button",
+        "bounds": {
+          "x": 8,
+          "y": 380,
+          "width": 300,
+          "height": 136
+        },
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false
+      }
+    }
+  ],
+  "matrix": [
+    {
+      "context": "mobile/chaleur/value/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "33,37 °C",
+      "subtitle": "Chaleur estivale · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "31,66 °C",
+      "subtitle": "Chaleur estivale · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "33,38 °C",
+      "subtitle": "Chaleur estivale · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "31,69 °C",
+      "subtitle": "Chaleur estivale · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "33,4 °C",
+      "subtitle": "Chaleur estivale · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "31,71 °C",
+      "subtitle": "Chaleur estivale · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "33,53 °C",
+      "subtitle": "Chaleur estivale · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "31,91 °C",
+      "subtitle": "Chaleur estivale · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "33,67 °C",
+      "subtitle": "Chaleur estivale · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/value/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "32,1 °C",
+      "subtitle": "Chaleur estivale · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0 °C",
+      "subtitle": "Chaleur estivale · 2026 · Évolution depuis 2026",
+      "detail": "2026: 33,37 °C → 2026: 33,37 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 °C",
+      "subtitle": "Chaleur estivale · 2026 · Évolution depuis 2026",
+      "detail": "2026: 31,66 °C → 2026: 31,66 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,02 °C",
+      "subtitle": "Chaleur estivale · 2028 · Évolution depuis 2026",
+      "detail": "2026: 33,37 °C → 2028: 33,38 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,03 °C",
+      "subtitle": "Chaleur estivale · 2028 · Évolution depuis 2026",
+      "detail": "2026: 31,66 °C → 2028: 31,69 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,03 °C",
+      "subtitle": "Chaleur estivale · 2030 · Évolution depuis 2026",
+      "detail": "2026: 33,37 °C → 2030: 33,4 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,05 °C",
+      "subtitle": "Chaleur estivale · 2030 · Évolution depuis 2026",
+      "detail": "2026: 31,66 °C → 2030: 31,71 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,17 °C",
+      "subtitle": "Chaleur estivale · 2040 · Évolution depuis 2026",
+      "detail": "2026: 33,37 °C → 2040: 33,53 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,25 °C",
+      "subtitle": "Chaleur estivale · 2040 · Évolution depuis 2026",
+      "detail": "2026: 31,66 °C → 2040: 31,91 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,3 °C",
+      "subtitle": "Chaleur estivale · 2050 · Évolution depuis 2026",
+      "detail": "2026: 33,37 °C → 2050: 33,67 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/chaleur/change/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,44 °C",
+      "subtitle": "Chaleur estivale · 2050 · Évolution depuis 2026",
+      "detail": "2026: 31,66 °C → 2050: 32,1 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "50,76 De Martonne",
+      "subtitle": "Aridité · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "57,52 De Martonne",
+      "subtitle": "Aridité · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 120.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "50,84 De Martonne",
+      "subtitle": "Aridité · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "57,56 De Martonne",
+      "subtitle": "Aridité · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 120.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "50,91 De Martonne",
+      "subtitle": "Aridité · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "57,59 De Martonne",
+      "subtitle": "Aridité · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 120.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "51,28 De Martonne",
+      "subtitle": "Aridité · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "59,27 De Martonne",
+      "subtitle": "Aridité · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 120.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "51,65 De Martonne",
+      "subtitle": "Aridité · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/value/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "60,94 De Martonne",
+      "subtitle": "Aridité · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 120.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0 De Martonne",
+      "subtitle": "Aridité · 2026 · Évolution depuis 2026",
+      "detail": "2026: 50,76 De Martonne → 2026: 50,76 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 De Martonne",
+      "subtitle": "Aridité · 2026 · Évolution depuis 2026",
+      "detail": "2026: 57,52 De Martonne → 2026: 57,52 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,07 De Martonne",
+      "subtitle": "Aridité · 2028 · Évolution depuis 2026",
+      "detail": "2026: 50,76 De Martonne → 2028: 50,84 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,03 De Martonne",
+      "subtitle": "Aridité · 2028 · Évolution depuis 2026",
+      "detail": "2026: 57,52 De Martonne → 2028: 57,56 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,15 De Martonne",
+      "subtitle": "Aridité · 2030 · Évolution depuis 2026",
+      "detail": "2026: 50,76 De Martonne → 2030: 50,91 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,06 De Martonne",
+      "subtitle": "Aridité · 2030 · Évolution depuis 2026",
+      "detail": "2026: 57,52 De Martonne → 2030: 57,59 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,52 De Martonne",
+      "subtitle": "Aridité · 2040 · Évolution depuis 2026",
+      "detail": "2026: 50,76 De Martonne → 2040: 51,28 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+1,75 De Martonne",
+      "subtitle": "Aridité · 2040 · Évolution depuis 2026",
+      "detail": "2026: 57,52 De Martonne → 2040: 59,27 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,89 De Martonne",
+      "subtitle": "Aridité · 2050 · Évolution depuis 2026",
+      "detail": "2026: 50,76 De Martonne → 2050: 51,65 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/secheresse/change/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+3,41 De Martonne",
+      "subtitle": "Aridité · 2050 · Évolution depuis 2026",
+      "detail": "2026: 57,52 De Martonne → 2050: 60,94 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "34,94 jours/an",
+      "subtitle": "Météo de feu extrême · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "24,74 jours/an",
+      "subtitle": "Météo de feu extrême · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 134.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "35,35 jours/an",
+      "subtitle": "Météo de feu extrême · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "24,75 jours/an",
+      "subtitle": "Météo de feu extrême · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 134.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "35,75 jours/an",
+      "subtitle": "Météo de feu extrême · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "24,77 jours/an",
+      "subtitle": "Météo de feu extrême · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 134.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "37,77 jours/an",
+      "subtitle": "Météo de feu extrême · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "24,85 jours/an",
+      "subtitle": "Météo de feu extrême · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 134.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "39,8 jours/an",
+      "subtitle": "Météo de feu extrême · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/value/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "24,94 jours/an",
+      "subtitle": "Météo de feu extrême · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 134.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0 jours/an",
+      "subtitle": "Météo de feu extrême · 2026 · Évolution depuis 2026",
+      "detail": "2026: 34,94 jours/an → 2026: 34,94 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 jours/an",
+      "subtitle": "Météo de feu extrême · 2026 · Évolution depuis 2026",
+      "detail": "2026: 24,74 jours/an → 2026: 24,74 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,4 jours/an",
+      "subtitle": "Météo de feu extrême · 2028 · Évolution depuis 2026",
+      "detail": "2026: 34,94 jours/an → 2028: 35,35 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,02 jours/an",
+      "subtitle": "Météo de feu extrême · 2028 · Évolution depuis 2026",
+      "detail": "2026: 24,74 jours/an → 2028: 24,75 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,81 jours/an",
+      "subtitle": "Météo de feu extrême · 2030 · Évolution depuis 2026",
+      "detail": "2026: 34,94 jours/an → 2030: 35,75 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,03 jours/an",
+      "subtitle": "Météo de feu extrême · 2030 · Évolution depuis 2026",
+      "detail": "2026: 24,74 jours/an → 2030: 24,77 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+2,83 jours/an",
+      "subtitle": "Météo de feu extrême · 2040 · Évolution depuis 2026",
+      "detail": "2026: 34,94 jours/an → 2040: 37,77 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,12 jours/an",
+      "subtitle": "Météo de feu extrême · 2040 · Évolution depuis 2026",
+      "detail": "2026: 24,74 jours/an → 2040: 24,85 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+4,86 jours/an",
+      "subtitle": "Météo de feu extrême · 2050 · Évolution depuis 2026",
+      "detail": "2026: 34,94 jours/an → 2050: 39,8 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/feux/change/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,2 jours/an",
+      "subtitle": "Météo de feu extrême · 2050 · Évolution depuis 2026",
+      "detail": "2026: 24,74 jours/an → 2050: 24,94 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "8,26 %",
+      "subtitle": "Submersion marine · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,17 %",
+      "subtitle": "Submersion marine · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "8,35 %",
+      "subtitle": "Submersion marine · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,17 %",
+      "subtitle": "Submersion marine · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "8,44 %",
+      "subtitle": "Submersion marine · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,17 %",
+      "subtitle": "Submersion marine · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "9,21 %",
+      "subtitle": "Submersion marine · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,17 %",
+      "subtitle": "Submersion marine · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "9,97 %",
+      "subtitle": "Submersion marine · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/value/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,17 %",
+      "subtitle": "Submersion marine · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0 points de pourcentage",
+      "subtitle": "Submersion marine · 2026 · Évolution depuis 2026",
+      "detail": "2026: 8,26 % → 2026: 8,26 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 points de pourcentage",
+      "subtitle": "Submersion marine · 2026 · Évolution depuis 2026",
+      "detail": "2026: 0,17 % → 2026: 0,17 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,09 points de pourcentage",
+      "subtitle": "Submersion marine · 2028 · Évolution depuis 2026",
+      "detail": "2026: 8,26 % → 2028: 8,35 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 < Δ < 0,01 points de pourcentage",
+      "subtitle": "Submersion marine · 2028 · Évolution depuis 2026",
+      "detail": "2026: 0,17 % → 2028: 0,17 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,19 points de pourcentage",
+      "subtitle": "Submersion marine · 2030 · Évolution depuis 2026",
+      "detail": "2026: 8,26 % → 2030: 8,44 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 < Δ < 0,01 points de pourcentage",
+      "subtitle": "Submersion marine · 2030 · Évolution depuis 2026",
+      "detail": "2026: 0,17 % → 2030: 0,17 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,95 points de pourcentage",
+      "subtitle": "Submersion marine · 2040 · Évolution depuis 2026",
+      "detail": "2026: 8,26 % → 2040: 9,21 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 < Δ < 0,01 points de pourcentage",
+      "subtitle": "Submersion marine · 2040 · Évolution depuis 2026",
+      "detail": "2026: 0,17 % → 2040: 0,17 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+1,72 points de pourcentage",
+      "subtitle": "Submersion marine · 2050 · Évolution depuis 2026",
+      "detail": "2026: 8,26 % → 2050: 9,97 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/mer/change/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 < Δ < 0,01 points de pourcentage",
+      "subtitle": "Submersion marine · 2050 · Évolution depuis 2026",
+      "detail": "2026: 0,17 % → 2050: 0,17 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "23,08 %",
+      "subtitle": "Inondation fluviale · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,74 %",
+      "subtitle": "Inondation fluviale · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "23,16 %",
+      "subtitle": "Inondation fluviale · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,37 %",
+      "subtitle": "Inondation fluviale · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "23,24 %",
+      "subtitle": "Inondation fluviale · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 %",
+      "subtitle": "Inondation fluviale · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "24,35 %",
+      "subtitle": "Inondation fluviale · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,87 %",
+      "subtitle": "Inondation fluviale · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "25,45 %",
+      "subtitle": "Inondation fluviale · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/value/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "1,74 %",
+      "subtitle": "Inondation fluviale · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2026 · Évolution depuis 2026",
+      "detail": "2026: 23,08 % → 2026: 23,08 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2026 · Évolution depuis 2026",
+      "detail": "2026: 0,74 % → 2026: 0,74 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,08 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2028 · Évolution depuis 2026",
+      "detail": "2026: 23,08 % → 2028: 23,16 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "−0,37 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2028 · Évolution depuis 2026",
+      "detail": "2026: 0,74 % → 2028: 0,37 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,17 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2030 · Évolution depuis 2026",
+      "detail": "2026: 23,08 % → 2030: 23,24 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "−0,74 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2030 · Évolution depuis 2026",
+      "detail": "2026: 0,74 % → 2030: 0 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+1,27 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2040 · Évolution depuis 2026",
+      "detail": "2026: 23,08 % → 2040: 24,35 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,13 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2040 · Évolution depuis 2026",
+      "detail": "2026: 0,74 % → 2040: 0,87 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+2,37 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2050 · Évolution depuis 2026",
+      "detail": "2026: 23,08 % → 2050: 25,45 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fleuves/change/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+1,01 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2050 · Évolution depuis 2026",
+      "detail": "2026: 0,74 % → 2050: 1,74 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0,72 °C",
+      "subtitle": "Réchauffement local · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,66 °C",
+      "subtitle": "Réchauffement local · 2026",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "0,76 °C",
+      "subtitle": "Réchauffement local · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,69 °C",
+      "subtitle": "Réchauffement local · 2028",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "0,79 °C",
+      "subtitle": "Réchauffement local · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,72 °C",
+      "subtitle": "Réchauffement local · 2030",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "1,04 °C",
+      "subtitle": "Réchauffement local · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,93 °C",
+      "subtitle": "Réchauffement local · 2040",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "1,3 °C",
+      "subtitle": "Réchauffement local · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/value/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "1,14 °C",
+      "subtitle": "Réchauffement local · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0 °C",
+      "subtitle": "Réchauffement local · 2026 · Évolution depuis 2026",
+      "detail": "2026: 0,72 °C → 2026: 0,72 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 °C",
+      "subtitle": "Réchauffement local · 2026 · Évolution depuis 2026",
+      "detail": "2026: 0,66 °C → 2026: 0,66 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,04 °C",
+      "subtitle": "Réchauffement local · 2028 · Évolution depuis 2026",
+      "detail": "2026: 0,72 °C → 2028: 0,76 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,03 °C",
+      "subtitle": "Réchauffement local · 2028 · Évolution depuis 2026",
+      "detail": "2026: 0,66 °C → 2028: 0,69 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,07 °C",
+      "subtitle": "Réchauffement local · 2030 · Évolution depuis 2026",
+      "detail": "2026: 0,72 °C → 2030: 0,79 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,06 °C",
+      "subtitle": "Réchauffement local · 2030 · Évolution depuis 2026",
+      "detail": "2026: 0,66 °C → 2030: 0,72 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,32 °C",
+      "subtitle": "Réchauffement local · 2040 · Évolution depuis 2026",
+      "detail": "2026: 0,72 °C → 2040: 1,04 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,27 °C",
+      "subtitle": "Réchauffement local · 2040 · Évolution depuis 2026",
+      "detail": "2026: 0,66 °C → 2040: 0,93 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,58 °C",
+      "subtitle": "Réchauffement local · 2050 · Évolution depuis 2026",
+      "detail": "2026: 0,72 °C → 2050: 1,3 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/stabilite/change/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,48 °C",
+      "subtitle": "Réchauffement local · 2050 · Évolution depuis 2026",
+      "detail": "2026: 0,66 °C → 2050: 1,14 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "+0,6 %",
+      "subtitle": "Population du pays · 2026",
+      "detail": "102 177 431 · 2025 → 2026",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 165.640625,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+1,7 %",
+      "subtitle": "Population du pays · 2026",
+      "detail": "10 947 848 · 2025 → 2026",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 263.875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+1,6 %",
+      "subtitle": "Population du pays · 2028",
+      "detail": "103 255 744 · 2025 → 2028",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 165.640625,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+5,1 %",
+      "subtitle": "Population du pays · 2028",
+      "detail": "11 312 894 · 2025 → 2028",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 263.875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+2,6 %",
+      "subtitle": "Population du pays · 2030",
+      "detail": "104 254 902 · 2025 → 2030",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 165.640625,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+8,4 %",
+      "subtitle": "Population du pays · 2030",
+      "detail": "11 671 424 · 2025 → 2030",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 263.875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+6,7 %",
+      "subtitle": "Population du pays · 2040",
+      "detail": "108 437 634 · 2025 → 2040",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 165.640625,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+24,3 %",
+      "subtitle": "Population du pays · 2040",
+      "detail": "13 376 160 · 2025 → 2040",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 272.609375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+8,3 %",
+      "subtitle": "Population du pays · 2050",
+      "detail": "110 008 908 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 168,
+        "width": 165.640625,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/value/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+38,5 %",
+      "subtitle": "Population du pays · 2050",
+      "detail": "14 906 590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 272.578125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2026/HCMC",
+      "name": "Viêt Nam",
+      "value": "0 %",
+      "subtitle": "Population du pays · 2026 · Évolution depuis 2026",
+      "detail": "102 177 431 · 2026 → 2026",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 269.84375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2026/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 %",
+      "subtitle": "Population du pays · 2026 · Évolution depuis 2026",
+      "detail": "10 947 848 · 2026 → 2026",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 269.84375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2028/HCMC",
+      "name": "Viêt Nam",
+      "value": "+1,1 %",
+      "subtitle": "Population du pays · 2028 · Évolution depuis 2026",
+      "detail": "103 255 744 · 2026 → 2028",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 269.71875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2028/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+3,3 %",
+      "subtitle": "Population du pays · 2028 · Évolution depuis 2026",
+      "detail": "11 312 894 · 2026 → 2028",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 269.71875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2030/HCMC",
+      "name": "Viêt Nam",
+      "value": "+2 %",
+      "subtitle": "Population du pays · 2030 · Évolution depuis 2026",
+      "detail": "104 254 902 · 2026 → 2030",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 269.9375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2030/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+6,6 %",
+      "subtitle": "Population du pays · 2030 · Évolution depuis 2026",
+      "detail": "11 671 424 · 2026 → 2030",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 269.9375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2040/HCMC",
+      "name": "Viêt Nam",
+      "value": "+6,1 %",
+      "subtitle": "Population du pays · 2040 · Évolution depuis 2026",
+      "detail": "108 437 634 · 2026 → 2040",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 270.015625,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2040/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+22,2 %",
+      "subtitle": "Population du pays · 2040 · Évolution depuis 2026",
+      "detail": "13 376 160 · 2026 → 2040",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 272.671875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2050/HCMC",
+      "name": "Viêt Nam",
+      "value": "+7,7 %",
+      "subtitle": "Population du pays · 2050 · Évolution depuis 2026",
+      "detail": "110 008 908 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 270.1875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/declin/change/2050/PNG",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+36,2 %",
+      "subtitle": "Population du pays · 2050 · Évolution depuis 2026",
+      "detail": "14 906 590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 8,
+        "y": 168,
+        "width": 272.609375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    }
+  ],
+  "locales": [
+    {
+      "context": "mobile/fr/chaleur/value",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "32,1 °C",
+      "subtitle": "Chaleur estivale · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/chaleur/change",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,44 °C",
+      "subtitle": "Chaleur estivale · 2050 · Évolution depuis 2026",
+      "detail": "2026: 31,66 °C → 2050: 32,1 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Maximum diurne moyen du mois le plus chaud. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/secheresse/value",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "60,94 De Martonne",
+      "subtitle": "Aridité · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 717,
+        "width": 300,
+        "height": 120.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/secheresse/change",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+3,41 De Martonne",
+      "subtitle": "Aridité · 2050 · Évolution depuis 2026",
+      "detail": "2026: 57,52 De Martonne → 2050: 60,94 De Martonne",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Pluie rapportée à la température. Plus bas signifie plus sec. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 698,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/feux/value",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "24,94 jours/an",
+      "subtitle": "Météo de feu extrême · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 703,
+        "width": 300,
+        "height": 134.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/feux/change",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,2 jours/an",
+      "subtitle": "Météo de feu extrême · 2050 · Évolution depuis 2026",
+      "detail": "2026: 24,74 jours/an → 2050: 24,94 jours/an",
+      "note": "Maille du modèle · 2,5° (~278 km nord–sud). Jours de météo localement extrême favorable aux feux, pas des incendies observés. Moyenne de 21 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/mer/value",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0,17 %",
+      "subtitle": "Submersion marine · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/mer/change",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "0 < Δ < 0,01 points de pourcentage",
+      "subtitle": "Submersion marine · 2050 · Évolution depuis 2026",
+      "detail": "2026: 0,17 % → 2050: 0,17 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 698,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/fleuves/value",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "1,74 %",
+      "subtitle": "Inondation fluviale · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/fleuves/change",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+1,01 points de pourcentage",
+      "subtitle": "Inondation fluviale · 2050 · Évolution depuis 2026",
+      "detail": "2026: 0,74 % → 2050: 1,74 %",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée. Moyenne de 5 modèles ; leurs résultats peuvent diverger.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/stabilite/value",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "1,14 °C",
+      "subtitle": "Réchauffement local · 2050",
+      "detail": "",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/stabilite/change",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+0,48 °C",
+      "subtitle": "Réchauffement local · 2050 · Évolution depuis 2026",
+      "detail": "2026: 0,66 °C → 2050: 1,14 °C",
+      "note": "Maille du modèle · 0,5° (~56 km nord–sud). Hausse de température locale par rapport à 1970–2000. Un seul modèle · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/declin/value",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+38,5 %",
+      "subtitle": "Population du pays · 2050",
+      "detail": "14 906 590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 102,
+        "y": 764,
+        "width": 272.578125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/fr/declin/change",
+      "name": "Papouasie-Nouvelle-Guinée",
+      "value": "+36,2 %",
+      "subtitle": "Population du pays · 2050 · Évolution depuis 2026",
+      "detail": "14 906 590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 102,
+        "y": 764,
+        "width": 272.609375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/chaleur/value",
+      "name": "Papua New Guinea",
+      "value": "32.1 °C",
+      "subtitle": "Summer heat · 2050",
+      "detail": "",
+      "note": "Model cell · 0.5° (~56 km north–south). Typical daytime maximum in the hottest month. One model · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/chaleur/change",
+      "name": "Papua New Guinea",
+      "value": "+0.44 °C",
+      "subtitle": "Summer heat · 2050 · Change since 2026",
+      "detail": "2026: 31.66 °C → 2050: 32.1 °C",
+      "note": "Model cell · 0.5° (~56 km north–south). Typical daytime maximum in the hottest month. One model · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/secheresse/value",
+      "name": "Papua New Guinea",
+      "value": "60.94 De Martonne",
+      "subtitle": "Aridity · 2050",
+      "detail": "",
+      "note": "Model cell · 0.5° (~56 km north–south). Rainfall relative to temperature. Lower means drier. One model · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/secheresse/change",
+      "name": "Papua New Guinea",
+      "value": "+3.41 De Martonne",
+      "subtitle": "Aridity · 2050 · Change since 2026",
+      "detail": "2026: 57.52 De Martonne → 2050: 60.94 De Martonne",
+      "note": "Model cell · 0.5° (~56 km north–south). Rainfall relative to temperature. Lower means drier. One model · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/feux/value",
+      "name": "Papua New Guinea",
+      "value": "24.94 days/year",
+      "subtitle": "Extreme fire weather · 2050",
+      "detail": "",
+      "note": "Model cell · 2.5° (~278 km north–south). Days with extreme local fire-weather conditions, not observed fires. Mean of 21 models; their results may disagree.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/feux/change",
+      "name": "Papua New Guinea",
+      "value": "+0.2 days/year",
+      "subtitle": "Extreme fire weather · 2050 · Change since 2026",
+      "detail": "2026: 24.74 days/year → 2050: 24.94 days/year",
+      "note": "Model cell · 2.5° (~278 km north–south). Days with extreme local fire-weather conditions, not observed fires. Mean of 21 models; their results may disagree.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/mer/value",
+      "name": "Papua New Guinea",
+      "value": "0.17 %",
+      "subtitle": "Coastal flooding · 2050",
+      "detail": "",
+      "note": "Model cell · 0.5° (~56 km north–south). Share of source cells deeper than 0.5 m in a 1-in-100-year flood. Neither river height nor population exposure.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/mer/change",
+      "name": "Papua New Guinea",
+      "value": "0 < Δ < 0.01 percentage points",
+      "subtitle": "Coastal flooding · 2050 · Change since 2026",
+      "detail": "2026: 0.17 % → 2050: 0.17 %",
+      "note": "Model cell · 0.5° (~56 km north–south). Share of source cells deeper than 0.5 m in a 1-in-100-year flood. Neither river height nor population exposure.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 698,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/fleuves/value",
+      "name": "Papua New Guinea",
+      "value": "1.74 %",
+      "subtitle": "River flooding · 2050",
+      "detail": "",
+      "note": "Model cell · 0.5° (~56 km north–south). Share of source cells deeper than 0.5 m in a 1-in-100-year flood. Neither river height nor population exposure. Mean of 5 models; their results may disagree.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/fleuves/change",
+      "name": "Papua New Guinea",
+      "value": "+1.01 percentage points",
+      "subtitle": "River flooding · 2050 · Change since 2026",
+      "detail": "2026: 0.74 % → 2050: 1.74 %",
+      "note": "Model cell · 0.5° (~56 km north–south). Share of source cells deeper than 0.5 m in a 1-in-100-year flood. Neither river height nor population exposure. Mean of 5 models; their results may disagree.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/stabilite/value",
+      "name": "Papua New Guinea",
+      "value": "1.14 °C",
+      "subtitle": "Local warming · 2050",
+      "detail": "",
+      "note": "Model cell · 0.5° (~56 km north–south). Local temperature rise relative to 1970–2000. One model · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/stabilite/change",
+      "name": "Papua New Guinea",
+      "value": "+0.48 °C",
+      "subtitle": "Local warming · 2050 · Change since 2026",
+      "detail": "2026: 0.66 °C → 2050: 1.14 °C",
+      "note": "Model cell · 0.5° (~56 km north–south). Local temperature rise relative to 1970–2000. One model · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/declin/value",
+      "name": "Papua New Guinea",
+      "value": "+38.5 %",
+      "subtitle": "Country population · 2050",
+      "detail": "14,906,590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 165,
+        "y": 764,
+        "width": 209.828125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/en/declin/change",
+      "name": "Papua New Guinea",
+      "value": "+36.2 %",
+      "subtitle": "Country population · 2050 · Change since 2026",
+      "detail": "14,906,590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 116,
+        "y": 764,
+        "width": 259.25,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/chaleur/value",
+      "name": "Papua Nuova Guinea",
+      "value": "32,1 °C",
+      "subtitle": "Caldo estivo · 2050",
+      "detail": "",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Massima diurna media del mese più caldo. Un solo modello · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/chaleur/change",
+      "name": "Papua Nuova Guinea",
+      "value": "+0,44 °C",
+      "subtitle": "Caldo estivo · 2050 · Variazione dal 2026",
+      "detail": "2026: 31,66 °C → 2050: 32,1 °C",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Massima diurna media del mese più caldo. Un solo modello · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/secheresse/value",
+      "name": "Papua Nuova Guinea",
+      "value": "60,94 De Martonne",
+      "subtitle": "Aridità · 2050",
+      "detail": "",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Precipitazioni in rapporto alla temperatura. Un valore più basso indica maggiore aridità. Un solo modello · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/secheresse/change",
+      "name": "Papua Nuova Guinea",
+      "value": "+3,41 De Martonne",
+      "subtitle": "Aridità · 2050 · Variazione dal 2026",
+      "detail": "2026: 57,52 De Martonne → 2050: 60,94 De Martonne",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Precipitazioni in rapporto alla temperatura. Un valore più basso indica maggiore aridità. Un solo modello · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 702,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/feux/value",
+      "name": "Papua Nuova Guinea",
+      "value": "24,94 giorni/anno",
+      "subtitle": "Meteo estremo favorevole agli incendi · 2050",
+      "detail": "",
+      "note": "Cella del modello · 2,5° (~278 km nord–sud). Giorni con condizioni meteorologiche locali estreme favorevoli agli incendi, non incendi osservati. Media di 21 modelli; i risultati possono divergere.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/feux/change",
+      "name": "Papua Nuova Guinea",
+      "value": "+0,2 giorni/anno",
+      "subtitle": "Meteo estremo favorevole agli incendi · 2050 · Variazione dal 2026",
+      "detail": "2026: 24,74 giorni/anno → 2050: 24,94 giorni/anno",
+      "note": "Cella del modello · 2,5° (~278 km nord–sud). Giorni con condizioni meteorologiche locali estreme favorevoli agli incendi, non incendi osservati. Media di 21 modelli; i risultati possono divergere.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 688,
+        "width": 300,
+        "height": 149.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/mer/value",
+      "name": "Papua Nuova Guinea",
+      "value": "0,17 %",
+      "subtitle": "Inondazioni costiere · 2050",
+      "detail": "",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Quota di celle sorgente con profondità oltre 0,5 m per un evento centennale. Non è il livello dei fiumi né la popolazione esposta.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/mer/change",
+      "name": "Papua Nuova Guinea",
+      "value": "0 < Δ < 0,01 punti percentuali",
+      "subtitle": "Inondazioni costiere · 2050 · Variazione dal 2026",
+      "detail": "2026: 0,17 % → 2050: 0,17 %",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Quota di celle sorgente con profondità oltre 0,5 m per un evento centennale. Non è il livello dei fiumi né la popolazione esposta.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/fleuves/value",
+      "name": "Papua Nuova Guinea",
+      "value": "1,74 %",
+      "subtitle": "Alluvioni fluviali · 2050",
+      "detail": "",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Quota di celle sorgente con profondità oltre 0,5 m per un evento centennale. Non è il livello dei fiumi né la popolazione esposta. Media di 5 modelli; i risultati possono divergere.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/fleuves/change",
+      "name": "Papua Nuova Guinea",
+      "value": "+1,01 punti percentuali",
+      "subtitle": "Alluvioni fluviali · 2050 · Variazione dal 2026",
+      "detail": "2026: 0,74 % → 2050: 1,74 %",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Quota di celle sorgente con profondità oltre 0,5 m per un evento centennale. Non è il livello dei fiumi né la popolazione esposta. Media di 5 modelli; i risultati possono divergere.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/stabilite/value",
+      "name": "Papua Nuova Guinea",
+      "value": "1,14 °C",
+      "subtitle": "Riscaldamento locale · 2050",
+      "detail": "",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Aumento della temperatura locale rispetto al periodo dal 1970 al 2000. Un solo modello · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/stabilite/change",
+      "name": "Papua Nuova Guinea",
+      "value": "+0,48 °C",
+      "subtitle": "Riscaldamento locale · 2050 · Variazione dal 2026",
+      "detail": "2026: 0,66 °C → 2050: 1,14 °C",
+      "note": "Cella del modello · 0,5° (~56 km nord–sud). Aumento della temperatura locale rispetto al periodo dal 1970 al 2000. Un solo modello · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/declin/value",
+      "name": "Papua Nuova Guinea",
+      "value": "+38,5 %",
+      "subtitle": "Popolazione del paese · 2050",
+      "detail": "14.906.590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 153,
+        "y": 764,
+        "width": 222.078125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/it/declin/change",
+      "name": "Papua Nuova Guinea",
+      "value": "+36,2 %",
+      "subtitle": "Popolazione del paese · 2050 · Variazione dal 2026",
+      "detail": "14.906.590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 100,
+        "y": 764,
+        "width": 274.796875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/chaleur/value",
+      "name": "Papúa Nueva Guinea",
+      "value": "32,1 °C",
+      "subtitle": "Calor estival · 2050",
+      "detail": "",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Máxima diurna media del mes más caluroso. Un solo modelo · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/chaleur/change",
+      "name": "Papúa Nueva Guinea",
+      "value": "+0,44 °C",
+      "subtitle": "Calor estival · 2050 · Cambio desde 2026",
+      "detail": "2026: 31,66 °C → 2050: 32,1 °C",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Máxima diurna media del mes más caluroso. Un solo modelo · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/secheresse/value",
+      "name": "Papúa Nueva Guinea",
+      "value": "60,94 De Martonne",
+      "subtitle": "Aridez · 2050",
+      "detail": "",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Precipitación en relación con la temperatura. Un valor menor indica más aridez. Un solo modelo · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/secheresse/change",
+      "name": "Papúa Nueva Guinea",
+      "value": "+3,41 De Martonne",
+      "subtitle": "Aridez · 2050 · Cambio desde 2026",
+      "detail": "2026: 57,52 De Martonne → 2050: 60,94 De Martonne",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Precipitación en relación con la temperatura. Un valor menor indica más aridez. Un solo modelo · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/feux/value",
+      "name": "Papúa Nueva Guinea",
+      "value": "24,94 días/año",
+      "subtitle": "Meteorología extrema favorable a incendios · 2050",
+      "detail": "",
+      "note": "Celda del modelo · 2,5° (~278 km norte–sur). Días con condiciones meteorológicas locales extremas favorables a incendios, no incendios observados. Media de 21 modelos; sus resultados pueden diferir.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/feux/change",
+      "name": "Papúa Nueva Guinea",
+      "value": "+0,2 días/año",
+      "subtitle": "Meteorología extrema favorable a incendios · 2050 · Cambio desde 2026",
+      "detail": "2026: 24,74 días/año → 2050: 24,94 días/año",
+      "note": "Celda del modelo · 2,5° (~278 km norte–sur). Días con condiciones meteorológicas locales extremas favorables a incendios, no incendios observados. Media de 21 modelos; sus resultados pueden diferir.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 688,
+        "width": 300,
+        "height": 149.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/mer/value",
+      "name": "Papúa Nueva Guinea",
+      "value": "0,17 %",
+      "subtitle": "Inundación costera · 2050",
+      "detail": "",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Proporción de celdas de origen con profundidad superior a 0,5 m en un evento centenario. No es el nivel de los ríos ni la población expuesta.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/mer/change",
+      "name": "Papúa Nueva Guinea",
+      "value": "0 < Δ < 0,01 puntos porcentuales",
+      "subtitle": "Inundación costera · 2050 · Cambio desde 2026",
+      "detail": "2026: 0,17 % → 2050: 0,17 %",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Proporción de celdas de origen con profundidad superior a 0,5 m en un evento centenario. No es el nivel de los ríos ni la población expuesta.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/fleuves/value",
+      "name": "Papúa Nueva Guinea",
+      "value": "1,74 %",
+      "subtitle": "Inundación fluvial · 2050",
+      "detail": "",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Proporción de celdas de origen con profundidad superior a 0,5 m en un evento centenario. No es el nivel de los ríos ni la población expuesta. Media de 5 modelos; sus resultados pueden diferir.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/fleuves/change",
+      "name": "Papúa Nueva Guinea",
+      "value": "+1,01 puntos porcentuales",
+      "subtitle": "Inundación fluvial · 2050 · Cambio desde 2026",
+      "detail": "2026: 0,74 % → 2050: 1,74 %",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Proporción de celdas de origen con profundidad superior a 0,5 m en un evento centenario. No es el nivel de los ríos ni la población expuesta. Media de 5 modelos; sus resultados pueden diferir.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/stabilite/value",
+      "name": "Papúa Nueva Guinea",
+      "value": "1,14 °C",
+      "subtitle": "Calentamiento local · 2050",
+      "detail": "",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Aumento de la temperatura local respecto a 1970 a 2000. Un solo modelo · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/stabilite/change",
+      "name": "Papúa Nueva Guinea",
+      "value": "+0,48 °C",
+      "subtitle": "Calentamiento local · 2050 · Cambio desde 2026",
+      "detail": "2026: 0,66 °C → 2050: 1,14 °C",
+      "note": "Celda del modelo · 0,5° (~56 km norte–sur). Aumento de la temperatura local respecto a 1970 a 2000. Un solo modelo · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/declin/value",
+      "name": "Papúa Nueva Guinea",
+      "value": "+38,5 %",
+      "subtitle": "Población del país · 2050",
+      "detail": "14.906.590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 153,
+        "y": 764,
+        "width": 221.828125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/es/declin/change",
+      "name": "Papúa Nueva Guinea",
+      "value": "+36,2 %",
+      "subtitle": "Población del país · 2050 · Cambio desde 2026",
+      "detail": "14.906.590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 117,
+        "y": 764,
+        "width": 257.5625,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/chaleur/value",
+      "name": "Papua New Guinea",
+      "value": "32,1 °C",
+      "subtitle": "Nóng mùa hè · 2050",
+      "detail": "",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Nhiệt độ cao nhất ban ngày trung bình trong tháng nóng nhất. Một mô hình · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/chaleur/change",
+      "name": "Papua New Guinea",
+      "value": "+0,44 °C",
+      "subtitle": "Nóng mùa hè · 2050 · Thay đổi so với năm 2026",
+      "detail": "2026: 31,66 °C → 2050: 32,1 °C",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Nhiệt độ cao nhất ban ngày trung bình trong tháng nóng nhất. Một mô hình · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/secheresse/value",
+      "name": "Papua New Guinea",
+      "value": "60,94 De Martonne",
+      "subtitle": "Độ khô hạn · 2050",
+      "detail": "",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Lượng mưa tương quan với nhiệt độ. Giá trị thấp hơn nghĩa là khô hơn. Một mô hình · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/secheresse/change",
+      "name": "Papua New Guinea",
+      "value": "+3,41 De Martonne",
+      "subtitle": "Độ khô hạn · 2050 · Thay đổi so với năm 2026",
+      "detail": "2026: 57,52 De Martonne → 2050: 60,94 De Martonne",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Lượng mưa tương quan với nhiệt độ. Giá trị thấp hơn nghĩa là khô hơn. Một mô hình · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/feux/value",
+      "name": "Papua New Guinea",
+      "value": "24,94 ngày/năm",
+      "subtitle": "Thời tiết cực đoan thuận lợi cho cháy · 2050",
+      "detail": "",
+      "note": "Ô mô hình · 2,5° (~278 km bắc–nam). Số ngày có điều kiện thời tiết nguy hiểm cho cháy ở địa phương, không phải số vụ cháy quan sát được. Trung bình 21 mô hình; kết quả có thể khác nhau.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/feux/change",
+      "name": "Papua New Guinea",
+      "value": "+0,2 ngày/năm",
+      "subtitle": "Thời tiết cực đoan thuận lợi cho cháy · 2050 · Thay đổi so với năm 2026",
+      "detail": "2026: 24,74 ngày/năm → 2050: 24,94 ngày/năm",
+      "note": "Ô mô hình · 2,5° (~278 km bắc–nam). Số ngày có điều kiện thời tiết nguy hiểm cho cháy ở địa phương, không phải số vụ cháy quan sát được. Trung bình 21 mô hình; kết quả có thể khác nhau.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 688,
+        "width": 300,
+        "height": 149.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/mer/value",
+      "name": "Papua New Guinea",
+      "value": "0,17 %",
+      "subtitle": "Ngập ven biển · 2050",
+      "detail": "",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Tỷ lệ ô dữ liệu gốc có độ sâu trên 0,5 m trong lũ chu kỳ 100 năm. Không phải mực nước sông hay dân số bị ảnh hưởng.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/mer/change",
+      "name": "Papua New Guinea",
+      "value": "0 < Δ < 0,01 điểm phần trăm",
+      "subtitle": "Ngập ven biển · 2050 · Thay đổi so với năm 2026",
+      "detail": "2026: 0,17 % → 2050: 0,17 %",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Tỷ lệ ô dữ liệu gốc có độ sâu trên 0,5 m trong lũ chu kỳ 100 năm. Không phải mực nước sông hay dân số bị ảnh hưởng.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 698,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/fleuves/value",
+      "name": "Papua New Guinea",
+      "value": "1,74 %",
+      "subtitle": "Lũ sông · 2050",
+      "detail": "",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Tỷ lệ ô dữ liệu gốc có độ sâu trên 0,5 m trong lũ chu kỳ 100 năm. Không phải mực nước sông hay dân số bị ảnh hưởng. Trung bình 5 mô hình; kết quả có thể khác nhau.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/fleuves/change",
+      "name": "Papua New Guinea",
+      "value": "+1,01 điểm phần trăm",
+      "subtitle": "Lũ sông · 2050 · Thay đổi so với năm 2026",
+      "detail": "2026: 0,74 % → 2050: 1,74 %",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Tỷ lệ ô dữ liệu gốc có độ sâu trên 0,5 m trong lũ chu kỳ 100 năm. Không phải mực nước sông hay dân số bị ảnh hưởng. Trung bình 5 mô hình; kết quả có thể khác nhau.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/stabilite/value",
+      "name": "Papua New Guinea",
+      "value": "1,14 °C",
+      "subtitle": "Mức nóng lên tại địa phương · 2050",
+      "detail": "",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Mức tăng nhiệt độ địa phương so với trung bình giai đoạn 1970 đến 2000. Một mô hình · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/stabilite/change",
+      "name": "Papua New Guinea",
+      "value": "+0,48 °C",
+      "subtitle": "Mức nóng lên tại địa phương · 2050 · Thay đổi so với năm 2026",
+      "detail": "2026: 0,66 °C → 2050: 1,14 °C",
+      "note": "Ô mô hình · 0,5° (~56 km bắc–nam). Mức tăng nhiệt độ địa phương so với trung bình giai đoạn 1970 đến 2000. Một mô hình · MPI-ESM1-2-HR · SSP3-7.0.",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 702,
+        "width": 300,
+        "height": 135.75
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/declin/value",
+      "name": "Papua New Guinea",
+      "value": "+38,5 %",
+      "subtitle": "Dân số cả nước · 2050",
+      "detail": "14.906.590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 165,
+        "y": 764,
+        "width": 209.8125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/vi/declin/change",
+      "name": "Papua New Guinea",
+      "value": "+36,2 %",
+      "subtitle": "Dân số cả nước · 2050 · Thay đổi so với năm 2026",
+      "detail": "14.906.590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 101,
+        "y": 764,
+        "width": 273.671875,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/chaleur/value",
+      "name": "パプアニューギニア",
+      "value": "32.1 °C",
+      "subtitle": "夏の暑さ · 2050",
+      "detail": "",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 最も暑い月の平均的な日中の最高気温。 単一モデル · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 749,
+        "width": 300,
+        "height": 89.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/chaleur/change",
+      "name": "パプアニューギニア",
+      "value": "+0.44 °C",
+      "subtitle": "夏の暑さ · 2050 · 2026年からの変化",
+      "detail": "2026: 31.66 °C → 2050: 32.1 °C",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 最も暑い月の平均的な日中の最高気温。 単一モデル · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 730,
+        "width": 300,
+        "height": 108
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/secheresse/value",
+      "name": "パプアニューギニア",
+      "value": "60.94 De Martonne",
+      "subtitle": "乾燥度 · 2050",
+      "detail": "",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 気温に対する降水量。低いほど乾燥した気候を示します。 単一モデル · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/secheresse/change",
+      "name": "パプアニューギニア",
+      "value": "+3.41 De Martonne",
+      "subtitle": "乾燥度 · 2050 · 2026年からの変化",
+      "detail": "2026: 57.52 De Martonne → 2050: 60.94 De Martonne",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 気温に対する降水量。低いほど乾燥した気候を示します。 単一モデル · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/feux/value",
+      "name": "パプアニューギニア",
+      "value": "24.94 日/年",
+      "subtitle": "極端な火災気象 · 2050",
+      "detail": "",
+      "note": "モデル格子 · 2.5°（南北約278 km）。 火災が発生しやすい、その地域で極端な気象条件の日数。観測された火災の数ではありません。 21モデルの平均。結果が一致するとは限りません。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/feux/change",
+      "name": "パプアニューギニア",
+      "value": "+0.2 日/年",
+      "subtitle": "極端な火災気象 · 2050 · 2026年からの変化",
+      "detail": "2026: 24.74 日/年 → 2050: 24.94 日/年",
+      "note": "モデル格子 · 2.5°（南北約278 km）。 火災が発生しやすい、その地域で極端な気象条件の日数。観測された火災の数ではありません。 21モデルの平均。結果が一致するとは限りません。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 702,
+        "width": 300,
+        "height": 136
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/mer/value",
+      "name": "パプアニューギニア",
+      "value": "0.17 %",
+      "subtitle": "沿岸浸水 · 2050",
+      "detail": "",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 100年に1度の洪水で浸水深が0.5mを超える元データ格子の割合。河川の水位でも人口曝露でもありません。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/mer/change",
+      "name": "パプアニューギニア",
+      "value": "0 < Δ < 0.01 パーセントポイント",
+      "subtitle": "沿岸浸水 · 2050 · 2026年からの変化",
+      "detail": "2026: 0.17 % → 2050: 0.17 %",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 100年に1度の洪水で浸水深が0.5mを超える元データ格子の割合。河川の水位でも人口曝露でもありません。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 698,
+        "width": 300,
+        "height": 139.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/fleuves/value",
+      "name": "パプアニューギニア",
+      "value": "1.74 %",
+      "subtitle": "河川洪水 · 2050",
+      "detail": "",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 100年に1度の洪水で浸水深が0.5mを超える元データ格子の割合。河川の水位でも人口曝露でもありません。 5モデルの平均。結果が一致するとは限りません。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 721,
+        "width": 300,
+        "height": 117.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/fleuves/change",
+      "name": "パプアニューギニア",
+      "value": "+1.01 パーセントポイント",
+      "subtitle": "河川洪水 · 2050 · 2026年からの変化",
+      "detail": "2026: 0.74 % → 2050: 1.74 %",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 100年に1度の洪水で浸水深が0.5mを超える元データ格子の割合。河川の水位でも人口曝露でもありません。 5モデルの平均。結果が一致するとは限りません。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 684,
+        "width": 300,
+        "height": 153.5
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/stabilite/value",
+      "name": "パプアニューギニア",
+      "value": "1.14 °C",
+      "subtitle": "地域の気温上昇 · 2050",
+      "detail": "",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 1970〜2000年を基準とした、その地域の気温上昇。 単一モデル · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/stabilite/change",
+      "name": "パプアニューギニア",
+      "value": "+0.48 °C",
+      "subtitle": "地域の気温上昇 · 2050 · 2026年からの変化",
+      "detail": "2026: 0.66 °C → 2050: 1.14 °C",
+      "note": "モデル格子 · 0.5°（南北約56 km）。 1970〜2000年を基準とした、その地域の気温上昇。 単一モデル · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/declin/value",
+      "name": "パプアニューギニア",
+      "value": "+38.5 %",
+      "subtitle": "国の人口 · 2050",
+      "detail": "14,906,590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 163,
+        "y": 764,
+        "width": 211.984375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/ja/declin/change",
+      "name": "パプアニューギニア",
+      "value": "+36.2 %",
+      "subtitle": "国の人口 · 2050 · 2026年からの変化",
+      "detail": "14,906,590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 163,
+        "y": 764,
+        "width": 211.984375,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/chaleur/value",
+      "name": "巴布亚新几内亚",
+      "value": "32.1 °C",
+      "subtitle": "夏季高温 · 2050",
+      "detail": "",
+      "note": "模型网格 · 0.5°（南北约56公里）。 最热月份的平均日间最高气温。 单一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 749,
+        "width": 300,
+        "height": 89.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/chaleur/change",
+      "name": "巴布亚新几内亚",
+      "value": "+0.44 °C",
+      "subtitle": "夏季高温 · 2050 · 相较2026年的变化",
+      "detail": "2026: 31.66 °C → 2050: 32.1 °C",
+      "note": "模型网格 · 0.5°（南北约56公里）。 最热月份的平均日间最高气温。 单一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 730,
+        "width": 300,
+        "height": 108
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/secheresse/value",
+      "name": "巴布亚新几内亚",
+      "value": "60.94 De Martonne",
+      "subtitle": "干旱度 · 2050",
+      "detail": "",
+      "note": "模型网格 · 0.5°（南北约56公里）。 相对于气温的降水量。数值越低表示越干燥。 单一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/secheresse/change",
+      "name": "巴布亚新几内亚",
+      "value": "+3.41 De Martonne",
+      "subtitle": "干旱度 · 2050 · 相较2026年的变化",
+      "detail": "2026: 57.52 De Martonne → 2050: 60.94 De Martonne",
+      "note": "模型网格 · 0.5°（南北约56公里）。 相对于气温的降水量。数值越低表示越干燥。 单一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/feux/value",
+      "name": "巴布亚新几内亚",
+      "value": "24.94 天/年",
+      "subtitle": "极端火灾天气 · 2050",
+      "detail": "",
+      "note": "模型网格 · 2.5°（南北约278公里）。 当地出现极端火险气象条件的天数，并非观测到的火灾次数。 21个模型的平均值；结果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/feux/change",
+      "name": "巴布亚新几内亚",
+      "value": "+0.2 天/年",
+      "subtitle": "极端火灾天气 · 2050 · 相较2026年的变化",
+      "detail": "2026: 24.74 天/年 → 2050: 24.94 天/年",
+      "note": "模型网格 · 2.5°（南北约278公里）。 当地出现极端火险气象条件的天数，并非观测到的火灾次数。 21个模型的平均值；结果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/mer/value",
+      "name": "巴布亚新几内亚",
+      "value": "0.17 %",
+      "subtitle": "沿海淹水 · 2050",
+      "detail": "",
+      "note": "模型网格 · 0.5°（南北约56公里）。 百年一遇洪水中水深超过0.5米的原始数据网格比例。不是河流水位或受影响人口。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 749,
+        "width": 300,
+        "height": 89.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/mer/change",
+      "name": "巴布亚新几内亚",
+      "value": "0 < Δ < 0.01 百分点",
+      "subtitle": "沿海淹水 · 2050 · 相较2026年的变化",
+      "detail": "2026: 0.17 % → 2050: 0.17 %",
+      "note": "模型网格 · 0.5°（南北约56公里）。 百年一遇洪水中水深超过0.5米的原始数据网格比例。不是河流水位或受影响人口。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 730,
+        "width": 300,
+        "height": 108
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/fleuves/value",
+      "name": "巴布亚新几内亚",
+      "value": "1.74 %",
+      "subtitle": "河流洪水 · 2050",
+      "detail": "",
+      "note": "模型网格 · 0.5°（南北约56公里）。 百年一遇洪水中水深超过0.5米的原始数据网格比例。不是河流水位或受影响人口。 5个模型的平均值；结果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/fleuves/change",
+      "name": "巴布亚新几内亚",
+      "value": "+1.01 百分点",
+      "subtitle": "河流洪水 · 2050 · 相较2026年的变化",
+      "detail": "2026: 0.74 % → 2050: 1.74 %",
+      "note": "模型网格 · 0.5°（南北约56公里）。 百年一遇洪水中水深超过0.5米的原始数据网格比例。不是河流水位或受影响人口。 5个模型的平均值；结果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/stabilite/value",
+      "name": "巴布亚新几内亚",
+      "value": "1.14 °C",
+      "subtitle": "当地升温 · 2050",
+      "detail": "",
+      "note": "模型网格 · 0.5°（南北约56公里）。 相对于1970至2000年平均水平的当地气温升幅。 单一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/stabilite/change",
+      "name": "巴布亚新几内亚",
+      "value": "+0.48 °C",
+      "subtitle": "当地升温 · 2050 · 相较2026年的变化",
+      "detail": "2026: 0.66 °C → 2050: 1.14 °C",
+      "note": "模型网格 · 0.5°（南北约56公里）。 相对于1970至2000年平均水平的当地气温升幅。 单一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/declin/value",
+      "name": "巴布亚新几内亚",
+      "value": "+38.5 %",
+      "subtitle": "全国人口 · 2050",
+      "detail": "14,906,590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 191,
+        "y": 764,
+        "width": 184.25,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh/declin/change",
+      "name": "巴布亚新几内亚",
+      "value": "+36.2 %",
+      "subtitle": "全国人口 · 2050 · 相较2026年的变化",
+      "detail": "14,906,590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 160,
+        "y": 764,
+        "width": 214.703125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/chaleur/value",
+      "name": "巴布亞紐幾內亞",
+      "value": "32.1 °C",
+      "subtitle": "夏季高溫 · 2050",
+      "detail": "",
+      "note": "模型網格 · 0.5°（南北約56公里）。 最熱月份的平均日間最高氣溫。 單一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 749,
+        "width": 300,
+        "height": 89.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/chaleur/change",
+      "name": "巴布亞紐幾內亞",
+      "value": "+0.44 °C",
+      "subtitle": "夏季高溫 · 2050 · 相較2026年的變化",
+      "detail": "2026: 31.66 °C → 2050: 32.1 °C",
+      "note": "模型網格 · 0.5°（南北約56公里）。 最熱月份的平均日間最高氣溫。 單一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 730,
+        "width": 300,
+        "height": 108
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/secheresse/value",
+      "name": "巴布亞紐幾內亞",
+      "value": "60.94 De Martonne",
+      "subtitle": "乾旱度 · 2050",
+      "detail": "",
+      "note": "模型網格 · 0.5°（南北約56公里）。 相對於氣溫的降水量。數值越低表示越乾燥。 單一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/secheresse/change",
+      "name": "巴布亞紐幾內亞",
+      "value": "+3.41 De Martonne",
+      "subtitle": "乾旱度 · 2050 · 相較2026年的變化",
+      "detail": "2026: 57.52 De Martonne → 2050: 60.94 De Martonne",
+      "note": "模型網格 · 0.5°（南北約56公里）。 相對於氣溫的降水量。數值越低表示越乾燥。 單一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/feux/value",
+      "name": "巴布亞紐幾內亞",
+      "value": "24.94 天/年",
+      "subtitle": "極端火災天氣 · 2050",
+      "detail": "",
+      "note": "模型網格 · 2.5°（南北約278公里）。 當地出現極端火險氣象條件的天數，並非觀測到的火災次數。 21個模型的平均值；結果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/feux/change",
+      "name": "巴布亞紐幾內亞",
+      "value": "+0.2 天/年",
+      "subtitle": "極端火災天氣 · 2050 · 相較2026年的變化",
+      "detail": "2026: 24.74 天/年 → 2050: 24.94 天/年",
+      "note": "模型網格 · 2.5°（南北約278公里）。 當地出現極端火險氣象條件的天數，並非觀測到的火災次數。 21個模型的平均值；結果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/mer/value",
+      "name": "巴布亞紐幾內亞",
+      "value": "0.17 %",
+      "subtitle": "沿海淹水 · 2050",
+      "detail": "",
+      "note": "模型網格 · 0.5°（南北約56公里）。 百年一遇洪水中水深超過0.5米的原始資料網格比例。不是河流水位或受影響人口。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 749,
+        "width": 300,
+        "height": 89.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/mer/change",
+      "name": "巴布亞紐幾內亞",
+      "value": "0 < Δ < 0.01 百分點",
+      "subtitle": "沿海淹水 · 2050 · 相較2026年的變化",
+      "detail": "2026: 0.17 % → 2050: 0.17 %",
+      "note": "模型網格 · 0.5°（南北約56公里）。 百年一遇洪水中水深超過0.5米的原始資料網格比例。不是河流水位或受影響人口。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 730,
+        "width": 300,
+        "height": 108
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/fleuves/value",
+      "name": "巴布亞紐幾內亞",
+      "value": "1.74 %",
+      "subtitle": "河流洪水 · 2050",
+      "detail": "",
+      "note": "模型網格 · 0.5°（南北約56公里）。 百年一遇洪水中水深超過0.5米的原始資料網格比例。不是河流水位或受影響人口。 5個模型的平均值；結果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/fleuves/change",
+      "name": "巴布亞紐幾內亞",
+      "value": "+1.01 百分點",
+      "subtitle": "河流洪水 · 2050 · 相較2026年的變化",
+      "detail": "2026: 0.74 % → 2050: 1.74 %",
+      "note": "模型網格 · 0.5°（南北約56公里）。 百年一遇洪水中水深超過0.5米的原始資料網格比例。不是河流水位或受影響人口。 5個模型的平均值；結果可能不一致。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/stabilite/value",
+      "name": "巴布亞紐幾內亞",
+      "value": "1.14 °C",
+      "subtitle": "當地升溫 · 2050",
+      "detail": "",
+      "note": "模型網格 · 0.5°（南北約56公里）。 相對於1970至2000年平均水平的當地氣溫升幅。 單一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 735,
+        "width": 300,
+        "height": 103.25
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/stabilite/change",
+      "name": "巴布亞紐幾內亞",
+      "value": "+0.48 °C",
+      "subtitle": "當地升溫 · 2050 · 相較2026年的變化",
+      "detail": "2026: 0.66 °C → 2050: 1.14 °C",
+      "note": "模型網格 · 0.5°（南北約56公里）。 相對於1970至2000年平均水平的當地氣溫升幅。 單一模型 · MPI-ESM1-2-HR · SSP3-7.0。",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 75,
+        "y": 716,
+        "width": 300,
+        "height": 122
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/declin/value",
+      "name": "巴布亞紐幾內亞",
+      "value": "+38.5 %",
+      "subtitle": "全國人口 · 2050",
+      "detail": "14,906,590 · 2025 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 191,
+        "y": 764,
+        "width": 184.25,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "context": "mobile/zh-Hant/declin/change",
+      "name": "巴布亞紐幾內亞",
+      "value": "+36.2 %",
+      "subtitle": "全國人口 · 2050 · 相較2026年的變化",
+      "detail": "14,906,590 · 2026 → 2050",
+      "note": "",
+      "visible": true,
+      "role": "button",
+      "bounds": {
+        "x": 160,
+        "y": 764,
+        "width": 214.703125,
+        "height": 74
+      },
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false
+    }
+  ],
+  "checks": [
+    {
+      "profile": "mobile",
+      "sameCellMutations": 0,
+      "otherCellBefore": "25,45 %",
+      "otherCellAfter": "0 %",
+      "missing": {
+        "name": "Papouasie-Nouvelle-Guinée",
+        "value": "",
+        "subtitle": "Inondation fluviale · 2050",
+        "detail": "Estimation indisponible",
+        "note": "",
+        "visible": true,
+        "role": "button",
+        "bounds": {
+          "x": 116,
+          "y": 168,
+          "width": 209.984375,
+          "height": 74
+        },
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false
+      },
+      "zero": {
+        "name": "France",
+        "value": "0 %",
+        "subtitle": "Submersion marine · 2050",
+        "detail": "",
+        "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+        "visible": true,
+        "role": "button",
+        "bounds": {
+          "x": 8,
+          "y": 168,
+          "width": 300,
+          "height": 103.25
+        },
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false
+      },
+      "small": {
+        "name": "Papouasie-Nouvelle-Guinée",
+        "value": "0 < Δ < 0,01 points de pourcentage",
+        "subtitle": "Submersion marine · 2050 · Évolution depuis 2026",
+        "detail": "2026: 0,17 % → 2050: 0,17 %",
+        "note": "Maille du modèle · 0,5° (~56 km nord–sud). Part des cellules sources où la profondeur dépasse 0,5 m pour une crue centennale. Ni hauteur des fleuves, ni population exposée.",
+        "visible": true,
+        "role": "button",
+        "bounds": {
+          "x": 8,
+          "y": 168,
+          "width": 300,
+          "height": 139.5
+        },
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false
+      }
+    }
+  ],
+  "notices": [
+    {
+      "profile": "mobile",
+      "kind": "startup",
+      "text": "Estimations de modèles sous des scénarios définis. Les années climatiques sont interpolées entre moyennes de périodes ; la population ONU est projetée annuellement. Ce projet ne mesure pas l’habitabilité et ne prédit pas une catastrophe locale.",
+      "bounds": {
+        "x": 24,
+        "y": 637.390625,
+        "width": 345,
+        "height": 70.375
+      }
+    },
+    {
+      "profile": "mobile",
+      "kind": "score",
+      "text": "Indice expérimental : six indicateurs, seuils et poids choisis par l’application. Les scénarios climatiques et d’inondation sont distincts ; cet indice n’a pas été validé scientifiquement.",
+      "bounds": {
+        "x": 17,
+        "y": 392.625,
+        "width": 171.5,
+        "height": 99
+      }
+    }
+  ],
+  "limitations": "Chromium with mobile emulation; no physical iPhone/Safari test. Numeric UI expectations derive from shipped fields, not independent raw TIFF acquisition."
+}

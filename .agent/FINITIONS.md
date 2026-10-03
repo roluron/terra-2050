@@ -386,3 +386,22 @@ Garde-fous à chaque passe :
 
 Ordre conseillé : 0 → 1 → 2 → 3 → 5 → 4 → 6. La phase 1 seule suffit
 déjà à supprimer tout ce qu'un visiteur attentif remarque aujourd'hui.
+
+---
+
+## Fusion avec main (3 octobre 2026, 20 commits)
+
+Main a repris plusieurs zones touchées ici ; ses décisions l'emportent :
+- **Curseur** : la position suit l'événement sans aucun retard
+  (`.agent/POINTER-PERFORMANCE.md`). Les états de la phase 3 (trait, capsule,
+  anneau, aimant, ressort de taille) sont gardés ; seul le lissage de
+  position est retiré. Les classes ne s'écrivent que si l'état change.
+- **Entrée** : fondu simultané (`.agent/FEEDBACK.md`, retour 8) au lieu de
+  l'entrée resserrée et échelonnée de la phase 6 (point 4 abandonné) ;
+  `intro.mjs` vérifie désormais l'arrivée groupée des filtres.
+- **Dock** : timeline à droite, pastille des filtres à la largeur de son
+  texte, `--dock-bottom`. Les marges, largeurs et centrages de la phase 5
+  qui les écrasaient sont retirés.
+- **Règle des années au doigt** : l'input reste touchable (le test
+  `feedback.mjs` le touche) ; ses événements remontent à la bande, qui
+  gère tap et glissé comme avant.

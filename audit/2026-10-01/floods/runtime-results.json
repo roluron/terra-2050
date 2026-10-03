@@ -1,0 +1,15 @@
+{
+  "scope": "shipped payload arithmetic only; source TIFFs not independently validated",
+  "checks": 34022156,
+  "precisionAmbiguousAgreement": 2,
+  "results": {
+    "coast": {
+      "cityCalls": 920673,
+      "gridCalls": 1036800
+    },
+    "river": {
+      "cityCalls": 920673,
+      "gridCalls": 1036800
+    }
+  }
+}

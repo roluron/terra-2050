@@ -1,0 +1,16 @@
+PASS mobile chaleur: two modes, five years, HCMC + PNG
+PASS mobile secheresse: two modes, five years, HCMC + PNG
+PASS mobile feux: two modes, five years, HCMC + PNG
+PASS mobile mer: two modes, five years, HCMC + PNG
+PASS mobile fleuves: two modes, five years, HCMC + PNG
+PASS mobile stabilite: two modes, five years, HCMC + PNG
+PASS mobile declin: two modes, five years, HCMC + PNG
+PASS mobile fr: seven filters, both modes, local-cell support and bounds
+PASS mobile en: seven filters, both modes, local-cell support and bounds
+PASS mobile it: seven filters, both modes, local-cell support and bounds
+PASS mobile es: seven filters, both modes, local-cell support and bounds
+PASS mobile vi: seven filters, both modes, local-cell support and bounds
+PASS mobile ja: seven filters, both modes, local-cell support and bounds
+PASS mobile zh: seven filters, both modes, local-cell support and bounds
+PASS mobile zh-Hant: seven filters, both modes, local-cell support and bounds
+PASS mobile: localized units/support, 8 languages, bounds, actual pointer/touch, NoData vs zero, tiny changes and cache

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "fixtures": 11,
+  "checks": [
+    "missing scores excluded from denominator",
+    "valid zero retained",
+    "invalid population weights excluded",
+    "known weighted averages",
+    "country/year caching",
+    "scientific-source cache invalidation"
+  ]
+}

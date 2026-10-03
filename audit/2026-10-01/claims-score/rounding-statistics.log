@@ -1,0 +1,38 @@
+{"year":2026,"cityCases":34099,"failures":0}
+{"year":2027,"cityCases":34099,"failures":0}
+{"year":2028,"cityCases":34099,"failures":0}
+{"year":2029,"cityCases":34099,"failures":0}
+{"year":2030,"cityCases":34099,"failures":0}
+{"year":2031,"cityCases":34099,"failures":0}
+{"year":2032,"cityCases":34099,"failures":0}
+{"year":2033,"cityCases":34099,"failures":0}
+{"year":2034,"cityCases":34099,"failures":0}
+{"year":2035,"cityCases":34099,"failures":0}
+{"year":2036,"cityCases":34099,"failures":0}
+{"year":2037,"cityCases":34099,"failures":0}
+{"year":2038,"cityCases":34099,"failures":0}
+{"year":2039,"cityCases":34099,"failures":0}
+{"year":2040,"cityCases":34099,"failures":0}
+{"year":2041,"cityCases":34099,"failures":0}
+{"year":2042,"cityCases":34099,"failures":0}
+{"year":2043,"cityCases":34099,"failures":0}
+{"year":2044,"cityCases":34099,"failures":0}
+{"year":2045,"cityCases":34099,"failures":0}
+{"year":2046,"cityCases":34099,"failures":0}
+{"year":2047,"cityCases":34099,"failures":0}
+{"year":2048,"cityCases":34099,"failures":0}
+{"year":2049,"cityCases":34099,"failures":0}
+{"year":2050,"cityCases":34099,"failures":0}
+{
+  "status": "PASS",
+  "cases": 852475,
+  "literalZeroFailures": 0,
+  "boundedChanges": {
+    "thermique": 4944,
+    "eau": 12381,
+    "feux": 871,
+    "mer": 705,
+    "fleuves": 70002,
+    "stabilite": 4160
+  }
+}

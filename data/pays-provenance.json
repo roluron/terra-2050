@@ -1,0 +1,72 @@
+{
+  "dataset": "Natural Earth admin-0 map units",
+  "repository": "https://github.com/nvkelso/natural-earth-vector",
+  "source_commit": "ca96624a56bd078437bca8184e78163e5039ad19",
+  "generated_utc_date": "2026-10-01",
+  "license": "Public domain",
+  "sources": {
+    "50m": {
+      "file": "ne_50m_admin_0_map_units.geojson",
+      "sha256": "b8d421aca6e9e08e8cdf09cc26af111cc3e0deba4fe915611d58ade71e8a4db0",
+      "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_50m_admin_0_map_units.geojson"
+    },
+    "10m": {
+      "file": "ne_10m_admin_0_map_units.geojson",
+      "sha256": "57da82be755f4afccd8f3b14251bb2752f5df1395f47d2d86f817470c4a48862",
+      "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_map_units.geojson"
+    }
+  },
+  "selection": "All 50m map units with valid ISO_A2_EH; Gibraltar alone from 10m. Features sharing an ISO code use one palette entry. Unassigned ISO -99 units are not assigned an invented country.",
+  "raster": {
+    "width": 2160,
+    "height": 1080,
+    "resolution_degrees": 0.16666666666666666,
+    "orientation": "north-first, west-first",
+    "method": "Even-odd polygon scanlines at cell centres; polygon holes excluded; no outline dilation or artificial enlargement of small islands.",
+    "pixel_coordinate": "longitude = -180 + (x+0.5)/6; latitude = 90 - (y+0.5)/6",
+    "lookup": "x=floor((lon+180)*6), y=floor((90-lat)*6), clamped to grid bounds",
+    "encoding": "uint8 grayscale; 0=no assigned map unit; nonzero value indexes pays_index.json iso",
+    "palette_entries_including_zero": 249
+  },
+  "un_population_series_codes_in_palette": 237,
+  "un_population_series_without_raster_cells": [
+    "AI",
+    "AS",
+    "AW",
+    "BL",
+    "BM",
+    "CK",
+    "GG",
+    "GI",
+    "KN",
+    "MO",
+    "MS",
+    "NR",
+    "PM",
+    "SC",
+    "SH",
+    "SX",
+    "TC",
+    "TK",
+    "TO",
+    "TV",
+    "VA",
+    "WF"
+  ],
+  "limitations": [
+    "Simplified Natural Earth geography, not a legal or property boundary.",
+    "Demographic areas such as French overseas territories are distinct from sovereign-country population series.",
+    "Areas smaller than a raster cell may have no sampled cell centres; annual series can be available while map coverage is incomplete.",
+    "Codes and disputed boundaries follow the pinned Natural Earth source; this is not an independent political classification."
+  ],
+  "outputs": {
+    "pays.png": {
+      "sha256": "152d4da2cd050ef79ebaa8d7ef0e00be559dbdf546ffcd77d839a7f09db74b7d",
+      "bytes": 48631
+    },
+    "pays_index.json": {
+      "sha256": "4e115b0d076754e2edceaaecd661123e01bf41f330d8625bdff636f2948e36b1",
+      "bytes": 1271
+    }
+  }
+}

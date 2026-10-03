@@ -4,8 +4,10 @@ export function createYearRuler(slider, ruler) {
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   let hover=null;
   slider.addEventListener('pointermove',event=>{
-    const box=ruler.getBoundingClientRect();
-    hover=Math.max(0,Math.min(24,Math.round((event.clientX-box.left)/box.width*24)));
+    // Keep the pointer position continuous: rounding lights the endpoint early.
+    const first=bars[0].getBoundingClientRect(), last=bars.at(-1).getBoundingClientRect();
+    const start=first.left+first.width/2, end=last.left+last.width/2;
+    hover=Math.max(0,Math.min(24,(event.clientX-start)/(end-start)*24));
   });
   slider.addEventListener('pointerleave',()=>{hover=null;});
   // le pouce, c'est la barre de l'année : elle grandit tant qu'on appuie
@@ -64,7 +66,7 @@ export function createYearRuler(slider, ruler) {
       const distance=i-active;
       let height=i===active?(appui?3.7:3.1):1+1.6*Math.exp(-distance*distance/7);
       let alpha=i===active?1:i<active?.55:.25;
-      if(!reduced.matches&&hover!==null){height+=.9*Math.exp(-((i-hover)**2)/5);if(Math.abs(i-hover)<1)alpha=Math.max(alpha,.85);}
+      if(!reduced.matches&&hover!==null){height+=.9*Math.exp(-((i-hover)**2)/5);if(i<=hover)alpha=Math.max(alpha,.25+.6*Math.exp(-((i-hover)**2)/.3));}
       const nextHeight=heights[i]+(height-heights[i])*k;
       const nextOpacity=opacity[i]+(alpha-opacity[i])*k;
       if(Math.abs(nextHeight-heights[i])>.0015){heights[i]=nextHeight;bar.style.transform=`scaleY(${nextHeight.toFixed(3)})`;}

@@ -13,6 +13,7 @@ exports.chooseLanguage = async function(page, code) {
 exports.discover = async function(page) {
   await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 });
   await exports.welcome(page);
+  await page.waitForSelector('#earth-shell.interaction-ready');
   for (const word of await page.locator('#earth-shell .word').all()) await word.focus();
   await page.waitForSelector('#earth-shell.complete');
 };

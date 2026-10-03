@@ -184,23 +184,8 @@ body { background: var(--encre); color: var(--texte); }
   -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255, 253, 226, 0.12); }
 #resultats li:first-child { border-top: none; }
 
-/* =====================================================================
-   Wordmark irisé : la déformation vit dans les lettres. Au passage du
-   pointeur chaque lettre monte, s'étire et se dédouble en cyan/ambre —
-   effet de film mince, sans halo qui déborde du texte.
-   ===================================================================== */
+/* Wordmark statique. */
 #wordmark { position: relative; display: inline-block; cursor: default; }
-#wordmark .lettre {
-  --iris: 0; --decal: 0px;
-  display: inline-block; will-change: transform;
-  text-shadow:
-    calc(var(--decal) * -1.6) 0 0 rgba(47, 208, 255, calc(var(--iris) * 0.85)),
-    var(--decal) 0 0 rgba(255, 154, 60, calc(var(--iris) * 0.7)),
-    0 0 calc(var(--iris) * 14px) rgba(23, 64, 169, calc(var(--iris) * 0.55));
-}
-#wordmark .lettre.barre { color: var(--bleu); }
-#wordmark.irise .lettre.barre { color: #2FD0FF; transition: color 0.4s var(--ease); }
-@media (prefers-reduced-motion: reduce) { #wordmark .lettre { text-shadow: none !important; } }
 
 /* =====================================================================
    Curseur DOS : au focus le placeholder s'efface et un trait fin clignote
@@ -545,17 +530,12 @@ body.cale-annee #timeline .an { opacity: 0.92; }
 }
 
 /* =====================================================================
-   LOUPE DE VERRE — la recherche au repos est un cercle de la même lentille
-   WebGL ; le déploiement est animé par GSAP (largeur du champ).
+   RECHERCHE REPLIÉE — la classe loupe conserve l'état compact historique ;
+   premium.css présente désormais l'invitation à la place du champ.
    ===================================================================== */
 #champ-recherche { transition: none; }   /* la largeur appartient à GSAP */
 body.loupe #champ-recherche { cursor: pointer; color: transparent; }
 body.loupe #champ-recherche::placeholder { color: transparent; }
-#loupe { position: absolute; left: auto; right: calc(78px + 23px); top: 50%;
-  width: 19px; height: 19px;
-  transform: translate(50%, -50%); pointer-events: none; opacity: 0.8;
-  stroke: var(--texte); stroke-width: 1.4; fill: none; stroke-linecap: round; }
-body:not(.loupe) #loupe { opacity: 0; }
 
 /* la roue ne garde plus de rotation CSS : tout passe par GSAP */
 #bouton-reglages .rouage { transition: none; }
@@ -565,8 +545,8 @@ body:not(.loupe) #loupe { opacity: 0; }
 .calque[data-cle="declin"].actif .pastille { background: #9A8FB8; }
 
 /* =====================================================================
-   RECHERCHE À DROITE — la loupe vit à côté de l'engrenage et se déploie
-   vers la gauche ; la liste ne déborde jamais le cadre de la barre.
+   ALIGNEMENT HISTORIQUE — premium.css centre désormais la recherche ;
+   la liste suit toujours le cadre du champ pendant son déploiement.
    ===================================================================== */
 #recherche { align-items: flex-end; padding-right: 78px; }
 #resultats { left: auto; right: 78px; transform: translateY(-6px);
@@ -577,18 +557,9 @@ body:not(.loupe) #loupe { opacity: 0; }
 #resultats li .type-lieu { flex: none; max-width: 45%; overflow: hidden;
   text-overflow: ellipsis; white-space: nowrap; }
 
-/* brillance qui respire sur la loupe repliée — pour qu'on la remarque */
-@keyframes loupe-souffle {
-  0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 0 rgba(255, 253, 226, 0)); }
-  50% { opacity: 0.95; filter: drop-shadow(0 0 7px rgba(255, 253, 226, 0.5)); }
-}
-body.loupe #loupe { animation: loupe-souffle 3.8s var(--ease) infinite; }
-@media (prefers-reduced-motion: reduce) { body.loupe #loupe { animation: none; } }
-
 @media (max-width: 720px) {
   #recherche { padding-right: 60px; }
   #resultats { right: 60px; width: min(220px, 60vw); }
-  #loupe { right: calc(60px + 23px); }
 }
 
 /* le caret DOS n'existe qu'en barre déployée — replié en loupe, rien */
@@ -847,9 +818,7 @@ body.calques-en-attente .calque .pastille { animation: attente-calque 1.6s ease-
 @keyframes attente-calque { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.9; } }
 @media (prefers-reduced-motion: reduce) { body.calques-en-attente .calque .pastille { animation: none; } }
 
-/* l'annuaire des villes arrive apres le globe : la loupe respire tant qu'il
-   n'est pas la, et la liste le dit si l'on cherche trop tot */
-body.villes-en-attente #loupe { opacity: 0.45; }
+/* La liste signale que l'annuaire arrive si l'on cherche avant son chargement. */
 
 /* les rangees de resultats faisaient 41 px sous le doigt, sous le seuil de 44 */
 @media (pointer: coarse) {
@@ -889,7 +858,8 @@ body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
    la planète. Sous le chrome, au-dessus de la toile.
    ===================================================================== */
 #survol { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none;
-  padding: 7px 11px 8px; border-radius: 9px; white-space: nowrap;
+  padding: 9px 11px; border-radius: 9px; white-space: normal;
+  width: max-content; max-width: min(300px, calc(100vw - 16px)); box-sizing: border-box;
   background: rgba(2, 4, 10, 0.66); border: 1px solid rgba(255, 253, 226, 0.16);
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   color: var(--texte); font-family: var(--police); font-size: 13px; line-height: 1.25;
@@ -900,8 +870,11 @@ body.calques-indisponibles .calque { opacity: 0.35; cursor: not-allowed; }
 #survol .s-nom { font-weight: 600; }
 #survol .s-indice { margin-left: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
 #survol .s-indice:empty { display: none; }
-#survol .s-sous { display: block; margin-top: 2px; font-size: 9.5px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--muter); }
+#survol .s-sous { display: block; margin-top: 4px; font-size: 11px; color: var(--muter); }
+#survol .s-detail { display: block; margin-top: 5px; font-size: 11px; font-variant-numeric: tabular-nums; }
+#survol .s-note { display: block; margin-top: 6px; font-size: 10px; line-height: 1.4; color: var(--muter); }
+#survol .s-detail:empty, #survol .s-note:empty { display: none; }
+#survol:focus-visible { outline: 2px solid var(--texte); outline-offset: 3px; }
 body.sur-lieu #scene { cursor: pointer; }
 #etiquettes { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
 body:not(.pret) #etiquettes { display: none; }
@@ -1146,7 +1119,7 @@ body:not(.pret) #model-notice { display: none; }
 
 @media(max-width:720px), (max-height:500px) { #model-notice #layer-context { max-height: 1.4em; overflow: hidden; } #model-notice:has(details[open]) { max-width: min(300px,calc(100vw - 20px)); width: 300px; } #model-notice:has(details[open]) #layer-context { max-height: none; } #model-notice summary { min-height: 44px; } }
 
-@media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #loupe, #resultats.ouvert { pointer-events: auto; } }
+@media(max-height:500px) and (orientation:landscape) { #recherche { pointer-events: none; } #champ-recherche, #explore-city, #resultats.ouvert { pointer-events: auto; } }
 html:lang(ja){--police:'Hiragino Kaku Gothic ProN','Yu Gothic',Meiryo,sans-serif;--herbik:'Hiragino Mincho ProN','Yu Mincho',serif;--mono:'Hiragino Kaku Gothic ProN',sans-serif}
 html:lang(zh){--police:'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif;--herbik:'Songti SC','Noto Serif CJK SC',serif;--mono:'PingFang SC','Microsoft YaHei',sans-serif}
 html:lang(vi){--police:Arial,sans-serif;--herbik:Georgia,serif}
@@ -1170,3 +1143,12 @@ body.comparaison-active #champ-recherche { caret-color: #b5cbea; }
   #dossier-comparer { grid-column: 1 / -1; min-height: 44px; }
 }
 @media(prefers-reduced-motion:reduce) { #model-notice details[open] { animation: none; } }
+
+/* Method limits accompany the map contact link and the experimental index. */
+#map-inspector .v-science { margin: 8px 4px 4px; font-size: 11px; line-height: 1.6; color: var(--glass-muted); letter-spacing: 0; text-transform: none; text-align: left; }
+.score-method-note { margin: 12px 0; font-size: 11px; line-height: 1.5; color: var(--fiche-secondaire); }
+
+/* A pinned model reading must leave the primary controls usable. Keep its
+   state while the filter picker is open, then show the updated reading. */
+body.pret #globe-dock { z-index: 31; }
+body:has(#map-inspector.choix-ouvert) #survol { visibility: hidden; pointer-events: none; }

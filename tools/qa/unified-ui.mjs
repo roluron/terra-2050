@@ -14,8 +14,8 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
    Object.defineProperty(navigator,'canShare',{value:()=>false});
   });
   await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await enter(page);
-  const year=await page.locator('#an').boundingBox(),filter=await page.locator('#map-inspector').boundingBox(),search=await page.locator('#champ-recherche').boundingBox(),gear=await page.locator('#bouton-reglages').boundingBox();
-  assert.ok(Math.abs(year.x+year.width/2-page.viewportSize().width/2)<1,'Year is independently centered');
+  const year=await page.locator('#an').boundingBox(),timeline=await page.locator('#timeline').boundingBox(),filter=await page.locator('#map-inspector').boundingBox(),search=await page.locator('#champ-recherche').boundingBox(),gear=await page.locator('#bouton-reglages').boundingBox();
+  assert.ok(Math.abs(page.viewportSize().width-timeline.x-timeline.width-(page.viewportSize().width<=720?20:24))<1,'Timeline is anchored on the right');
   assert.ok(filter.x<30&&filter.x+filter.width<year.x,'Filters remain left of year');
   assert.ok(Math.abs(search.width-search.height)<1&&Math.abs(search.height-gear.height)<1,'Matching round search and gear');
   await page.screenshot({path:`${out}/${name}-home.png`});
@@ -38,6 +38,6 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   const fonts=await page.evaluate(()=>storyFonts);assert.ok(fonts.length>5);assert.ok(fonts.every(f=>! /Herbik|Georgia|monospace/.test(f)));assert.ok(fonts.some(f=>f.startsWith('300 340px')));
   assert.match(await page.locator('#story-partager').evaluate(e=>getComputedStyle(e).fontFamily),/Lausanne/);
   const download=page.waitForEvent('download');await page.locator('#story-partager').click();await (await download).saveAs(`${out}/${name}-story.jpg`);
-  assert.deepEqual(errors,[]);console.log(`PASS ${name}: left filters, centered year, matched icons, shared ruler, Lausanne story download`);
+  assert.deepEqual(errors,[]);console.log(`PASS ${name}: left filters, right year, matched icons, shared ruler, Lausanne story download`);
  }finally{await browser.close();}
 }

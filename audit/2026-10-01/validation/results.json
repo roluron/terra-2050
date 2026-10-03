@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-01",
+  "base_commit": "57a0757d101a51206ba9758cfb59cbe45e0d35b2",
+  "scope": "Shipped payload consistency and application behavior; no scientific certification.",
+  "raw_scientific_source_reconstruction": "blocked: originals absent; source domains rejected by enforced network proxy (CONNECT 403)",
+  "geography_source_reconstruction": "passed: pinned official Natural Earth sources; independent reconstruction and territorial point-in-polygon checks",
+  "environment": {
+    "os": "Linux",
+    "browser": "Chromium /usr/bin/chromium",
+    "renderer": "software SwiftShader",
+    "url": "http://localhost:8080/",
+    "mobile": "simulated viewports/touch, not physical devices",
+    "scientific_ui_google_fonts": "CSS stubbed only in this suite because source domain is blocked",
+    "safari": "not tested locally"
+  },
+  "local_checks": [
+    {
+      "suite": "quick-checks",
+      "pass": true,
+      "count": 8,
+      "full_browser_matrix": false,
+      "log": "quick-checks.log"
+    },
+    {
+      "suite": "science-textures",
+      "pass": true,
+      "textures": 7,
+      "bytes": 20736000,
+      "log": "science-textures.log"
+    },
+    {
+      "suite": "aridity-transport",
+      "pass": true,
+      "cells": 259200,
+      "log": "aridity-transport.log"
+    },
+    {
+      "suite": "map-diagnostic",
+      "pass": true,
+      "filter_cells": 1306368,
+      "location_year_filter_combinations": 900,
+      "log": "map-diagnostic.log"
+    },
+    {
+      "suite": "country-score",
+      "pass": true,
+      "fixtures": 11,
+      "source": "../../../tools/qa/country-score.mjs",
+      "log": "country-score.log"
+    },
+    {
+      "suite": "hover-diagnostic",
+      "pass": true,
+      "profiles": [
+        "desktop",
+        "mobile"
+      ],
+      "filters": 7,
+      "languages": 8,
+      "modes": 2,
+      "log": "hover-diagnostic.log"
+    },
+    {
+      "suite": "cursor",
+      "pass": true,
+      "log": "cursor.log"
+    },
+    {
+      "suite": "letter-arrival",
+      "pass": true,
+      "profiles": [
+        "desktop",
+        "phone",
+        "reduced"
+      ],
+      "log": "letter-arrival.log"
+    },
+    {
+      "suite": "scientific-ui",
+      "pass": true,
+      "cases": 58,
+      "failures": 0,
+      "log": "scientific-ui.log",
+      "details": "scientific-ui.json"
+    },
+    {
+      "suite": "data-integrity-ui",
+      "pass": true,
+      "filters": 7,
+      "modes": 2,
+      "languages": 8,
+      "profiles": [
+        {
+          "name": "desktop",
+          "numeric_states": 140,
+          "localized_states": 112,
+          "native_pointer": "passed",
+          "evidence": "../floods/ui/desktop-pass.log"
+        },
+        {
+          "name": "mobile",
+          "width": 393,
+          "numeric_states": 140,
+          "localized_states": 112,
+          "native_touch": "passed",
+          "evidence": "../floods/ui/mobile-results.json"
+        },
+        {
+          "name": "compact",
+          "width": 320,
+          "numeric_states": 140,
+          "localized_states": 112,
+          "native_touch": "passed in separate pointer-only run with rural location and normal zoom 2.4",
+          "single_full_run_pass": false,
+          "matrix_evidence": "../floods/ui/compact-matrix-counts.json",
+          "native_evidence": "../floods/ui/compact-pointer-results.json"
+        }
+      ],
+      "note": "Compact matrices and final native interaction are separate passes. Chromium redirected near-label touch to a nearby city; no production change was made to force that coordinate to hit canvas."
+    }
+  ],
+  "corrected_application_sha256": {
+    "index.html": "f960dc1b8fac9401c8d207cb4e88ce99f13d1617ee6a89effd5e286cc4ca2e93",
+    "hover-diagnostic.mjs": "dc3fa4d00c88aa6310d0e6a5ead186d2fd544e365144f839f5879bf0b2936b5f",
+    "map-diagnostic.mjs": "a1118672079a957aa6ec81920ae25ccff9bbfb71ed484a0e68a575ea08a0bd60",
+    "map-diagnostic-copy.mjs": "05d4f9f772d1107eeb4c7602f3a39737b4116cec04c91924681bb6cd0256192d",
+    "science-textures.mjs": "e4f3ec9d337a2c804c17eca0c1820a79e164aa93df3c391a116e24b76a27d95f",
+    "terra-menus.css": "58caf703fe41f255122e5ce3858385d37e2704c6ea3bccb6328430e86a1c6762",
+    "data/pays.png": "152d4da2cd050ef79ebaa8d7ef0e00be559dbdf546ffcd77d839a7f09db74b7d",
+    "data/pays_index.json": "4e115b0d076754e2edceaaecd661123e01bf41f330d8625bdff636f2948e36b1",
+    "data/pays-provenance.json": "fcf03af94379bee96ddf74fac8e2669c945bddeebd9c8da2e92ed1da6d6455b0",
+    "assets/og-projections.jpg": "30838a2b99540c772e9b2cf6614ab00ea57b0f4d1ccf3a69c1f8c4b13c07ce5e"
+  },
+  "ci_status": "Runs on main push; not represented by the local PASS statuses.",
+  "baseline_ci": {
+    "commit": "57a0757d101a51206ba9758cfb59cbe45e0d35b2",
+    "url": "https://github.com/roluron/terra-2050/actions/runs/36827389649",
+    "conclusion": "failure",
+    "scope": "Preexisting full browser matrix failures, including obsolete search/menu targets and hard-coded macOS paths; outside targeted data checks."
+  }
+}

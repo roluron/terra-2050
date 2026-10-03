@@ -1,0 +1,358 @@
+{
+  "base_commit": "57a0757d101a51206ba9758cfb59cbe45e0d35b2",
+  "scope": "All shipped cells and annual values; local runtime checked separately. No independent raw-source reconstruction; raw inputs absent and original domains denied by network proxy.",
+  "fire": {
+    "sha256": "43d964c3c02fcdbdb8073557b68bac02503c7858a8e092fe2e1d2c71f21e1b04",
+    "cells": 10368,
+    "valid_cells": 2263,
+    "missing_cells": 8105,
+    "model_count": 21,
+    "positive_changes": 2205,
+    "negative_changes": 58,
+    "p10_p90_straddle_zero": 1718,
+    "max_delta_vs_future_minus_near_error_days_per_year": 3.814697265625e-06,
+    "texture_half_float_delta_max_error_days_per_year": 0.041965484619140625,
+    "texture_nonzero_change_quantized_to_zero_cells": 1,
+    "field_ranges": {
+      "historical": {
+        "min": 11.492856979370117,
+        "max": 45.39523696899414
+      },
+      "near": {
+        "min": 9.369047164916992,
+        "max": 56.53333282470703
+      },
+      "future": {
+        "min": 9.649999618530273,
+        "max": 80.259521484375
+      },
+      "pairedChangeMean": {
+        "min": -3.700000047683716,
+        "max": 27.899999618530273
+      },
+      "pairedChangeP10": {
+        "min": -14.75,
+        "max": 10.600000381469727
+      },
+      "pairedChangeP90": {
+        "min": 1.2999999523162842,
+        "max": 60.04999923706055
+      },
+      "signAgreement": {
+        "min": 0.380952388048172,
+        "max": 1.0
+      },
+      "burnableFraction": {
+        "min": 0.20016053318977356,
+        "max": 0.9999975562095642
+      }
+    },
+    "samples": {
+      "Paris": {
+        "row": 16,
+        "column": 72,
+        "historical": 20.090476989746094,
+        "near": 27.77857208251953,
+        "future": 36.371429443359375,
+        "pairedChangeMean": 8.592857360839844,
+        "pairedChangeP10": -2.450000047683716,
+        "pairedChangeP90": 13.100000381469727,
+        "signAgreement": 0.8571428656578064,
+        "burnableFraction": 0.9557196497917175
+      },
+      "Ho Chi Minh City": {
+        "row": 31,
+        "column": 114,
+        "historical": 30.299999237060547,
+        "near": 34.94047546386719,
+        "future": 39.7976188659668,
+        "pairedChangeMean": 4.857142925262451,
+        "pairedChangeP10": -5.25,
+        "pairedChangeP90": 16.450000762939453,
+        "signAgreement": 0.7142857313156128,
+        "burnableFraction": 0.9213197231292725
+      },
+      "Ouagadougou": {
+        "row": 31,
+        "column": 71,
+        "historical": 22.402381896972656,
+        "near": 23.823808670043945,
+        "future": 25.321428298950195,
+        "pairedChangeMean": 1.4976190328598022,
+        "pairedChangeP10": -4.699999809265137,
+        "pairedChangeP90": 8.0,
+        "signAgreement": 0.5714285969734192,
+        "burnableFraction": 0.9953751564025879
+      },
+      "Sydney": {
+        "row": 49,
+        "column": 132,
+        "historical": 21.428571701049805,
+        "near": 21.878570556640625,
+        "future": 28.419048309326172,
+        "pairedChangeMean": 6.540476322174072,
+        "pairedChangeP10": -1.0499999523162842,
+        "pairedChangeP90": 15.25,
+        "signAgreement": 0.8571428656578064,
+        "burnableFraction": 0.5297258496284485
+      },
+      "Los Angeles": {
+        "row": 22,
+        "column": 24,
+        "historical": 19.764286041259766,
+        "near": 21.52142906188965,
+        "future": 23.673809051513672,
+        "pairedChangeMean": 2.15238094329834,
+        "pairedChangeP10": -0.75,
+        "pairedChangeP90": 5.699999809265137,
+        "signAgreement": 0.8571428656578064,
+        "burnableFraction": 0.39506596326828003
+      },
+      "Sahara": {
+        "row": 26,
+        "column": 76,
+        "historical": null,
+        "near": null,
+        "future": null,
+        "pairedChangeMean": null,
+        "pairedChangeP10": null,
+        "pairedChangeP90": null,
+        "signAgreement": null,
+        "burnableFraction": 0.0002838160435203463
+      }
+    }
+  },
+  "population": {
+    "sha256": "98f8d307ab6682d8a840aedda51e1ac824645afb6bbd8b47ee7e86fb01f074b1",
+    "countries_and_areas": 237,
+    "annual_values": 6162,
+    "years": [
+      2025,
+      2050
+    ],
+    "raster_iso_count": 238,
+    "un_codes_not_in_raster": [
+      "BQ",
+      "GF",
+      "GI",
+      "GP",
+      "MQ",
+      "RE",
+      "TK",
+      "YT"
+    ],
+    "raster_codes_without_un_series": [
+      "",
+      "AQ",
+      "AX",
+      "GS",
+      "HM",
+      "IO",
+      "NF",
+      "PN",
+      "TF"
+    ],
+    "samples": {
+      "CN": {
+        "2025": 1416096094,
+        "2026": 1412914089,
+        "2050": 1260289093,
+        "change_from_2025_percent": -11.002572612138007,
+        "change_from_2026_percent": -10.802142691352268
+      },
+      "VN": {
+        "2025": 101598527,
+        "2026": 102177431,
+        "2050": 110008908,
+        "change_from_2025_percent": 8.278054070606755,
+        "change_from_2026_percent": 7.66458592993986
+      },
+      "FR": {
+        "2025": 66650804,
+        "2026": 66746401,
+        "2050": 68219675,
+        "change_from_2025_percent": 2.353866579013819,
+        "change_from_2026_percent": 2.2072710706903864
+      },
+      "JP": {
+        "2025": 123103479,
+        "2026": 122427731,
+        "2050": 105123167,
+        "change_from_2025_percent": -14.605852040948408,
+        "change_from_2026_percent": -14.134513364459888
+      },
+      "IN": {
+        "2025": 1463865525,
+        "2026": 1476625576,
+        "2050": 1679589259,
+        "change_from_2025_percent": 14.736581353673174,
+        "change_from_2026_percent": 13.745101418993698
+      },
+      "NG": {
+        "2025": 237527782,
+        "2026": 242431832,
+        "2050": 359185556,
+        "change_from_2025_percent": 51.21833453570497,
+        "change_from_2026_percent": 48.15940342355702
+      },
+      "TG": {
+        "2025": 8591626,
+        "2026": 8780006,
+        "2050": 13960027,
+        "change_from_2025_percent": 62.484109527113965,
+        "change_from_2026_percent": 58.99792095814058
+      },
+      "PG": {
+        "2025": 10762817,
+        "2026": 10947848,
+        "2050": 14906590,
+        "change_from_2025_percent": 38.50082185732602,
+        "change_from_2026_percent": 36.160001490703934
+      }
+    },
+    "territory_raster_samples": {
+      "GF": {
+        "name": "French Guiana",
+        "coordinate": [
+          4,
+          -53
+        ],
+        "pixel": [
+          762,
+          516
+        ],
+        "map_iso": "FR",
+        "own_2026_population": 318872,
+        "own_2050_population": 471916,
+        "own_change_since_2026_percent": 47.99543390451342,
+        "map_series_change_since_2026_percent": 2.2072710706903864
+      },
+      "GP": {
+        "name": "Guadeloupe",
+        "coordinate": [
+          16.265,
+          -61.551
+        ],
+        "pixel": [
+          710,
+          442
+        ],
+        "map_iso": "FR",
+        "own_2026_population": 372453,
+        "own_2050_population": 326318,
+        "own_change_since_2026_percent": -12.38679779730597,
+        "map_series_change_since_2026_percent": 2.2072710706903864
+      },
+      "MQ": {
+        "name": "Martinique",
+        "coordinate": [
+          14.64,
+          -61.024
+        ],
+        "pixel": [
+          713,
+          452
+        ],
+        "map_iso": "FR",
+        "own_2026_population": 337711,
+        "own_2050_population": 282070,
+        "own_change_since_2026_percent": -16.47592172005058,
+        "map_series_change_since_2026_percent": 2.2072710706903864
+      },
+      "RE": {
+        "name": "Reunion",
+        "coordinate": [
+          -21.12,
+          55.53
+        ],
+        "pixel": [
+          1413,
+          666
+        ],
+        "map_iso": "FR",
+        "own_2026_population": 886298,
+        "own_2050_population": 941413,
+        "own_change_since_2026_percent": 6.218563056669435,
+        "map_series_change_since_2026_percent": 2.2072710706903864
+      },
+      "YT": {
+        "name": "Mayotte",
+        "coordinate": [
+          -12.82,
+          45.166
+        ],
+        "pixel": [
+          1350,
+          616
+        ],
+        "map_iso": "FR",
+        "own_2026_population": 347536,
+        "own_2050_population": 645426,
+        "own_change_since_2026_percent": 85.714861194236,
+        "map_series_change_since_2026_percent": 2.2072710706903864
+      },
+      "GI": {
+        "name": "Gibraltar",
+        "coordinate": [
+          36.14,
+          -5.35
+        ],
+        "pixel": [
+          1047,
+          323
+        ],
+        "map_iso": "ES",
+        "own_2026_population": 40867,
+        "own_2050_population": 49798,
+        "own_change_since_2026_percent": 21.853818484351685,
+        "map_series_change_since_2026_percent": -6.106972981618086
+      },
+      "BQ": {
+        "name": "Bonaire",
+        "coordinate": [
+          12.19,
+          -68.28
+        ],
+        "pixel": [
+          670,
+          466
+        ],
+        "map_iso": "NL",
+        "own_2026_population": 31913,
+        "own_2050_population": 34742,
+        "own_change_since_2026_percent": 8.864725973741105,
+        "map_series_change_since_2026_percent": 2.7627850629648787
+      },
+      "TK": {
+        "name": "Tokelau",
+        "coordinate": [
+          -9.2,
+          -171.8
+        ],
+        "pixel": [
+          49,
+          595
+        ],
+        "map_iso": "",
+        "own_2026_population": 2691,
+        "own_2050_population": 3821,
+        "own_change_since_2026_percent": 41.991824600520246,
+        "map_series_change_since_2026_percent": null
+      }
+    }
+  },
+  "remote_source_access": [
+    {
+      "url": "https://essd.copernicus.org/articles/15/2153/2023/",
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    },
+    {
+      "url": "https://www.research-collection.ethz.ch/server/api/core/bitstreams/21ebf431-5c20-4a85-82c6-bb96df91daaa",
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    },
+    {
+      "url": "https://population.un.org/wpp/",
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    }
+  ]
+}

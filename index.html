@@ -14,9 +14,9 @@
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_color_2048.webp">
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_mask_4320.webp">
 <link rel="preload" as="image" href="./data/grille_c.png">
-<meta property="og:title" content="TERRA／2050 — Will your city still be livable in 2050?">
+<meta property="og:title" content="TERRA／2050 — Explore climate projections">
 <meta property="og:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
-<meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
+<meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
 <meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TERRA／2050">
@@ -24,12 +24,12 @@
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Le globe TERRA／2050 en 2050, chaleur extreme allumee, avec la question : votre ville sera-t-elle encore vivable ?">
+<meta property="og:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="TERRA／2050 — Will your city still be livable in 2050?">
+<meta name="twitter:title" content="TERRA／2050 — Explore climate projections">
 <meta name="twitter:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
-<meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-globe.jpg">
-<meta name="twitter:image:alt" content="Le globe TERRA／2050 en 2050, chaleur extreme allumee, avec la question : votre ville sera-t-elle encore vivable ?">
+<meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
+<meta name="twitter:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
 <meta name="description" content="34 099 villes · un indice illustratif d’exposition climatique. Explorez les risques modélisés, hypothèses et limites des sources.">
 <meta name="theme-color" content="#070706">
 <meta name="color-scheme" content="dark">
@@ -42,7 +42,7 @@
 <link rel="icon" href="./assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>TERRA//2050 — Résilience Climatique</title>
+<title>TERRA／2050 — Explorer les projections climatiques</title>
 <!--
   TERRA//2050 — globe tactique des risques climatiques.
   Œuvre originale. Stack : Three.js r160 + GSAP 3 + Howler (vendord en local, rien d'autre).
@@ -249,11 +249,12 @@
 </header>
 
 <div id="recherche" class="panneau">
+  <button id="explore-city" type="button" aria-controls="champ-recherche">
+    <span class="city-search-label"></span>
+    <svg class="city-search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m12.5 12.5 4.5 4.5"/></svg>
+  </button>
   <input id="champ-recherche" type="text" placeholder="Chercher un lieu — ⌘K"
-    autocomplete="off" spellcheck="false" aria-label="Rechercher un lieu" role="combobox" aria-expanded="false" aria-controls="resultats" aria-autocomplete="list">
-  <svg id="loupe" viewBox="0 0 20 20" aria-hidden="true">
-    <circle cx="8.6" cy="8.6" r="5.4"/><path d="M12.8 12.8 L17.2 17.2"/>
-  </svg>
+    autocomplete="off" spellcheck="false" tabindex="-1" aria-hidden="true" aria-label="Rechercher un lieu" role="combobox" aria-expanded="false" aria-controls="resultats" aria-autocomplete="list">
   <span id="mesure-recherche" aria-hidden="true"></span>
   <span id="caret-dos" aria-hidden="true"></span>
   <ul id="resultats" role="listbox" aria-label="Résultats"></ul>
@@ -270,6 +271,7 @@
   <div class="bornes micro"><span>2026</span><span>2050</span></div>
 </div>
 
+<aside id="filter-summary" hidden aria-live="polite"><p class="summary-headline"></p><p class="summary-reference" hidden></p><p class="summary-detail"></p></aside>
 <section id="map-inspector">
 <button id="map-toggle" type="button" aria-expanded="false" aria-controls="map-options"><span></span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
 <div id="map-options">
@@ -283,15 +285,16 @@
       <button class="calque" aria-pressed="false" data-cle="declin"><span class="pastille"></span><span class="nom" data-t-calque></span><span class="code">R-08</span></button>
       
     </nav>
-<aside id="model-notice"><div id="map-reading"><button type="button" data-map-mode="change" aria-pressed="true"></button><button type="button" data-map-mode="value" aria-pressed="false"></button></div><div id="layer-context" aria-live="polite"></div><details id="map-method"><summary></summary><div id="layer-method"></div><p data-t="betaNotice"></p></details></aside>
+<aside id="model-notice"><div id="map-reading"><button type="button" data-map-mode="reference" aria-pressed="false" hidden></button><button type="button" data-map-mode="change" aria-pressed="true"></button><button type="button" data-map-mode="value" aria-pressed="false"></button></div><div id="layer-context" aria-live="polite"></div><details id="map-method"><summary></summary><div id="layer-method"></div><p data-t="betaNotice"></p></details></aside>
 <a id="map-contact" href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a>
+<p class="v-science" data-t="indicatorNotice"></p>
 </div>
 </section>
 </div>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
 <div id="etiquettes"></div>
-<div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span></div>
+<div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span><span class="s-detail"></span><span class="s-note"></span></div>
 
 <div id="util" class="panneau">
   <div class="menu-groupe">
@@ -340,6 +343,7 @@
   <div class="pedago-carte">
     <div class="pedago-titre"><span class="pastille-pedago"></span><span id="pedago-nom"></span></div>
     <p id="pedago-texte"></p>
+    <details class="pedago-details"><summary id="pedago-details-label"></summary><p id="pedago-details-text"></p></details>
     <div class="pedago-source" id="pedago-source"></div>
     <button class="entree-pedago" id="pedago-fermer"></button>
   </div>
@@ -363,6 +367,7 @@
         <div class="score"><span class="valeur" id="dossier-score"></span><span class="score-sur">/100</span></div>
         <div><p data-t="panelIndex"></p><p class="fiche-secondaire" data-t="panelDirection"></p></div>
       </div>
+      <p class="score-method-note" data-t="scoreNotice"></p>
       <p id="dossier-evolution"></p>
       <button class="duel" id="dossier-duel" hidden></button>
     </section>
@@ -409,9 +414,15 @@ import { loadFloodHazards } from './climate-data.mjs';
 import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { language, getText, message, languageControl } from './i18n.mjs';
-import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker } from './refinement-copy.mjs';
+import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
 import { createComparison } from './city-comparison.mjs';
 import { createYearRuler } from './year-ruler.mjs';
+import { hoverCopy, hoverMetricKey, populationHover, physicalHover, historicalHover, formatHoverNumber } from './hover-diagnostic.mjs';
+import { mapValueContext, mapReferenceContext, historicalFilters } from './map-value-context.mjs';
+import { mapDiagnosticReading } from './map-diagnostic.mjs';
+import { mapDiagnosticCopy } from './map-diagnostic-copy.mjs';
+import { createGlobalSummary } from './global-summary.mjs';
+import { summarizeText } from './global-summary-copy.mjs';
 import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
@@ -531,7 +542,37 @@ const nomPays = (() => {
 
 const GRILLES = {};
 let FIRE_WEATHER = null;
-let SCIENCE = null;
+let SCIENCE = null, FLOOD_HAZARDS = null;
+let climateCoverage = null, globalSummary = null, globalSummaryStarted = false;
+let globalSourcesReady = false, populationSourceReady = false;
+async function chargerCouvertureClimat(){
+  const response = await fetch('./data/climate-coverage.bin');
+  if (!response.ok) throw new Error('Climate coverage unavailable: ' + response.status);
+  const bytes = new Uint8Array(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+  if (bytes.length !== 720 * 360 * 12 || bytes.some(n => n > 9)) throw new Error('Invalid climate coverage');
+  return bytes;
+}
+function majSyntheseGlobale(){
+  const el = document.getElementById('filter-summary');
+  const filter = document.querySelector('.calque.actif')?.dataset.cle;
+  el.hidden = !filter || !globalSummary;
+  if (el.hidden) return;
+  const copy = summarizeText(filter, globalSummary.reading(filter, etat.annee), langue, etat.annee);
+  el.classList.toggle('summary-unavailable', !copy.headline);
+  el.querySelector('.summary-headline').textContent = copy.headline;
+  const reference = el.querySelector('.summary-reference');
+  reference.textContent = copy.reference || '';
+  reference.hidden = !copy.reference;
+  el.querySelector('.summary-detail').textContent = copy.detail;
+}
+function preparerSyntheseGlobale(){
+  if (globalSummaryStarted || !globalSourcesReady || !populationSourceReady) return;
+  globalSummaryStarted = true;
+  createGlobalSummary({ climate: SCIENCE?.climate, fire: FIRE_WEATHER, floods: FLOOD_HAZARDS,
+    population: PAYS_POP, climateCoverage }).then(summary => {
+    globalSummary = summary; majSyntheseGlobale();
+  }).catch(error => console.error('Global summary unavailable', error));
+}
 let scienceLoadFailed = false;
 const SOURCE_INDEX = new WeakMap();
 const SCORE_CACHE = new Map();
@@ -590,7 +631,7 @@ function texteCouverture(l){
 }
 function detailPhysique(key, reading){
   if (!reading?.available) return unavailableScienceText().detail;
-  const format = value => value.toLocaleString(langue, { maximumFractionDigits: 2 });
+  const format = value => formatHoverNumber(value, langue, false, 2);
   const unit = uniteLocale(reading.unit);
   return `${format(reading.value)} ${unit} · ${T().ui['2026_illustrative_estimate']}: ${format(reading.baseline)} · 2050: ${format(reading.future)}.`;
 }
@@ -662,7 +703,9 @@ function indicePays(iso, annee){
   let somme = 0, poids = 0;
   for (const v of (VILLES_PAR_PAYS[iso] || [])){
     if (!v[7]) continue;
-    somme += indiceHabitabiliteVille(v, annee) * v[4];
+    const score = indiceHabitabiliteVille(v, annee);
+    if (!Number.isFinite(score) || !Number.isFinite(v[4]) || v[4] <= 0) continue;
+    somme += score * v[4];
     poids += v[4];
   }
   const r = poids ? Math.round(somme / poids) : null;
@@ -980,8 +1023,11 @@ function chargerGrillesCalques(){
   if (calquesCharges) return calquesCharges;
   calquesCharges = Promise.all([
     loadFloodHazards(),
-    loadScientificMetrics().then(science => {
+    Promise.all([loadScientificMetrics(), chargerCouvertureClimat().catch(error => { console.error(error); return null; })]).then(([science, coverage]) => {
       SCIENCE = science;
+      climateCoverage = coverage;
+      SCORE_CACHE.clear();
+      _memoPays.clear();
       const grid = science.fire;
       FIRE_WEATHER = grid;
       const { width, height } = grid.metadata;
@@ -991,7 +1037,7 @@ function chargerGrillesCalques(){
         const valid = Number.isFinite(grid.values[source + 1]) && Number.isFinite(grid.values[source + 2]);
         pixels[target] = valid ? grid.values[source + 1] : 0;
         pixels[target + 1] = valid ? grid.values[source + 2] : 0;
-        pixels[target + 2] = valid ? grid.values[source + 6] : 0;
+        pixels[target + 2] = valid ? (Number.isFinite(grid.values[source]) ? grid.values[source] : -1) : 0;
         pixels[target + 3] = valid ? 1 : 0;
       }
       const texture = new THREE.DataTexture(Uint16Array.from(pixels, THREE.DataUtils.toHalfFloat), width, height, THREE.RGBAFormat, THREE.HalfFloatType);
@@ -999,14 +1045,17 @@ function chargerGrillesCalques(){
       texture.wrapS = THREE.RepeatWrapping; texture.needsUpdate = true;
       uniformsGlobe.uFireWeather.value = texture;
       return true;
-    }).catch(error => { scienceLoadFailed = true; if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
+    }).catch(error => { scienceLoadFailed = true; rafraichirSurvol(); if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
   ]).then(async r => {
+    FLOOD_HAZARDS = r[0];
+    globalSourcesReady = true; preparerSyntheseGlobale();
     if (SCIENCE){
       const textures = await buildScientificTextures(THREE, SCIENCE.climate, r[0], moteur.extensions.has('OES_texture_float_linear'));
       for (const [key, texture] of Object.entries(textures)) uniformsGlobe['uScientific_' + key].value = texture;
     }
+    rafraichirSurvol();
     if (lieuDossier) majDossier(); const ok = r.every(Boolean); resoudreCalques(ok); return ok;
-  }).catch(error => { console.error('Scientific layers unavailable', error); resoudreCalques(false); return false; });
+  }).catch(error => { globalSourcesReady = true; preparerSyntheseGlobale(); console.error('Scientific layers unavailable', error); resoudreCalques(false); return false; });
   return calquesCharges;
 }
 
@@ -1016,6 +1065,9 @@ const uniformsGlobe = {
   uTemps:      { value: 0 },
   uProgression:{ value: 0 },                          // timeline 2026→2050 → 0..1
   uChange: { value: 1 },
+  uReference: { value: 0 },
+  uCountryOpacity: { value: MOINS_ANIM ? 0.1 : 0 },
+  uCountryStep: { value: new THREE.Vector2(0, 0) },
   uSoleil:     { value: new THREE.Vector3(1, .35, .6).normalize() },   // recalé sur la caméra à chaque image
   uChaleur:    { value: 0 },
   uSecheresse: { value: 0 }, uMer:    { value: 0 }, uStabilite: { value: 0 },
@@ -1025,7 +1077,9 @@ const uniformsGlobe = {
   uFireWeather: { value: texVide },
   uScientific_heat: { value: texVide }, uScientific_aridity: { value: texVide },
   uScientific_warming: { value: texVide }, uScientific_coast: { value: texVide }, uScientific_river: { value: texVide },
-  uCrue:   { value: 0 },     // calque « inondation fluviale » : carte JRC, la MEME que la fiche
+  uScientific_aridityTemperature: { value: texVide }, uScientific_aridityPrecipitation: { value: texVide },
+  uScientific_historicalClimate: { value: texVide }, uScientific_historicalFlood: { value: texVide },
+  uCrue:   { value: 0 },     // fraction locale Aqueduct ; les fiches gardent les profondeurs échantillonnées
   uIndice: { value: 1 },     // teinte ambiante de sévérité quand aucun calque
   uA2026: { value: texA2026 }, uA2050: { value: texA2050 },
   uB2026: { value: texB2026 }, uB2050: { value: texB2050 },
@@ -1046,11 +1100,13 @@ const matGlobe = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform sampler2D uMap; uniform sampler2D uMasque;
-    uniform float uTemps, uProgression, uChange, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue, uFeu;
+    uniform float uTemps, uProgression, uChange, uReference, uCountryOpacity, uChaleur, uSecheresse, uMer, uStabilite, uDeclin, uEveil, uIndice, uCrue, uFeu;
+    uniform vec2 uCountryStep;
     uniform vec3 uSoleil; uniform float uHaloP;
     uniform sampler2D uA2026, uA2050, uB2026, uB2050, uC, uD, uPays, uPopulation;
     uniform sampler2D uFireWeather;
-    uniform sampler2D uScientific_heat, uScientific_aridity, uScientific_warming, uScientific_coast, uScientific_river;
+    uniform sampler2D uScientific_heat, uScientific_aridityTemperature, uScientific_aridityPrecipitation, uScientific_warming, uScientific_coast, uScientific_river;
+    uniform sampler2D uScientific_historicalClimate, uScientific_historicalFlood;
     varying vec3 vN; varying vec3 vP; varying vec2 vUv; varying vec3 vPm;
 
     
@@ -1068,7 +1124,8 @@ const matGlobe = new THREE.ShaderMaterial({
     }
     vec3 changeColor(vec3 base, float delta, float range, float opacity){
       vec3 tone = delta >= 0.0 ? vec3(1.0, 0.19, 0.045) : vec3(0.12, 0.70, 0.90);
-      return mix(base, tone, clamp(abs(delta) / range, 0.0, 1.0) * opacity);
+      // Preserve the earth texture even at the end of a colour scale.
+      return mix(base, base * (0.7 + tone * 1.5) + tone * 0.16, clamp(abs(delta) / range, 0.0, 1.0) * opacity * 0.55);
     }
     void main(){
       vec3 tex = texture2D(uMap, vUv).rgb;
@@ -1102,14 +1159,23 @@ const matGlobe = new THREE.ShaderMaterial({
 
       float P = uProgression;
       vec4 heatData = texture2D(uScientific_heat, vUv);
-      vec4 aridityData = texture2D(uScientific_aridity, vUv);
+      vec4 aridityTemperature = texture2D(uScientific_aridityTemperature, vUv);
+      vec4 aridityPrecipitation = texture2D(uScientific_aridityPrecipitation, vUv);
+      float tReference = scientificValue(aridityTemperature, 0.0);
+      float tCurrent = scientificValue(aridityTemperature, P);
+      float aridityReady = min(aridityTemperature.a, aridityPrecipitation.a);
+      if (tReference <= -10.0 || tCurrent <= -10.0) aridityReady = 0.0;
+      float aridityReference = aridityReady > 0.0 ? scientificValue(aridityPrecipitation, 0.0) / (tReference + 10.0) : 0.0;
+      float aridityCurrent = aridityReady > 0.0 ? scientificValue(aridityPrecipitation, P) / (tCurrent + 10.0) : 0.0;
       vec4 warmingData = texture2D(uScientific_warming, vUv);
       vec4 coastData = texture2D(uScientific_coast, vUv);
       vec4 riverData = texture2D(uScientific_river, vUv);
+      vec4 historicalClimate = texture2D(uScientific_historicalClimate, vUv);
+      vec4 historicalFlood = texture2D(uScientific_historicalFlood, vUv);
 
       
-      vec3 a26 = vec3(clamp((scientificValue(heatData, 0.0) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(scientificValue(aridityData, 0.0) / 60.0, 0.0, 1.0)) * aridityData.a);
-      vec3 ga = vec3(clamp((scientificValue(heatData, P) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(scientificValue(aridityData, P) / 60.0, 0.0, 1.0)) * aridityData.a);
+      vec3 a26 = vec3(clamp((scientificValue(heatData, 0.0) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(aridityReference / 60.0, 0.0, 1.0)) * aridityReady);
+      vec3 ga = vec3(clamp((scientificValue(heatData, P) - 20.0) / 30.0, 0.0, 1.0) * heatData.a, 0.0, (1.0 - clamp(aridityCurrent / 60.0, 0.0, 1.0)) * aridityReady);
       vec3 b26 = vec3(0.0, scientificValue(coastData, 0.0) * coastData.a, scientificValue(riverData, 0.0) * riverData.a);
       vec3 gb = vec3(0.0, scientificValue(coastData, P) * coastData.a, scientificValue(riverData, P) * riverData.a);
       
@@ -1126,19 +1192,21 @@ const matGlobe = new THREE.ShaderMaterial({
         
         float chaud = clamp((scientificValue(heatData, P) - 20.0) / 30.0, 0.0, 1.0);
         vec3 thermique = mix(vec3(1.0, 0.78, 0.22), vec3(0.90, 0.06, 0.025), chaud);
-        col = mix(col, thermique, 0.85 * uChaleur * terre * heatData.a);
+        col = mix(col, col * (0.7 + thermique * 1.5) + thermique * 0.1, 0.38 * uChaleur * terre * heatData.a);
         // ±4 °C : a ±3 °C, un +1,5 °C (la moitie du globe en 2050) etait deja ecarlate
         if (uChange > 0.5) col = changeColor(base, scientificValue(heatData, P) - scientificValue(heatData, 0.0), 4.0, uChaleur * terre * heatData.a);
+        if (uReference > 0.5) col = changeColor(base, scientificValue(heatData, P) - historicalClimate.r / max(historicalClimate.b, 0.001), 4.0, uChaleur * terre * heatData.a * historicalClimate.b);
       }
 
 
       
       if (uSecheresse > 0.001){
         
-        float humidite = clamp(scientificValue(aridityData, P) / 60.0, 0.0, 1.0);
+        float humidite = clamp(aridityCurrent / 60.0, 0.0, 1.0);
         vec3 sol = mix(vec3(0.667, 0.522, 0.224), vec3(0.149, 0.220, 0.173), humidite);
-        col = mix(col, sol, uSecheresse * terre * aridityData.a * 0.85);
-        if (uChange > 0.5) col = changeColor(base, scientificValue(aridityData, 0.0) - scientificValue(aridityData, P), 10.0, uSecheresse * terre * aridityData.a);
+        col = mix(col, col * (0.7 + sol * 1.5) + sol * 0.1, uSecheresse * terre * aridityReady * 0.38);
+        if (uChange > 0.5) col = changeColor(base, aridityReference - aridityCurrent, 10.0, uSecheresse * terre * aridityReady);
+        if (uReference > 0.5) col = changeColor(base, historicalClimate.g / max(historicalClimate.a, 0.001) - aridityCurrent, 10.0, uSecheresse * terre * aridityReady * historicalClimate.a);
       }
 
       if (uFeu > 0.001){
@@ -1146,8 +1214,9 @@ const matGlobe = new THREE.ShaderMaterial({
         float jours = mix(fireWeather.r, fireWeather.g, P) / max(fireWeather.a, 0.001);
         float amplitude = clamp(jours / 100.0, 0.0, 1.0);
         vec3 meteoFeu = mix(vec3(0.30, 0.24, 0.12), vec3(0.98, 0.20, 0.055), amplitude);
-        col = mix(col, meteoFeu, sqrt(amplitude) * fireWeather.a * terre * uFeu * 0.85);
+        col = mix(col, col * (0.7 + meteoFeu * 1.5) + meteoFeu * 0.1, sqrt(amplitude) * fireWeather.a * terre * uFeu * 0.38);
         if (uChange > 0.5) col = changeColor(base, (fireWeather.g - fireWeather.r) * P / max(fireWeather.a, 0.001), 30.0, fireWeather.a * terre * uFeu);
+        if (uReference > 0.5) col = changeColor(base, jours - fireWeather.b / max(fireWeather.a, 0.001), 30.0, fireWeather.a * terre * uFeu * step(0.0, fireWeather.b));
       }
 
       
@@ -1155,8 +1224,9 @@ const matGlobe = new THREE.ShaderMaterial({
         
         float fraction = clamp(scientificValue(coastData, P), 0.0, 1.0);
         vec3 eau = mix(vec3(0.45, 0.82, 1.0), vec3(0.08, 0.28, 0.95), fraction);
-        col = mix(col, eau, sqrt(fraction) * coastData.a * terre * uMer * 0.9);
+        col = mix(col, col * (0.7 + eau * 1.5) + eau * 0.1, sqrt(fraction) * coastData.a * terre * uMer * 0.38);
         if (uChange > 0.5) col = changeColor(base, fraction - scientificValue(coastData, 0.0), 0.05, coastData.a * terre * uMer);
+        if (uReference > 0.5) col = changeColor(base, fraction - historicalFlood.r / max(historicalFlood.b, 0.001), 0.05, coastData.a * terre * uMer * historicalFlood.b);
       }
 
       
@@ -1165,9 +1235,7 @@ const matGlobe = new THREE.ShaderMaterial({
       if (uStabilite > 0.001){
         
         float inst = scientificValue(warmingData, P);
-        float m = clamp(abs(inst) / 5.0, 0.0, 1.0);
-        vec3 anomalie = mix(vec3(0.96, 0.79, 0.58), inst >= 0.0 ? vec3(0.88, 0.14, 0.09) : vec3(0.18, 0.55, 0.88), m);
-        col = mix(col, anomalie, terre * warmingData.a * uStabilite * 0.85);
+        col = changeColor(base, inst, 5.0, terre * warmingData.a * uStabilite);
         if (uChange > 0.5) col = changeColor(base, inst - scientificValue(warmingData, 0.0), 4.0, terre * warmingData.a * uStabilite);
       }
 
@@ -1184,8 +1252,8 @@ const matGlobe = new THREE.ShaderMaterial({
         vec3 vide = mix(vec3(gris * 0.5), vec3(0.55, 0.47, 0.78), 0.75);
         
         float vidage = uDeclin;
-        col = mix(col, vide, m * vidage);
-        col += vec3(0.42, 0.34, 0.66) * m * vidage * 0.35;
+        col = mix(col, vide, m * vidage * 0.45);
+        col += vec3(0.42, 0.34, 0.66) * m * vidage * 0.12;
         // la hausse (Afrique : +30 a +50 %) se peignait aussi fort que la baisse
         // et se lisait comme un declin : sur ce calque, seule la baisse sature
         if (uChange > 0.5) col = changeColor(base, population.g, 0.20, population.a * terre * uDeclin * (population.g >= 0.0 ? 1.0 : 0.4));
@@ -1196,8 +1264,9 @@ const matGlobe = new THREE.ShaderMaterial({
         if (crueReference > 0.0 || b26.b > 0.0){
           float fraction = clamp(scientificValue(riverData, P), 0.0, 1.0);
           vec3 bleu = mix(vec3(0.45, 0.82, 1.0), vec3(0.08, 0.28, 0.95), fraction);
-          col = mix(col, bleu, sqrt(fraction) * riverData.a * terre * uCrue * 0.9);
+          col = mix(col, col * (0.7 + bleu * 1.5) + bleu * 0.1, sqrt(fraction) * riverData.a * terre * uCrue * 0.38);
           if (uChange > 0.5) col = changeColor(base, fraction - scientificValue(riverData, 0.0), 0.05, riverData.a * terre * uCrue);
+          if (uReference > 0.5) col = changeColor(base, fraction - historicalFlood.g / max(historicalFlood.a, 0.001), 0.05, riverData.a * terre * uCrue * historicalFlood.a);
         }
       }
 
@@ -1220,6 +1289,17 @@ const matGlobe = new THREE.ShaderMaterial({
       float calque = clamp(uChaleur + uSecheresse + uMer + uStabilite + uDeclin + uCrue + uFeu, 0.0, 1.0);
       col *= mix(mix(0.34, 0.62, calque), 1.0, jour);
       col += vec3(1.0, 0.96, 0.86) * reflet * 0.28 * (1.0 - calque);
+      float selected = max(max(max(uChaleur, uSecheresse), max(uFeu, uMer)), max(max(uStabilite, uDeclin), uCrue));
+      if (selected > 0.001 && uCountryStep.x > 0.0){
+        float country = floor(texture2D(uPays, vUv).r * 255.0 + 0.5);
+        vec4 neighbours = floor(vec4(texture2D(uPays, vUv + vec2(uCountryStep.x, 0.0)).r,
+          texture2D(uPays, vUv - vec2(uCountryStep.x, 0.0)).r,
+          texture2D(uPays, vUv + vec2(0.0, uCountryStep.y)).r,
+          texture2D(uPays, vUv - vec2(0.0, uCountryStep.y)).r) * 255.0 + 0.5);
+        vec4 different = step(vec4(0.5), abs(neighbours - country)) * step(vec4(0.5), neighbours);
+        float border = max(max(different.r, different.g), max(different.b, different.a)) * step(0.5, country);
+        col = mix(col, vec3(0.68, 0.73, 0.77), border * selected * uCountryOpacity);
+      }
       col *= mix(0.24, 1.0, uEveil);
 
       gl_FragColor = vec4(col, 1.0);
@@ -1333,7 +1413,7 @@ let feux, feuxUniforms;
   geo.setAttribute('aDanger', new THREE.BufferAttribute(dangers, 2));
   geo.setAttribute('aSeuil', new THREE.BufferAttribute(seuils, 1));
   feuxUniforms = {
-    uTemps: uniformsGlobe.uTemps, uIntensite: uniformsGlobe.uFeu, uProgression: uniformsGlobe.uProgression, uChange: uniformsGlobe.uChange,
+    uTemps: uniformsGlobe.uTemps, uIntensite: uniformsGlobe.uFeu, uProgression: uniformsGlobe.uProgression, uChange: uniformsGlobe.uChange, uReference: uniformsGlobe.uReference,
     uPixelRatio: { value: moteur.getPixelRatio() },
   };
   feux = new THREE.Points(geo, new THREE.ShaderMaterial({
@@ -1354,9 +1434,9 @@ let feux, feuxUniforms;
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: `
-      uniform float uIntensite, uChange; varying float vFlamme, vVif;
+      uniform float uIntensite, uChange, uReference; varying float vFlamme, vVif;
       void main(){
-        if (vVif < 0.02 || uChange > 0.5) discard;
+        if (vVif < 0.02 || uChange > 0.5 || uReference > 0.5) discard;
         float d = length(gl_PointCoord - 0.5);
         float alpha = smoothstep(0.5, 0.05, d) * vFlamme * uIntensite * vVif;
         vec3 col = mix(vec3(1.0, 0.45, 0.08), vec3(0.95, 0.12, 0.025), d * 2.0);
@@ -1730,6 +1810,15 @@ const CALQUES = {
 };
 const etat = { progression: 0, annee: 2026, crise: false };
 let jeuCalquesAffiche = null;
+let filtreSurvol = null, rafraichirSurvol = () => {};
+// Each indicator opens on its contextual level/reference, and remembers
+// explicit mode choices during this visit.
+const modesCarte = new Map();
+function appliquerModeCarte(mode){
+  uniformsGlobe.uChange.value = Number(mode === 'change');
+  uniformsGlobe.uReference.value = Number(mode === 'reference');
+  for (const item of document.querySelectorAll('[data-map-mode]')) item.setAttribute('aria-pressed', String(item.dataset.mapMode === mode));
+}
 function majContexteCalques(){
   const el = document.getElementById('layer-context');
   const actifs = [...document.querySelectorAll('.calque.actif')].map(b => b.dataset.cle);
@@ -1747,11 +1836,26 @@ function majContexteCalques(){
   toggle.dataset.shortLabel=({en:'Filters',fr:'Filtres',it:'Filtri',es:'Filtros',vi:'Bộ lọc',ja:'指標',zh:'指标','zh-Hant':'指標'})[langue]||'Filters';
   toggle.setAttribute('aria-label',`${toggle.dataset.shortLabel}: ${toggle.querySelector('span').textContent}`);
   const changing = uniformsGlobe.uChange.value > 0.5;
+  const referencing = uniformsGlobe.uReference.value > 0.5;
+  const valueContext = mapValueContext(actifs[0], langue, etat.annee);
+  const referenceContext = historicalFilters.has(actifs[0]) ? mapReferenceContext(actifs[0], langue) : null;
+  const referenceButton = document.querySelector('[data-map-mode="reference"]');
+  referenceButton.hidden = !referenceContext;
+  referenceButton.textContent = referenceContext?.value || '';
   document.getElementById('model-notice').hidden = !actifs.length;
   document.querySelector('[data-map-mode="change"]').textContent = words[0];
-  document.querySelector('[data-map-mode="value"]').textContent = words[1];
+  const guide = experienceCopy(langue);
+  const searchInvitation=document.getElementById('explore-city');
+  searchInvitation.querySelector('.city-search-label').textContent = guide.journey;
+  searchInvitation.setAttribute('aria-label',guide.journey);
+  document.querySelector('[data-map-mode="value"]').textContent = valueContext.value;
   document.querySelector('#map-method summary').textContent = words[2];
   const notes = [`${etat.annee} · ${T().ui.model_indicators}`];
+  if (referencing && referenceContext) notes.push(referenceContext.reference);
+  const diagnosticWords = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
+  if (actifs.includes('fleuves')) notes.push(diagnosticWords[2].replace('{n}', '5'));
+  if (actifs.includes('feux')) notes.push(diagnosticWords[2].replace('{n}', '21'));
+  if (actifs.some(key => ['chaleur','secheresse','stabilite'].includes(key))) notes.push(diagnosticWords[3]);
   if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(T().ui.wri_rcp85_100year_event_no);
   if (actifs.includes('fleuves') || actifs.includes('mer')) notes.push(floodMapMeaning[langue] || floodMapMeaning.en);
   if (actifs.includes('fleuves')) notes.push(refinementCopy(langue).riverLines);
@@ -1761,14 +1865,14 @@ function majContexteCalques(){
   if (actifs.includes('declin')) notes.push(uniformsGlobe.uPopulation.value === texVide
     ? (T().ui.population_map_loading_or_unavailable)
     : changing ? `${refinementCopy(langue).population} · UN WPP · 2026 → ${etat.annee}` : T().ui.un_annual_medium_projection_decline);
-  if (actifs.some(c => !['fleuves','declin'].includes(c))) notes.push(T().ui.interpolated_estimates_not_annual_forecasts);
+  if (actifs.some(c => c !== 'declin')) notes.push(T().ui.interpolated_estimates_not_annual_forecasts);
   if (actifs.includes('feux')) {
     notes.push(refinementCopy(langue).summary[2]);
     notes.push(T().ui['21model_mean_ssp370_20162035_20412060']);
     notes.push(T().ui.point_density_represents_modelled_weather);
   }
   el.replaceChildren();
-  const scales = changing ? {
+  const scales = changing || referencing ? {
     chaleur: ['#1fb3e6,#29333a,#ff300b','≤ −4 °C','0','≥ +4 °C'],
     feux: ['#1fb3e6,#29333a,#ff300b',`≤ −30 ${T().ui.daysyear}`,'0',`≥ +30 ${T().ui.daysyear}`],
     secheresse: ['#1fb3e6,#29333a,#ff300b',`+10 · ${words[6]}`,'0',`−10 · ${words[7]}`],
@@ -1782,7 +1886,7 @@ function majContexteCalques(){
     secheresse: ['#aa8539,#26382c','0','60+ De Martonne'],
     mer: ['#73d1ff,#1447f2','0%','100%'],
     fleuves: ['#73d1ff,#1447f2','0%','100%'],
-    stabilite: ['#2e8ce0,#f5c993,#e02417','≤ −5 °C','0','≥ +5 °C'],
+    stabilite: ['#1fb3e6,#29333a,#ff300b','≤ −5 °C','0','≥ +5 °C'],
     declin: ['#31343a,#8c78c7','0%','30%+']
   };
   for (const key of actifs){
@@ -1793,15 +1897,23 @@ function majContexteCalques(){
     const ticks = document.createElement('span');
     for (const value of scales[key].slice(1)) {const tick = document.createElement('span');tick.textContent=value;ticks.append(tick);}
     row.append(title,bar,ticks);el.append(row);
-    if (changing && ['mer','fleuves','secheresse','declin'].includes(key)) {
+    if (!changing){
+      const reference = document.createElement('small');
+      reference.textContent = referencing ? referenceContext.reference : valueContext.reference;
+      row.append(reference);
+    }
+    if ((changing || referencing) && ['mer','fleuves','secheresse','declin'].includes(key)) {
       const unit = document.createElement('small');
       unit.textContent = ['mer','fleuves'].includes(key) ? words[8] : key === 'secheresse' ? 'De Martonne' : `${words[10]} / ${words[9]}`;
       row.append(unit);
     }
   }
-  const hint = document.createElement('p');hint.className='map-hint';hint.textContent = changing && etat.annee === 2026 ? words[4] : changing ? words[0] : refinementCopy(langue).period;el.append(hint);
+  const hint = document.createElement('p');hint.className='map-hint';hint.textContent = referencing && referenceContext ? referenceContext.hint : changing && etat.annee === 2026 ? words[4] : changing ? guide.change : valueContext.hint;el.append(hint);
   document.getElementById('layer-method').textContent = [...notes, words[5]].join('\n');
   cadrerCarte();
+  filtreSurvol = actifs[0] || null;
+  majSyntheseGlobale();
+  rafraichirSurvol();
 }
 /* cadrage : le centre optique suit l'espace libre. Fiche ouverte sur un écran
    large, la ville visée se centre dans ce qui reste à gauche du panneau (à
@@ -1840,14 +1952,16 @@ function fermerChoixCarte(){
 document.getElementById('map-toggle').addEventListener('click', () => {
   const open = document.getElementById('map-inspector').classList.toggle('choix-ouvert');
   document.getElementById('map-toggle').setAttribute('aria-expanded',String(open));
+  if(open)gsap.fromTo('#map-options',{opacity:0,y:10},{opacity:1,y:0,duration:MOINS_ANIM?0:DUREE.fast,ease:EASE,clearProps:'opacity,transform',overwrite:true});
 });
 document.addEventListener('pointerdown', event => {if (!event.target.closest('#map-inspector')) fermerChoixCarte();});
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && document.getElementById('map-inspector').classList.contains('choix-ouvert')) {fermerChoixCarte();document.getElementById('map-toggle').focus();}
 });
 for (const button of document.querySelectorAll('[data-map-mode]')) button.addEventListener('click', () => {
-  uniformsGlobe.uChange.value = Number(button.dataset.mapMode === 'change');
-  for (const item of document.querySelectorAll('[data-map-mode]')) item.setAttribute('aria-pressed', String(item === button));
+  const key = document.querySelector('.calque.actif')?.dataset.cle || '';
+  modesCarte.set(key, button.dataset.mapMode);
+  appliquerModeCarte(button.dataset.mapMode);
   majContexteCalques();
 });
 
@@ -1879,6 +1993,7 @@ for (const btn of document.querySelectorAll('.calque')){
     if (actif) for (const other of document.querySelectorAll('.calque.actif')) if (other !== btn) other.click();
     btn.classList.toggle('actif', actif);
     btn.setAttribute('aria-pressed', actif ? 'true' : 'false');
+    if (actif) appliquerModeCarte(modesCarte.get(btn.dataset.cle) || (historicalFilters.has(btn.dataset.cle) ? 'reference' : 'value'));
     fermerChoixCarte();
     majContexteCalques();
     if (actif) montrerPedago(btn.dataset.cle);
@@ -2010,15 +2125,38 @@ document.getElementById('etiquettes').addEventListener('click', event => {
 }, true);
 
 /* ---- la piste de la timeline épouse exactement la largeur de l'année ---- */
+let calerTimeline = () => {};
 {
   const an = document.getElementById('an'), tl = document.getElementById('timeline');
-  const caler = () => tl.style.setProperty('--l-an', an.offsetWidth + 'px');
-  new ResizeObserver(caler).observe(an);
-  caler(); document.fonts.ready.then(caler);
+  const mesure = document.createElement('canvas').getContext('2d');
+  calerTimeline = () => {
+    tl.style.setProperty('--l-an', an.getBoundingClientRect().width + 'px');
+    const colonnes = an.querySelectorAll('.odo');
+    if (!an.closest('#globe-dock') || colonnes.length !== 4 || !mesure) return;
+    const style = getComputedStyle(an);
+    mesure.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    const chiffres = document.getElementById('curseur').value;
+    const bord = (colonne, chiffre, gauche) => {
+      const element = colonne.querySelectorAll('.js-number')[Number(chiffre)];
+      const range = document.createRange(); range.selectNodeContents(element);
+      const avance = range.getBoundingClientRect().left;
+      const encre = mesure.measureText(chiffre);
+      return avance + (gauche ? -encre.actualBoundingBoxLeft : encre.actualBoundingBoxRight);
+    };
+    // Les colonnes du compteur incluent les approches de la police : la règle
+    // suit l'encre du premier et du dernier chiffre, sans ces marges.
+    const gauche = bord(colonnes[0], chiffres[0], true);
+    const droite = bord(colonnes[3], chiffres[3], false);
+    tl.style.setProperty('--l-an', (droite - gauche) + 'px');
+    tl.style.setProperty('--an-ink-left', (gauche - tl.getBoundingClientRect().left) + 'px');
+  };
+  new ResizeObserver(calerTimeline).observe(an);
+  calerTimeline(); document.fonts.ready.then(calerTimeline);
 }
 
 /* ---- recherche de lieu : filtrage instantané + vol caméra ---- */
 const champ = document.getElementById('champ-recherche');
+document.getElementById('explore-city').addEventListener('click',()=>champ.focus());
 const liste = document.getElementById('resultats');
 let indiceChoisi = -1, resultatsActuels = [], focusProgramme = false;
 /* la liste n'est pas une boîte sous la barre : c'est la barre elle-même qui
@@ -2219,6 +2357,7 @@ document.addEventListener('click', e => {
 /* ---- timeline 2026 → 2050 ---- */
 const curseur = document.getElementById('curseur'), affichageAn = document.getElementById('an');
 const odoAn = new Odometre(affichageAn, 4); odoAn.set(2026, true);
+calerTimeline();
 /* la règle : un trait par année, 2026 → 2050. Une vague liquide se
    soulève autour de l'année active et anticipe le survol ; l'année
    courante est une aiguille pleine. Ressort par trait, rien d'instantané. */
@@ -2232,10 +2371,10 @@ curseur.addEventListener('pointerdown', () => document.body.classList.add('cale-
 addEventListener('pointerup', () => document.body.classList.remove('cale-annee'));
 addEventListener('pointercancel', () => document.body.classList.remove('cale-annee'));
 curseur.addEventListener('input', () => {
-  cacherSurvol();
+  if (!survolFige) cacherSurvol();
   const an = +curseur.value;
   if (an !== etat.annee){ etat.annee = an; SoundManager.play('timeline_tick'); }
-  odoAn.set(an); majDistanceAn(); majContexteCalques();
+  odoAn.set(an); calerTimeline(); majDistanceAn(); majContexteCalques();
   curseur.setAttribute('aria-valuetext', `${an} — ${T().distanceAn(an - 2026)}`);
   if (lieuDossier){ majDossier(); majLien(); clearTimeout(minuterieAnnonce); minuterieAnnonce = setTimeout(annoncer, 400); }
   gsap.to(etat, {
@@ -2256,21 +2395,23 @@ curseur.addEventListener('input', () => {
 });
 
 /* =====================================================================
-   LOUPE -> BARRE : au repos la recherche est une loupe de verre (la même
-   lentille WebGL, en cercle). Le clic la déploie en pilule, un balayage de
-   lumière passe sur le placeholder. Elle se replie vide, hors dossier.
+   INVITATION -> BARRE : un seul emplacement pour trouver une ville.
+   Le clic ou ⌘K transforme l'invitation en champ ; vide et sans focus,
+   il retrouve son invitation. La classe loupe reste l'état replié.
    ===================================================================== */
-const LARGEUR_LOUPE = 44;
-const etatRecherche = { w: LARGEUR_LOUPE };
-const loupe = document.getElementById('loupe');
+const LARGEUR_INVITATION = 184;
+const RECHERCHE_SMARTPHONE = matchMedia('(max-width:720px), (pointer:coarse) and (max-height:500px)');
+const etatRecherche = { w: largeurInvitation() };
+const invitationRecherche = document.getElementById('explore-city');
+function largeurInvitation(){
+  return RECHERCHE_SMARTPHONE.matches ? 48 : LARGEUR_INVITATION;
+}
 function largeurBarre(){
-  // mobile : le champ deploye ne doit pas couvrir le wordmark (~136 px + marges)
-  return innerWidth <= 720 ? Math.min(220, innerWidth - 215)
-                           : Math.min(252, innerWidth * 0.37);
+  return Math.min(360, innerWidth - (innerWidth<=720 ? 100 : 140));
 }
 let placerCaret = () => {};
 function appliquerLargeurRecherche(){
-  champ.style.width = etatRecherche.w + 'px';
+  document.getElementById('recherche').style.width = etatRecherche.w + 'px';
   // le carré de verre reste collé au champ pendant le déploiement
   if (liste.classList.contains('ouvert')) liste.style.width = largeurListe() + 'px';
   majVerre(); placerCaret();
@@ -2278,22 +2419,24 @@ function appliquerLargeurRecherche(){
 function deployerRecherche(){
   if (!document.body.classList.contains('loupe')) return;
   document.body.classList.remove('loupe');
-  gsap.to(etatRecherche, { w: largeurBarre(), duration: 0.7, ease: 'back.out(1.6)',
+  champ.tabIndex=0;champ.removeAttribute('aria-hidden');
+  invitationRecherche.tabIndex=-1;invitationRecherche.setAttribute('aria-hidden','true');
+  gsap.to(etatRecherche, { w: largeurBarre(), duration: MOINS_ANIM ? 0 : 0.45, ease: EASE, overwrite:true,
     onUpdate: appliquerLargeurRecherche });
-  gsap.to(loupe, { opacity: 0, scale: 0.6, duration: 0.3, ease: EASE });
 }
 function replierRecherche(){
   if (document.body.classList.contains('loupe')) return;
   if (champ.value || lieuDossier || document.activeElement === champ) return;
   document.body.classList.add('loupe');
+  champ.tabIndex=-1;champ.setAttribute('aria-hidden','true');
+  invitationRecherche.tabIndex=0;invitationRecherche.removeAttribute('aria-hidden');
   fermerListe();
-  gsap.to(etatRecherche, { w: LARGEUR_LOUPE, duration: 0.55, ease: EASE,
+  gsap.to(etatRecherche, { w: largeurInvitation(), duration: MOINS_ANIM ? 0 : 0.35, ease: EASE, overwrite:true,
     onUpdate: appliquerLargeurRecherche });
-  gsap.to(loupe, { opacity: 0.8, scale: 1, duration: 0.4, delay: 0.15, ease: EASE });
 }
 document.body.classList.add('loupe');
 // au boot, seulement la largeur : la lentille (etatVerre) n'existe pas encore
-champ.style.width = etatRecherche.w + 'px';
+document.getElementById('recherche').style.width = etatRecherche.w + 'px';
 champ.addEventListener('focus', deployerRecherche);
 champ.addEventListener('blur', () => setTimeout(() => {
   // on a ouvert la recherche puis renonce : l URL ne doit plus nommer la ville
@@ -2304,9 +2447,9 @@ champ.addEventListener('blur', () => setTimeout(() => {
   replierRecherche();
 }, 140));
 addEventListener('resize', () => {
-  if (!document.body.classList.contains('loupe')){
-    etatRecherche.w = largeurBarre(); appliquerLargeurRecherche();
-  }
+  gsap.killTweensOf(etatRecherche);
+  etatRecherche.w = document.body.classList.contains('loupe') ? largeurInvitation() : largeurBarre();
+  appliquerLargeurRecherche();
 });
 
 /* ---- caret bloc façon terminal DOS : le placeholder disparaît au focus,
@@ -2323,7 +2466,7 @@ addEventListener('resize', () => {
     centre = st.textAlign === 'center';
   };
   const placer = () => {
-    mesure.textContent = champ.value;
+    if(mesure.textContent !== champ.value) mesure.textContent = champ.value;
     const largeurTexte = mesure.getBoundingClientRect().width;
     const utile = champ.clientWidth - padG - padD;
     // le champ est centré au repos, aligné à gauche au focus (cf. terra-menus.css)
@@ -2341,50 +2484,17 @@ addEventListener('resize', () => {
   addEventListener('resize', placer);
 }
 
-/* ---- wordmark irisé : chaque lettre se déforme légèrement au passage du
-   pointeur, avec un dédoublement chromatique dont la teinte suit l'écart.
-   Pas de halo : la déformation est portée par le texte lui-même. ---- */
-{
-  const marque = document.getElementById('wordmark');
-  const source = marque.querySelector('span');
-  const lettres = [...source.textContent].map(c => {
-    const sp = document.createElement('span');
-    sp.className = 'lettre';
-    sp.textContent = c;
-    if (c === '／') sp.classList.add('barre');
-    return sp;
-  });
-  source.textContent = '';
-  lettres.forEach(l => source.appendChild(l));
-
-  const RAYON = 78;                                   // portée de la déformation, en px
-  const anims = lettres.map(l => ({
-    y: gsap.quickTo(l, 'y', { duration: 0.5, ease: EASE }),
-    sy: gsap.quickTo(l, 'scaleY', { duration: 0.5, ease: EASE }),
-    sk: gsap.quickTo(l, 'skewX', { duration: 0.5, ease: EASE }),
-  }));
-
-  const deformer = (px) => {
-    lettres.forEach((l, i) => {
-      const r = l.getBoundingClientRect();
-      const d = px === null ? Infinity : Math.abs(px - (r.left + r.width / 2));
-      const f = px === null ? 0 : Math.max(0, 1 - d / RAYON);
-      const onde = f * f * (3 - 2 * f);               // smoothstep, pas de cassure
-      anims[i].y(-onde * 3.2);
-      anims[i].sy(1 + onde * 0.13);
-      anims[i].sk(-onde * 5);
-      l.style.setProperty('--iris', onde.toFixed(3));
-      l.style.setProperty('--decal', (px === null ? 0 : Math.sign(px - (r.left + r.width / 2)) * onde * 1.1).toFixed(2) + 'px');
-    });
-  };
-
-  marque.addEventListener('pointermove', e => { marque.classList.add('irise'); deformer(e.clientX); });
-  marque.addEventListener('pointerleave', () => { marque.classList.remove('irise'); deformer(null); });
-}
-
 /* ---- verre liquide : la lentille du pass post suit le rect réel du champ ---- */
 const etatVerre = { force: 0.7 };
 let actualiserVerrePanneau = () => {};
+function surfaceOpacity(surface,cache){
+  if(!surface)return 1;
+  if(cache.has(surface))return cache.get(surface);
+  const style=getComputedStyle(surface);
+  const opacity=style.display==='none'||style.visibility==='hidden'?0:Number(style.opacity)*surfaceOpacity(surface.parentElement,cache);
+  cache.set(surface,opacity);
+  return opacity;
+}
 function majVerre(){
   // le rect du CHAMP, pas de #recherche : ce dernier englobe la liste de
   // résultats repliée, ce qui rendait la lentille bien plus haute que la barre
@@ -2399,8 +2509,9 @@ function majVerre(){
     (r.height / 2) / innerHeight);
   // le rayon reste celui de la pilule : ouvert, le verre devient un carré arrondi
   matPost.uniforms.uVerreRayon.value = Math.min(parseFloat(getComputedStyle(liste.classList.contains('ouvert') ? liste : champ).borderRadius) || 16, r.height / 2, r.width / 2) / innerHeight;
-  matPost.uniforms.uVerreForce.value = etatVerre.force;
-  actualiserVerrePanneau();
+  const opacityCache=new Map();
+  matPost.uniforms.uVerreForce.value = etatVerre.force*surfaceOpacity(champ,opacityCache);
+  actualiserVerrePanneau(opacityCache);
 }
 addEventListener('resize', majVerre);
 champ.addEventListener('focus', () => gsap.to(etatVerre, { force: 1, duration: DUREE.fast, ease: EASE, onUpdate: majVerre }));
@@ -2512,7 +2623,7 @@ function finirRisques(nouveau){
     conteneur.append(...rangees);
   }
   const readings = mesuresLieu(lieuDossier, etat.annee);
-  const format = value => value.toLocaleString(langue, { maximumFractionDigits: 2 });
+  const format = value => formatHoverNumber(value, langue, false, 2);
   rangees.forEach(el => {
     const key = el.dataset.cle, sample = readings?.[key], available = sample?.available;
     const unit = uniteLocale(key === 'feux' ? 'days/year' : key === 'eau' ? 'De Martonne index' : sample?.unit);
@@ -2856,6 +2967,7 @@ function ouvrirDossier(l){
   majDossier();
   dossierEl.classList.add('ouvert'); scrimEl.classList.add('ouvert');
   document.body.classList.add('dossier-ouvert');
+  calerTimeline();
   annoncer();
   majCentreDossier();
   setTimeout(majCentreDossier, 600);   // re-mesure après l'entrée de la fiche
@@ -2901,14 +3013,16 @@ function fermerDossier(depuisChamp){
     // retombait alors sur un globe vide)
     dossierEl.classList.remove('ouvert'); scrimEl.classList.remove('ouvert');
     document.body.classList.remove('dossier-ouvert');
+    calerTimeline();
     clearTimeout(minuterieLien);
     return;
   }
   if (!depuisChamp){ lieuVs = null; defiLien = null; cacherAccroche(); }
 
-  if (!depuisChamp) champ.value = '';   // la barre se vide et la loupe revient
+  if (!depuisChamp) champ.value = '';   // la barre se vide et l'invitation revient
   // la terre reprend son cadrage d'arrivée
   document.body.classList.remove('dossier-ouvert');
+  calerTimeline();
   CAMERA_ACCUEIL.setLength(distanceAccueil());
   controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
   volEnCours = volCamera(CAMERA_ACCUEIL, { onComplete: reprendreRotation });
@@ -3081,7 +3195,7 @@ async function genererStory(opts){
     g.fillText(r.nom, 120, y, 540);
     g.textAlign = 'right'; g.fillStyle = CREME; g.font = `400 36px ${sans}`;
     const unit = uniteLocale(r.reading.unit);
-    g.fillText(r.reading.value.toLocaleString(langue, { maximumFractionDigits: 2 }) + ' ' + unit, 960, y, 280);
+    g.fillText(formatHoverNumber(r.reading.value, langue, false, 2) + ' ' + unit, 960, y, 280);
     y += 88;
   }
   if (opts.population && PAYS_POP[l[1]]){
@@ -3409,12 +3523,17 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
   ];
   /* la lentille de verre du pass post épouse le panneau ouvert */
   const verreMenu = { force: 0, panneau: null };
-  function majVerreMenu(){
+  function majVerreMenu(opacityCache=new Map()){
     const u = matPost.uniforms;
     u.uGlassRadii.value.fill(0);
+    // Child opacity alone misses a closed/fading parent and leaves floating glass.
+    const visible = surface => {
+      if(!surface?.getClientRects().length)return 0;
+      return surfaceOpacity(surface,opacityCache);
+    };
     const panneau = verreMenu.force > .001 && verreMenu.panneau || document.querySelector('#story-popup:not([hidden]) .story-carte') || document.querySelector('#city-comparison[open]') || document.querySelector('#dossier.ouvert') || document.getElementById('map-inspector');
     const style = getComputedStyle(panneau);
-    if (document.querySelector('#earth-shell[open],#language-dialog[open]') || style.visibility === 'hidden' || style.display === 'none') {u.uVerreForce2.value = 0;return;}
+    if (document.querySelector('#earth-shell[open],#language-dialog[open]') || !visible(panneau)) {u.uVerreForce2.value = 0;return;}
     const r = panneau.getBoundingClientRect();
     u.uVerre2.value.set(
       (r.left + r.width / 2) / innerWidth,
@@ -3422,21 +3541,20 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
       (r.width / 2) / innerWidth,
       (r.height / 2) / innerHeight);
     u.uVerreRayon2.value = Math.min(parseFloat(style.borderTopLeftRadius) || 18,r.width/2,r.height/2) / innerHeight;
-    // un panneau qui s'efface emporte sa réfraction avec lui (sinon il laisse
-    // une lentille fantôme pendant sa sortie)
-    u.uVerreForce2.value = panneau === verreMenu.panneau ? verreMenu.force : .9;
+    // un panneau qui s'efface emporte sa réfraction avec lui
+    u.uVerreForce2.value = (panneau === verreMenu.panneau ? verreMenu.force : .9)*visible(panneau);
     let slot=0;
     for(const surface of document.querySelectorAll('#bouton-reglages,#map-inspector,#map-options,#dossier.ouvert,#city-comparison[open],.pedago-carte')){
       if(surface===panneau || slot===6) continue;
       const s=getComputedStyle(surface),box=surface.getBoundingClientRect();
-      if(s.visibility==='hidden'||s.display==='none'||box.width===0||box.height===0||Number(s.opacity)===0) continue;
+      if(!visible(surface)||box.width===0||box.height===0) continue;
       u.uGlassRects.value[slot].set((box.left+box.width/2)/innerWidth,1-(box.top+box.height/2)/innerHeight,box.width/2/innerWidth,box.height/2/innerHeight);
       u.uGlassRadii.value[slot]=Math.min(parseFloat(s.borderTopLeftRadius)||24,box.width/2,box.height/2)/innerHeight;
       slot++;
     }
   }
   actualiserVerrePanneau = majVerreMenu;
-  addEventListener('resize', majVerreMenu);
+  addEventListener('resize',()=>majVerreMenu());
   const fermer = m => {
     if (!m.panneau.classList.contains('ouvert')) return;
     m.panneau.classList.remove('ouvert');
@@ -3507,10 +3625,12 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
     const t = T(), c = CRITERES_COULEURS[cle] || 'var(--bleu)';
     pedago.querySelector('.pastille-pedago').style.background = c;
     document.getElementById('pedago-nom').textContent = t.calque[cle];
-    document.getElementById('pedago-texte').textContent = t.infoplus[cle];
-    // trait d'union insécable dans les codes (SSP3‑7.0, CMIP6‑…) : ils se
-    // coupaient en fin de ligne
-    document.getElementById('pedago-source').textContent = t.infoSource[cle].replace(/([A-Z]+\d*)-(\d)/g, '$1\u2011$2');
+    const guide=experienceCopy(langue);
+    document.getElementById('pedago-texte').textContent = guide.indicators[cle];
+    document.getElementById('pedago-details-label').textContent = guide.details;
+    document.getElementById('pedago-details-text').textContent = t.infoplus[cle];
+    pedago.querySelector('.pedago-details').open=false;
+    document.getElementById('pedago-source').textContent = t.infoSource[cle].replace(/([A-Z]+\d*)-(\d)/g, '$1\u2011$2');  // codes insécables (SSP3‑7.0)
     document.getElementById('pedago-fermer').textContent = t.pedagoOk;
     pedago.hidden = false;
     pedagoOuvert = true;
@@ -3551,6 +3671,8 @@ boutonSon.addEventListener('click', () => {
    ===================================================================== */
 function traduire(){
   document.getElementById('survol').classList.remove('visible', 'fige');
+  document.getElementById('survol').tabIndex = -1;
+  document.getElementById('survol').setAttribute('aria-hidden', 'true');
   document.body.classList.remove('sur-lieu');
   document.documentElement.lang = langue;
   document.title = T().ui.terra2050_will_your_city_still;
@@ -3626,8 +3748,8 @@ function chargerAnnuaire(){
   }),
   charger('./data/population-annual.json', 'json').then(j => {
     if (!Object.keys(j).length || !Object.values(j).every(a => Array.isArray(a) && a.length === 26 && a.every(n => Number.isSafeInteger(n) && n > 0))) throw new Error('Invalid annual population data');
-    PAYS_POP = j; preparerPopulation();
-  }),
+    PAYS_POP = j; preparerPopulation(); rafraichirSurvol();
+  }).finally(() => { populationSourceReady = true; preparerSyntheseGlobale(); }),
 ]).then(() => {
   for (let i = 0; i < LIEUX.length; i++) LIEUX[i][7] = SCIENCE?.coverage[i] === 63 ? { science: true } : null;
   allumerVilles();
@@ -3650,6 +3772,7 @@ function chargerAnnuaire(){
               PAYS_POP[iso][0], 2, nomEn, null];
     });
   indexerVilles();
+  rafraichirSurvol();
   calquesPrets.then(chargerPays);   // 50 Ko, après les grilles : jamais sur le chemin critique
   document.body.classList.add('donnees-pretes');
   document.body.classList.remove('villes-en-attente');
@@ -3870,7 +3993,7 @@ if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
    lettre, et un fromTo posé là arrive après le premier rendu du chrome —
    le millésime se montrait un instant, fondait vers 0 puis rentrait. */
 const CHROME_DEPART = [
-  ['#wordmark .lettre', { yPercent: 115 }],
+  ['#titre', { opacity: 0 }],
   ['#recherche', { opacity: 0, y: -10 }],
   ['#bouton-reglages', { opacity: 0, y: -8 }],
   ['.calque', { opacity: 0, x: -12 }],
@@ -3882,25 +4005,19 @@ const CHROME_DEPART = [
 for (const [cible, depart] of CHROME_DEPART) gsap.set(cible, MOINS_ANIM ? { opacity: 0 } : depart);
 function revelerChrome(){
   document.body.classList.add('entree-chrome');
-  // entrée resserrée : l'interface se lève pendant que la lettre s'efface
-  const tl = gsap.timeline({ delay: 0.2, onComplete: () => document.body.classList.remove('entree-chrome') });
-  // mouvement réduit : tout ce qui glissait arrive en simple fondu
-  const sansDeplacement = depart => MOINS_ANIM
-    ? Object.fromEntries(Object.entries(depart).filter(([k]) => k === 'opacity')) : depart;
+  const tl = gsap.timeline({ delay: MOINS_ANIM ? 0 : 0.55, onComplete: () => document.body.classList.remove('entree-chrome') });
   const entree = (cible, depart, position, extra = {}) =>
-    tl.fromTo(cible, sansDeplacement(depart),
-      { opacity: 1, x: 0, y: 0, duration: DUREE.fast, ease: EASE,
+    tl.fromTo(cible, depart,
+      { opacity: 1, x: 0, y: 0, duration: MOINS_ANIM ? 0 : DUREE.normal, ease: EASE,
         clearProps: 'opacity,transform', ...extra }, position);
 
-  if (MOINS_ANIM) tl.to('#wordmark .lettre', { opacity: 1, duration: DUREE.fast, ease: EASE, clearProps: 'opacity' }, 0);
-  else tl.fromTo('#wordmark .lettre', { yPercent: 115 },
-    { yPercent: 0, duration: 1.2, stagger: 0.015, ease: EASE, clearProps: 'transform' }, 0);
-  entree('#recherche', { opacity: 0, y: -10 }, 0.15);
-  entree('#bouton-reglages', { opacity: 0, y: -8 }, 0.4);
-  entree('.calque', { opacity: 0, x: -12 }, 0.15, { stagger: MOINS_ANIM ? 0 : 0.16, duration: MOINS_ANIM ? 0 : 0.9 });
-  entree('#timeline .an', { opacity: 0, y: 18 }, 0.3, { duration: DUREE.normal });
-  entree('#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }, 0.6);
-  entree('#map-inspector', { opacity: 0, y: 10 }, 0.5, { duration: DUREE.normal });
+  entree('#titre', { opacity: 0 }, 0);
+  entree('#recherche', { opacity: 0, y: -10 }, 0);
+  entree('#bouton-reglages', { opacity: 0, y: -8 }, 0);
+  entree('.calque', { opacity: 0, x: -12 }, 0);
+  entree('#timeline .an', { opacity: 0, y: 18 }, 0);
+  entree('#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }, 0);
+  entree('#map-inspector', { opacity: 0, y: 10 }, 0);
   return tl;
 }
 
@@ -3912,7 +4029,7 @@ function revelerChrome(){
    l'intersection est analytique et chaque ville se projette à l'écran.
    Le pays vient d'une grille Natural Earth (data/pays.png, 10') : la ville
    la plus proche d'un point du Sahara peut être de l'autre côté d'une
-   frontière, la grille ne se trompe pas.
+   frontière ; la grille réduit cette ambiguïté avec une résolution de 10′.
    ===================================================================== */
 let PAYS_RASTER = null, PAYS_ISO = [];
 let VILLES_VEC = null, ORDRE_POP = null;
@@ -3953,6 +4070,8 @@ function chargerPays(){
     tex.minFilter = tex.magFilter = THREE.NearestFilter;
     tex.generateMipmaps = false; tex.needsUpdate = true;
     uniformsGlobe.uPays.value = tex;
+    tex.wrapS = THREE.RepeatWrapping;
+    uniformsGlobe.uCountryStep.value.set(0.5 / c.width, 0.5 / c.height);
     preparerPopulation();
   }).catch(e => console.warn('grille des pays indisponible :', e && e.message));
 }
@@ -4008,37 +4127,104 @@ function sousPointeur(cx, cy){
   const d = camera.position.length();
   const [lat, lon] = versLatLon(v);
   const ville = villeProche(v, 16 * radParPixel(d), seuilPop(d) / 5);
-  const iso = paysSous(lat, lon) || (ville ? ville[1] : null);
-  return { ville, iso };
+  // An unassigned raster cell stays unknown; a nearby city cannot provide
+  // a reliable demographic-area boundary, especially on small islands.
+  const iso = paysSous(lat, lon);
+  return { ville, iso, lat, lon };
 }
 const ligneDePays = iso => PAYS_LIGNES.find(p => p[1] === iso) || null;
+// Country boundaries determine the globe diagnostic; city labels keep their own sheets.
+const lieuSousPointeur = s => s && (s.iso ? ligneDePays(s.iso) : s.ville);
 const survolEl = document.getElementById('survol');
 const survolNom = survolEl.querySelector('.s-nom'), survolIndice = survolEl.querySelector('.s-indice'),
-      survolSous = survolEl.querySelector('.s-sous');
-let survolLieu = null, survolFige = false;
+      survolSous = survolEl.querySelector('.s-sous'), survolDetail = survolEl.querySelector('.s-detail'),
+      survolNote = survolEl.querySelector('.s-note');
+let survolLieu = null, survolFige = false, survolPoint = null;
+let survolContenu = null, survolLargeur = 0, survolHauteur = 0;
+// A first touch reveals city labels. Its compatibility click must not open
+// a label (or tooltip) that appeared underneath it after pointerdown.
+let cibleAppuiDiagnostic = null;
+document.addEventListener('pointerdown', e => { cibleAppuiDiagnostic = e.target; }, true);
+document.addEventListener('pointercancel', () => { cibleAppuiDiagnostic = null; }, true);
 function montrerSurvol(s, cx, cy, fige){
-  const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
-  const iso = s && s.iso;
+  const l = lieuSousPointeur(s), iso = s && s.iso;
   if (!l && !iso){ cacherSurvol(); return; }
-  survolLieu = l; survolFige = !!fige;
-  const an = etat.annee;
-  const indice = !l ? null : estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
-  survolNom.textContent = l ? nomVille(l) : nomPays(iso);
-  survolIndice.textContent = indice === null ? '' : indice;
-  survolIndice.style.color = indice === null ? '' : couleurNote(indice);
-  survolSous.textContent = l && !estPays(l) ? nomPays(l[1]) : (T().ui.country);
-  survolEl.classList.toggle('fige', survolFige);
-  const w = survolEl.offsetWidth, h = survolEl.offsetHeight;
-  const x = cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16;
-  const y = cy + 18 + h > innerHeight - 8 ? cy - 12 - h : cy + 18;
+  survolLieu = l; survolFige = !!fige; survolPoint = {s,cx,cy};
+  const an = etat.annee, filter = filtreSurvol, changing = uniformsGlobe.uChange.value > .5, referencing = uniformsGlobe.uReference.value > .5;
+  const resolution = filter === 'feux' ? 2.5 : .5;
+  const cell = filter && filter !== 'declin' ? `${Math.floor((90 - s.lat) / resolution)}:${Math.floor((s.lon + 180) / resolution)}` : '';
+  const signature = [iso, cell, an, langue, filter, changing, referencing, scienceLoadFailed, fige, innerWidth, innerHeight].join('|');
+  // Reuse the cell/country reading and layout while only the pointer position changes.
+  if (!survolContenu || survolContenu.signature !== signature || survolContenu.l !== l || survolContenu.science !== SCIENCE || survolContenu.floods !== FLOOD_HAZARDS || survolContenu.population !== PAYS_POP){
+    const copy = refinementCopy(langue), scope = hoverCopy[langue] || hoverCopy.en;
+    let diagnostic = null, note = '', label, color = '';
+    if (filter){
+      label = filter === 'declin' ? copy.population : T().critere[hoverMetricKey[filter]];
+      if (filter === 'declin') {
+        diagnostic = populationHover(PAYS_POP[iso], an, changing, langue);
+        if (diagnostic && !changing) note = mapValueContext(filter, langue, an).hint;
+      }
+      else {
+        const reading = mapDiagnosticReading({filter, year: an, latitude: s.lat, longitude: s.lon,
+          climate: SCIENCE?.climate, fire: FIRE_WEATHER, floods: FLOOD_HAZARDS});
+        const isFlood = filter === 'mer' || filter === 'fleuves';
+        const changeUnit = isFlood ? (mapCopy[langue] || mapCopy.en)[8] : uniteLocale(reading.unit);
+        diagnostic = referencing ? historicalHover(reading, an, langue, uniteLocale(reading.unit), changeUnit)
+          : physicalHover(reading, an, changing, langue, uniteLocale(reading.unit), changeUnit);
+        if (diagnostic && !changing && !referencing){
+          const context = mapValueContext(filter, langue, an);
+          if (context.label) label = context.label;
+          diagnostic.detail = context.reference;
+        }
+        if (diagnostic){
+          const words = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
+          note = words[0].replace('{size}', formatHoverNumber(reading.resolutionDegrees, langue))
+            .replace('{km}', String(Math.round(reading.resolutionDegrees * 111.2)));
+          if (changing || referencing || !['chaleur','secheresse','stabilite'].includes(filter)) note += ' ' + (isFlood ? words[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
+          if (reading.modelCount > 1) note += ' ' + words[2].replace('{n}', String(reading.modelCount));
+          else if (!isFlood && filter !== 'feux') note += ' ' + words[3];
+        }
+      }
+    } else {
+      label = T().panelIndex;
+      const indice = iso ? indicePays(iso, an) : l?.[7] ? indiceHabitabilite(l, an) : null;
+      if (Number.isFinite(indice)){
+        diagnostic = {value: `${indice}/100`, detail: ''}; color = couleurNote(indice);
+        note = iso ? scope[2] : '';
+      }
+    }
+    survolNom.textContent = iso ? nomPays(iso) : nomVille(l);
+    survolIndice.textContent = diagnostic?.value || '';
+    survolIndice.style.color = color;
+    survolSous.textContent = `${label} · ${an}${filter && referencing ? ` · ${mapReferenceContext(filter, langue).value}` : filter && changing ? ` · ${copy.change}` : ''}`;
+    survolDetail.textContent = diagnostic?.detail || (diagnostic ? '' : filter === 'declin' ? T().ui.no_estimate : unavailableScienceText().title);
+    survolNote.textContent = note;
+    survolEl.classList.toggle('fige', survolFige);
+    const actionable = survolFige && !!l;
+    survolEl.setAttribute('role', actionable ? 'button' : 'tooltip');
+    survolEl.tabIndex = actionable ? 0 : -1;
+    survolLargeur = survolEl.offsetWidth; survolHauteur = survolEl.offsetHeight;
+    survolContenu = {signature,l,science:SCIENCE,floods:FLOOD_HAZARDS,population:PAYS_POP};
+  }
+  const w = survolLargeur, h = survolHauteur;
+  const x = Math.max(8, Math.min(innerWidth - w - 8, cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16));
+  const y = Math.max(8, Math.min(innerHeight - h - 8, cy + 18 + h > innerHeight - 8 ? cy - 12 - h : cy + 18));
   survolEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-  survolEl.classList.add('visible');
-  document.body.classList.toggle('sur-lieu', !!l);
+  if (!survolEl.classList.contains('visible')) { survolEl.classList.add('visible'); survolEl.setAttribute('aria-hidden', 'false'); }
+  if (document.body.classList.contains('sur-lieu') !== !!l) document.body.classList.toggle('sur-lieu', !!l);
 }
+rafraichirSurvol = () => {
+  if (survolPoint && survolEl.classList.contains('visible')){
+    const {s,cx,cy} = survolPoint; montrerSurvol(s,cx,cy,survolFige);
+  }
+};
+addEventListener('resize', rafraichirSurvol);
 function cacherSurvol(){
-  survolLieu = null; survolFige = false;
-  survolEl.classList.remove('visible', 'fige');
-  document.body.classList.remove('sur-lieu');
+  survolLieu = null; survolFige = false; survolPoint = null;
+  if (survolEl.classList.contains('visible') || survolEl.classList.contains('fige')) survolEl.classList.remove('visible', 'fige');
+  survolEl.tabIndex = -1; survolEl.setAttribute('aria-hidden', 'true');
+  if (document.body.classList.contains('sur-lieu')) document.body.classList.remove('sur-lieu');
+  survolContenu = null;
 }
 {
   let presse = null;
@@ -4067,14 +4253,18 @@ function cacherSurvol(){
     if (!p || p.id !== e.pointerId || pointeurs.size || p.bouge || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6 || performance.now() - p.t > 500) return;
     const s = sousPointeur(e.clientX, e.clientY);
     if (e.pointerType === 'mouse'){
-      const l = s && (s.ville || (s.iso && ligneDePays(s.iso)));
+      const l = lieuSousPointeur(s);
       if (l){ cacherSurvol(); choisirLieu(l); }
     } else {
       // au doigt : un tap pose l'étiquette, un tap sur l'étiquette ouvre la fiche
       montrerSurvol(s, e.clientX, e.clientY, true);
     }
   });
-  survolEl.addEventListener('click', () => {
+  survolEl.addEventListener('keydown', e => {
+    if (survolFige && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); survolEl.click(); }
+  });
+  survolEl.addEventListener('click', e => {
+    if (e.detail && !survolEl.contains(cibleAppuiDiagnostic)) return;
     if (!survolLieu) return;
     const l = survolLieu; cacherSurvol(); choisirLieu(l);
   });
@@ -4102,7 +4292,11 @@ const ETIQUETTES_MAX = 36, etiquettes = [], etiquettesParVille = new Map();
 for (let i = 0; i < ETIQUETTES_MAX; i++){
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'etiquette'; b.hidden = true;
-  b.addEventListener('click', () => { const l = LIEUX[parseInt(b.dataset.i, 10)]; if (l){ cacherSurvol(); choisirLieu(l); } });
+  b.addEventListener('click', e => {
+    if (e.detail && !b.contains(cibleAppuiDiagnostic)) return;
+    const l = LIEUX[parseInt(b.dataset.i, 10)];
+    if (l){ cacherSurvol(); choisirLieu(l); }
+  });
   etiquettesEl.appendChild(b); etiquettes.push(b);
 }
 let foyerEtiquettes = null;
@@ -4199,6 +4393,8 @@ function boucle(){
   if (dt > 0) fpsEMA += ((1 / dt) - fpsEMA) * 0.04;
 
   uniformsGlobe.uTemps.value = MOINS_ANIM ? 0 : t;
+  // Eight-second breath, 0–20%; reduced motion keeps a quiet 10% outline.
+  uniformsGlobe.uCountryOpacity.value = MOINS_ANIM ? 0.1 : 0.1 * (1 - Math.cos(t * Math.PI / 4));
   marqueurUniforms.uTemps.value = t;
   fleuvesUniforms.uTemps.value = MOINS_ANIM ? 0 : t;
   fleuvesUniforms.uCrue.value = uniformsGlobe.uCrue.value * 0.45;

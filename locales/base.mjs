@@ -1,6 +1,8 @@
 export const TEXTES = {
   fr: {
     lang: 'fr',
+    indicatorNotice: "Estimations de modèles sous des scénarios définis. Les années climatiques sont interpolées entre moyennes de périodes ; la population ONU est projetée annuellement. Ce projet ne mesure pas l’habitabilité et ne prédit pas une catastrophe locale.",
+    scoreNotice: "Indice expérimental : six indicateurs, seuils et poids choisis par l’application. Les scénarios climatiques et d’inondation sont distincts ; cet indice n’a pas été validé scientifiquement.",
     panelVerdict: {bon: 'Indice expérimental élevé', moyen: 'Indice expérimental intermédiaire', dur: 'Indice expérimental bas'},
     panelSummary: risque => `Axe dominant de l’indice expérimental : ${risque.toLowerCase()}.`,
     panelMinimal: 'Valeurs basses sur les échelles choisies pour cet indice expérimental.',
@@ -23,7 +25,7 @@ export const TEXTES = {
     panelEvolution: n => n === 0 ? 'Même indice qu’en 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points par rapport à 2026.`,
 
     sous1: 'Observatoire prospectif',
-    sous2: 'Votre ville sera-t-elle encore vivable en 2050 ?',
+    sous2: "Explorez les projections climatiques de votre ville.",
     initialiser: 'Explorer',
     chercher: 'Chercher une ville — ⌘K',
     aucunLieu: 'Aucune ville trouvée',
@@ -53,7 +55,7 @@ export const TEXTES = {
       mer: 'Aqueduct Floods : événement centennal, RCP8.5, niveau marin médian, sans affaissement ni protections. Historique 1979–2014, horizons 2030 et 2050. Profondeur de la maille native au centre de la ville ; la carte résume la fraction des cellules couvertes dépassant 0,5 m. Interpolation illustrative, pas une prévision annuelle ou une probabilité locale. Le scénario diffère du SSP3-7.0 des couches climatiques.',
       fleuves: 'Aqueduct Floods : événement centennal, RCP8.5, cinq modèles, sans protections. Historique 1960–1999 ; 2030 = 2010–2049, 2050 = 2030–2069. Profondeur à la maille native du centre de la ville ; carte = fraction des cellules couvertes dépassant 0,5 m. Interpolation illustrative entre périodes, pas une prévision annuelle. La dispersion des modèles n’est pas un intervalle de confiance.',
       stabilite: 'Réchauffement local en °C relativement à 1970–2000. Température annuelle dérivée de la moyenne mensuelle de (minimum + maximum)/2. WorldClim / MPI-ESM1-2-HR, SSP3-7.0, périodes 2021–2040 et 2041–2060. Interpolation illustrative ; un seul modèle, pas un seuil de basculement climatique.',
-      declin: 'Variation nationale estimée selon le scénario médian ONU WPP 2024. Une projection démographique est incertaine ; elle ne prédit pas directement les services, les emplois ni la population de chaque ville.',
+      declin: 'Variation nationale estimée selon la variante moyenne ONU WPP 2024. Une projection démographique est incertaine ; elle ne prédit pas directement les services, les emplois ni la population de chaque ville.',
     },
     infoSource: {
       chaleur: 'WorldClim 2.1 · MPI-ESM1-2-HR · SSP3-7.0',
@@ -62,7 +64,7 @@ export const TEXTES = {
       mer: 'WRI Aqueduct Floods · événement centennal · RCP8.5',
       fleuves: 'WRI Aqueduct Floods · cinq modèles · RCP8.5',
       stabilite: 'WorldClim 2.1 · MPI-ESM1-2-HR · SSP3-7.0',
-      declin: 'ONU WPP 2024 (médiane) · Our World in Data · Natural Earth',
+      declin: "ONU · World Population Prospects 2024 · variante moyenne · mise à jour Togo 2026",
     },
     pedagoOk: 'Compris',
     sansDonnees: 'Données insuffisantes',
@@ -110,6 +112,8 @@ export const TEXTES = {
   },
   en: {
     lang: 'en',
+    indicatorNotice: "Model estimates under defined scenarios. Climate years interpolate period averages; UN population projections are annual. This project does not measure habitability or predict a local disaster.",
+    scoreNotice: "Experimental index: six indicators, thresholds and weights chosen by the app. Climate and flood scenarios differ; the index has not been scientifically validated.",
     panelVerdict: {bon: 'Higher experimental index', moyen: 'Mid-range experimental index', dur: 'Lower experimental index'},
     panelSummary: risk => `Dominant axis in the experimental index: ${risk.toLowerCase()}.`,
     panelMinimal: 'Low values on the scales chosen for this experimental index.',
@@ -132,7 +136,7 @@ export const TEXTES = {
     panelEvolution: n => n === 0 ? 'Same index as in 2026.' : `${n > 0 ? '+' : '−'}${Math.abs(n)} points compared with 2026.`,
 
     sous1: 'Prospective observatory',
-    sous2: 'Will your city still be livable in 2050?',
+    sous2: "Explore your city’s climate projections.",
     initialiser: 'Explore',
     chercher: 'Search for a city — ⌘K',
     aucunLieu: 'No city found',
@@ -171,7 +175,7 @@ export const TEXTES = {
       mer: 'WRI Aqueduct Floods · 100-year event · RCP8.5',
       fleuves: 'WRI Aqueduct Floods · five models · RCP8.5',
       stabilite: 'WorldClim 2.1 · MPI-ESM1-2-HR · SSP3-7.0',
-      declin: 'UN WPP 2024 (medium) · Our World in Data · Natural Earth',
+      declin: "UN · World Population Prospects 2024 · medium variant · 2026 Togo update",
     },
     pedagoOk: 'Got it',
     sansDonnees: 'Not enough data',

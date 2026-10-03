@@ -1,0 +1,2 @@
+{"command": ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "/workspace/terra-2050/tools/verifier_fire_weather.py"], "exit_code": 0}
+{"verifiedCells": 10368, "validCells": 2263, "models": 21, "scope": "Shipped hashes, manifest, paired members and binary contracts; raw source not read"}

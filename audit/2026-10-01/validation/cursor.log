@@ -1,0 +1,3 @@
+PASS no-preference: immediate pointer, 0 layouts during movement, lens/control/press/modal/keyboard/blur
+PASS reduce: immediate pointer, 0 layouts during movement, lens/control/press/modal/keyboard/blur
+PASS live globe tooltip (Niger): cached content during movement, refreshed on year change
