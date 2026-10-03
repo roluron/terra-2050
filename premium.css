@@ -145,7 +145,7 @@ body:not(.dossier-ouvert) #timeline .an {font-weight:300;letter-spacing:-.07em;t
 @media(max-height:650px) {.language-content{padding:18px 24px}.language-globe{width:36px;height:36px;margin-bottom:12px}#language-title{font-size:28px;margin-bottom:14px}#language-options label{min-height:44px}#language-continue{margin-top:12px;padding-top:8px}}
 @media(prefers-reduced-motion:reduce) {.language-content::before{animation:none}:is(#language-options label,#language-continue svg,#earth-shell #future::after,#dossier .actions button,.entree-pedago){transition:none;translate:none}}
 @media(prefers-reduced-transparency:reduce) {:root{--glass-tint:#111610}}
-@supports not (backdrop-filter:blur(1px)) {:root{--glass-tint:#111610}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {:root{--glass-tint:#111610}}
 body #recherche,body.dossier-ouvert #recherche {padding-right:100px}
 #resultats {right:100px}
 #champ-recherche {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px) saturate(1.5);-webkit-backdrop-filter:blur(2px) saturate(1.5)}
@@ -279,3 +279,21 @@ body.entree-chrome :is(#titre,#recherche,#bouton-reglages,#map-inspector,#explor
  #explore-city .city-search-icon {display:block}
 }
 @media(prefers-reduced-motion:reduce) {#explore-city,#explore-city::after,#recherche #champ-recherche {transition:none}}
+/* Passe de compatibilite multi-appareils (audit du 24 septembre 2026). */
+/* Seuls le champ, l'invitation et la liste ouverte recoivent les clics. */
+#recherche {pointer-events:none}
+#champ-recherche,#resultats.ouvert {pointer-events:auto}
+/* L'invitation a comparer, visible par-dessus la fiche ouverte */
+#accroche {pointer-events:auto;z-index:26;left:max(24px,env(safe-area-inset-left))}
+@media(max-width:720px) {#accroche {top:auto;bottom:calc(84px + env(safe-area-inset-bottom));left:12px}}
+@media(max-height:500px) and (orientation:landscape) {#accroche {top:auto;bottom:max(12px,env(safe-area-inset-bottom));left:max(24px,env(safe-area-inset-left))}}
+/* Encoche / Dynamic Island : la fiche mobile demarre sous l'en-tete reel */
+@media(max-width:720px) {#dossier {top:calc(88px + env(safe-area-inset-top))}}
+/* Fenetres basses (telephone paysage, portable Windows a 125-150 %) : le
+   millesime de 80 px recouvrait le globe */
+@media(max-height:560px) {#globe-dock > #timeline,body.pret #globe-dock > #timeline {width:128px}#globe-dock #timeline .an {font-size:44px}}
+/* Liste de resultats : toujours atteignable, meme clavier ouvert ou en paysage */
+#resultats.ouvert {max-height:calc(100dvh - 96px);overscroll-behavior:contain}
+/* Tablette portrait, Windows a 150 % : la fiche fait 46vw (340-500 px), trop
+   etroite pour deux cartes de risque ; l'unite chevauchait la jauge */
+@media(min-width:721px) and (max-width:1100px) {#dossier-risques {grid-template-columns:minmax(0,1fr);gap:10px}}

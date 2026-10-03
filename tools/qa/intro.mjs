@@ -8,7 +8,7 @@ assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},0),{x:0,y:5});
 assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},1),{x:10,y:15});
 {
   let next, ready = false, completed = 0;
-  Object.assign(globalThis,{innerWidth:800,innerHeight:600,devicePixelRatio:1,document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){}});
+  Object.assign(globalThis,{matchMedia:()=>({matches:false,addEventListener(){},removeEventListener(){}}),innerWidth:800,innerHeight:600,devicePixelRatio:1,document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){}});
   startOrb({getContext:()=>null},[],{ready:()=>ready,points:()=>[],materialize(){},complete(){completed++;}});
   const now=performance.now();
   next(now+100);assert.equal(completed,0);
@@ -160,9 +160,10 @@ for (const [name, engine, configuration] of [
       await page.waitForFunction(() => window.__filterReveal.every(Number.isFinite));
       const revealed = await page.evaluate(() => window.__filterReveal);
       assert.ok(revealed[0] > result.duration, 'Filters appear after the Earth transition');
-      assert.ok(revealed.every((time, i) => !i || time >= revealed[i - 1]), 'Filters enter in order: ' + JSON.stringify(revealed));
-      assert.ok(new Set(revealed).size >= 4 && revealed.at(-1) - revealed[0] >= 700,
-        'Filter reveal remains visibly staggered across sampled frames: ' + JSON.stringify(revealed));
+      // fondu simultané du titre, des contrôles, des filtres et de l'année
+      // (.agent/FEEDBACK.md, retour n° 8) : les filtres arrivent ensemble
+      assert.ok(revealed.at(-1) - Math.min(...revealed) <= 400,
+        'Filters fade in together: ' + JSON.stringify(revealed));
       result.filterRevealTimes = revealed;
     }
     if (name === 'desktop') await page.mouse.move(viewport.width / 2, viewport.height / 2);

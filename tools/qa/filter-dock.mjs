@@ -6,7 +6,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
  try{
   const page=await browser.newPage(options);
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/shader|WebGL|GLSL/i.test(m.text()))errors.push(m.text());});
-  await page.goto('http://127.0.0.1:8088/?lang=it');await enter(page);
+  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=it');await enter(page);
   const toggle=page.locator('#map-toggle'),panel=page.locator('#map-inspector');
   assert.equal(await toggle.getAttribute('aria-expanded'),'false');
   assert.equal(await page.locator('#calques').isVisible(),false);

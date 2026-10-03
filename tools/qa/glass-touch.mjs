@@ -9,8 +9,14 @@ for(const [name,engine,options] of [
  const tap=async selector=>page.locator(selector).tap();
  const shot=async suffix=>{await page.waitForTimeout(650);await page.screenshot({path:`${out}/${name}-${suffix}.png`});};
  const glass=async selector=>{
-  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
-  assert.match(surface.background,/gradient/);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
+  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,tint:s.backgroundColor,reduced:matchMedia('(prefers-reduced-transparency: reduce)').matches,blurSupport:CSS.supports('backdrop-filter','blur(1px)')||CSS.supports('-webkit-backdrop-filter','blur(1px)'),blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
+  // depuis a9462fd (premium.css --glass-surface:var(--glass-tint)) le verre est une teinte unie
+  // translucide, plus forcément un dégradé : on exige un dégradé OU une teinte d'alpha < 1.
+  // « Réduire la transparence » (ou un navigateur sans flou) demande au contraire une surface
+  // opaque (premium.css:148-149) : le runner macOS de la CI signale cette préférence
+  const alpha=(surface.tint.match(/rgba?\(([^)]*)\)/)?.[1].split(/[\s,\/]+/).filter(Boolean)[3]);
+  const opaqueVoulu=surface.reduced||!surface.blurSupport;
+  assert.ok(opaqueVoulu||/gradient/.test(surface.background)||(alpha!==undefined&&Number(alpha)<1&&Number(alpha)>0),`${selector}: ni dégradé ni teinte translucide (${surface.background} / ${surface.tint}, reduce-transparency=${surface.reduced}, flou=${surface.blurSupport})`);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
  };
  const target=async selector=>{for(const item of await page.locator(selector).all()){const b=await item.boundingBox();assert.ok(b&&b.height>=44&&b.width>=44,`${selector}: ${JSON.stringify(b)}`);}};
  try{

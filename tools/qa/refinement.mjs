@@ -19,7 +19,7 @@ for (const [name, engine, options] of [
   try {
     const page = await browser.newPage({...options,...(process.env.QA_DPR?{deviceScaleFactor:Number(process.env.QA_DPR)}:{})}), errors = [];
     page.on('pageerror', error => { errors.push(error.message); console.error(error.stack); });
-    await page.goto((process.env.URL0 || 'http://127.0.0.1:8088/') + '?lang=en');
+    await page.goto((process.env.URL0||'http://127.0.0.1:8088/') + '?lang=en');
     await page.locator('#language-dialog').waitFor();
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(1800);
@@ -32,8 +32,10 @@ for (const [name, engine, options] of [
       await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), 'fr');
     } else {
+      // un seul toucher confirme la langue (language-click.mjs) : le second visait un
+      // dialogue déjà fermé, et passait ou non selon la vitesse de fermeture
       await page.locator('#language-options input[value="en"]').tap();
-      await page.locator('#language-options input:checked').tap();
+      await page.locator('#language-dialog').waitFor({state:'hidden'});
     }
     await discover(page);
     await page.locator('#future').click();
@@ -78,6 +80,10 @@ for (const [name, engine, options] of [
     const replaced = await page.locator('#city-comparison thead th').allTextContents();
     assert.equal(replaced[1], heads[1]); assert.notEqual(replaced[2], heads[2]);
     await page.locator('.compare-close').click();
+    // le comparateur se ferme en fondu (finitions.css, 380 ms) : il doit être
+    // fermé tout de suite, et invisible une fois sa sortie jouée
+    assert.equal(await page.locator('#city-comparison').evaluate(e => e.open), false);
+    await page.locator('#city-comparison').waitFor({state:'hidden', timeout:5000});
     assert.equal(await page.locator('#city-comparison').isVisible(), false);
     await page.locator('#dossier-comparer').click();
     await page.locator('#comparison-search').press('ArrowDown');

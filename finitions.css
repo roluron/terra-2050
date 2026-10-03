@@ -1,0 +1,273 @@
+/* =====================================================================
+   FINITIONS — phase 1 du plan .agent/FINITIONS.md : les défauts visibles.
+   Chargée après premium.css, elle gagne sur les passes précédentes sans
+   les réécrire. Chaque bloc nomme le défaut qu'il corrige.
+   ===================================================================== */
+
+/* ---- lumière de pointeur sur le verre --------------------------------
+   premium.mjs écrivait --light-x/--light-y à chaque mouvement, mais aucune
+   règle ne les lisait : la lumière n'existait pas. Elle devient une couche
+   crème (la même que le point du curseur) posée sur la surface de verre,
+   qui s'allume au survol et s'éteint en fondu là où elle était. */
+@property --light-a { syntax:'<number>'; inherits:false; initial-value:0 }
+:is(#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages) {
+  --glass-surface:
+    radial-gradient(280px circle at var(--light-x,50%) var(--light-y,0%), rgb(255 253 226 / calc(var(--light-a) * .075)), transparent 70%),
+    linear-gradient(135deg,#daeaff18 0%,#ffffff06 38%,#8faab508 100%),
+    var(--glass-tint);
+}
+/* l'allumage (--light-a) est animé par premium.mjs : une transition CSS ici
+   remplacerait celles des panneaux (le glissement de la fiche, par exemple) */
+@media (prefers-reduced-transparency:reduce) {
+  :is(#map-options,#map-inspector,#dossier,#city-comparison,.pedago-carte,#menu-reglages,#champ-recherche,#bouton-reglages) { --glass-surface:var(--glass-tint) }
+}
+
+/* ---- le rectangle derrière « 2026 » ----------------------------------
+   Le halo en text-shadow des chiffres était coupé net par .odo
+   (overflow-y:clip) : un rectangle clair à bords durs sur tous les écrans.
+   Le halo passe sur l'année entière, en dégradé radial, que rien ne coupe. */
+body:not(.dossier-ouvert) #timeline .an { text-shadow:none; position:relative }
+body:not(.dossier-ouvert) #timeline .an::before {
+  content:''; position:absolute; inset:-35% -20%; z-index:-1; pointer-events:none;
+  background:radial-gradient(closest-side, #d0d2d514, transparent);
+}
+
+/* ---- résultats de recherche : les lignes déjà là ne rejouent pas leur
+   entrée (index.html marque .reste), seules les nouvelles glissent ---- */
+#resultats li.reste { animation:none }
+
+/* (téléphone à l'horizontale : la timeline est désormais ancrée à droite
+   par main, ed6dd56/d221411 ; premium.css la réduit sous 560 px de haut) */
+
+/* ---- cartes de risque : l'unité passe à la ligne au lieu de déborder
+   (« 28.73 De Martonne » chevauchait la jauge à 768 px) ---- */
+#dossier .risk-reading { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:3px; white-space:normal; min-width:0 }
+#dossier .risk-reading small { margin-left:0; white-space:nowrap }
+
+/* ---- « Got it » et « Save as JPEG » : la pastille gardait la police mono
+   et le trait souligné de sa première version ---- */
+.entree-pedago { font:400 13px/1.4 var(--police); letter-spacing:0; text-transform:none }
+.entree-pedago::after { content:none }
+
+/* ---- champ de recherche : le curseur-point laisse place au caret ----- */
+body.curseur-verre :is(input:not([type=range],[type=radio],[type=checkbox]),textarea) { cursor:text !important }
+
+/* ---- curseur : positionné par transform (glass-cursor.mjs), matière au
+   tempo de la taille, et deux états nouveaux ---- */
+.glass-cursor { left:0; top:0; will-change:transform; transition-duration:.22s }
+/* au-dessus d'un champ texte, le point s'efface : le caret natif le remplace */
+.glass-cursor.texte { opacity:0; transition:opacity .12s }
+/* sur un contrôle désactivé : un anneau éteint, pas un bouton qui invite */
+.glass-cursor.point.eteint { background:transparent; border-color:#fffde260; box-shadow:none; opacity:.55 }
+/* phase 3 : la taille écrite en JS est la taille vue (bordure comprise),
+   le trait d'un lien et la capsule de la règle restent nets */
+.glass-cursor { box-sizing:border-box }
+/* bouton occupé (image en préparation) : un anneau crème qui tourne */
+.glass-cursor.point.occupe { background:transparent; border-color:#fffde230; box-shadow:none; overflow:visible }
+.glass-cursor.point.occupe::after { content:""; position:absolute; inset:-1px; border-radius:inherit;
+  border:1.5px solid transparent; border-top-color:#fffde2; border-right-color:#fffde2a0;
+  animation:curseur-tourne .8s linear infinite }
+@keyframes curseur-tourne { to { rotate:1turn } }
+@media (prefers-reduced-motion:reduce) { .glass-cursor.point.occupe::after { animation-duration:2.4s } }
+
+/* un seul langage de survol pour les rangées : fond #ffffff0e en 180 ms
+   (#resultats li était défini quatre fois, avec quatre fonds) */
+#resultats li { background:transparent; transition:background-color .18s var(--ease-sortie) }
+#resultats li:is(.choisi,:hover) { background:#ffffff0e }
+
+/* =====================================================================
+   PHASE 2 — ce qui entre en s'animant sort en s'animant.
+   Entrées : 600 ms, courbe expo (.16,1,.3,1). Sorties : 380 ms, courbe de
+   sortie (.4,0,.2,1). Les <dialog> utilisent @starting-style et la
+   transition discrète d'overlay/display : là où le navigateur ne la connaît
+   pas, la fermeture reste instantanée, comme avant.
+   ===================================================================== */
+:root { --ease-entree:cubic-bezier(.16,1,.3,1); --ease-sortie:cubic-bezier(.4,0,.2,1); --dur-entree:.6s; --dur-sortie:.38s }
+
+/* ---- comparateur : il s'ouvrait et se fermait d'un coup ---- */
+#city-comparison {
+  opacity:0; translate:0 14px; scale:.975;
+  transition:opacity var(--dur-sortie) var(--ease-sortie), translate var(--dur-sortie) var(--ease-sortie), scale var(--dur-sortie) var(--ease-sortie),
+    overlay var(--dur-sortie) allow-discrete, display var(--dur-sortie) allow-discrete;
+}
+#city-comparison[open] {
+  opacity:1; translate:0 0; scale:1;
+  transition-duration:var(--dur-entree); transition-timing-function:var(--ease-entree);
+}
+#city-comparison::backdrop { opacity:0; transition:opacity var(--dur-sortie) var(--ease-sortie), overlay var(--dur-sortie) allow-discrete, display var(--dur-sortie) allow-discrete }
+#city-comparison[open]::backdrop { opacity:1; transition-duration:.45s }
+@starting-style {
+  #city-comparison[open] { opacity:0; translate:0 16px; scale:.97 }
+  #city-comparison[open]::backdrop { opacity:0 }
+}
+
+/* ---- langue rouverte depuis les réglages : fondu au lieu d'un écran noir
+   posé d'un coup. Le premier passage (accueil) garde son noir immédiat. ---- */
+#language-dialog:not(.accueil) {
+  opacity:0;
+  transition:opacity .32s var(--ease-sortie), overlay .32s allow-discrete, display .32s allow-discrete;
+}
+#language-dialog:not(.accueil)[open] { opacity:1; transition-duration:.42s; transition-timing-function:var(--ease-entree) }
+#language-dialog:not(.accueil)::backdrop { opacity:0; transition:opacity .32s var(--ease-sortie), overlay .32s allow-discrete, display .32s allow-discrete }
+#language-dialog:not(.accueil)[open]::backdrop { opacity:1 }
+@starting-style {
+  #language-dialog:not(.accueil)[open], #language-dialog:not(.accueil)[open]::backdrop { opacity:0 }
+}
+
+/* ---- la fiche recule sous le comparateur, la story ou les réglages au lieu
+   de disparaître d'un coup (visibility:hidden) : elle s'efface et revient
+   avec ses propres transitions d'opacité et de transformation ---- */
+body:has(#city-comparison[open],#story-popup:not([hidden]),#menu-reglages.ouvert) #dossier.ouvert {
+  visibility:visible; opacity:0; transform:scale(.985); pointer-events:none;
+}
+
+/* ---- les filtres s'effacent quand la fiche s'ouvre (ils se cachaient net
+   pendant qu'elle glissait) et reviennent en fondu ---- */
+body.pret #map-inspector { transition:opacity .35s var(--ease-entree), visibility 0s }
+body.pret.dossier-ouvert #map-inspector { opacity:0; transition:opacity .25s var(--ease-sortie), visibility 0s .25s }
+body.dossier-ouvert #map-inspector * { visibility:inherit }
+
+/* ---- sélecteur d'indicateurs : il basculait display:none/grid sans
+   transition. Il s'ouvre depuis la pastille (coin bas gauche) et ses calques
+   arrivent en cascade ---- */
+#map-inspector #map-options {
+  transform-origin:0 100%;
+  transition:opacity .3s var(--ease-sortie), scale .3s var(--ease-sortie), translate .3s var(--ease-sortie), display .3s allow-discrete;
+}
+#map-inspector.choix-ouvert #map-options { transition-duration:.5s; transition-timing-function:var(--ease-entree) }
+/* le contenu reste affiché le temps que la vitre s'efface */
+#map-inspector :is(#calques, #model-notice) { transition:display .3s allow-discrete }
+#map-inspector:not(.choix-ouvert) #map-options { opacity:0; scale:.96; translate:0 8px }
+@starting-style { #map-inspector.choix-ouvert #map-options { opacity:0; scale:.96; translate:0 8px } }
+@keyframes calque-entree { from { opacity:0; translate:-8px 0 } }
+#map-inspector.choix-ouvert #calques .calque { animation:calque-entree .45s var(--ease-entree) backwards }
+#map-inspector.choix-ouvert #calques .calque:nth-child(2) { animation-delay:.03s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(3) { animation-delay:.06s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(4) { animation-delay:.09s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(5) { animation-delay:.12s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(6) { animation-delay:.15s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(7) { animation-delay:.18s }
+#map-inspector.choix-ouvert #calques .calque:nth-child(n+8) { animation-delay:.21s }
+
+/* ---- « Méthode » et « Sources et lecture » : ils s'ouvraient en glissant
+   et se fermaient net. La hauteur s'anime dans les deux sens ---- */
+:is(#dossier .fiche-methode, #map-method) { interpolate-size:allow-keywords }
+:is(#dossier .fiche-methode, #map-method)::details-content {
+  block-size:0; overflow:clip; opacity:0;
+  transition:block-size .38s var(--ease-sortie), opacity .25s var(--ease-sortie), content-visibility .38s allow-discrete;
+}
+/* à l'ouverture, le contenu est rendu tout de suite (content-visibility hors
+   de la transition) : seule la hauteur et l'opacité s'animent */
+:is(#dossier .fiche-methode, #map-method)[open]::details-content {
+  block-size:auto; opacity:1;
+  transition:block-size .5s var(--ease-entree), opacity .4s var(--ease-entree);
+}
+
+/* ---- la fiche sort avec la courbe de sortie : elle reprenait la courbe
+   expo de l'entrée et partait d'un coup ---- */
+#dossier:not(.ouvert) { transition:opacity .3s var(--ease-sortie), transform var(--dur-sortie) var(--ease-sortie), visibility var(--dur-sortie) }
+
+@media (prefers-reduced-motion:reduce) {
+  #city-comparison, #city-comparison::backdrop, #language-dialog, #language-dialog::backdrop,
+  #map-inspector, #map-inspector #map-options, #dossier:not(.ouvert),
+  :is(#dossier .fiche-methode, #map-method)::details-content { transition:none }
+  #map-inspector.choix-ouvert #calques .calque { animation:none }
+}
+
+/* ---- un seul tempo pour l'année : globe, compteur et repères des jauges
+   en 600 ms (le repère avait deux déclarations, 350 puis 650 ms) ---- */
+#dossier .risk-meter i { transition:top .6s var(--ease-entree) }
+@media (prefers-reduced-motion:reduce) { #dossier .risk-meter i { transition:none } }
+
+/* ---- lettre d'accueil : aucun glyphe de brouillage ne doit basculer en
+   emoji (✳ devenait une pastille verte sur iPhone). Filet de sécurité en plus
+   du choix des signes dans earth-letter.js ---- */
+#earth-shell, #letter { font-variant-emoji:text }
+
+/* ---- règle des années au doigt : toute la bande de la règle répond
+   (year-ruler.mjs), l'input compris : ses événements remontent à la bande.
+   Un glissé horizontal fait défiler les années, un glissé vertical continue
+   de faire défiler la fiche ---- */
+@media (pointer:coarse) {
+  #timeline, .compare-time { touch-action:pan-y }
+}
+
+/* ---- deux défauts de toucher relevés par la QA (correctifs repris de
+   bf1c95e, PR #10 jamais fusionnée) ----
+   La loupe n'est qu'un dessin : en téléphone paysage elle captait le tap et
+   la recherche ne s'ouvrait jamais. L'invitation sort du dock (index.html),
+   qui ne laissait passer aucun clic : elle redevient cliquable, au-dessus de
+   la fiche. */
+#accroche { pointer-events:auto; z-index:26; left:max(24px, env(safe-area-inset-left)) }
+@media (max-width:720px) { #accroche { top:auto; bottom:calc(116px + env(safe-area-inset-bottom)); left:12px } }
+@media (max-height:500px) and (orientation:landscape) {
+  #accroche { top:auto; bottom:calc(84px + env(safe-area-inset-bottom)); left:max(24px, env(safe-area-inset-left)) }
+  /* fiche ouverte, il ne reste pas la place à sa gauche : l'invitation à
+     comparer s'efface comme en portrait (le bouton « Comparer » de la fiche
+     fait la même chose) */
+  body.dossier-ouvert #accroche { visibility:hidden }
+}
+
+/* =====================================================================
+   PHASE 5 — centré, ou décentré exprès.
+   ===================================================================== */
+
+/* ---- plus de monospace système : sous Linux ou Windows, « ANNÉE ·
+   2026–2050 », les sources et les notes tombaient en DejaVu ou Consolas.
+   Lausanne 500 en petites capitales, chiffres tabulaires ---- */
+:is(#dossier .fiche-temps-label, .pedago-source, .compare-eyebrow, .note-calques) {
+  font-family:var(--police); font-weight:500; font-variant-numeric:tabular-nums;
+  letter-spacing:.1em; text-transform:uppercase;
+}
+.pedago-source { font-size:10px; line-height:1.55; text-wrap:pretty }
+
+/* (marges basses, pastille des filtres : le dock de main les gère avec
+   --dock-bottom, qui ajoute déjà la zone sûre) */
+@media (max-height:500px) and (orientation:landscape) {
+  /* fiche en paysage : l'année s'arrêtait à 4 px de la croix */
+  #dossier-temps { padding-right:72px }
+}
+
+/* ---- boutons de la fiche : trois colonnes égales, libellés équilibrés
+   (« Comparer une ville » passait seul sur deux lignes) ---- */
+@media (min-width:721px) { #dossier .actions { grid-template-columns:repeat(3, minmax(0,1fr)) } }
+#dossier .actions button { text-wrap:balance; text-align:center; line-height:1.25 }
+
+/* ---- titres qui se coupaient trop tôt (« Select your / language ») ---- */
+:is(#language-title, .pedago-titre, .compare-shell h2, #dossier-nom) { text-wrap:balance }
+
+/* ---- vietnamien : la police de secours ne s'applique qu'au texte ; le
+   wordmark, l'année et les chiffres gardent Lausanne ---- */
+html:lang(vi) :is(#wordmark, #timeline .an, .compare-time output, #dossier-score, .risk-number) {
+  font-family:"TWK Lausanne", Arial, sans-serif;
+}
+
+/* ---- très grands écrans : le libellé des filtres grandit un peu (la
+   timeline garde la largeur de l'année, réglée par main) ---- */
+@media (min-width:1800px) and (min-height:900px) {
+  #map-toggle { font-size:clamp(13px, .35vw + 7px, 15px) }
+}
+
+/* =====================================================================
+   PHASE 4 — une seule lumière. Le soleil du globe est fixé en haut à gauche
+   de la caméra (index.html, SOLEIL_VUE) ; les arêtes du verre WebGL, le halo
+   et la lentille du curseur viennent du même point. Les panneaux CSS
+   prennent la même direction : liseré haut-gauche plus vif, bas-droite éteint.
+   ===================================================================== */
+:root { --glass-shadow:inset 1px 1px 0 #ffffff40, inset -1px -1px 0 #ffffff0c, 0 18px 64px #0007 }
+@media (prefers-reduced-transparency:reduce) { :root { --glass-shadow:inset 0 1px 0 #ffffff26, 0 18px 64px #0007 } }
+
+/* =====================================================================
+   PHASE 0 — un seul anneau de focus pour tout le site : crème, 1,5 px,
+   décalé de 3 px. Il y en avait huit, dont un bleu #416e9b peu lisible
+   sur le verre sombre du dossier. La lettre d'accueil garde ses décalages
+   larges, mais prend la même teinte.
+   ===================================================================== */
+:root { --focus-teinte:rgb(255 253 226 / .9); --focus:1.5px solid var(--focus-teinte) }
+:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content,#timeline,#accroche,#story-popup,#map-options)
+  :is(button,summary,a,input:not([type=range],#champ-recherche)):focus-visible,
+.calque:focus-visible, .bouton-ico:focus-visible, #story-partager:focus-visible, .compare-shell :focus-visible {
+  outline:var(--focus); outline-offset:3px }
+.etiquette:focus-visible { outline:var(--focus); outline-offset:3px; border-radius:6px }
+#language-options label:has(input:focus-visible), #language-continue:focus-visible,
+#earth-shell button:focus-visible, #earth-shell .word:focus-visible { outline-color:var(--focus-teinte) }

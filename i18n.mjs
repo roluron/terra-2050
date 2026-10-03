@@ -53,6 +53,9 @@ function syncLanguageDialog() {
 export function openLanguage(onClose, first = false) {
   if (languageDialog.open) return;
   afterLanguage = onClose; welcome = first; closingLanguage = false;
+  // le premier passage reste noir d'emblée ; rouvert depuis les réglages, il
+  // entre et sort en fondu (finitions.css)
+  languageDialog.classList.toggle('accueil', first);
   syncLanguageDialog(); languageDialog.showModal();
   document.getElementById('boot-screen').hidden = true;
   languageDialog.querySelector('input:checked').focus({preventScroll:true});
@@ -63,7 +66,7 @@ async function closeLanguage() {
   closingLanguage = true;
   const content = languageDialog.querySelector('.language-content');
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    await content.animate([{opacity:1,filter:'blur(0px)',transform:'translateY(0)'},{opacity:0,filter:'blur(8px)',transform:'translateY(-8px)'}], {duration:420,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).finished;
+    await content.animate([{opacity:1,filter:'blur(0px)',transform:'translateY(0)'},{opacity:0,filter:'blur(8px)',transform:'translateY(-8px)'}], {duration:420,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).finished.catch(() => {});
   }
   languageDialog.close();
   for (const animation of content.getAnimations()) animation.cancel();
@@ -73,6 +76,7 @@ languageDialog.querySelector('form').addEventListener('submit', event => {event.
 languageDialog.addEventListener('cancel', event => {event.preventDefault(); if (!welcome) closeLanguage();});
 languageDialog.addEventListener('keydown', event => {
   event.stopPropagation();
+  if (event.key === 'Escape') { event.preventDefault(); if (!welcome) closeLanguage(); return; }
   if (['ArrowDown','ArrowRight','ArrowUp','ArrowLeft'].includes(event.key) && event.target.matches('#language-options input')) {
     event.preventDefault();
     const inputs = [...languageDialog.querySelectorAll('input')];
