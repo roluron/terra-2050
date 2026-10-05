@@ -308,12 +308,12 @@ try {
       await page.touchscreen.tap(point.x,point.y);
       await page.waitForFunction(()=>document.getElementById('survol').classList.contains('visible'));
       assert.equal(await page.evaluate(()=>document.body.classList.contains('dossier-ouvert')),false,profile+' first canvas tap must not open a newly revealed city');
-      assert.equal((await snapshot()).role,'button');
-      await page.locator('#survol').tap();await page.waitForFunction(()=>document.body.classList.contains('dossier-ouvert'));
+      assert.equal((await snapshot()).role,'group');
+      await page.locator('[data-hover-action="explore"]').tap();await page.waitForFunction(()=>document.body.classList.contains('dossier-ouvert'));
       assert.match(await page.locator('#dossier-nom').textContent(),/Chine/);
     }else {
       await page.mouse.move(point.x,point.y);await page.waitForFunction(()=>document.getElementById('survol').classList.contains('visible'));
-      await page.mouse.click(point.x,point.y);await page.waitForFunction(()=>document.body.classList.contains('dossier-ouvert'));
+      await page.mouse.click(point.x,point.y);await page.locator('[data-hover-action="explore"]').click();await page.waitForFunction(()=>document.body.classList.contains('dossier-ouvert'));
     }
     const scoreNotice=page.locator('.score-method-note');await scoreNotice.scrollIntoViewIfNeeded();
     assert.equal(await scoreNotice.isVisible(),true,profile+' score method notice visible');assert.ok((await scoreNotice.textContent()).trim().length>50);

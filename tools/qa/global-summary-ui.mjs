@@ -240,10 +240,12 @@ try {
     await page.mouse.move(4, 4);
     await page.evaluate(pinned => __summaryAudit.show({iso:'SA',lat:25,lon:45},80,100,pinned), !!options.hasTouch);
     assert.equal(await page.locator('#survol').isVisible(), true, context + ' hover visible in capture');
+    assert.equal(await summary.isVisible(),!options.hasTouch,context+' mobile pin replaces the summary');
     await page.waitForFunction(() => Number(getComputedStyle(document.getElementById('survol')).opacity) > .99);
     await page.evaluate(() => __summaryAudit.frames());
     const path = `${output}/${profile}-fr-heat-2026-local-and-global.png`; await page.screenshot({path}); if (!report.captures.includes(path)) report.captures.push(path);
     await page.evaluate(() => __summaryAudit.hide());
+    assert.equal(await summary.isVisible(),true,context+' unpin restores the summary');
     await openMenu(); await act('.calque[data-cle="chaleur"]');
     assert.equal(await summary.isVisible(), false, context + ' disabling filter hides summary');
     const shader = await page.evaluate(() => __summaryAudit.shader());

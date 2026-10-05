@@ -194,10 +194,10 @@ try{
    assert.deepEqual(errors,[]);fs.writeFileSync(`${output}/results.json`,JSON.stringify(report,null,2)+'\n');await page.close();continue;
   }
   await show();assert.equal(await field('.s-nom'),'Chine');
-  assert.equal(await field('.s-indice'),`${await page.evaluate(()=>__hoverAudit.score('CN'))}/100`);
-  assert.match(await field('.s-sous'),/expérimental.*2026/);
+  assert.equal(await field('.s-indice'),'');
+  assert.match(await field('.s-sous'),/Choisissez un filtre.*2026/);
   await year(2050);
-  if(name==='mobile'){assert.match(await field('.s-sous'),/2050/);assert.equal(await page.locator('#survol').getAttribute('role'),'button');}
+  if(name==='mobile'){assert.match(await field('.s-sous'),/2050/);assert.equal(await page.locator('#survol').getAttribute('role'),'group');}
   else await show();
   await filter('declin');await mode('change');await show();
   assert.equal(await field('.s-indice'),populationHover(annual.CN,2050,true,'fr').value);
@@ -239,15 +239,15 @@ try{
   await page.waitForTimeout(220);
   await page.screenshot({path:`${output}/${name}-country-hover.png`});
   if(name==='mobile'){
-   assert.equal(await page.locator('#survol').getAttribute('role'),'button');
+   assert.equal(await page.locator('#survol').getAttribute('role'),'group');
    await year(2038);assert.match(await field('.s-sous'),/2038/);
    assert.equal(await page.evaluate(()=>document.body.classList.contains('dossier-ouvert')),false,'first country tap must not activate a newly revealed city label');
-   await page.locator('#survol').tap();
+   await page.locator('[data-hover-action="explore"]').tap();
    await page.waitForFunction(()=>document.body.classList.contains('dossier-ouvert'));
    assert.match(await page.locator('#dossier-nom').textContent(),/Chine/);
    await page.locator('#dossier-croix').click();
    await page.waitForFunction(()=>!document.body.classList.contains('dossier-ouvert'));
-   await show();await page.locator('#survol').focus();await page.keyboard.press('Enter');
+   await show();await page.locator('[data-hover-action="explore"]').focus();await page.keyboard.press('Enter');
    await page.waitForFunction(()=>document.body.classList.contains('dossier-ouvert'));
    assert.match(await page.locator('#dossier-nom').textContent(),/Chine/);
   }else{

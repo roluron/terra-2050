@@ -1,0 +1,71 @@
+#map-method{display:none!important}
+#map-inspector #map-options{width:490px}
+#map-inspector .ux-source-link{margin-top:12px}
+.ux-source-link{background:none;border:0;color:var(--glass-text);font:400 12px/1.4 var(--police);text-decoration:underline;text-underline-offset:4px;text-align:left;min-height:36px;cursor:pointer;pointer-events:auto}
+#visible-legend{width:min(240px,100%);margin-bottom:14px}
+#visible-legend .ux-scale strong{display:none}
+#visible-legend .ux-legend-mode{font-size:11px;line-height:1.35;color:var(--glass-muted);margin-bottom:7px}
+#visible-legend .ux-scale{margin:0}
+#visible-legend .ux-scale small{font-size:10px;line-height:1.3}
+#visible-legend .ux-scale>span{font-size:10px}
+#layer-visibility{position:absolute;bottom:var(--dock-bottom);width:44px;height:44px;border:1px solid var(--glass-edge);background:var(--glass-surface);border-radius:50%;color:var(--glass-text);pointer-events:auto;cursor:pointer}
+#layer-visibility[hidden]{display:none}
+#layer-visibility svg,#share-view svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.4;vertical-align:middle}
+#layer-visibility.layer-hidden svg{opacity:.45}
+#filter-summary.layer-hidden #visible-legend{opacity:.45}
+#share-view{position:fixed;z-index:31;top:calc(10px + env(safe-area-inset-top,0px));height:48px;display:flex;align-items:center;gap:9px;border:1px solid var(--glass-edge);border-radius:28px;padding:0 16px;background:var(--glass-surface);color:var(--glass-text);font:400 12px/1.3 var(--police);cursor:pointer}
+body:not(.pret) #share-view,body:not(.pret) #layer-visibility,body.dossier-ouvert #share-view{visibility:hidden}
+body:has(#earth-shell[open],#city-comparison[open],#story-popup:not([hidden])) #share-view{visibility:hidden}
+.ux-dialog{position:fixed;inset:0;margin:auto;max-width:calc(100vw - 32px);width:500px;max-height:calc(100dvh - 64px);border:1px solid var(--glass-edge);border-radius:24px;padding:28px;color:var(--glass-text);background:#101419f5;font:400 14px/1.5 var(--police);overflow:auto;box-shadow:0 18px 90px #0008}
+.ux-dialog::backdrop{background:#0009;backdrop-filter:blur(4px)}
+.ux-dialog h2{font-size:25px;font-weight:400;letter-spacing:-.025em;line-height:1.2;padding-right:28px;margin-bottom:18px}
+.ux-dialog .ux-close{position:absolute;right:14px;top:14px;width:40px;height:40px;font-size:24px;background:none;border:0;color:inherit;cursor:pointer}
+.ux-row{padding:14px 0;border-top:1px solid #ffffff20}
+.ux-row h3{font-size:11px;font-weight:400;color:var(--glass-muted);margin-bottom:6px}
+.ux-row p,.ux-year-comparison p{white-space:pre-line;font-size:13px}
+.ux-row a{display:block;color:inherit;font-size:11px;overflow-wrap:anywhere;margin-top:8px}
+.ux-dialog .map-scale strong{display:block;font-weight:400;font-size:12px}
+.ux-primary{width:100%;border:0;border-radius:24px;background:#edf1f5;color:#101419;padding:12px 16px;min-height:44px;font:inherit;margin-top:16px;cursor:pointer}
+.ux-dialog input{width:100%;display:block;font:12px/1.4 var(--police);color:inherit;background:#ffffff09;border:1px solid #ffffff30;border-radius:10px;padding:12px;margin-top:8px}
+.ux-status{font-size:12px;min-height:18px;margin-top:10px}
+.ux-year-comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.ux-year-comparison article{border:1px solid #ffffff25;border-radius:14px;padding:16px;min-width:0}
+.ux-year-comparison h3{font-size:12px;font-weight:400;color:var(--glass-muted)}
+.ux-year-comparison strong{font-size:26px;font-weight:400;display:block;overflow-wrap:anywhere;margin:8px 0}
+#survol .s-explanation{margin-top:9px;font-size:11px}
+#survol .s-explanation summary{min-height:24px;cursor:pointer;color:var(--glass-muted)}
+#survol:not(.fige) .s-explanation{display:none}
+#survol .s-actions{display:flex;gap:4px 12px;flex-wrap:wrap;border-top:1px solid #ffffff25;margin-top:10px;padding-top:8px}
+#survol .s-actions[hidden]{display:none}
+#survol .s-actions button{min-height:32px;max-width:100%;background:none;border:0;color:inherit;font:11px/1.4 var(--police);text-align:left;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+#survol .s-actions button:disabled{display:none}
+#survol.fige{cursor:default;max-height:calc(100dvh - 24px);overflow:auto}
+body:has(.ux-dialog[open]) :is(#survol,#etiquettes){visibility:hidden}
+@media(max-width:720px){
+ #map-inspector{max-width:calc(100vw - 194px);padding:0 12px}
+ #map-toggle span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+ #map-toggle::before{content:none}
+ #map-toggle{min-width:0;gap:8px}
+ #map-inspector #map-options{width:calc(100vw - 24px);max-height:calc(100dvh - 160px);left:-1px;bottom:calc(100% + 14px)}
+ #share-view{width:44px;height:44px;justify-content:center;padding:0;top:calc(12px + env(safe-area-inset-top,0px))}
+ #share-view span{display:none}
+ #layer-visibility{width:40px;height:44px}
+ #visible-legend{width:210px;margin-bottom:10px}
+ #filter-summary .ux-source-link{min-height:28px;font-size:11px}
+ .ux-dialog{inset:auto 12px 18px;max-width:calc(100vw - 24px);width:auto;max-height:78dvh;padding:22px}
+ .ux-dialog h2{font-size:23px}
+ .ux-year-comparison article{padding:12px}
+ .ux-year-comparison strong{font-size:23px}
+}
+@media(max-width:360px){#wordmark{font-size:27px}}
+@media(max-height:500px){#visible-legend{margin-bottom:5px}#filter-summary .summary-detail{display:none}.ux-dialog{max-height:calc(100dvh - 24px)}}
+@media(prefers-reduced-motion:no-preference){.ux-dialog[open]{animation:ux-enter .18s ease-out}@keyframes ux-enter{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}}
+#survol .s-scope{display:block;margin-top:6px;font-size:10px;line-height:1.4;color:var(--glass-muted)}
+#survol .s-scope:empty{display:none}
+#visible-legend .ux-scale small,.ux-dialog .map-scale small{display:block;margin-top:5px;font-size:10px;color:var(--glass-muted)}
+
+.ux-scale strong{display:block;font-size:11px;font-weight:400}.ux-scale i{display:block;height:4px;border-radius:4px;margin:9px 0 5px}.ux-scale>span{display:flex;justify-content:space-between;font-size:10px}
+@media(max-width:720px) and (max-height:650px){#filter-summary .summary-detail{display:none}#filter-summary .summary-headline{font-size:23px}#visible-legend{margin-bottom:8px}}
+#survol.fige{z-index:32;max-height:calc(100dvh - 160px - env(safe-area-inset-bottom,0px))}
+@media(max-width:720px){body:has(#survol.visible.fige) #filter-summary{visibility:hidden;pointer-events:none}}
+body:not(.loupe) #share-view{visibility:hidden;pointer-events:none}

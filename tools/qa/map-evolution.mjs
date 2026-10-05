@@ -34,9 +34,9 @@ for(const mobile of [false,true]){
    assert.deepEqual(geometry,{overlap:false,panelOutside:false,overflow:false});
    await page.screenshot({path:`${out}/${name}-${key}-2050.png`});
   }
-  await page.locator('#map-method summary').click();
+  await page.locator('#menu-sources').click();
   await page.screenshot({path:`${out}/${name}-sources.png`});
-  await page.locator('#map-method summary').click();
+  await page.locator('#view-sources .ux-close').click();
   await page.locator('[data-map-mode="value"]').click();
   assert.equal(await page.locator('[data-map-mode="value"]').getAttribute('aria-pressed'),'true');
   assert.equal(errors.length,0,errors.join('\n'));

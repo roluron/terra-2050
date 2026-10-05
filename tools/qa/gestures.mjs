@@ -24,7 +24,7 @@ assert.deepEqual(observed.splice(0), []);
 send('pointerdown', 1, 100); send('pointercancel', 1, 100); send('pointerup', 1, 100);
 assert.deepEqual(observed.splice(0), []);
 send('pointerdown', 1, 100, 'mouse'); send('pointerup', 1, 100, 'mouse');
-assert.deepEqual(observed.splice(0), ['open']);
+assert.deepEqual(observed.splice(0), ['tooltip']);
 send('pointerdown', 1, 100, 'mouse'); send('pointermove', 1, 160, 'mouse'); send('pointermove', 1, 100, 'mouse'); send('pointerup', 1, 100, 'mouse');
 assert.deepEqual(observed.splice(0), []);
 console.log('PASS actual pointer handlers: tap, returning drag, pinch, cancellation, mouse click, returning mouse drag');

@@ -213,6 +213,7 @@
 </dialog>
 <link rel="stylesheet" href="./earth-letter.css">
 <link rel="stylesheet" href="./premium.css">
+<link rel="stylesheet" href="./experience-ui.css">
 <script type="module" src="./premium.mjs"></script>
 <script type="module" src="./earth-letter.js"></script>
 <canvas id="scene"></canvas>
@@ -265,7 +266,7 @@
   <div class="bornes micro"><span>2026</span><span>2050</span></div>
 </div>
 
-<aside id="filter-summary" hidden aria-live="polite"><p class="summary-headline"></p><p class="summary-reference" hidden></p><p class="summary-detail"></p></aside>
+<aside id="filter-summary" hidden aria-live="polite"><div id="visible-legend"></div><p class="summary-headline"></p><p class="summary-reference" hidden></p><p class="summary-detail"></p></aside>
 <section id="map-inspector">
 <button id="map-toggle" type="button" aria-expanded="false" aria-controls="map-options"><span></span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
 <div id="map-options">
@@ -284,11 +285,13 @@
 <p class="v-science" data-t="indicatorNotice"></p>
 </div>
 </section>
+<button id="layer-visibility" type="button" hidden></button>
 </div>
+<button id="share-view" type="button" aria-haspopup="dialog"></button>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
 <div id="etiquettes"></div>
-<div id="survol"><span class="s-nom"></span><span class="s-indice"></span><span class="s-sous"></span><span class="s-detail"></span><span class="s-note"></span></div>
+<div id="survol"><span class="s-nom" id="hover-location"></span><span class="s-indice"></span><span class="s-sous"></span><span class="s-scope"></span><span class="s-detail"></span><details class="s-explanation"><summary></summary><span class="s-note"></span></details><div class="s-actions" hidden><button type="button" data-hover-action="compare"></button><button type="button" data-hover-action="source"></button><button type="button" data-hover-action="explore"></button><button type="button" data-hover-action="close"></button></div></div>
 
 <div id="util" class="panneau">
   <div class="menu-groupe">
@@ -420,6 +423,8 @@ import { mapDiagnosticReading } from './map-diagnostic.mjs';
 import { mapDiagnosticCopy } from './map-diagnostic-copy.mjs';
 import { createGlobalSummary } from './global-summary.mjs';
 import { summarizeText } from './global-summary-copy.mjs';
+import {createExperienceUI} from './experience-ui.mjs';
+import {experienceUICopy} from './experience-ui-copy.mjs';
 import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
 
 // Slow GPU frames must not stretch short UI transitions into minutes.
@@ -508,6 +513,7 @@ function revelerChars(el, texte){
    porteurs de data-t sont réécrits par traduire().
    ===================================================================== */
 let langue = language();
+let experienceUI = null;
 const T = getText;
 
 /* =====================================================================
@@ -549,18 +555,19 @@ async function chargerCouvertureClimat(){
   if (bytes.length !== 720 * 360 * 12 || bytes.some(n => n > 9)) throw new Error('Invalid climate coverage');
   return bytes;
 }
-function majSyntheseGlobale(){
+function majSyntheseGlobale(sync = true){
   const el = document.getElementById('filter-summary');
   const filter = document.querySelector('.calque.actif')?.dataset.cle;
-  el.hidden = !filter || !globalSummary;
+  el.hidden = !filter;
   if (el.hidden) return;
-  const copy = summarizeText(filter, globalSummary.reading(filter, etat.annee), langue, etat.annee);
+  const copy = summarizeText(filter, globalSummary?.reading(filter, etat.annee), langue, etat.annee);
   el.classList.toggle('summary-unavailable', !copy.headline);
   el.querySelector('.summary-headline').textContent = copy.headline;
   const reference = el.querySelector('.summary-reference');
   reference.textContent = copy.reference || '';
   reference.hidden = !copy.reference;
   el.querySelector('.summary-detail').textContent = copy.detail;
+  if(sync)experienceUI?.sync();
 }
 function preparerSyntheseGlobale(){
   if (globalSummaryStarted || !globalSourcesReady || !populationSourceReady) return;
@@ -1680,6 +1687,18 @@ const CALQUES = {
 };
 const etat = { progression: 0, annee: 2026, crise: false };
 let filtreSurvol = null, rafraichirSurvol = () => {};
+let coucheMasquee = false;
+function basculerVisibilite(){
+  coucheMasquee = !coucheMasquee;
+  const key = document.querySelector('.calque.actif')?.dataset.cle;
+  for (const [name,c] of Object.entries(CALQUES)){
+    const visible = name === key && !coucheMasquee;
+    if (visible && c.objet) c.objet.visible = true;
+    gsap.to(c.uniforme,{value:Number(visible),duration:MOINS_ANIM?0:.4,overwrite:true,ease:EASE,onComplete:()=>{if(c.objet&&!visible)c.objet.visible=false;}});
+  }
+  gsap.to(uniformsGlobe.uIndice,{value:key&&!coucheMasquee?0:1,duration:MOINS_ANIM?0:.4,overwrite:true});
+  majContexteCalques();
+}
 // Each indicator opens on its contextual level/reference, and remembers
 // explicit mode choices during this visit.
 const modesCarte = new Map();
@@ -1691,7 +1710,7 @@ function appliquerModeCarte(mode){
 function majContexteCalques(){
   const el = document.getElementById('layer-context');
   const actifs = [...document.querySelectorAll('.calque.actif')].map(b => b.dataset.cle);
-  matAtmo.uniforms.uProgression.value = actifs.length ? 0 : etat.progression;
+  matAtmo.uniforms.uProgression.value = actifs.length && !coucheMasquee ? 0 : etat.progression;
   const words = mapCopy[langue] || mapCopy.en;
   document.querySelector('#map-toggle span').textContent = actifs.length ? document.querySelector(`.calque[data-cle="${actifs[0]}"] .nom`).textContent : (mapPicker[langue] || mapPicker.en);
   const toggle=document.getElementById('map-toggle');
@@ -1774,8 +1793,9 @@ function majContexteCalques(){
   document.getElementById('layer-method').textContent = [...notes, words[5]].join('\n');
   cadrerCarte();
   filtreSurvol = actifs[0] || null;
-  majSyntheseGlobale();
+  majSyntheseGlobale(false);
   rafraichirSurvol();
+  experienceUI?.sync();
 }
 function cadrerCarte(){
   if (innerWidth <= 720 && innerHeight > 500 && !document.body.classList.contains('dossier-ouvert') && document.querySelector('.calque.actif')) camera.setViewOffset(innerWidth, innerHeight, 0, 64, innerWidth, innerHeight);
@@ -1833,18 +1853,18 @@ for (const btn of document.querySelectorAll('.calque')){
     btn.setAttribute('aria-pressed', actif ? 'true' : 'false');
     if (actif) appliquerModeCarte(modesCarte.get(btn.dataset.cle) || (historicalFilters.has(btn.dataset.cle) ? 'reference' : 'value'));
     fermerChoixCarte();
+    coucheMasquee = false;
     majContexteCalques();
-    if (actif) montrerPedago(btn.dataset.cle);
     if (c.objet && actif) c.objet.visible = true;
     SoundManager.play(actif ? 'layer_on' : 'layer_off');
     SoundManager.play('ui_click');
     gsap.to(c.uniforme, {
-      value: actif ? 1 : 0, duration: 0.6, ease: EASE,    // tempo standard 0.5-0.6 s
+      value: actif ? 1 : 0, duration: MOINS_ANIM ? 0 : 0.6, ease: EASE, overwrite:true,    // tempo standard 0.5-0.6 s
       onComplete: () => { if (c.objet && !actif) c.objet.visible = false; },
     });
     // un calque actif devient l'inspecteur : la teinte ambiante s'efface
     const unActif = [...document.querySelectorAll('.calque')].some(b => b.classList.contains('actif'));
-    gsap.to(uniformsGlobe.uIndice, { value: unActif ? 0 : 1, duration: 0.6, ease: EASE });
+    gsap.to(uniformsGlobe.uIndice, { value: unActif ? 0 : 1, duration: MOINS_ANIM?0:0.6, ease: EASE,overwrite:true });
   });
   btn.addEventListener('mouseenter', () => SoundManager.play('ui_hover')); // anti-rebond intégré
 }
@@ -2156,7 +2176,7 @@ curseur.addEventListener('input', () => {
     progression: (an - 2026) / 24, duration: 0.5, ease: EASE, overwrite: 'auto',
     onUpdate: () => {
       uniformsGlobe.uProgression.value = etat.progression;
-      matAtmo.uniforms.uProgression.value = document.querySelector('.calque.actif') ? 0 : etat.progression;
+      matAtmo.uniforms.uProgression.value = document.querySelector('.calque.actif') && !coucheMasquee ? 0 : etat.progression;
     },
   });
   // boucle « crise » : s'installe à partir de 2040 (fondu 2 s croisé)
@@ -3415,7 +3435,8 @@ boutonSon.addEventListener('click', () => {
    construits en JS. Le choix est mémorisé et pilote aussi Intl.DisplayNames.
    ===================================================================== */
 function traduire(){
-  document.getElementById('survol').classList.remove('visible', 'fige');
+  if (experienceUI) cacherSurvol();
+  document.getElementById('survol').classList.remove('visible','fige');
   document.getElementById('survol').tabIndex = -1;
   document.getElementById('survol').setAttribute('aria-hidden', 'true');
   document.body.classList.remove('sur-lieu');
@@ -3882,28 +3903,22 @@ const survolNom = survolEl.querySelector('.s-nom'), survolIndice = survolEl.quer
       survolSous = survolEl.querySelector('.s-sous'), survolDetail = survolEl.querySelector('.s-detail'),
       survolNote = survolEl.querySelector('.s-note');
 let survolLieu = null, survolFige = false, survolPoint = null;
-let survolContenu = null, survolLargeur = 0, survolHauteur = 0;
+let survolContenu = null, survolLargeur = 0, survolHauteur = 0, survolBas = 8;
 // A first touch reveals city labels. Its compatibility click must not open
 // a label (or tooltip) that appeared underneath it after pointerdown.
 let cibleAppuiDiagnostic = null;
 document.addEventListener('pointerdown', e => { cibleAppuiDiagnostic = e.target; }, true);
 document.addEventListener('pointercancel', () => { cibleAppuiDiagnostic = null; }, true);
-function montrerSurvol(s, cx, cy, fige){
-  const l = lieuSousPointeur(s), iso = s && s.iso;
-  if (!l && !iso){ cacherSurvol(); return; }
-  survolLieu = l; survolFige = !!fige; survolPoint = {s,cx,cy};
-  const an = etat.annee, filter = filtreSurvol, changing = uniformsGlobe.uChange.value > .5, referencing = uniformsGlobe.uReference.value > .5;
-  const resolution = filter === 'feux' ? 2.5 : .5;
-  const cell = filter && filter !== 'declin' ? `${Math.floor((90 - s.lat) / resolution)}:${Math.floor((s.lon + 180) / resolution)}` : '';
-  const signature = [iso, cell, an, langue, filter, changing, referencing, scienceLoadFailed, fige, innerWidth, innerHeight].join('|');
-  // Reuse the cell/country reading and layout while only the pointer position changes.
-  if (!survolContenu || survolContenu.signature !== signature || survolContenu.l !== l || survolContenu.science !== SCIENCE || survolContenu.floods !== FLOOD_HAZARDS || survolContenu.population !== PAYS_POP){
+function lectureSurvol(s, an){
+  const iso=s?.iso, filter=filtreSurvol;
+  const changing=uniformsGlobe.uChange.value>.5, referencing=uniformsGlobe.uReference.value>.5;
     const copy = refinementCopy(langue), scope = hoverCopy[langue] || hoverCopy.en;
-    let diagnostic = null, note = '', label, color = '';
+    let diagnostic = null, note = '', support = '', label, color = '';
     if (filter){
       label = filter === 'declin' ? copy.population : T().critere[hoverMetricKey[filter]];
       if (filter === 'declin') {
         diagnostic = populationHover(PAYS_POP[iso], an, changing, langue);
+        support = T().popLabel;
         if (diagnostic && !changing) note = mapValueContext(filter, langue, an).hint;
       }
       else {
@@ -3922,35 +3937,52 @@ function montrerSurvol(s, cx, cy, fige){
           const words = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
           note = words[0].replace('{size}', formatHoverNumber(reading.resolutionDegrees, langue))
             .replace('{km}', String(Math.round(reading.resolutionDegrees * 111.2)));
+          support = note;
           if (changing || referencing || !['chaleur','secheresse','stabilite'].includes(filter)) note += ' ' + (isFlood ? words[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
           if (reading.modelCount > 1) note += ' ' + words[2].replace('{n}', String(reading.modelCount));
           else if (!isFlood && filter !== 'feux') note += ' ' + words[3];
         }
       }
     } else {
-      label = T().panelIndex;
-      const indice = iso ? indicePays(iso, an) : l?.[7] ? indiceHabitabilite(l, an) : null;
-      if (Number.isFinite(indice)){
-        diagnostic = {value: `${indice}/100`, detail: ''}; color = couleurNote(indice);
-        note = iso ? scope[2] : '';
-      }
+      label = experienceUICopy(langue).choose;
+      diagnostic = {value:'',detail:''};
     }
+    return {diagnostic,note,support,label,color,copy};
+}
+function montrerSurvol(s, cx, cy, fige){
+  const l = lieuSousPointeur(s), iso = s && s.iso;
+  if (!l && !iso){ cacherSurvol(); return; }
+  survolLieu = l; survolFige = !!fige; survolPoint = {s,cx,cy};
+  const an = etat.annee, filter = filtreSurvol, changing = uniformsGlobe.uChange.value > .5, referencing = uniformsGlobe.uReference.value > .5;
+  const resolution = filter === 'feux' ? 2.5 : .5;
+  const cell = filter && filter !== 'declin' ? `${Math.floor((90 - s.lat) / resolution)}:${Math.floor((s.lon + 180) / resolution)}` : '';
+  const signature = [iso, cell, an, langue, filter, changing, referencing, scienceLoadFailed, fige, innerWidth, innerHeight].join('|');
+  // Reuse the cell/country reading and layout while only the pointer position changes.
+  if (!survolContenu || survolContenu.signature !== signature || survolContenu.l !== l || survolContenu.science !== SCIENCE || survolContenu.floods !== FLOOD_HAZARDS || survolContenu.population !== PAYS_POP){
+    const {diagnostic,note,support,label,color,copy} = lectureSurvol(s,an);
     survolNom.textContent = iso ? nomPays(iso) : nomVille(l);
     survolIndice.textContent = diagnostic?.value || '';
     survolIndice.style.color = color;
     survolSous.textContent = `${label} · ${an}${filter && referencing ? ` · ${mapReferenceContext(filter, langue).value}` : filter && changing ? ` · ${copy.change}` : ''}`;
+    survolEl.querySelector('.s-scope').textContent = support;
     survolDetail.textContent = diagnostic?.detail || (diagnostic ? '' : filter === 'declin' ? T().ui.no_estimate : unavailableScienceText().title);
     survolNote.textContent = note;
     survolEl.classList.toggle('fige', survolFige);
     const actionable = survolFige && !!l;
-    survolEl.setAttribute('role', actionable ? 'button' : 'tooltip');
+    survolEl.setAttribute('role', actionable ? 'group' : 'tooltip');
+    survolEl.setAttribute('aria-labelledby','hover-location');
+    survolEl.querySelector('.s-actions').hidden = !survolFige;
+    survolEl.querySelector('.s-explanation').hidden = !note;
+
+    experienceUI?.translateHover();
     survolEl.tabIndex = actionable ? 0 : -1;
     survolLargeur = survolEl.offsetWidth; survolHauteur = survolEl.offsetHeight;
+    survolBas = survolFige ? Math.max(8,innerHeight-document.getElementById('map-inspector').getBoundingClientRect().top+12) : 8;
     survolContenu = {signature,l,science:SCIENCE,floods:FLOOD_HAZARDS,population:PAYS_POP};
   }
   const w = survolLargeur, h = survolHauteur;
   const x = Math.max(8, Math.min(innerWidth - w - 8, cx + 16 + w > innerWidth - 8 ? cx - 16 - w : cx + 16));
-  const y = Math.max(8, Math.min(innerHeight - h - 8, cy + 18 + h > innerHeight - 8 ? cy - 12 - h : cy + 18));
+  const y = Math.max(8, Math.min(innerHeight - h - survolBas, cy + 18 + h > innerHeight - survolBas ? cy - 12 - h : cy + 18));
   survolEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
   if (!survolEl.classList.contains('visible')) { survolEl.classList.add('visible'); survolEl.setAttribute('aria-hidden', 'false'); }
   if (document.body.classList.contains('sur-lieu') !== !!l) document.body.classList.toggle('sur-lieu', !!l);
@@ -3984,7 +4016,7 @@ function cacherSurvol(){
       cacherSurvol();
     }
     if (e.pointerType !== 'mouse') return;            // au doigt, c'est le tap qui lit
-    if (pointeurs.size) return;
+    if (pointeurs.size || survolFige) return;
     montrerSurvol(sousPointeur(e.clientX, e.clientY), e.clientX, e.clientY, false);
   });
   toile.addEventListener('pointerleave', () => { if (!survolFige) cacherSurvol(); });
@@ -3994,21 +4026,22 @@ function cacherSurvol(){
     const p = presse; presse = null;
     if (!p || p.id !== e.pointerId || pointeurs.size || p.bouge || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6 || performance.now() - p.t > 500) return;
     const s = sousPointeur(e.clientX, e.clientY);
-    if (e.pointerType === 'mouse'){
-      const l = lieuSousPointeur(s);
-      if (l){ cacherSurvol(); choisirLieu(l); }
-    } else {
-      // au doigt : un tap pose l'étiquette, un tap sur l'étiquette ouvre la fiche
-      montrerSurvol(s, e.clientX, e.clientY, true);
-    }
+    montrerSurvol(s, e.clientX, e.clientY, true);
   });
+  survolEl.addEventListener('click',e=>{
+    if(e.detail&&!survolEl.contains(cibleAppuiDiagnostic)){e.preventDefault();e.stopImmediatePropagation();}
+  },true);
   survolEl.addEventListener('keydown', e => {
-    if (survolFige && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); survolEl.click(); }
+    if(e.key==='Escape'){cacherSurvol();toile.focus({preventScroll:true});}
   });
-  survolEl.addEventListener('click', e => {
-    if (e.detail && !survolEl.contains(cibleAppuiDiagnostic)) return;
-    if (!survolLieu) return;
-    const l = survolLieu; cacherSurvol(); choisirLieu(l);
+  survolEl.querySelector('[data-hover-action="explore"]').addEventListener('click',()=>{
+    if(!survolLieu)return; const l=survolLieu; cacherSurvol(); choisirLieu(l);
+  });
+  survolEl.querySelector('[data-hover-action="close"]').addEventListener('click',cacherSurvol);
+  survolEl.querySelector('.s-explanation').addEventListener('toggle',()=>{
+    survolContenu=null;
+    survolLargeur=survolEl.offsetWidth;survolHauteur=survolEl.offsetHeight;
+    if(survolPoint){const {cx,cy}=survolPoint;survolEl.style.transform=`translate(${Math.max(8,Math.min(innerWidth-survolLargeur-8,cx+16))}px,${Math.max(8,Math.min(innerHeight-survolHauteur-survolBas,cy+18))}px)`;}
   });
 }
 const etiquettesEl = document.getElementById('etiquettes');
@@ -4165,6 +4198,46 @@ addEventListener('pagehide', () => {
   cibles.forEach(c => c.dispose()); moteur.dispose();
   for (const id in SoundManager.registre) SoundManager.registre[id].audio.unload();
 });
+experienceUI = createExperienceUI({
+  getState:()=>({language:langue,year:etat.annee,filter:filtreSurvol,hidden:coucheMasquee,
+    mode:uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value',
+    location:survolFige&&survolPoint?survolNom.textContent:lieuDossier?nomVille(lieuDossier):'',
+    point:survolFige?survolPoint?.s:null}),
+  getSource:()=>({description:experienceCopy(langue).indicators[filtreSurvol]||'',
+    source:T().infoSource[filtreSurvol]||'',method:document.getElementById('layer-method').textContent,technical:T().infoplus[filtreSurvol]||'',
+    notice:T().indicatorNotice,animation:T().betaNotice,summary:[...document.querySelectorAll('#filter-summary .summary-headline,#filter-summary .summary-reference,#filter-summary .summary-detail')].map(el=>el.textContent).filter(Boolean).join('\n')}),
+  readYear:year=>survolPoint?lectureSurvol(survolPoint.s,year):null,
+  toggleLayer:basculerVisibilite,
+  restore:async params=>{
+    await calquesPrets;
+    const filter=params.get('layer');
+    const button=[...document.querySelectorAll('.calque')].find(b=>b.dataset.cle===filter);
+    if(button&&!button.disabled){if(!button.classList.contains('actif'))button.click();
+      const mode=params.get('mode');
+      if(['value','change'].includes(mode)||mode==='reference'&&historicalFilters.has(filter)){
+        appliquerModeCarte(mode);modesCarte.set(filter,mode);
+      }
+      if(params.get('hidden')==='1'&&!coucheMasquee)basculerVisibilite();
+    }
+    const year=params.get('year');
+    if(/^20(?:2[6-9]|[34][0-9]|50)$/.test(year||'')){curseur.value=year;curseur.dispatchEvent(new Event('input',{bubbles:true}));}
+    majContexteCalques();
+    if(params.has('lat')&&params.has('lon')){
+      const lat=Number(params.get('lat')),lon=Number(params.get('lon'));
+      if(Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=-90&&lat<=90&&lon>=-180&&lon<=180){
+        const started=performance.now();
+        while((!PAYS_RASTER||!PAYS_LIGNES.length||!document.body.classList.contains('pret'))&&performance.now()-started<30000)await new Promise(resolve=>setTimeout(resolve,250));
+        const iso=paysSous(lat,lon);
+        if(iso){arreterVolCamera();introOrbit?.kill();controles.autoRotate=false;
+          camera.position.copy(latLonVersVec3(lat,lon,camera.position.length()));camera.lookAt(0,0,0);controles.update();camera.updateMatrixWorld();
+          montrerSurvol({iso,lat,lon,ville:null},innerWidth/2,innerHeight/2,true);
+        }
+      }
+    }
+  },
+  prepareURL:()=>majLien(true)
+});
+experienceUI.sync();
 </script>
 </body>
 </html>
