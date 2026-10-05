@@ -34,6 +34,7 @@ for(const mobile of [false,true]){
    assert.deepEqual(geometry,{overlap:false,panelOutside:false,overflow:false});
    await page.screenshot({path:`${out}/${name}-${key}-2050.png`});
   }
+  if(await page.locator('#map-toggle').getAttribute('aria-expanded')!=='true')await page.locator('#map-toggle').click();
   await page.locator('#menu-sources').click();
   await page.screenshot({path:`${out}/${name}-sources.png`});
   await page.locator('#view-sources .ux-close').click();
