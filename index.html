@@ -303,7 +303,6 @@
       </svg>
     </button>
     <div id="menu-reglages">
-      <button class="bouton-ico fa-lien" id="bouton-position"></button>
       <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" type="button" aria-haspopup="dialog"></button>
@@ -742,7 +741,7 @@ function notesPays(iso, t){
   return notes;
 }
 
-/* Distance grand-cercle en km — sert à la géolocalisation « ma position ». */
+/* Distance grand-cercle en km. */
 function distanceKm(la1, lo1, la2, lo2){
   const R = 6371, r = Math.PI / 180;
   const dLa = (la2 - la1) * r, dLo = (lo2 - lo1) * r;
@@ -3237,28 +3236,6 @@ function retirerMarqueur(){
     onComplete: () => { if (marqueurUniforms.uForce.value === 0) marqueur.visible = false; } });
 }
 
-/* ---- « ma position » : la grande ville la plus proche, sur accord explicite ---- */
-document.getElementById('bouton-position').addEventListener('click', () => {
-  if (document.getElementById('bouton-reglages').getAttribute('aria-expanded') === 'true')
-    document.getElementById('bouton-reglages').click();
-  const lieuDemande = lieuDossier;
-  const indisponible = () => {
-    if (lieuDossier !== lieuDemande) return;
-    fermerDossier();
-    montrerAccroche(T().posIndispo, () => champ.focus(), 0);
-  };
-  if (!navigator.geolocation || !LIEUX.length){ indisponible(); return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude, longitude } = pos.coords;
-    let proche = null, dMin = Infinity;
-    for (const l of LIEUX){
-      const d = distanceKm(latitude, longitude, l[2], l[3]);
-      if (d < dMin){ dMin = d; proche = l; }
-    }
-    if (proche) choisirLieu(proche);
-  }, indisponible, { maximumAge: 600000, timeout: 8000 });
-});
-
 document.getElementById('dossier-croix').addEventListener('click', () => { fermerDossier(); SoundManager.play('ui_click'); });
 addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
@@ -3472,7 +3449,7 @@ function traduire(){
   }
   // sur ecran tactile, le raccourci clavier n'a pas de sens
   champ.placeholder = matchMedia('(pointer: coarse)').matches ? t.chercher.replace(/\s*—\s*⌘K$/, '') : t.chercher;
-  for (const [id, cle] of Object.entries(t.aria)) if (id !== 'bouton-langue') document.getElementById(id).setAttribute('aria-label', cle);
+  for (const [id, cle] of Object.entries(t.aria)) if (id !== 'bouton-langue') document.getElementById(id)?.setAttribute('aria-label', cle);
   curseur.setAttribute('aria-valuetext', `${etat.annee} — ${t.distanceAn(etat.annee - 2026)}`);
   document.getElementById('bouton-partager').textContent = t.partagerSite;
   if (lieuDossier) champ.value = nomVille(lieuDossier);
@@ -3480,7 +3457,6 @@ function traduire(){
   document.getElementById('dossier-comparer').textContent = t.comparer;
   document.getElementById('dossier-story').textContent = t.story;
   document.getElementById('dossier-sources').textContent = t.sources;
-  document.getElementById('bouton-position').textContent = t.aria['bouton-position'];
   majDistanceAn(); majContexteCalques(); cacherAccroche();
   if (defiLien && lieuDossier && !document.body.classList.contains('pret')) montrerAccroche(t.accrocheDefi, () => document.getElementById('dossier-comparer').click(), 3400);
   boutonSon.textContent = t.son(!SoundManager.mute);
