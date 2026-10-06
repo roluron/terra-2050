@@ -43,7 +43,7 @@ body:has(#earth-shell[open]) #voile{visibility:hidden}
 #earth-shell h1,#earth-shell .letter p{opacity:0;filter:blur(8px);transform:translateY(8px);animation:earth-arrive 2.2s cubic-bezier(.22,.61,.36,1) calc(.2s + var(--line,0)*1.6s) forwards}
 #earth-shell .word{position:relative;display:inline-block;white-space:pre;cursor:default;outline-offset:4px;vertical-align:bottom}
 #earth-shell .latin{opacity:0;transition:opacity .55s}
-#earth-shell .glyphs{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;font:14px/1.5 Georgia,serif;letter-spacing:2px;color:#b6bfb5;animation:earth-wave 7s ease-in-out infinite;animation-delay:var(--phase);pointer-events:none;white-space:nowrap}
+#earth-shell .glyphs{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;font:14px/1.5 Georgia,serif;font-variant-emoji:text;letter-spacing:2px;color:#b6bfb5;animation:earth-wave 7s ease-in-out infinite;animation-delay:var(--phase);pointer-events:none;white-space:nowrap}
 #earth-shell .revealing .glyphs{animation:earth-decode .55s ease-in-out infinite;color:#dce2d8}
 #earth-shell .revealing .glyphs.roman{font-family:EarthLausanne,'Noto Sans Cuneiform',Arial,sans-serif;font-style:italic;font-size:1em;letter-spacing:-.015em}
 #earth-shell .revealed .glyphs{display:none}

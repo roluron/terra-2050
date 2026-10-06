@@ -21,7 +21,7 @@ export function startOrb(canvas, origins, options) {
   let waitedAt = null, launch = null;
   const current = origins.map(origin => ({ x: origin.x, y: origin.y }));
   const coarse = matchMedia('(pointer: coarse)').matches;
-  const symbols = Array.from('·+✳⋮✶⊹');
+  const symbols = Array.from('·+✺⋮✶⊹');
   const resize = () => {
     width = innerWidth; height = innerHeight;
     // des points lumineux n'ont pas besoin de 2x sur tablette : un quart des pixels à remplir

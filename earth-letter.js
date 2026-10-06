@@ -8,7 +8,7 @@ shell.addEventListener('keydown', event => event.stopPropagation());
 const letter = document.querySelector('#letter');
 const future = document.querySelector('#future');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const signs = Array.from('·✳+⋮✶⋅⊹✧');
+const signs = Array.from('·✺+⋮✶⋅⊹✧');
 const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
 let finished = 0, pointerReady = false, letterReady = false, arrivalRevision = 0;
@@ -55,14 +55,14 @@ function buildLetter() {
   letter.replaceChildren(opening, body, signature); future.textContent = t.letterFuture;
   document.querySelector('#earth-recovery p').textContent = t.globeSlow;
   document.querySelector('#earth-retry').textContent = t.retry;
-  const segmenter = new Intl.Segmenter(language(), {granularity:'word'});
+  const segmenter = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter(language(), {granularity:'word'}) : null;
 for (const [line, paragraph] of [shell.querySelector('h1'), ...letter.querySelectorAll('p')].entries()) {
   paragraph.style.setProperty('--line', line);
   for (const node of [...paragraph.childNodes]) {
     if (node.nodeType !== Node.TEXT_NODE) continue;
     const fragment = document.createDocumentFragment();
     const segments = ['ja', 'zh', 'zh-Hant'].includes(language())
-      ? [...segmenter.segment(node.textContent)].reduce((parts, {segment, isWordLike}) => {
+      ? [...(segmenter ? segmenter.segment(node.textContent) : Array.from(node.textContent, segment => ({segment,isWordLike:!/[\p{P}\s]/u.test(segment)})))].reduce((parts, {segment, isWordLike}) => {
         if (!isWordLike && parts.length && !/\s/.test(segment)) parts[parts.length - 1] += segment;
         else parts.push(segment);
         return parts;
@@ -137,7 +137,7 @@ function finish({ word }) {
   }
 }
 
-document.getElementById('earth-letter-main').addEventListener('pointermove', event => {
+function revealNearPointer(event) {
   if (!letterReady) return;
   pointerReady = true;
   for (const item of words) {
@@ -147,7 +147,9 @@ document.getElementById('earth-letter-main').addEventListener('pointermove', eve
     const dy = Math.max(rect.top - event.clientY, 0, event.clientY - rect.bottom);
     if (dx * dx + dy * dy < 30 * 30) reveal(item);
   }
-});
+}
+document.getElementById('earth-letter-main').addEventListener('pointermove', revealNearPointer);
+document.getElementById('earth-letter-main').addEventListener('pointerdown', revealNearPointer);
 
 
 let departing = false, entered = false, stopOrb, recoveryTimer;
@@ -198,4 +200,4 @@ future.addEventListener('click', () => {
   });
   recoveryTimer = setTimeout(() => { if (!entered) document.querySelector('#earth-recovery').hidden = false; }, 16000);
 });
-window.addEventListener('pagehide', () => { clearInterval(codeTimer); clearTimeout(recoveryTimer); stopOrb?.(); });
+window.addEventListener('pagehide', event => { if (!event.persisted) { clearInterval(codeTimer); clearTimeout(recoveryTimer); stopOrb?.(); } });
