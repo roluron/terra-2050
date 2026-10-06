@@ -31,7 +31,9 @@ html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK T
 :is(button,summary,label,a) {-webkit-tap-highlight-color:transparent}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,.pedago-carte,.language-content) :is(button,summary,input,a):focus-visible {outline:2px solid #d1d3d6;outline-offset:4px}
 
-#language-dialog {background:#050707}
+#language-dialog {background:#050606}
+.language-content {animation:none}
+.language-content.language-entering {overflow:visible}
 .language-content {--police:"TWK Lausanne",-apple-system,sans-serif;position:relative;isolation:isolate;width:min(420px,100%);padding:32px;overflow:hidden;text-align:left}
 .language-content::before {content:'';position:absolute;z-index:-1;pointer-events:none;inset:0 0 auto;height:220px;background:radial-gradient(ellipse at 0% 5%,#98caff38,transparent 55%),radial-gradient(ellipse at 100% 0%,#d3b4ff26,transparent 55%);filter:blur(28px);animation:glass-drift 12s ease-in-out infinite alternate}
 .language-globe {display:block;width:62px;height:62px;margin:0 0 28px;opacity:1;filter:drop-shadow(0 0 18px #c6c8cb25)}

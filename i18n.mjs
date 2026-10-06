@@ -32,7 +32,7 @@ const languagePrompts = {
   it: ['Scegli la tua lingua', 'Continua'],
 };
 const languageDialog = document.getElementById('language-dialog');
-let afterLanguage, welcome = false, closingLanguage = false;
+let afterLanguage, welcome = false, closingLanguage = false, languageArrival;
 document.getElementById('language-options').replaceChildren(...Object.entries(languageNames).map(([code, name], index) => {
   const label = document.createElement('label'), input = document.createElement('input'), text = document.createElement('span');
   label.style.setProperty('--row', index);
@@ -53,16 +53,57 @@ function syncLanguageDialog() {
 export function openLanguage(onClose, first = false) {
   if (languageDialog.open) return;
   afterLanguage = onClose; welcome = first; closingLanguage = false;
-  syncLanguageDialog(); languageDialog.showModal();
-  document.getElementById('boot-screen').hidden = true;
+  syncLanguageDialog();
+  const boot = document.getElementById('boot-screen');
+  const planet = boot.querySelector('picture');
+  const origin = planet?.querySelector('img').getBoundingClientRect();
+  const content = languageDialog.querySelector('.language-content');
+  if (planet) content.classList.add('language-entering');
+  languageDialog.showModal();
+  if (planet) {
+    planet.querySelector('img').classList.add('language-globe');
+    document.getElementById('language-planet').replaceWith(planet);
+    languageArrival = arriveLanguage(content, planet.querySelector('img'), origin);
+  }
+  boot.hidden = true;
   const target = first ? document.getElementById('language-title') : languageDialog.querySelector('input:checked');
   if (first) target.tabIndex = -1;
-  target.focus({preventScroll:true});
+  if (planet) languageArrival.then(() => {
+    if (languageDialog.open && !closingLanguage) target.focus({preventScroll:true});
+  });
+  else target.focus({preventScroll:true});
+}
+async function arriveLanguage(content, globe, origin) {
+  content.inert = true;
+  const animations = [];
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const target = globe.getBoundingClientRect();
+    const x = origin.x + origin.width / 2 - target.x - target.width / 2;
+    const y = origin.y + origin.height / 2 - target.y - target.height / 2;
+    const style = getComputedStyle(content);
+    const timing = {duration:1100,easing:'cubic-bezier(.22,.61,.36,1)',fill:'both'};
+    animations.push(globe.animate([
+      {transform:`translate(${x}px,${y}px) scale(${origin.width / target.width})`},
+      {transform:'none'}
+    ], {...timing,delay:120}));
+    animations.push(content.animate([
+      {backgroundColor:'transparent',borderColor:'transparent',boxShadow:'none'},
+      {backgroundColor:style.backgroundColor,borderColor:style.borderColor,boxShadow:style.boxShadow}
+    ], {...timing,delay:250}));
+    for (const element of content.querySelectorAll('h2,fieldset')) animations.push(element.animate([
+      {opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}
+    ], {...timing,duration:700,delay:450}));
+    await Promise.allSettled(animations.map(animation => animation.finished));
+  }
+  for (const animation of animations) animation.cancel();
+  content.classList.remove('language-entering');
+  content.inert = false;
 }
 async function closeLanguage() {
   if (closingLanguage) return;
-  setLanguage(languageDialog.querySelector('input:checked').value);
   closingLanguage = true;
+  await languageArrival;
+  setLanguage(languageDialog.querySelector('input:checked').value);
   const content = languageDialog.querySelector('.language-content');
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     await content.animate([{opacity:1,filter:'blur(0px)',transform:'translateY(0)'},{opacity:0,filter:'blur(8px)',transform:'translateY(-8px)'}], {duration:420,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).finished;
