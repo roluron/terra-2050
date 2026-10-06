@@ -220,6 +220,8 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 .compare-time .regle i {width:2px;height:10px;border-radius:1px;background:var(--texte);transform-origin:bottom;opacity:.25}
 .compare-time #comparison-year {grid-area:3/1/4/3;appearance:none;-webkit-appearance:none;position:relative;z-index:2;width:100%;height:44px;margin:0;padding:0;background:transparent;cursor:ew-resize}
 #curseur::-webkit-slider-runnable-track,#comparison-year::-webkit-slider-runnable-track {height:44px;border:0;background:transparent;box-shadow:none}
+#curseur,#comparison-year {touch-action:none}
+#dossier #timeline #curseur {width:100%}
 #curseur::-moz-range-track,#comparison-year::-moz-range-track,#curseur::-moz-range-progress,#comparison-year::-moz-range-progress {border:0;background:transparent;box-shadow:none}
 #curseur::-webkit-slider-thumb,#curseur:hover::-webkit-slider-thumb,body.cale-annee #curseur::-webkit-slider-thumb,#comparison-year::-webkit-slider-thumb {appearance:none;-webkit-appearance:none;width:2px;height:44px;opacity:0;border:0;border-radius:0;background:transparent;box-shadow:none;transform:none}
 #curseur::-moz-range-thumb,#comparison-year::-moz-range-thumb {width:2px;height:44px;opacity:0;border:0;background:transparent;box-shadow:none}
