@@ -11,5 +11,7 @@ assert.equal(manifest.short_name,'fromearth');
 const html=await readFile(new URL('../../index.html',import.meta.url),'utf8');
 assert.match(html,/href="https:\/\/fromanother\.love" target="_blank" rel="noopener"/);
 assert.match(html,/assets\/fromearth-projections\.jpg/);
+assert.match(html,/fromearth<em>／<\/em>2050/);
+assert.doesNotMatch(html,/brand-horizon|assets\/fromearth\.svg/);
 assert.doesNotMatch(html,/title: 'TERRA|partagerTexte\('TERRA/);
 console.log('PASS fromearth identity, credit and eight languages');

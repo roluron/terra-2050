@@ -13,14 +13,12 @@ html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK T
 #earth-shell:lang(zh-Hant) h1,#earth-shell:lang(zh-Hant) .signature {font-family:'Songti TC','Noto Serif CJK TC',serif}
 ::selection {background:#c9cbce45;color:#fff}
 #titre h1 {font-weight:400;letter-spacing:-.055em}
-#wordmark .brand-logo{display:block;width:132px;height:auto}
-#wordmark .brand-horizon{display:block;margin-top:5px;font:400 9px/1 var(--police);letter-spacing:.16em;color:var(--glass-muted)}
-#v-wordmark img{display:block;width:clamp(240px,56vw,600px);height:auto}
-#v-wordmark .brand-horizon{display:block;margin-top:18px;font:400 18px/1 var(--police);letter-spacing:.16em;color:var(--muter)}
+#titre #wordmark{font-family:"TWK Lausanne",sans-serif;font-size:26px;white-space:nowrap}
+#v-wordmark{font-family:"TWK Lausanne",sans-serif;font-size:clamp(28px,7vw,110px)}
 .creator-credit{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--glass-edge);font:400 11px/1.4 var(--police);color:var(--glass-muted);white-space:nowrap}
 .creator-credit a{display:flex;align-items:center;min-height:44px}
 .creator-credit img{display:block;width:94px;height:auto}
-@media(max-width:720px){#wordmark .brand-logo{width:100px}}
+@media(max-width:720px){#titre #wordmark{font-size:clamp(14px,4.1vw,22px)}}
 #titre h1 em {color:var(--bleu)}
 :is(#map-inspector,#dossier,#city-comparison,.pedago-carte,.language-content) {border-radius:28px}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,.language-content,#calque-bulle,#survol,#accroche) {backdrop-filter:blur(8px) saturate(1.5);-webkit-backdrop-filter:blur(8px) saturate(1.5)}

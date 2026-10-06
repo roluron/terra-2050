@@ -80,8 +80,7 @@ try {
       #og-globe { position:absolute; inset:0; width:1200px; height:630px; }
       #og-brand { position:absolute; left:66px; top:52px; display:flex; align-items:center;
         font-size:44px; line-height:1; font-weight:400; letter-spacing:-2.4px; }
-      #og-brand img { width:235px; height:auto; }
-      #og-brand span { font-size:18px; letter-spacing:1px; margin-left:24px; }
+      #og-brand em { font-style:normal; color:#C1CAD5; }
       #og-credit { position:absolute; left:68px; bottom:26px; display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(245,247,250,.70); }
       #og-credit img { width:100px; height:auto; }
       #og-heading { position:absolute; left:66px; top:181px; margin:0; width:530px;
@@ -97,7 +96,7 @@ try {
     composition.id = 'og-composition';
     composition.innerHTML = `
       <img id="og-globe" alt="Earth globe" />
-      <div id="og-brand" aria-label="fromearth · 2050"><img src="./assets/fromearth.svg" alt="fromearth"><span>2050</span></div>
+      <div id="og-brand" aria-label="fromearth / 2050">fromearth<em>／</em>2050</div>
       <h1 id="og-heading">Explore<br>climate<br>projections</h1>
       <p id="og-count">7 indicators · 34,099 cities</p>
       <p id="og-disclosure">Model estimates and an experimental index. Assumptions and source limits are disclosed.</p>

@@ -225,7 +225,7 @@
 
   <div class="v-centre">
     <div class="v-eyebrow"><span data-t="sous1"></span></div>
-     <div id="v-wordmark" aria-hidden="true"><span class="v-masque"><img class="lettre" src="./assets/fromearth.svg" alt=""></span><span class="brand-horizon">2050</span></div>
+     <div id="v-wordmark" aria-hidden="true"><span class="v-masque"><span class="lettre">fromearth<em>／</em>2050</span></span></div>
     <div class="v-eyebrow v-eyebrow-bas"><span data-t="sous2"></span></div>
 
     <div class="v-charge">
@@ -239,7 +239,7 @@
 </div>
 
 <header id="titre" class="panneau">
-  <h1 id="wordmark" aria-label="fromearth · 2050"><img class="brand-logo" src="./assets/fromearth.svg" alt="fromearth"><span class="brand-horizon">2050</span></h1>
+  <h1 id="wordmark" aria-label="fromearth / 2050"><span>fromearth<em>／</em>2050</span></h1>
   <div class="micro" data-t="sousHeader"></div>
 </header>
 
@@ -2901,9 +2901,9 @@ async function genererStory(opts){
   const cjk = ['ja', 'zh', 'zh-Hant'].includes(langue);
   const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const indice50 = pays ? indicePays(l[1], 2050) : (l[7] ? indiceHabitabilite(l, 2050) : null);
-  const logo = new Image(), creator = new Image();
-  logo.src = './assets/fromearth.svg'; creator.src = './assets/fromanother.svg';
-  await Promise.all([... [`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`].map(f => document.fonts.load(f)), logo.decode(), creator.decode()]);
+  const creator = new Image();
+  creator.src = './assets/fromanother.svg';
+  await Promise.all([... [`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`,'400 62px "TWK Lausanne"'].map(f => document.fonts.load(f)), creator.decode()]);
   const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
   const g = cv.getContext('2d');
   const CREME = '#F5F7FA', MUTER = 'rgba(245,247,250,0.65)';
@@ -2922,9 +2922,8 @@ async function genererStory(opts){
   lueur.addColorStop(0, 'rgba(23,64,169,0.5)'); lueur.addColorStop(1, 'rgba(23,64,169,0)');
   g.fillStyle = lueur; g.fillRect(0, 0, 1080, 1920);
 
-  g.drawImage(logo, 300, 108, 480, 480 * logo.naturalHeight / logo.naturalWidth);
   g.textAlign = 'center';
-  g.fillStyle = MUTER; g.font = `400 28px ${sans}`; g.fillText('2050', 540, 245);
+  g.fillStyle = CREME; g.font = '400 62px "TWK Lausanne"'; g.letterSpacing = '-3px'; g.fillText('fromearth / 2050', 540, 190);
   g.letterSpacing = cjk ? '0px' : '3px'; g.font = `500 28px ${sans}`; g.fillStyle = MUTER;
   g.fillText(T().ui.experimental_climate_index + ' · ' + an, 540, 320, 840);
   g.letterSpacing = '0px';
