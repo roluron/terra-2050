@@ -9,7 +9,7 @@
 #language-dialog[open]{display:grid;place-items:center}
 .language-content{width:min(340px,100%);margin:auto;text-align:center;animation:language-arrive 1.4s cubic-bezier(.19,1,.22,1) both}
 .language-globe{width:84px;height:84px;opacity:.85;margin-bottom:28px;filter:drop-shadow(0 0 16px #cbd5bd15)}
-#language-title{font:400 32px/1.2 "TWK Lausanne",Arial,sans-serif;letter-spacing:-.055em;margin:0 0 34px}
+#language-title{font:400 32px/1.2 "TWK Lausanne",Arial,sans-serif;letter-spacing:-.055em;margin:0 0 34px;outline:0}
 #language-dialog:is(:lang(ja),:lang(zh)) #language-title{font:400 24px/1.5 var(--police),sans-serif;letter-spacing:0}
 #language-options{border:0;padding:0;margin:0;display:grid;gap:3px;text-align:left;min-width:0}
 #language-options label{position:relative;display:flex;align-items:center;min-height:48px;padding:0 20px;border:1px solid transparent;border-radius:12px;cursor:pointer;transition:background .35s,border-color .35s,color .35s,transform .5s cubic-bezier(.19,1,.22,1);color:#939b9e;animation:language-arrive .9s cubic-bezier(.19,1,.22,1) calc(.12s + var(--row,0)*.045s) both}

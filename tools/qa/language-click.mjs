@@ -12,6 +12,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.equal(await page.locator('#language-continue').count(),0);
   assert.equal(await page.locator('#language-title').evaluate(e=>e===document.activeElement),true);
+  assert.equal(await page.locator('#language-title').evaluate(e=>getComputedStyle(e).outlineStyle),'none');
   const idle=await page.locator('#language-options label').evaluateAll(labels=>labels.map(e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.borderColor,s.boxShadow,s.outlineStyle,s.color];}));
   assert.equal(new Set(idle.map(s=>JSON.stringify(s))).size,1,'all languages have the same initial appearance');
   assert.deepEqual(idle[0].slice(0,5),['rgba(0, 0, 0, 0)','none','rgba(0, 0, 0, 0)','none','none']);
