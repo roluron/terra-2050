@@ -36,13 +36,24 @@ const localRows={
  'zh-Hant':['此區域的數值','與{year}年的估計相比。','這個國家的估計人口。'],
 };
 export const readingCopy=locale=>({...record(dataKeys,dataRows,locale),...record(['localValues','yearComparison','countryPopulation'],localRows,locale),historicalMode:historicalLabels[locale]||historicalLabels.en});
-export function overviewCopy(filter,reading,locale){
+const presentHeat={
+ en:['The hottest month has become {n} °C warmer on average','The hottest month has become {n} °C cooler on average','Model estimate for 2026, compared with 1970–2000.'],
+ fr:['Le mois le plus chaud a gagné {n} °C en moyenne','Le mois le plus chaud a perdu {n} °C en moyenne','Selon le modèle pour 2026, par rapport à 1970–2000.'],
+ es:['El mes más caluroso ha subido {n} °C de media','El mes más caluroso ha bajado {n} °C de media','Estimación del modelo para 2026, comparada con 1970–2000.'],
+ it:['Il mese più caldo è diventato in media {n} °C più caldo','Il mese più caldo è diventato in media {n} °C più fresco','Stima del modello per il 2026, rispetto al 1970–2000.'],
+ vi:['Tháng nóng nhất đã nóng hơn trung bình {n} °C','Tháng nóng nhất đã mát hơn trung bình {n} °C','Ước tính từ mô hình cho năm 2026, so với 1970–2000.'],
+ ja:['最も暑い月は平均{n} °C暑くなりました','最も暑い月は平均{n} °C涼しくなりました','1970–2000年と比較した2026年のモデル推計。'],
+ zh:['最热月份已平均升温{n} °C','最热月份已平均降温{n} °C','2026年的模型估计，与1970–2000年相比。'],
+ 'zh-Hant':['最熱月份已平均升溫{n} °C','最熱月份已平均降溫{n} °C','2026年的模型估計，與1970–2000年相比。'],
+};
+export function overviewCopy(filter,reading,locale,year){
  const c=record(headlineKeys,headlines,locale),n=(v,d=1)=>formatHoverNumber(v,locale,false,d);
  const more=reading.value>=0,sign=reading.value===0?'Same':more?'More':'Less';
  const key={chaleur:'heat'+(more?'More':'Less'),stabilite:'warming'+(more?'More':'Less'),feux:'fire'+(more?'More':'Less'),secheresse:'dry',mer:'coast'+sign,fleuves:'river'+sign,declin:'population'}[filter];
  const eastAsian=['ja','zh','zh-Hant'].includes(locale);
  const value=filter==='declin'?reading.value/(eastAsian?1e8:1e9):Math.abs(reading.value);
- return {headline:c[key].replace('{n}',n(value,['feux','secheresse'].includes(filter)?0:1)),reference:c[filter==='declin'?'populationReference':['mer','fleuves'].includes(filter)?'floodReference':filter==='chaleur'?'summerReference':filter==='feux'?'fireReference':'climateReference'],detail:humanCopy(locale).effects[filter]};
+ const currentHeat=filter==='chaleur'&&year===2026?(presentHeat[locale]||presentHeat.en):null;
+ return {headline:(currentHeat?currentHeat[more?0:1]:c[key]).replace('{n}',n(value,['feux','secheresse'].includes(filter)?0:1)),reference:currentHeat?currentHeat[2]:c[filter==='declin'?'populationReference':['mer','fleuves'].includes(filter)?'floodReference':filter==='chaleur'?'summerReference':filter==='feux'?'fireReference':'climateReference'],detail:humanCopy(locale).effects[filter]};
 }
 export function explainSummary(filter,reading,locale,year){
  if(!reading?.available||!Number.isFinite(reading.value)||!humanCopy(locale).names[filter])return null;

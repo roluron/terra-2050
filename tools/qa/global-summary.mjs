@@ -11,7 +11,7 @@ const read = path => readFile(new URL(path, root));
 const json = async path => JSON.parse(await read(path));
 const floats = bytes => new Float32Array(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
 const filters = ['chaleur', 'secheresse', 'feux', 'mer', 'fleuves', 'declin', 'stabilite'];
-const years = [2026, 2030, 2050];
+const years = Array.from({ length: 25 }, (_, i) => 2026 + i);
 let checks = 0;
 const close = (actual, expected, tolerance = 1e-8) => {
   assert.ok(Math.abs(actual - expected) <= tolerance, `${actual} differs from ${expected}`); checks++;
@@ -227,7 +227,7 @@ for (const locale of Object.keys(summaryCopy)) for (const filter of filters) for
     assert.ok(text.reference.includes(reading.referencePeriod.join('–'))); assert.ok(text.detail.includes(reading.scenario));
     if (filter === 'chaleur') assert.ok(text.detail.includes(summaryCopy[locale].heatDefinition));
     if (filter === 'secheresse') assert.ok(text.detail.includes(summaryCopy[locale].aridityDefinition));
-    if (filter === 'feux') assert.ok(text.detail.includes('1850'));
+    if (filter === 'feux') assert.ok(text.detail.includes(summaryCopy[locale].fireThreshold));
     if (['mer', 'fleuves'].includes(filter)) assert.ok(text.detail.includes(summaryCopy[locale].percentagePoints));
   }
   const simple=summarizeText(filter,reading,locale,year),data=explainSummary(filter,reading,locale,year),human=humanCopy(locale);
@@ -242,6 +242,13 @@ for (const locale of Object.keys(summaryCopy)) for (const filter of filters) for
 }
 for (const locale of Object.keys(summaryCopy)) {
   const reading = { ...real.reading('chaleur', 2050) };
+  const current = summarizeText('chaleur', reading, locale, 2026);
+  const future = summarizeText('chaleur', reading, locale, 2027);
+  assert.notEqual(current.headline, future.headline);
+  assert.ok(current.reference.includes('2026') && current.reference.includes('1970–2000'));
+  assert.equal(future.headline, summarizeText('chaleur', reading, locale, 2050).headline);
+  assert.notEqual(current.headline, summarizeText('chaleur', { ...reading, value: -reading.value }, locale, 2026).headline);
+  copyChecks += 4;
   for (const value of [0, -.25, .0001, -.0001]) {
     const text = technicalSummaryText('chaleur', { ...reading, value }, locale, 2050);
     assert.ok(text.headline.includes('°C'));

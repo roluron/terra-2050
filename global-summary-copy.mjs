@@ -11,7 +11,7 @@ export const summaryCopy = {
     domain: 'Valid source-cell fractions, weighted by represented area', compared: 'vs {period}', estimate: '{year} · interpolated model periods',
     heatDefinition: 'Monthly mean of daily maxima', aridityDefinition: 'Lower De Martonne index · not drought probability',
     flood: '100-year event · depth >0.5 m · no flood protection',
-    fireThreshold: 'Local FWI 95th-percentile threshold: 1850–1899',
+    fireThreshold: 'Local preindustrial FWI 95th-percentile threshold',
     populationDetail: '{year} · UN WPP medium · sum of {n} country/area projections',
   },
   fr: {
@@ -22,7 +22,7 @@ export const summaryCopy = {
     domain: 'Fractions de cellules sources valides, pondérées par la surface représentée', compared: 'par rapport à {period}', estimate: '{year} · périodes du modèle interpolées',
     heatDefinition: 'Moyenne mensuelle des maxima quotidiens', aridityDefinition: 'Indice De Martonne plus bas · pas une probabilité de sécheresse',
     flood: 'Crue centennale · profondeur >0,5 m · sans protections',
-    fireThreshold: 'Seuil local du 95e percentile de FWI : 1850–1899',
+    fireThreshold: 'Seuil local du 95e percentile de FWI préindustriel',
     populationDetail: '{year} · ONU, variante moyenne · somme des projections de {n} pays/territoires',
   },
   it: {
@@ -33,7 +33,7 @@ export const summaryCopy = {
     domain: 'Frazioni di celle sorgente valide, ponderate per superficie rappresentata', compared: 'rispetto a {period}', estimate: '{year} · periodi del modello interpolati',
     heatDefinition: 'Media mensile dei massimi giornalieri', aridityDefinition: 'Indice De Martonne inferiore · non una probabilità di siccità',
     flood: 'Evento centennale · profondità >0,5 m · senza protezioni',
-    fireThreshold: 'Soglia locale del 95º percentile FWI: 1850–1899',
+    fireThreshold: 'Soglia locale del 95º percentile FWI preindustriale',
     populationDetail: '{year} · ONU, variante media · somma delle proiezioni di {n} paesi/territori',
   },
   es: {
@@ -44,7 +44,7 @@ export const summaryCopy = {
     domain: 'Fracciones de celdas fuente válidas, ponderadas por superficie representada', compared: 'respecto a {period}', estimate: '{year} · periodos del modelo interpolados',
     heatDefinition: 'Media mensual de las máximas diarias', aridityDefinition: 'Índice De Martonne menor · no probabilidad de sequía',
     flood: 'Evento centenario · profundidad >0,5 m · sin protecciones',
-    fireThreshold: 'Umbral local del percentil 95 de FWI: 1850–1899',
+    fireThreshold: 'Umbral local del percentil 95 de FWI preindustrial',
     populationDetail: '{year} · ONU, variante media · suma de proyecciones de {n} países/territorios',
   },
   vi: {
@@ -55,7 +55,7 @@ export const summaryCopy = {
     domain: 'Tỷ lệ ô nguồn hợp lệ, có trọng số diện tích được thể hiện', compared: 'so với {period}', estimate: '{year} · nội suy các giai đoạn mô hình',
     heatDefinition: 'Trung bình tháng của nhiệt độ tối đa hằng ngày', aridityDefinition: 'Chỉ số De Martonne thấp hơn · không phải xác suất hạn hán',
     flood: 'Lũ chu kỳ 100 năm · sâu >0,5 m · không tính công trình bảo vệ',
-    fireThreshold: 'Ngưỡng FWI phân vị 95 tại địa phương: 1850–1899',
+    fireThreshold: 'Ngưỡng FWI phân vị 95 tại địa phương thời tiền công nghiệp',
     populationDetail: '{year} · LHQ, phương án trung bình · tổng dự báo của {n} quốc gia/vùng lãnh thổ',
   },
   ja: {
@@ -66,7 +66,7 @@ export const summaryCopy = {
     domain: '有効な元データセルの割合を対象面積で加重', compared: '{period}との比較', estimate: '{year}年 · モデル期間の補間',
     heatDefinition: '日最高気温の月平均', aridityDefinition: 'De Martonne指数の低下 · 干ばつ確率ではありません',
     flood: '100年に1度の洪水 · 深さ0.5m超 · 防護なし',
-    fireThreshold: '地域のFWIの95パーセンタイル基準：1850～1899年',
+    fireThreshold: '産業革命前の地域のFWIの95パーセンタイル基準',
     populationDetail: '{year}年 · 国連中位推計 · {n}か国・地域の推計の合計',
   },
   zh: {
@@ -77,7 +77,7 @@ export const summaryCopy = {
     domain: '有效源网格占比，按代表面积加权', compared: '相对于{period}', estimate: '{year}年 · 模型时段插值',
     heatDefinition: '日最高气温的月平均值', aridityDefinition: 'De Martonne指数下降 · 不是干旱概率',
     flood: '百年一遇洪水 · 深度>0.5米 · 无防护',
-    fireThreshold: '当地FWI第95百分位数阈值：1850–1899年',
+    fireThreshold: '工业化前当地FWI第95百分位数阈值',
     populationDetail: '{year}年 · 联合国中位方案 · {n}个国家/地区预测的合计',
   },
   'zh-Hant': {
@@ -88,7 +88,7 @@ export const summaryCopy = {
     domain: '有效來源網格占比，按代表面積加權', compared: '相對於{period}', estimate: '{year}年 · 模型時段內插',
     heatDefinition: '日最高氣溫的月平均值', aridityDefinition: 'De Martonne指數下降 · 不是乾旱機率',
     flood: '百年一遇洪水 · 深度>0.5公尺 · 無防護',
-    fireThreshold: '當地FWI第95百分位數閾值：1850–1899年',
+    fireThreshold: '工業化前當地FWI第95百分位數閾值',
     populationDetail: '{year}年 · 聯合國中位方案 · {n}個國家/地區預測的合計',
   },
 };
@@ -134,5 +134,5 @@ export function technicalSummaryText(filter, reading, locale, year) {
 export function summarizeText(filter,reading,locale,year){
  const technical=technicalSummaryText(filter,reading,locale,year);
  if(!technical.headline)return technical;
- return {...overviewCopy(filter,reading,locale),technicalDetail:[technical.headline,technical.reference,technical.detail].filter(Boolean).join('\n')};
+ return {...overviewCopy(filter,reading,locale,year),technicalDetail:[technical.headline,technical.reference,technical.detail].filter(Boolean).join('\n')};
 }

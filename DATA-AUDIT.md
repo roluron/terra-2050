@@ -1,8 +1,21 @@
-# Audit des données — 1 octobre 2026
+# Audit des données — actualisé le 6 octobre 2026
 
-Les sept filtres ont été contrôlés sur tous leurs fichiers livrés, leurs lecteurs, leurs transformations et leur présentation. Plusieurs erreurs de présentation et une incohérence d’interpolation ont été corrigées. **La cohérence des données livrées est vérifiée ; leur reconstruction depuis les fichiers scientifiques originaux reste à vérifier. Cet audit n’est pas une certification scientifique.**
+Les sept filtres ont été contrôlés sur leurs fichiers livrés, leurs lecteurs, leurs transformations et leur présentation. **Le climat et la population ont maintenant été reconstruits depuis les fichiers scientifiques originaux, sans différence avec les données livrées. Les crues ont une vérification originale par échantillons ; la reconstruction originale du feu reste ouverte. Cet audit n’est pas une certification scientifique.**
 
-Base examinée : `57a0757d101a51206ba9758cfb59cbe45e0d35b2`. Les rapports détaillés décrivent cette base ; les corrections et leurs contrôles sont indiqués ci-dessous. Aucun binaire de climat, de crue, de feu ou de population n’a été remplacé pendant cet audit. La géographie des pays et territoires a été reconstruite depuis Natural Earth.
+Base du contrôle du 6 octobre : `d7ac819df02e336ca2557be5f0c17e4097f82abd`. Les corrections de texte ajoutent le passé pour la chaleur en 2026, avec une mention visible du modèle, et conservent le conditionnel pour 2027–2050 dans les huit langues. Les résultats détaillés du 6 octobre et les scripts de reproduction se trouvent dans [le rapport actualisé](audit/2026-10-06/REPORT.md). Les sections historiques ci-dessous décrivent aussi la base du 1 octobre, `57a0757d101a51206ba9758cfb59cbe45e0d35b2`. Aucun binaire de climat, de crue, de feu ou de population n’a été remplacé par ces corrections de texte.
+
+## Vérification originale du 6 octobre
+
+| Famille | Vérification effectuée | Résultat et limite |
+|---|---|---|
+| Chaleur, aridité, réchauffement | Neuf archives WorldClim officielles, empreintes et reconstruction indépendante | 3 110 400 champs de grille, autant de couvertures et 409 188 champs de points urbains identiques. Un seul modèle et un scénario, pas une observation annuelle de 2026. |
+| Population | CSV ONU WPP 2024 et révision officielle du Togo | 6 162 valeurs identiques, 237 séries sur 2025–2050. Le total est la somme révisée des pays/territoires, distincte de la ligne « World » du fichier original non révisé. |
+| Crues côtières et fluviales | Quatorze TIFF officiels WRI, empreintes complètes et 504 comparaisons de champs échantillonnés | Aucune différence sur les échantillons. La reconstruction de chaque maille depuis les TIFF n’a pas été exécutée. |
+| Géographie des pays | Deux GeoJSON Natural Earth épinglés, reconstruction du raster et de la palette | Les 2 332 800 pixels et la palette correspondent. Les petites îles peuvent rester sans pixel à cette résolution. |
+| Météo de feu | Documentation primaire, intégrité et calculs des fichiers livrés | Les archives ETH ont répondu HTTP 429 ; aucune reconstruction originale des 21 modèles dans ce contrôle. La publication indique 1850–1900, le manifeste 1850–1899. La borne exacte reste à vérifier dans les fichiers originaux ; l’interface indique désormais « préindustriel ». |
+| Villes et populations urbaines | Intégrité des fichiers et cohérence des coordonnées/lectures | Le dépôt n’épingle pas le fichier GeoNames original par version et empreinte. Une reproduction originale des noms et populations urbaines reste ouverte. |
+
+Les lecteurs physiques ont été parcourus pour 34 099 villes, six axes et les 25 années : 5 114 850 lectures. Les synthèses mondiales ont été recalculées séparément sur les 25 années. Les sommes, domaines, fractions, masques et signes passent les contrôles correspondants. Cela confirme les calculs, sans donner aux interpolations une précision annuelle réelle.
 
 ## Ce que les filtres mesurent
 
@@ -96,11 +109,11 @@ Les tests utilisent Chromium avec rendu logiciel dans cet environnement Linux, a
 
 La [CI complète de la base auditée](https://github.com/roluron/terra-2050/actions/runs/36827389649) était déjà en échec avant ces corrections : plusieurs suites ciblent notamment l’ancienne recherche, d’anciens contrôles ou un chemin utilisateur macOS. Ces échecs préexistants restent hors des passes ciblées ci-dessus. Ce rapport ne revendique pas une validation complète de l’interface ni une CI globale verte.
 
-## Vérification originale restant ouverte
+## Historique des accès et vérifications encore ouvertes
 
-Les GeoTIFF WorldClim et WRI, les NetCDF de météo de feu et les CSV originaux ONU sont absents de cet environnement. Les tentatives d’accès du 1 octobre 2026 ont été refusées par le proxy réseau (`CONNECT 403 Forbidden`). La géographie Natural Earth a, elle, été relue depuis les fichiers officiels accessibles sur GitHub et reconstruite avec des sources épinglées.
+Le 1 octobre, les fichiers originaux étaient absents et les tentatives d’accès avaient été refusées par le proxy réseau (`CONNECT 403 Forbidden`). Ce blocage ne décrit plus les accès du 6 octobre : WorldClim, WRI, ONU et Natural Earth ont été récupérés pour les contrôles indiqués ci-dessus. Les archives ETH du feu ont répondu HTTP 429. Les téléchargements ont été traités en mémoire, sans remplacement des données servies.
 
-Pour fermer la vérification des valeurs originales, il faut rendre accessibles les domaines des sources, récupérer les fichiers et reconstruire **toutes** les sorties avec les importeurs correspondants, puis comparer chaque champ, masque, coordonnée et agrégation aux fichiers servis. Il faut également relire les méthodes et leurs conditions de réutilisation. Les empreintes d’un manifeste interne ne constituent pas cette preuve indépendante.
+Restent ouvertes la reconstruction exhaustive des crues à partir des TIFF, celle du feu à partir des 21 modèles et du masque de végétation original, et celle du corpus GeoNames. Les anciens générateurs des fichiers visuels auxiliaires ne sont pas tous récupérés. Les empreintes seules ne prouvent pas une transformation correcte ; les vérifications complètes et les échantillons sont donc distingués dans le rapport. Les effets humains sont des exemples généraux documentés, sans résultat causal calculé pour une ville.
 
 Sources primaires à relire : [WorldClim 2.1](https://www.worldclim.org/data/worldclim21.html), [WorldClim CMIP6](https://www.worldclim.org/data/cmip6/cmip6climate.html), [Aqueduct Floods](https://datasets.wri.org/datasets/aqueduct-floods-hazard-maps), [méthodologie WRI](https://files.wri.org/d8/s3fs-public/aqueduct-floods-methodology.pdf), [météo de feu CMIP6 — ESSD](https://essd.copernicus.org/articles/15/2153/2023/), [archive ETH Zurich](https://doi.org/10.3929/ethz-b-000583391), [ONU WPP](https://population.un.org/wpp/).
 
