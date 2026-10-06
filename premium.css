@@ -20,11 +20,10 @@ html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK T
 .brand-name{letter-spacing:-.04em}
 .brand-year{letter-spacing:-.035em}
 .brand-lockup em{font-style:normal;font-weight:300}
-.creator-credit{display:grid;align-self:stretch;justify-items:center;gap:0;margin:12px 6px 0;padding:14px 6px 8px;border-top:1px solid var(--glass-edge);font:400 11px/1.5 var(--police);color:var(--glass-muted);text-align:center}
-.creator-credit p{margin:0}
-.creator-studio{display:flex;align-items:center;justify-content:center;font-size:12px}
-.creator-credit a{display:inline-flex;align-items:center;gap:.3em;min-height:44px;color:var(--glass-text);text-decoration:underline;text-decoration-color:#ffffff40;text-underline-offset:3px}
-.creator-credit a:hover{text-decoration-color:currentColor}
+.creator-credit{display:grid;align-self:stretch;text-align:left}
+.creator-credit p{margin:0;border-top:1px solid var(--filet);color:var(--texte)}
+.creator-credit :is(p,a){display:flex;align-items:center;gap:.3em}
+.creator-credit a{text-decoration:none}
 @media(max-width:720px){#titre #wordmark{font-size:clamp(15px,4.6vw,22px)}}
 #titre h1 em {color:var(--bleu)}
 :is(#map-inspector,#dossier,#city-comparison,.pedago-carte,.language-content) {border-radius:28px}
@@ -161,7 +160,7 @@ body #recherche,body.dossier-ouvert #recherche {padding-right:100px}
 #resultats {right:100px}
 #champ-recherche {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px) saturate(1.5);-webkit-backdrop-filter:blur(2px) saturate(1.5)}
 #menu-reglages {width:min(232px,calc(100vw - 40px));min-width:0;box-sizing:border-box;padding:8px}
-#menu-reglages .bouton-ico {font:400 12px/1.4 var(--police);letter-spacing:0;text-transform:none;min-height:44px;padding:10px 12px}
+#menu-reglages :is(.bouton-ico,.creator-credit p) {font:400 12px/1.4 var(--police);letter-spacing:0;text-transform:none;min-height:44px;padding:10px 12px;box-sizing:border-box}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte) {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow)}
 #menu-reglages {--glass-tint:#17171799;backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6)}
 body:has(#menu-reglages.ouvert) #dossier {visibility:hidden;pointer-events:none}

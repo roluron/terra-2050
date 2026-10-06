@@ -303,10 +303,9 @@
       </svg>
     </button>
     <div id="menu-reglages">
-      <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" type="button" aria-haspopup="dialog"></button>
-      <div class="creator-credit"><p class="creator-idea" data-t="ideaBy"></p><p class="creator-studio"><a href="https://fromanother.love" target="_blank" rel="noopener"><span data-t="createdBy"></span> fromanother</a></p></div>
+      <div class="creator-credit"><p data-t="ideaBy"></p><a class="bouton-ico" href="https://fromanother.love" target="_blank" rel="noopener"><span data-t="createdBy"></span> fromanother</a></div>
     </div>
   </div>
 </div>
@@ -2884,10 +2883,6 @@ function flashBouton(bouton, texte, delai = 1900){
   bouton.textContent = texte;
   bouton._flash = setTimeout(() => { bouton.textContent = bouton._avant; bouton._avant = undefined; }, delai);
 }
-document.getElementById('bouton-partager').addEventListener('click', () => {
-  const t = T();
-  partagerTexte('fromearth', t.partageSite, location.origin + location.pathname, document.getElementById('bouton-partager'));
-});
 /* =====================================================================
    IMAGE STORY — un portrait 1080x1920 dessiné au canvas dans le système
    fromanother (encre, creme, Lausanne, verdict Herbik) : partage natif
@@ -3281,7 +3276,7 @@ let surfaceAuDessus = () => null;  // 'pedago' | 'menu' | null — pour la pile 
 {
   const menus = [
     { bouton: document.getElementById('bouton-reglages'),
-      panneau: document.getElementById('menu-reglages'), rangees: '.bouton-ico' },
+      panneau: document.getElementById('menu-reglages'), rangees: '.bouton-ico,.creator-credit p' },
   ];
   /* la lentille de verre du pass post épouse le panneau ouvert */
   const verreMenu = { force: 0, panneau: null };
@@ -3451,7 +3446,6 @@ function traduire(){
   champ.placeholder = matchMedia('(pointer: coarse)').matches ? t.chercher.replace(/\s*—\s*⌘K$/, '') : t.chercher;
   for (const [id, cle] of Object.entries(t.aria)) if (id !== 'bouton-langue') document.getElementById(id)?.setAttribute('aria-label', cle);
   curseur.setAttribute('aria-valuetext', `${etat.annee} — ${t.distanceAn(etat.annee - 2026)}`);
-  document.getElementById('bouton-partager').textContent = t.partagerSite;
   if (lieuDossier) champ.value = nomVille(lieuDossier);
   document.getElementById('dossier-partage').textContent = t.partage;
   document.getElementById('dossier-comparer').textContent = t.comparer;
