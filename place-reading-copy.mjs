@@ -10,8 +10,19 @@ const rows={
  zh:['部分数据可用','6项估计中有{n}项。评分需要全部六项。','比较地点','选择其他地点','关闭比较','2026年估计','相较2026年的变化','年份','指标','模拟罕见洪水时市中心附近的水深。','气候使用多年平均值，并非每年的天气预报。','此指标无估计值。','区域估计 · 0.5°范围，南北约55公里','使用区域估计','模拟罕见洪水时周边区域的平均水深。','市中心附近的估计','此处无气候数据。全国人口显示在下方。','越高越湿润，越低越干燥。'],
  'zh-Hant':['部分資料可用','6項估計中有{n}項。評分需要全部六項。','比較地點','選擇其他地點','關閉比較','2026年估計','相較2026年的變化','年份','指標','模擬罕見洪水時市中心附近的水深。','氣候使用多年平均值，並非每年的天氣預報。','此指標無估計值。','區域估計 · 0.5°範圍，南北約55公里','使用區域估計','模擬罕見洪水時周邊區域的平均水深。','市中心附近的估計','此處無氣候資料。全國人口顯示在下方。','越高越濕潤，越低越乾燥。'],
 };
+const comparisonSearch={
+ en:['Choose another city','Choose another country','No matching place'],
+ fr:['Choisir une autre ville','Choisir un autre pays','Aucun lieu trouvé'],
+ es:['Elige otra ciudad','Elige otro país','No se encontró ningún lugar'],
+ it:['Scegli un’altra città','Scegli un altro paese','Nessun luogo trovato'],
+ vi:['Chọn thành phố khác','Chọn quốc gia khác','Không tìm thấy địa điểm'],
+ ja:['別の都市を選ぶ','別の国を選ぶ','該当する場所がありません'],
+ zh:['选择其他城市','选择其他国家','未找到匹配地点'],
+ 'zh-Hant':['選擇其他城市','選擇其他國家','找不到符合的地點']
+};
 export function placeReadingCopy(locale){
  const c=humanCopy(locale);
- return {...Object.fromEntries(keys.map((key,i)=>[key,(rows[locale]||rows.en)[i]])),humidity:c.names.secheresse,
+ const [searchCity,searchCountry,emptyPlace]=comparisonSearch[locale]||comparisonSearch.en;
+ return {...Object.fromEntries(keys.map((key,i)=>[key,(rows[locale]||rows.en)[i]])),searchCity,searchCountry,emptyPlace,humidity:c.names.secheresse,
   summary:['chaleur','secheresse','feux','mer','fleuves','stabilite'].map(filter=>c.definitions[filter])};
 }

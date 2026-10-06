@@ -2100,8 +2100,8 @@ function afficherResultats(){
 function choisirLieu(l){
   cacherSurvol();
   // arrivé par un lien partagé : la ville qu'on choisit ensuite ouvre le duel
-  if (defiLien && l !== defiLien){ lieuVs = defiLien; defiLien = null; }
-  else if (lieuVs === l) lieuVs = null;
+  if (defiLien && l !== defiLien){ lieuVs = estPays(l) === estPays(defiLien) ? defiLien : null; defiLien = null; }
+  else if (lieuVs === l || (lieuVs && estPays(lieuVs) !== estPays(l))) lieuVs = null;
   cacherAccroche();
   fermerListe();
   const cleRecent = l[0] + '|' + l[1];
@@ -2548,7 +2548,7 @@ function majDossierPays(l, an, t, dossierNeuf){
 /* duel : la fiche porte la comparaison quand un lien « vs » est actif */
 function majDuel(l, an){
   const el = document.getElementById('dossier-duel');
-  if (!lieuVs || lieuVs === l){ el.hidden = true; return; }
+  if (!lieuVs || lieuVs === l || estPays(lieuVs) !== estPays(l)){ el.hidden = true; return; }
   const sV = estPays(lieuVs) ? indicePays(lieuVs[1], an)
     : (lieuVs[7] ? indiceHabitabilite(lieuVs, an) : null);
   const sL = estPays(l) ? indicePays(l[1], an)
@@ -2564,7 +2564,7 @@ document.getElementById('dossier-duel').addEventListener('click', () => {
   comparaison.open(lieuDossier, lieuVs, etat.annee);
 });
 const comparaison = createComparison({
-  places: () => [...LIEUX, ...PAYS_LIGNES], name: nomVille, country: nomPays,
+  places: () => [...LIEUX, ...PAYS_LIGNES], name: nomVille, country: nomPays, isCountry: estPays,
   measures: mesuresLieu, criteria: CRITERES, population: populationAnnuelle,
   normalize: normaliser,
   onYear: year => { curseur.value = year; curseur.dispatchEvent(new Event('input')); },
@@ -3168,7 +3168,7 @@ function ouvrirDepuisLien(sansDefi){
       const cVs = LIEUX.filter(x => x[0] === nomVs || x[6] === nomVs)
         .concat(PAYS_LIGNES.filter(x => x[0] === nomVs || x[6] === nomVs));
       lieuVs = (m[5] && cVs.find(x => x[1] === m[5])) || cVs[0] || null;
-      if (lieuVs === l) lieuVs = null;
+      if (lieuVs === l || (lieuVs && estPays(lieuVs) !== estPays(l))) lieuVs = null;
     }
   } else if (!sansDefi){
     defiLien = l;    // le destinataire d'un lien simple sera invité à comparer

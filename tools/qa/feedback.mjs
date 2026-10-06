@@ -118,6 +118,8 @@ for(const [profile,engine,options] of profiles){
       await page.screenshot({path:`${output}/${profile}-city-search.png`});
     }
     await page.locator('#dossier-comparer').click();
+    await page.locator('#comparison-search').fill('France');
+    assert.equal(await page.getByRole('option',{name:'France',exact:true}).count(),0,'city comparison excludes countries');
     await page.locator('#comparison-search').fill('Tokyo');await page.locator('#comparison-search').press('ArrowDown');await page.locator('#comparison-search').press('Enter');
     const before=await page.locator('#city-comparison thead th').allTextContents();
     assert.match(before[2],/Tokyo/);
@@ -133,11 +135,25 @@ for(const [profile,engine,options] of profiles){
     assert.ok(new URLSearchParams(new URL(page.url()).hash.slice(1)).has('vs'));
     await page.screenshot({path:`${output}/${profile}-comparison.png`});
     assert.equal(await page.locator('.compare-shell header').evaluate(e=>getComputedStyle(e).backgroundColor),'rgba(0, 0, 0, 0)');
-    assert.equal(await page.locator('.compare-table-wrap thead').evaluate(e=>getComputedStyle(e).backgroundColor),'rgba(0, 0, 0, 0)');
+    assert.equal(await page.locator('.compare-shell header').evaluate(e=>getComputedStyle(e).position),'static');
+    assert.equal(await page.locator('.compare-table-wrap thead').evaluate(e=>getComputedStyle(e).position),'sticky');
+    await page.locator('#city-comparison').evaluate(e=>e.scrollTop=e.scrollHeight);
+    const pinned=await page.locator('#city-comparison').evaluate(e=>({top:e.getBoundingClientRect().top,head:e.querySelector('thead').getBoundingClientRect().top,title:e.querySelector('header').getBoundingClientRect().bottom,close:e.querySelector('.compare-close').getBoundingClientRect().top}));
+    assert.ok(Math.abs(pinned.head-pinned.top)<3,'place names remain at the top of the dialog');
+    assert.ok(pinned.title<pinned.top,'comparison title leaves the scrolled view');
+    assert.ok(pinned.close>=pinned.top&&pinned.close<pinned.top+80,'close stays accessible');
     assert.equal(await page.locator('#recherche').evaluate(e=>getComputedStyle(e).visibility),'hidden');
     assert.ok(await page.locator('#city-comparison').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
     await page.locator('.compare-close').click();await page.locator('#dossier-croix').click();
     await page.waitForFunction(()=>!document.body.classList.contains('dossier-ouvert')&&Number(getComputedStyle(document.getElementById('dossier')).opacity)<.01);
+    await page.locator('#champ-recherche').fill('France');await page.getByRole('option').filter({hasText:'France'}).first().click();
+    await page.locator('#dossier-comparer').click();
+    assert.equal(await page.locator('#comparison-search').getAttribute('placeholder'),'Choose another country');
+    await page.locator('#comparison-search').fill('Tokyo');
+    assert.equal(await page.locator('#comparison-results [role="option"]').count(),0,'country comparison excludes cities');
+    await page.locator('#comparison-search').fill('Japan');await page.getByRole('option',{name:'Japan',exact:true}).click();
+    assert.deepEqual((await page.locator('#city-comparison thead th').allTextContents()).slice(1),['France','Japan']);
+    await page.locator('.compare-close').click();await page.locator('#dossier-croix').click();
     if(profile==='desktop'){
       for(const code of ['fr','vi','ja','zh','zh-Hant','es','it','en']){
         await chooseLanguage(page,code);
