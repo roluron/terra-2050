@@ -79,8 +79,9 @@ try {
         -webkit-font-smoothing:antialiased; }
       #og-globe { position:absolute; inset:0; width:1200px; height:630px; }
       #og-brand { position:absolute; left:66px; top:52px; display:flex; align-items:center;
-        font-size:44px; line-height:1; font-weight:400; letter-spacing:-2.4px; }
-      #og-brand em { font-style:normal; color:#C1CAD5; }
+        font-size:44px; line-height:1; font-weight:300; letter-spacing:-2.4px; }
+      #og-brand em { font-style:normal; color:#1740A9; }
+      #og-brand strong { font-weight:600; }
       #og-credit { position:absolute; left:68px; bottom:26px; display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(245,247,250,.70); }
       #og-credit img { width:100px; height:auto; }
       #og-heading { position:absolute; left:66px; top:181px; margin:0; width:530px;
@@ -96,7 +97,7 @@ try {
     composition.id = 'og-composition';
     composition.innerHTML = `
       <img id="og-globe" alt="Earth globe" />
-      <div id="og-brand" aria-label="fromearth / 2050">fromearth<em>／</em>2050</div>
+      <div id="og-brand" aria-label="fromearth / 2050">from<strong>earth</strong><em>／</em>2050</div>
       <h1 id="og-heading">Explore<br>climate<br>projections</h1>
       <p id="og-count">7 indicators · 34,099 cities</p>
       <p id="og-disclosure">Model estimates and an experimental index. Assumptions and source limits are disclosed.</p>
@@ -107,7 +108,7 @@ try {
     image.src = source;
     await image.decode();
     await Promise.all([...composition.querySelectorAll('img:not(#og-globe)')].map(img=>img.decode()));
-    await document.fonts.load('400 68px "TWK Lausanne"');
+    await Promise.all(['400 68px "TWK Lausanne"','300 44px "TWK Lausanne"','600 44px "TWK Lausanne"'].map(font=>document.fonts.load(font)));
     await document.fonts.ready;
   }, globeImage);
   assert.deepEqual(errors, [], 'No browser errors during native-globe generation');

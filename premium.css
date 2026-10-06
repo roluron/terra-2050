@@ -13,8 +13,9 @@ html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK T
 #earth-shell:lang(zh-Hant) h1,#earth-shell:lang(zh-Hant) .signature {font-family:'Songti TC','Noto Serif CJK TC',serif}
 ::selection {background:#c9cbce45;color:#fff}
 #titre h1 {font-weight:400;letter-spacing:-.055em}
-#titre #wordmark{font-family:"TWK Lausanne",sans-serif;font-size:26px;white-space:nowrap}
-#v-wordmark{font-family:"TWK Lausanne",sans-serif;font-size:clamp(28px,7vw,110px)}
+#titre #wordmark{font-family:"TWK Lausanne",sans-serif;font-weight:300;font-size:26px;white-space:nowrap}
+#v-wordmark{font-family:"TWK Lausanne",sans-serif;font-weight:300;font-size:clamp(28px,7vw,110px)}
+#wordmark strong,#v-wordmark strong{font-weight:600}
 .creator-credit{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--glass-edge);font:400 11px/1.4 var(--police);color:var(--glass-muted);white-space:nowrap}
 .creator-credit a{display:flex;align-items:center;min-height:44px}
 .creator-credit img{display:block;width:94px;height:auto}
