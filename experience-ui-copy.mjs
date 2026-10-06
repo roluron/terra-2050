@@ -10,4 +10,14 @@ const rows={
  zh:['理解数据','指标显示什么','模型与情景','数据来源','数据无法说明什么','分享视图','复制链接','链接已复制','无法复制。请选择下方链接。','隐藏颜色','显示颜色','了解这项估计','比较年份','查看地点详情','关闭','选择指标','暂无估计','地图上的显示','地点','视图链接','全球概览'],
  'zh-Hant':['理解資料','指標顯示什麼','模型與情境','資料來源','資料無法說明什麼','分享視圖','複製連結','連結已複製','無法複製。請選取下方連結。','隱藏顏色','顯示顏色','了解這項估計','比較年份','查看地點詳情','關閉','選擇指標','暫無估計','地圖上的顯示','地點','視圖連結','全球概覽']
 };
-export const experienceUICopy=lang=>Object.fromEntries(keys.map((key,i)=>[key,(rows[lang]||rows.en)[i]]));
+const stories={
+ en:['Create a story','Instagram Stories · 9:16 · Choose a city or country, then customise your image.'],
+ fr:['Créer une story','Instagram Stories · 9:16 · Choisissez une ville ou un pays, puis personnalisez votre image.'],
+ es:['Crear una story','Instagram Stories · 9:16 · Elige una ciudad o un país y personaliza tu imagen.'],
+ it:['Crea una storia','Instagram Stories · 9:16 · Scegli una città o un paese e personalizza la tua immagine.'],
+ vi:['Tạo tin','Instagram Stories · 9:16 · Chọn một thành phố hoặc quốc gia, rồi tùy chỉnh hình ảnh.'],
+ ja:['ストーリーを作成','Instagram Stories · 9:16 · 都市または国を選び、画像をカスタマイズ。'],
+ zh:['创建快拍','Instagram Stories · 9:16 · 选择城市或国家，再自定义图片。'],
+ 'zh-Hant':['建立限時動態','Instagram Stories · 9:16 · 選擇城市或國家，再自訂圖片。']
+};
+export const experienceUICopy=lang=>({...Object.fromEntries(keys.map((key,i)=>[key,(rows[lang]||rows.en)[i]])),story:(stories[lang]||stories.en)[0],storyHint:(stories[lang]||stories.en)[1]});

@@ -255,6 +255,7 @@
   <ul id="resultats" role="listbox" aria-label="Résultats"></ul>
 </div>
 
+<button id="share-view" type="button" aria-haspopup="dialog"></button>
 <div id="globe-dock">
 <div id="timeline" class="panneau">
   <div id="accroche" hidden><button id="accroche-txt"></button><button id="accroche-x" aria-label="Fermer">×</button></div>
@@ -287,7 +288,6 @@
 </section>
 <button id="layer-visibility" type="button" hidden></button>
 </div>
-<button id="share-view" type="button" aria-haspopup="dialog"></button>
 <div id="calque-bulle" role="tooltip" aria-hidden="true"></div>
 <!-- noms des grandes villes sur le globe, et l'étiquette qui suit le pointeur -->
 <div id="etiquettes"></div>
@@ -2097,7 +2097,9 @@ function afficherResultats(){
   }
   ouvrirListe();
 }
+let storyDepuisRecherche = false;
 function choisirLieu(l){
+  const creerStory = storyDepuisRecherche; storyDepuisRecherche = false;
   cacherSurvol();
   // arrivé par un lien partagé : la ville qu'on choisit ensuite ouvre le duel
   if (defiLien && l !== defiLien){ lieuVs = estPays(l) === estPays(defiLien) ? defiLien : null; defiLien = null; }
@@ -2120,6 +2122,7 @@ function choisirLieu(l){
     onUpdate: () => camera.lookAt(0, 0, 0),
     onComplete: reprendreRotation,
   });
+  if (creerStory){ document.getElementById('dossier-story').focus(); ouvrirStory(); }
 }
 champ.addEventListener('input', afficherResultats);
 // reprendre une recherche = tourner la page : le dossier ouvert se ferme et
@@ -2144,11 +2147,12 @@ champ.addEventListener('keydown', e => {
     e.preventDefault();
     choisirLieu(resultatsActuels[Math.max(indiceChoisi, 0)]);
   } else if (e.key === 'Escape'){
+    storyDepuisRecherche = false;
     champ.blur(); fermerListe();
   }
 });
 document.addEventListener('click', e => {
-  if (!document.getElementById('recherche').contains(e.target)) fermerListe();
+  if (!document.getElementById('recherche').contains(e.target)){ storyDepuisRecherche = false; fermerListe(); }
 });
 
 /* ---- timeline 2026 → 2050 ---- */
@@ -2222,6 +2226,7 @@ function deployerRecherche(){
 function replierRecherche(){
   if (document.body.classList.contains('loupe')) return;
   if (champ.value || lieuDossier || document.activeElement === champ) return;
+  storyDepuisRecherche = false;
   document.body.classList.add('loupe');
   champ.tabIndex=-1;champ.setAttribute('aria-hidden','true');
   invitationRecherche.tabIndex=0;invitationRecherche.removeAttribute('aria-hidden');
@@ -4256,7 +4261,8 @@ experienceUI = createExperienceUI({
       }
     }
   },
-  prepareURL:()=>majLien(true)
+  prepareURL:()=>majLien(true),
+  openStory:()=>{if(lieuDossier)ouvrirStory();else{champ.focus();storyDepuisRecherche=true;}}
 });
 experienceUI.sync();
 </script>

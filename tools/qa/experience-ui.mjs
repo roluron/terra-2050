@@ -44,14 +44,28 @@ try{
   for(const language of ['en','fr','es','it','vi','ja','zh','zh-Hant']){
    current=viewport.width+'/'+language;await chooseLanguage(page,language);await page.locator('#bouton-reglages').click();
    assert.equal(await page.locator('#share-view').getAttribute('aria-label'),experienceUICopy(language).share);
+   assert.equal(await page.locator('#share-view').textContent(),'');
    const boxes=await page.locator('#map-inspector,#layer-visibility,#timeline,#titre,#share-view,#recherche,#util').evaluateAll(nodes=>nodes.map(n=>({id:n.id,...n.getBoundingClientRect().toJSON()})));
    for(const b of boxes)assert.ok(b.x>=-1&&b.right<=viewport.width+1,JSON.stringify(b));
+   const search=boxes.find(b=>b.id==='recherche'),share=boxes.find(b=>b.id==='share-view'),settings=boxes.find(b=>b.id==='util');
+   assert.ok(search.right+6<=share.x&&share.right+6<=settings.x,current+' header order');
    const pill=boxes.find(b=>b.id==='map-inspector'),eye=boxes.find(b=>b.id==='layer-visibility'),timeline=boxes.find(b=>b.id==='timeline');assert.ok(eye.x>=pill.right+6);assert.ok(eye.right<=timeline.x,current+' controls overlap');
    await page.locator('#map-toggle').click();assert.equal(await page.locator('#map-options').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);await page.locator('#menu-sources').click();
    const dialog=await page.locator('#view-sources').boundingBox();assert.ok(dialog.x>=0&&dialog.y>=0&&dialog.x+dialog.width<=viewport.width&&dialog.y+dialog.height<=viewport.height);
    await page.screenshot({path:output+'/sources-'+viewport.width+'-'+language+'.png'});await page.keyboard.press('Escape');await page.locator('#map-toggle').click();
   }
   await page.locator('#explore-city').click();assert.equal(await page.locator('#share-view').isVisible(),false);await page.locator('#champ-recherche').press('Escape');await page.waitForFunction(()=>document.body.classList.contains('loupe'));
+  await page.locator('#share-view').click();await page.locator('#view-share .ux-story').click();await page.locator('#champ-recherche').press('Tab');
+  await page.waitForFunction(()=>document.body.classList.contains('loupe'));await page.locator('#explore-city').click();await page.locator('#champ-recherche').fill('Paris');
+  await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();assert.equal(await page.locator('#story-popup').isVisible(),false);
+  await page.locator('#dossier-croix').click();await page.waitForFunction(()=>document.body.classList.contains('loupe'));
+  await page.locator('#share-view').click();await page.locator('#view-share .ux-story').click();
+  assert.equal(await page.locator('#champ-recherche').evaluate(el=>el===document.activeElement),true);
+  await page.locator('#champ-recherche').fill('Paris');await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();
+  await page.locator('#story-popup').waitFor({state:'visible'});await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);
+  assert.equal(await page.locator('#story-popup .story-opt').count(),4);await page.locator('.story-opt input[data-opt="planete"]').uncheck();
+  await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);await page.keyboard.press('Escape');
+  await page.locator('#dossier-croix').click();await page.waitForFunction(()=>document.body.classList.contains('loupe'));
   await page.evaluate(()=>__experience.show());await page.locator('#layer-visibility').click();await page.locator('#share-view').click();
   const url=await page.locator('#view-share input').inputValue();const params=new URL(url).searchParams;assert.equal(params.get('hidden'),'1');assert.equal(params.get('layer'),'declin');assert.equal(params.get('year'),'2050');assert.equal(params.get('lat'),'48.80000');
   await page.keyboard.press('Escape');await page.goto(url);await enter(page);await page.waitForFunction(()=>__experience.state().hidden&&document.querySelector('#survol.fige'),null,{timeout:60000});assert.equal((await page.evaluate(()=>__experience.state())).year,2050);assert.match(await page.locator('.s-nom').textContent(),/France|法国|法國/);

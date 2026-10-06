@@ -6,7 +6,7 @@ const el=(tag,text,className)=>{const node=document.createElement(tag);if(text!=
 const sourceURLs={chaleur:'https://www.worldclim.org/data/cmip6/cmip6climate.html',secheresse:'https://www.worldclim.org/data/cmip6/cmip6climate.html',stabilite:'https://www.worldclim.org/data/cmip6/cmip6climate.html',feux:'https://essd.copernicus.org/articles/15/2153/2023/',mer:'https://www.wri.org/data/aqueduct-floods-hazard-maps',fleuves:'https://www.wri.org/data/aqueduct-floods-hazard-maps',declin:'https://population.un.org/wpp/'};
 export function createExperienceUI(api){
  const $=id=>document.getElementById(id), eye=$('layer-visibility'), share=$('share-view');
- eye.innerHTML=icon('eye');share.innerHTML=icon('share')+'<span></span>';
+ eye.innerHTML=icon('eye');share.innerHTML=icon('share');
  const menuSource=el('button',undefined,'ux-source-link');menuSource.id='menu-sources';menuSource.type='button';
  $('model-notice').append(menuSource);
  const summarySource=menuSource.cloneNode();summarySource.id='summary-sources';$('filter-summary').append(summarySource);
@@ -50,6 +50,9 @@ export function createExperienceUI(api){
    const human=humanCopy(state.language),impact=row(full,human.effectLabel,[human.effects[state.filter],human.effectScope].filter(Boolean).join('\n'));
    if(impact&&impactSources[state.filter]){const reference=impactSources[state.filter],link=el('a',reference.name);link.href=reference.url;link.target='_blank';link.rel='noopener';impact.append(link);}
   }else if(name==='share'){
+   const story=el('button',c.story,'ux-story');story.type='button';
+   story.addEventListener('click',()=>{d.addEventListener('close',api.openStory,{once:true});d.close();});
+   content.append(story,el('p',c.storyHint,'ux-story-hint'));
    row(content,c.reading,filterName+' · '+state.year+(state.filter?'\n'+modeName+'\n'+(state.hidden?c.hide:c.show):''));
    row(content,c.location,state.location);
    const label=el('label',c.link),input=el('input');input.type='url';input.readOnly=true;input.value=viewURL();input.setAttribute('aria-label',c.link);input.addEventListener('click',()=>input.select());label.append(input);content.append(label);
@@ -84,12 +87,11 @@ export function createExperienceUI(api){
  }
  function layout(){
   const r=$('map-inspector').getBoundingClientRect();eye.style.left=(r.right+8)+'px';
-  const search=$('recherche').getBoundingClientRect();share.style.right=Math.max(12,innerWidth-search.left+14)+'px';
  }
  function sync(){
   const state=api.getState(),c=experienceUICopy(state.language);
   eye.hidden=!state.filter;eye.setAttribute('aria-label',state.hidden?c.show:c.hide);eye.setAttribute('aria-pressed',String(!state.hidden));eye.classList.toggle('layer-hidden',state.hidden);
-  share.querySelector('span').textContent=c.share;share.setAttribute('aria-label',c.share);
+  share.setAttribute('aria-label',c.share);share.title=c.share;
   menuSource.textContent=summarySource.textContent=c.sources;menuSource.hidden=!state.filter;
   const legend=$('visible-legend'),scale=$('layer-context').querySelector('.map-scale');legend.replaceChildren();
   if(scale){const clone=scale.cloneNode(true),simple=legendCopy(state.filter,state.language,state.mode);clone.classList.replace('map-scale','ux-scale');
