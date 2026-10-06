@@ -15,7 +15,6 @@
 #language-options label{position:relative;display:flex;align-items:center;min-height:48px;padding:0 20px;border:1px solid transparent;border-radius:12px;cursor:pointer;transition:background .35s,border-color .35s,color .35s,transform .5s cubic-bezier(.19,1,.22,1);color:#939b9e;animation:language-arrive .9s cubic-bezier(.19,1,.22,1) calc(.12s + var(--row,0)*.045s) both}
 #language-options input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;width:100%;height:100%}
 #language-options span{font:400 17px/1.5 var(--police),Arial,sans-serif;letter-spacing:0}
-#language-options label:has(input:checked){background:linear-gradient(120deg,#ffffff0c,#ffffff03);border-color:#d7dfcc25;color:#e6e9df;box-shadow:inset 0 1px #ffffff0b}
 #language-options label:hover{color:#f0f2e9;background:#ffffff09;transform:translateX(3px)}
 #language-options label:has(input:focus-visible){outline:1px solid #e4eaf4;outline-offset:3px}
 #language-continue{display:inline-flex;align-items:center;gap:15px;margin:28px 0 0;padding:8px 0;border:0;background:none;color:#c3cac7;font:400 13px/1.5 var(--police),Arial,sans-serif;cursor:pointer}

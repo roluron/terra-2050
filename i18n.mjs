@@ -55,7 +55,9 @@ export function openLanguage(onClose, first = false) {
   afterLanguage = onClose; welcome = first; closingLanguage = false;
   syncLanguageDialog(); languageDialog.showModal();
   document.getElementById('boot-screen').hidden = true;
-  languageDialog.querySelector('input:checked').focus({preventScroll:true});
+  const target = first ? document.getElementById('language-title') : languageDialog.querySelector('input:checked');
+  if (first) target.tabIndex = -1;
+  target.focus({preventScroll:true});
 }
 async function closeLanguage() {
   if (closingLanguage) return;

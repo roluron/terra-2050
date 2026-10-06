@@ -26,8 +26,6 @@ html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK T
 #language-title {font:300 38px/1.08 var(--police);letter-spacing:-.055em;margin-bottom:28px;max-width:300px}
 #language-options {grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 #language-options label {padding:0 14px;border-radius:12px;color:var(--glass-muted);animation:none;transition:background .3s,border-color .3s,color .3s}
-#language-options label:has(input:checked) {background:radial-gradient(ellipse at 22% 110%,#bcbec132,transparent 80%),linear-gradient(130deg,#d9dbde17,#ffffff04);border-color:#cfd1d44d;box-shadow:inset 0 1px #eaecef2b,0 4px 18px #0002;color:#f0f2f5}
-#language-options label:has(input:checked)::after {color:#d0d2d5}
 #language-options span {font-size:15px}
 #language-continue {width:100%;justify-content:space-between;border-top:1px solid #ffffff16;padding-top:16px;margin-top:20px;color:#f0f1e9;font-size:14px}
 #language-continue svg {background:linear-gradient(145deg,#dfe1e426,#c8cacd0a);border-color:#cdcfd24d;box-shadow:inset 0 1px #fff3}
@@ -230,7 +228,7 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 :is(#champ-recherche,#bouton-reglages,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#map-inspector #map-options) {backdrop-filter:blur(2px) saturate(1.35);-webkit-backdrop-filter:blur(2px) saturate(1.35)}
 #city-comparison::backdrop,#story-popup,#pedago {background:#02060a66;backdrop-filter:none;-webkit-backdrop-filter:none}
 .language-content::before {display:none}
-#language-options label:has(input:checked),#map-inspector #calques .calque.actif,#map-reading button[aria-pressed=true],#resultats li:is(.choisi,:hover),#dossier .risque,#dossier .risque[open],#dossier .actions button,#dossier .actions #dossier-story,.compare-swap,.entree-pedago {background:#ffffff09}
+#map-inspector #calques .calque.actif,#map-reading button[aria-pressed=true],#resultats li:is(.choisi,:hover),#dossier .risque,#dossier .risque[open],#dossier .actions button,#dossier .actions #dossier-story,.compare-swap,.entree-pedago {background:#ffffff09}
 #dossier-croix,.compare-close,#story-fermer {background:#ffffff09!important}
 .compare-shell header,.story-carte .pedago-titre,.compare-table-wrap thead {background:transparent}
 .compare-shell header {position:static;top:auto;margin:0 0 12px;padding:0 64px 0 0;border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none}
