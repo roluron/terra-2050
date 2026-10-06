@@ -9,35 +9,35 @@
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_color_2048.webp">
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_mask_4320.webp">
 <link rel="preload" as="image" href="./data/grille_c.png">
-<meta property="og:title" content="TERRA／2050 — Explore climate projections">
+<meta property="og:title" content="fromearth · 2050 — Explore climate projections">
 <meta property="og:description" content="See your future. Explore how climate and population could change where you live, from 2026 to 2050.">
-<meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
+<meta property="og:image" content="https://roluron.github.io/terra-2050/assets/fromearth-projections.jpg">
 <meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="TERRA／2050">
+<meta property="og:site_name" content="fromearth">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
+<meta property="og:image:alt" content="fromearth : exploration de projections climatiques jusqu’en 2050">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="TERRA／2050 — Explore climate projections">
+<meta name="twitter:title" content="fromearth · 2050 — Explore climate projections">
 <meta name="twitter:description" content="See your future. Explore how climate and population could change where you live, from 2026 to 2050.">
-<meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
-<meta name="twitter:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
+<meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/fromearth-projections.jpg">
+<meta name="twitter:image:alt" content="fromearth : exploration de projections climatiques jusqu’en 2050">
 <meta name="description" content="Explorez votre futur. Voyez comment le climat et la population pourraient changer près de chez vous, de 2026 à 2050.">
 <meta name="theme-color" content="#070706">
 <meta name="color-scheme" content="dark">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TERRA 2050">
+<meta name="apple-mobile-web-app-title" content="fromearth">
 <link rel="canonical" href="https://roluron.github.io/terra-2050/">
 <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
 <link rel="icon" href="./assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>TERRA／2050 — Explorer les projections climatiques</title>
+<title>fromearth · 2050 — Explorer les projections climatiques</title>
 <!--
   TERRA//2050 — globe tactique des risques climatiques.
   Œuvre originale. Stack : Three.js r160 + GSAP 3 + Howler (vendord en local, rien d'autre).
@@ -225,7 +225,7 @@
 
   <div class="v-centre">
     <div class="v-eyebrow"><span data-t="sous1"></span></div>
-    <div id="v-wordmark" aria-hidden="true">terra<em>／</em>2050</div>
+     <div id="v-wordmark" aria-hidden="true"><span class="v-masque"><img class="lettre" src="./assets/fromearth.svg" alt=""></span><span class="brand-horizon">2050</span></div>
     <div class="v-eyebrow v-eyebrow-bas"><span data-t="sous2"></span></div>
 
     <div class="v-charge">
@@ -239,7 +239,7 @@
 </div>
 
 <header id="titre" class="panneau">
-  <h1 id="wordmark"><span>terra<em>／</em>2050</span></h1>
+  <h1 id="wordmark" aria-label="fromearth · 2050"><img class="brand-logo" src="./assets/fromearth.svg" alt="fromearth"><span class="brand-horizon">2050</span></h1>
   <div class="micro" data-t="sousHeader"></div>
 </header>
 
@@ -307,6 +307,7 @@
       <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" type="button" aria-haspopup="dialog"></button>
+      <p class="creator-credit"><span data-t="createdBy"></span><a href="https://fromanother.love" target="_blank" rel="noopener"><img src="./assets/fromanother.svg" alt="fromanother"></a></p>
     </div>
   </div>
 </div>
@@ -2856,9 +2857,9 @@ document.getElementById('dossier-partage').addEventListener('click', async () =>
   const indice = estPays(l) ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const t = T();
   const texte = indice === null
-    ? `${nomVille(l)} — TERRA/2050`
+    ? `${nomVille(l)} — fromearth · 2050`
     : message('shareSummary', {city: nomVille(l), score: indice, year: an, verdict: t.verdict[niveauDe(indice)]});
-  const titre = `${nomVille(l)} — TERRA/2050`;
+  const titre = `${nomVille(l)} — fromearth · 2050`;
   await partagerTexte(titre, texte, location.href, document.getElementById('dossier-partage'));
 });
 // feuille native quand elle existe, presse-papiers sinon (ou si la feuille echoue)
@@ -2886,7 +2887,7 @@ function flashBouton(bouton, texte, delai = 1900){
 }
 document.getElementById('bouton-partager').addEventListener('click', () => {
   const t = T();
-  partagerTexte('TERRA／2050', t.partageSite, location.origin + location.pathname, document.getElementById('bouton-partager'));
+  partagerTexte('fromearth', t.partageSite, location.origin + location.pathname, document.getElementById('bouton-partager'));
 });
 /* =====================================================================
    IMAGE STORY — un portrait 1080x1920 dessiné au canvas dans le système
@@ -2900,7 +2901,9 @@ async function genererStory(opts){
   const cjk = ['ja', 'zh', 'zh-Hant'].includes(langue);
   const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const indice50 = pays ? indicePays(l[1], 2050) : (l[7] ? indiceHabitabilite(l, 2050) : null);
-  await Promise.all([`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`].map(f => document.fonts.load(f)));
+  const logo = new Image(), creator = new Image();
+  logo.src = './assets/fromearth.svg'; creator.src = './assets/fromanother.svg';
+  await Promise.all([... [`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`].map(f => document.fonts.load(f)), logo.decode(), creator.decode()]);
   const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
   const g = cv.getContext('2d');
   const CREME = '#F5F7FA', MUTER = 'rgba(245,247,250,0.65)';
@@ -2919,13 +2922,9 @@ async function genererStory(opts){
   lueur.addColorStop(0, 'rgba(23,64,169,0.5)'); lueur.addColorStop(1, 'rgba(23,64,169,0)');
   g.fillStyle = lueur; g.fillRect(0, 0, 1080, 1920);
 
-  // wordmark terra / 2050
-  g.font = `600 62px ${sans}`;
-  const seg = [['terra', CREME], [' / ', '#1740A9'], ['2050', CREME]];
-  let x = 540 - seg.reduce((a, [txt]) => a + g.measureText(txt).width, 0) / 2;
-  g.textAlign = 'left';
-  for (const [txt, col] of seg){ g.fillStyle = col; g.fillText(txt, x, 200); x += g.measureText(txt).width; }
+  g.drawImage(logo, 300, 108, 480, 480 * logo.naturalHeight / logo.naturalWidth);
   g.textAlign = 'center';
+  g.fillStyle = MUTER; g.font = `400 28px ${sans}`; g.fillText('2050', 540, 245);
   g.letterSpacing = cjk ? '0px' : '3px'; g.font = `500 28px ${sans}`; g.fillStyle = MUTER;
   g.fillText(T().ui.experimental_climate_index + ' · ' + an, 540, 320, 840);
   g.letterSpacing = '0px';
@@ -3008,6 +3007,11 @@ async function genererStory(opts){
     g.letterSpacing = cjk ? '0px' : '2px'; g.fillStyle = 'rgba(245,247,250,0.45)'; g.font = `400 24px ${sans}`;
     g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}&cc=${l[1]}`, 540, 1746);
     g.letterSpacing = '0px';
+    g.font = `400 24px ${sans}`;
+    const label = t.createdBy + ' ', labelWidth = g.measureText(label).width;
+    const creditX = 540 - (labelWidth + 170) / 2;
+    g.textAlign = 'left'; g.fillText(label, creditX, 1830);
+    g.drawImage(creator, creditX + labelWidth, 1809, 170, 170 * creator.naturalHeight / creator.naturalWidth);
   }
   return cv;
 }
@@ -3028,7 +3032,7 @@ storyPopup.querySelectorAll('input[data-opt]').forEach(ch => {
 // le fichier est prepare des l'apercu : au clic, navigator.share part sans
 // await (iOS Safari revoque l'activation utilisateur pendant un rendu long)
 let storyFichier = null;
-function nomFichierStory(){ return `terra-2050-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.jpg`; }
+function nomFichierStory(){ return `fromearth-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.jpg`; }
 async function majApercuStory(){
   const jeton = ++storyGen; storyFichier = null;
   const bouton = document.getElementById('story-partager'), nom = nomFichierStory();
@@ -3120,7 +3124,7 @@ async function partagerStory(){
   // du geste utilisateur, le fichier etant deja pret.
   if (navigator.canShare && navigator.canShare({ files: [fichier] })){
     try {
-      await navigator.share({ files: [fichier], title: 'TERRA／2050',
+      await navigator.share({ files: [fichier], title: 'fromearth',
         text: `${nomVille(lieuDossier)} — ${location.href}` });
       SoundManager.play('ui_click'); fermerStory(); return;
     } catch (e) { if (e.name === 'AbortError') return; }
@@ -3745,10 +3749,6 @@ if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
   /* Wordmark : chaque lettre dans son masque, révélation en cascade. */
   const wm = document.getElementById('v-wordmark');
   if (wm){
-    const html = [...wm.textContent].map(c =>
-      c === '／' ? '<span class="v-masque"><span class="lettre"><em>／</em></span></span>'
-                 : `<span class="v-masque"><span class="lettre">${c}</span></span>`).join('');
-    wm.innerHTML = html;
     gsap.fromTo(wm.querySelectorAll('.lettre'), { yPercent: 115 },
       { yPercent: 0, duration: 1.3, stagger: 0.035, ease: EASE, delay: 0.15,
         clearProps: 'transform' });

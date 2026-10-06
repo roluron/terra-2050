@@ -10,7 +10,7 @@ import { enter } from './qa/entrance.cjs';
 const width = 1200, height = 630;
 const preview = new URL(process.env.QA_URL || 'http://127.0.0.1:8080/');
 preview.searchParams.set('lang', 'en');
-const output = new URL('../assets/og-projections.jpg', import.meta.url);
+const output = new URL('../assets/fromearth-projections.jpg', import.meta.url);
 const browser = await chromium.launch({ headless: true,
   ...(process.env.QA_CHROMIUM_PATH ? { executablePath: process.env.QA_CHROMIUM_PATH } : {}),
   args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
@@ -80,8 +80,10 @@ try {
       #og-globe { position:absolute; inset:0; width:1200px; height:630px; }
       #og-brand { position:absolute; left:66px; top:52px; display:flex; align-items:center;
         font-size:44px; line-height:1; font-weight:400; letter-spacing:-2.4px; }
-      #og-brand svg { width:42px; height:44px; margin:0 1px; overflow:visible; }
-      #og-brand line { stroke:#1740A9; stroke-width:2.3; }
+      #og-brand img { width:235px; height:auto; }
+      #og-brand span { font-size:18px; letter-spacing:1px; margin-left:24px; }
+      #og-credit { position:absolute; left:68px; bottom:26px; display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(245,247,250,.70); }
+      #og-credit img { width:100px; height:auto; }
       #og-heading { position:absolute; left:66px; top:181px; margin:0; width:530px;
         font-size:68px; line-height:.99; font-weight:400; letter-spacing:-3px; }
       #og-count { position:absolute; left:68px; top:429px; font-size:21px; font-weight:400;
@@ -95,15 +97,17 @@ try {
     composition.id = 'og-composition';
     composition.innerHTML = `
       <img id="og-globe" alt="Earth globe" />
-      <div id="og-brand" aria-label="terra / 2050">terra<svg viewBox="0 0 42 44" aria-hidden="true"><line x1="4" y1="43" x2="39" y2="0"/></svg>2050</div>
+      <div id="og-brand" aria-label="fromearth · 2050"><img src="./assets/fromearth.svg" alt="fromearth"><span>2050</span></div>
       <h1 id="og-heading">Explore<br>climate<br>projections</h1>
       <p id="og-count">7 indicators · 34,099 cities</p>
       <p id="og-disclosure">Model estimates and an experimental index. Assumptions and source limits are disclosed.</p>
+      <p id="og-credit">Created by <img src="./assets/fromanother.svg" alt="fromanother"></p>
     `;
     document.body.append(composition);
     const image = document.getElementById('og-globe');
     image.src = source;
     await image.decode();
+    await Promise.all([...composition.querySelectorAll('img:not(#og-globe)')].map(img=>img.decode()));
     await document.fonts.load('400 68px "TWK Lausanne"');
     await document.fonts.ready;
   }, globeImage);

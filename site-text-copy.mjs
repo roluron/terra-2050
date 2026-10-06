@@ -42,15 +42,16 @@ const scoreRows={
  zh:['越高 = 在我们的模型中暴露程度越低。','与2026年评分相同。','相较2026年{n}分。','{city}：{year}年实验性评分{score}/100 — {verdict}。并非当地预报。','亚特兰蒂斯是传说。试试真实的城市。'],
  'zh-Hant':['越高 = 在我們的模型中暴露程度越低。','與2026年評分相同。','相較2026年{n}分。','{city}：{year}年實驗性評分{score}/100 — {verdict}。並非當地預報。','亞特蘭提斯是傳說。試試真實的城市。'],
 };
+const creators={en:'Created by',fr:'Créé par',es:'Creado por',it:'Creato da',vi:'Thực hiện bởi',ja:'制作',zh:'制作方','zh-Hant':'製作方'};
 export function applySiteText(translations){
  return Object.fromEntries(Object.entries(translations).map(([locale,original])=>{
   const dictionary=Object.fromEntries(keys.map((key,i)=>[key,rows[locale][i]]));
   const ui=Object.fromEntries(uiKeys.map((key,i)=>[key,uiRows[locale][i]]));
   const human=humanCopy(locale),t=templates[locale],score=scoreRows[locale],verdict={bon:t[0],moyen:t[1],dur:t[2]};
   const critere=Object.fromEntries(Object.entries({thermique:'chaleur',eau:'secheresse',feux:'feux',mer:'mer',fleuves:'fleuves',stabilite:'stabilite'}).map(([key,filter])=>[key,human.names[filter]]));
-  return [locale,{...original,...dictionary,calque:human.names,critere,info:{...human.definitions,mer:original.info.mer,fleuves:original.info.fleuves},verdict,panelVerdict:verdict,
+  return [locale,{...original,...dictionary,createdBy:creators[locale],partagerSite:original.partagerSite.replace('TERRA','fromearth'),calque:human.names,critere,info:{...human.definitions,mer:original.info.mer,fleuves:original.info.fleuves},verdict,panelVerdict:verdict,
    panelSummary:risk=>t[3].replace('{risk}',risk.toLowerCase()),panelCountryNote:n=>t[4].replace('{n}',n),panelDirection:score[0],atlantide:score[4],
    panelEvolution:n=>n===0?score[1]:score[2].replace('{n}',`${n>0?'+':'−'}${Math.abs(n)}`),
-   aria:{...original.aria,calques:t[6],dossier:t[7]},ui:{...original.ui,...ui,countryWeighted:t[5],shareSummary:score[3]}}];
+   aria:{...original.aria,calques:t[6],dossier:t[7]},ui:{...original.ui,...ui,terra2050_will_your_city_still:original.ui.terra2050_will_your_city_still.replace(/TERRA[／/]2050/g,'fromearth · 2050'),countryWeighted:t[5],shareSummary:score[3]}}];
  }));
 }

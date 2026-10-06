@@ -44,6 +44,8 @@ try{
   for(const language of ['en','fr','es','it','vi','ja','zh','zh-Hant']){
    current=viewport.width+'/'+language;await chooseLanguage(page,language);await page.locator('#bouton-reglages').click();
    assert.equal(await page.locator('#share-view').getAttribute('aria-label'),experienceUICopy(language).share);
+   assert.match(await page.title(),/^fromearth/);
+   assert.equal(await page.locator('#wordmark .brand-logo').evaluate(img=>img.complete&&img.naturalWidth>0),true);
    assert.equal(await page.locator('#share-view').textContent(),'');
    const boxes=await page.locator('#map-inspector,#layer-visibility,#timeline,#titre,#share-view,#recherche,#util').evaluateAll(nodes=>nodes.map(n=>({id:n.id,...n.getBoundingClientRect().toJSON()})));
    for(const b of boxes)assert.ok(b.x>=-1&&b.right<=viewport.width+1,JSON.stringify(b));

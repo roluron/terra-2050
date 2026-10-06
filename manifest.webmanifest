@@ -1,7 +1,7 @@
 {
- "name": "TERRA／2050",
- "short_name": "TERRA 2050",
- "description": "Will your city still be livable in 2050?",
+ "name": "fromearth · 2050",
+ "short_name": "fromearth",
+ "description": "Explore climate projections through 2050.",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",

@@ -59,7 +59,7 @@ export function createExperienceUI(api){
    const status=el('p',undefined,'ux-status');status.setAttribute('role','status');
    const copy=el('button',c.copy,'ux-primary');copy.type='button';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(input.value);status.textContent=c.copied;}catch{status.textContent=c.failed;input.focus();input.select();}});
    content.append(copy);
-   if(navigator.share){const native=el('button',c.share,'ux-source-link');native.type='button';native.addEventListener('click',async()=>{try{await navigator.share({title:'TERRA/2050',text:filterName+' · '+state.year,url:input.value});}catch(e){if(e.name!=='AbortError')status.textContent=c.failed;}});content.append(native);}
+   if(navigator.share){const native=el('button',c.share,'ux-source-link');native.type='button';native.addEventListener('click',async()=>{try{await navigator.share({title:'fromearth',text:filterName+' · '+state.year,url:input.value});}catch(e){if(e.name!=='AbortError')status.textContent=c.failed;}});content.append(native);}
    content.append(status);
   }else{
    title.textContent=c.compare+' · '+state.location;
