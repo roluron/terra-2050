@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<style>html,body{background:#050606}#boot-screen{position:fixed;inset:0;z-index:100000;background:#050606;display:grid;place-items:center}#boot-screen[hidden]{display:none}.planet-sprite{width:96px;height:96px}</style>
+<style>html,body{background:#050606}#boot-screen{position:fixed;inset:0;z-index:100000;background:#050606;display:grid;place-items:center}#boot-screen[hidden]{display:none}.planet-sprite{width:96px;height:96px}.return-planet{display:none}.returning-visit #boot-screen picture{display:none}.returning-visit .return-planet{display:block;width:60vmin;height:60vmin;border-radius:50%;background:radial-gradient(circle,#dcdcd6 1px,transparent 1.5px) 0 0/6px 6px;mask-image:radial-gradient(circle,#000 45%,transparent 71%);-webkit-mask-image:radial-gradient(circle,#000 45%,transparent 71%)}</style>
+<script>try{if(localStorage.getItem('terra-intro-complete')==='1')document.documentElement.classList.add('returning-visit')}catch{}</script>
 <link rel="preload" as="image" href="./assets/pixel-earth-animated.png" media="(prefers-reduced-motion: no-preference)">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="modulepreload" href="./assets/lib/three.module.min.js">
@@ -191,7 +192,7 @@
 </style>
 </head>
 <body>
-<div id="boot-screen" aria-label="Loading"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./assets/favicon-pixel-earth.png"><img class="planet-sprite" src="./assets/pixel-earth-animated.png" width="96" height="96" alt=""></picture></div>
+<div id="boot-screen" aria-label="Loading"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./assets/favicon-pixel-earth.png"><img class="planet-sprite" src="./assets/pixel-earth-animated.png" width="96" height="96" alt=""></picture><span class="return-planet" aria-hidden="true"></span></div>
 <dialog id="earth-shell" lang="en" aria-label="A letter from Earth">
   <canvas id="earth-orb" aria-hidden="true"></canvas>
   <main id="earth-letter-main" tabindex="-1" hidden>
@@ -305,6 +306,7 @@
     <div id="menu-reglages">
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" type="button" aria-haspopup="dialog"></button>
+      <button class="bouton-ico" id="bouton-recommencer" type="button" data-ui="startAgain"></button>
       <div class="creator-credit"><p data-t="ideaBy"></p><a class="bouton-ico" href="https://fromanother.love" target="_blank" rel="noopener"><span data-t="createdBy"></span> fromanother</a></div>
     </div>
   </div>

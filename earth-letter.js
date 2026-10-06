@@ -8,6 +8,7 @@ shell.addEventListener('keydown', event => event.stopPropagation());
 const letter = document.querySelector('#letter');
 const future = document.querySelector('#future');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const returning = document.documentElement.classList.contains('returning-visit');
 const signs = Array.from('·✺+⋮✶⋅⊹✧');
 const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
 const words = [];
@@ -34,7 +35,7 @@ function armLetter() {
     for (const item of words) if (!item.started) item.word.tabIndex = 0;
   });
 }
-openLanguage(() => {
+if (!returning) openLanguage(() => {
   document.getElementById('earth-letter-main').hidden = false;
   document.getElementById('earth-letter-main').focus({preventScroll:true});
   armLetter();
@@ -195,9 +196,48 @@ future.addEventListener('click', () => {
     complete: () => {
       clearTimeout(recoveryTimer);
       window.terraIntro.complete();
+      try { localStorage.setItem('terra-intro-complete', '1'); } catch {}
       shell.close();
     }
   });
   recoveryTimer = setTimeout(() => { if (!entered) document.querySelector('#earth-recovery').hidden = false; }, 16000);
 });
+document.getElementById('bouton-recommencer').addEventListener('click', () => {
+  try {
+    const keys = ['terra-intro-complete','terra-langue','terra-recents','terra-story-opts','terra-son'];
+    for (const key of Object.keys(localStorage)) if (keys.includes(key) || key.startsWith('terra-pedago-')) localStorage.removeItem(key);
+  } catch {}
+  const url = new URL(location.href);
+  url.hash = ''; url.searchParams.delete('lang');
+  location.replace(url);
+});
+if (returning) {
+  departing = true;
+  clearInterval(codeTimer);
+  shell.classList.add('departing', 'returning');
+  shell.setAttribute('aria-label', getText().ui.globeSlow);
+  document.getElementById('boot-screen').hidden = true;
+  const count = 1200, radius = Math.min(innerWidth, innerHeight) * .3;
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  const origins = Array.from({length:count}, (_, index) => {
+    const y = 1 - (index + .5) / count * 2, r = Math.sqrt(1 - y * y);
+    return {x:innerWidth / 2 + Math.sin(index * golden) * r * radius,y:innerHeight / 2 - y * radius,character:'·'};
+  });
+  enter();
+  stopOrb = startOrb(document.getElementById('earth-orb'), origins, {
+    returning:true, reduced:motion.matches,
+    ready:() => entered,
+    points:() => window.terraIntro?.points() || [],
+    materialize:progress => {
+      shell.classList.add('materializing');
+      shell.style.setProperty('--earth-veil', String(1 - progress));
+    },
+    complete:() => {
+      clearTimeout(recoveryTimer);
+      window.terraIntro.complete();
+      shell.close();
+    }
+  });
+  recoveryTimer = setTimeout(() => { if (!entered) document.getElementById('earth-recovery').hidden = false; }, 16000);
+}
 window.addEventListener('pagehide', event => { if (!event.persisted) { clearInterval(codeTimer); clearTimeout(recoveryTimer); stopOrb?.(); } });

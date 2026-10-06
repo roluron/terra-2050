@@ -5,6 +5,7 @@ import { gunzipSync } from 'node:zlib';
 import { loadScientificMetrics } from '../../science-metrics.mjs';
 
 const root = new URL('../../', import.meta.url);
+if (process.argv.includes('--without-web-crypto')) Object.defineProperty(globalThis, 'crypto', { value: undefined });
 let corruptPlaces = false;
 globalThis.fetch = async path => {
   const bytes = await fs.readFile(new URL(path, root));

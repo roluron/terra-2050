@@ -18,7 +18,7 @@ export function startOrb(canvas, origins, options) {
     const y = 1 - (i + .5) / origins.length * 2, r = Math.sqrt(1 - y * y);
     return { y, r, theta: i * golden };
   });
-  let waitedAt = null, launch = null;
+  let waitedAt = options.returning ? began : null, launch = null;
   const current = origins.map(origin => ({ x: origin.x, y: origin.y }));
   const coarse = matchMedia('(pointer: coarse)').matches;
   const symbols = Array.from('·+✺⋮✶⊹');
@@ -60,23 +60,31 @@ export function startOrb(canvas, origins, options) {
     }
     if (assembledAt === null && waitedAt === null && now - began > WAIT_DELAY) waitedAt = now;
     const time = assembledAt === null ? 0 : (now - assembledAt) / 1000;
-    if ((time > 5.4 || simplified) && assembledAt !== null && blendAt === null) {
+    if ((time > (options.returning ? 1.8 : 5.4) || simplified) && assembledAt !== null && blendAt === null) {
       blendAt = now;
     }
-    const blend = blendAt === null ? 0 : Math.min(1, (now - blendAt) / (simplified ? 1 : 3600));
+    const blend = blendAt === null ? 0 : Math.min(1, (now - blendAt) / (simplified ? 1 : options.returning ? 1200 : 3600));
     const dissolve = blend * blend * (3 - 2 * blend);
     if (blendAt !== null) options.materialize(dissolve);
     if (blend === 1) { stop(); options.complete(); return; }
     if (drawingAvailable && !options.reduced) {
       ctx.clearRect(0, 0, width, height);
-      const progress = Math.min(1, time / 4.4);
+      const progress = Math.min(1, time / (options.returning ? 1.4 : 4.4));
       const opacity = 1 - dissolve;
-      const glyphMix = 1 - Math.min(1, Math.max(0, (progress - .35) / .6));
+      const glyphMix = options.returning ? 0 : 1 - Math.min(1, Math.max(0, (progress - .35) / .6));
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       const count = points.length || origins.length;
       const waiting = assembledAt === null && waitedAt !== null;
-      const gather = waiting ? Math.min(1, (now - waitedAt) / WAIT_GATHER) : 0;
+      const gather = waiting ? options.returning ? 1 : Math.min(1, (now - waitedAt) / WAIT_GATHER) : 0;
       const spin = (now - began) / 9000 * Math.PI * 2, radius = Math.min(width, height) * .3;
+      if (options.returning && assembledAt !== null && time < .35) {
+        for (const s of sphere) {
+          const angle = s.theta + spin, z = Math.cos(angle) * s.r;
+          ctx.globalAlpha = (.16 + .74 * Math.max(0, z)) * (1 - time / .35);
+          ctx.drawImage(dot, width / 2 + Math.sin(angle) * s.r * radius - 1.75, height / 2 - s.y * radius - 1.75, 3.5, 3.5);
+        }
+        ctx.globalAlpha = 1;
+      }
       let lastFont = null;
       for (let index = 0; index < count; index++) {
         const origin = origins[index % origins.length] || { x: width / 2, y: height / 2, character: '·' };
@@ -90,13 +98,13 @@ export function startOrb(canvas, origins, options) {
           position = morphPoint(origin, target, gather);
           current[index].x = position.x; current[index].y = position.y;
         } else {
-          const start = launch ? launch[index % origins.length] : origin;
+          const start = options.returning ? target : launch ? launch[index % origins.length] : origin;
           position = morphPoint(start, target, progress);
         }
         const first = index < origins.length;
-        const emission = first ? 1 : Math.min(1, time / 1.8);
+        const emission = options.returning && !waiting ? Math.min(1, time / .35) : first ? 1 : Math.min(1, time / 1.8);
         const brightness = point.alpha * opacity * emission;
-        const letterOpacity = Math.max(0, 1 - (now - began) / 1000);
+        const letterOpacity = options.returning ? 0 : Math.max(0, 1 - (now - began) / 1000);
         if (first && letterOpacity > 0) {
           ctx.fillStyle = `rgba(218,219,214,${letterOpacity * opacity})`;
           const font = origin.font || 'italic 20px Lausanne, sans-serif';

@@ -1,3 +1,5 @@
+import { sha256 } from './sha256.mjs';
+
 const fieldMaps = new WeakMap();
 const epochs = ['historical', 'near', 'future'];
 
@@ -128,11 +130,6 @@ export function floodCityAtYear(cities, index, year, hazard) {
       future: sources.find(source => source.epoch === 2050)?.climate_period },
     { spatialSupport: 'native-grid-cell-at-stored-city-coordinate', nativeResolutionArcseconds: metadata.native_resolution_arcseconds,
       coordinatePrecisionDegrees: metadata.coordinate_precision_degrees, cityIndex: index });
-}
-
-async function sha256(buffer) {
-  const bytes = new Uint8Array(await crypto.subtle.digest('SHA-256', buffer));
-  return Array.from(bytes, value => value.toString(16).padStart(2, '0')).join('');
 }
 
 async function fetchBuffer(path) {

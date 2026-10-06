@@ -56,14 +56,15 @@ export function openLanguage(onClose, first = false) {
   syncLanguageDialog();
   const boot = document.getElementById('boot-screen');
   const planet = boot.querySelector('picture');
+  const arriving = planet && !boot.hidden;
   const origin = planet?.querySelector('img').getBoundingClientRect();
   const content = languageDialog.querySelector('.language-content');
-  if (planet) content.classList.add('language-entering');
+  if (arriving) content.classList.add('language-entering');
   languageDialog.showModal();
   if (planet) {
     planet.querySelector('img').classList.add('language-globe');
     document.getElementById('language-planet').replaceWith(planet);
-    languageArrival = arriveLanguage(content, planet.querySelector('img'), origin);
+    languageArrival = arriving ? arriveLanguage(content, planet.querySelector('img'), origin) : Promise.resolve();
   }
   boot.hidden = true;
   const target = first ? document.getElementById('language-title') : languageDialog.querySelector('input:checked');

@@ -1,14 +1,10 @@
 import { loadWorldClim, loadFireWeather, loadFloodHazards, fireAtYear, climateAtYear } from './climate-data.mjs';
 import { floodCityAtYear, floodAtYear, loadFloodCities } from './flood-data.mjs';
+import { sha256 as hash } from './sha256.mjs';
 
 const axes = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
 const units = ['°C', 'De Martonne index', 'days/year', 'm', 'm', '°C'];
 const finite = value => Number.isFinite(value) ? (value === 0 ? 0 : value) : null;
-
-async function hash(buffer) {
-  return [...new Uint8Array(await crypto.subtle.digest('SHA-256', buffer))]
-    .map(value => value.toString(16).padStart(2, '0')).join('');
-}
 
 async function buffer(path) {
   const response = await fetch(path);

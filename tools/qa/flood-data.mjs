@@ -4,6 +4,7 @@ import { gunzipSync } from 'node:zlib';
 import { loadFloodCities, floodAtYear, floodCityAtYear } from '../../flood-data.mjs';
 
 const root = new URL('../../', import.meta.url);
+if (process.argv.includes('--without-web-crypto')) Object.defineProperty(globalThis, 'crypto', { value: undefined });
 const file = path => readFile(new URL(path, root));
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async path => new Response(await file(path));

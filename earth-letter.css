@@ -63,6 +63,7 @@ body:has(#earth-shell[open]) #voile{visibility:hidden}
 #earth-shell.departing{overflow:hidden}
 #earth-shell.departing #earth-letter-main{pointer-events:none;opacity:0;filter:blur(2px);transform:none;transition:opacity .35s,filter .35s}
 #earth-shell.departing #earth-orb{opacity:1}
+#earth-shell.returning #earth-orb{transition:none}
 #earth-recovery{position:fixed;bottom:25px;left:0;right:0;text-align:center;color:#9aa397;font-size:13px}
 #earth-recovery[hidden]{display:none}
 @keyframes earth-arrive{to{opacity:1;filter:blur(0);transform:none}}
