@@ -1,5 +1,6 @@
 import { refinementCopy, experienceCopy } from './refinement-copy.mjs';
 import { warmingCopy } from './hover-diagnostic.mjs';
+import {readingCopy} from './reading-copy.mjs';
 
 // Value mode uses the meaning of each stored metric. Only warming and
 // population are differences from a reference; physical levels stay levels.
@@ -63,7 +64,8 @@ const references = {
 };
 
 export function mapValueContext(filter, locale, year) {
-  if (filter === 'stabilite') return warmingCopy[locale] || warmingCopy.en;
+  const simple=readingCopy(locale);
+  if (filter === 'stabilite') return {...(warmingCopy[locale] || warmingCopy.en),value:simple.historicalMode};
   const words = references[locale] || references.en;
   if (filter === 'declin') return {
     value: words.populationValue, reference: words.population, hint: words.populationHint,
@@ -76,7 +78,7 @@ export function mapValueContext(filter, locale, year) {
     mer: words.flood,
     fleuves: words.flood,
   }[filter];
-  return { value: guide.value.replace('{year}', year), reference: reference || '',
+  return { value: simple.valueMode, reference: reference || '',
     hint: guide.valueHint.replace('{year}', year) };
 }
 
@@ -94,5 +96,5 @@ const historicalCopy = {
 };
 export function mapReferenceContext(filter, locale) {
   const words = historicalCopy[locale] || historicalCopy.en, period = historicalPeriods[filter];
-  return { value: words[0].replace('{period}', period), reference: words[1].replace('{period}', period), hint: words[2] };
+  return { value: readingCopy(locale).historicalMode, reference: words[1].replace('{period}', period), hint: words[2] };
 }

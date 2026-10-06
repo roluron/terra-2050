@@ -10,7 +10,7 @@
 <link rel="preload" as="image" type="image/webp" href="./assets/textures/earth_mask_4320.webp">
 <link rel="preload" as="image" href="./data/grille_c.png">
 <meta property="og:title" content="TERRA／2050 — Explore climate projections">
-<meta property="og:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
+<meta property="og:description" content="See your future. Explore how climate and population could change where you live, from 2026 to 2050.">
 <meta property="og:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
 <meta property="og:url" content="https://roluron.github.io/terra-2050/">
 <meta property="og:type" content="website">
@@ -22,10 +22,10 @@
 <meta property="og:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TERRA／2050 — Explore climate projections">
-<meta name="twitter:description" content="34,099 cities · an illustrative climate exposure index. Explore modelled hazards, assumptions and source limitations.">
+<meta name="twitter:description" content="See your future. Explore how climate and population could change where you live, from 2026 to 2050.">
 <meta name="twitter:image" content="https://roluron.github.io/terra-2050/assets/og-projections.jpg">
 <meta name="twitter:image:alt" content="Le globe TERRA／2050, exploration de projections climatiques sous des scénarios définis">
-<meta name="description" content="34 099 villes · un indice illustratif d’exposition climatique. Explorez les risques modélisés, hypothèses et limites des sources.">
+<meta name="description" content="Explorez votre futur. Voyez comment le climat et la population pourraient changer près de chez vous, de 2026 à 2050.">
 <meta name="theme-color" content="#070706">
 <meta name="color-scheme" content="dark">
 <meta name="mobile-web-app-capable" content="yes">
@@ -422,7 +422,9 @@ import { mapValueContext, mapReferenceContext, historicalFilters } from './map-v
 import { mapDiagnosticReading } from './map-diagnostic.mjs';
 import { mapDiagnosticCopy } from './map-diagnostic-copy.mjs';
 import { createGlobalSummary } from './global-summary.mjs';
-import { summarizeText } from './global-summary-copy.mjs';
+import { summarizeText,technicalSummaryText,explainSummary } from './global-summary-copy.mjs';
+import {humanCopy,impactSources} from './human-impact-copy.mjs';
+import {readingCopy,explainMapReading} from './reading-copy.mjs';
 import {createExperienceUI} from './experience-ui.mjs';
 import {experienceUICopy} from './experience-ui-copy.mjs';
 import { glassCursor, setCursorGlobeHitTest } from './glass-cursor.mjs';
@@ -2398,11 +2400,11 @@ const definitionRisque = (t, cle) => t.infoplus[{
 }[cle]];
 function creerRisques(conteneur, cles, t, signature, nouveau){
   if (!nouveau && conteneur.dataset.langue === signature) return;
-  const ouverts = nouveau ? [] : [...conteneur.querySelectorAll('details[open]')].map(el => el.dataset.cle);
+  const ouverts = nouveau ? [] : [...conteneur.querySelectorAll('.risque[open]')].map(el => el.dataset.cle);
   conteneur.dataset.langue = signature;
   conteneur.innerHTML = cles.map(cle => `<details class="risque" data-cle="${cle}" ${ouverts.includes(cle) ? 'open' : ''}>
     <summary><span class="nom-crit">${t.critere[cle]}</span><span class="risque-chevron" aria-hidden="true">+</span><span class="risk-reading"><b class="risk-number"></b><small>/100</small></span><span class="risk-meter" aria-hidden="true"><i></i></span><span class="val"><b class="v-now"></b></span><span class="risk-change"></span></summary>
-    <p class="detail"></p></details>`).join('');
+    <p class="risk-impact"></p><details class="risk-method"><summary>${experienceUICopy(langue).sources}</summary><p class="detail"></p></details></details>`).join('');
 }
 const uniteLocale = unit => unit === 'days/year' ? T().ui.daysyear : unit === 'De Martonne index' ? 'De Martonne' : unit || '';
 function finirRisques(nouveau){
@@ -2416,6 +2418,8 @@ function finirRisques(nouveau){
   const format = value => formatHoverNumber(value, langue, false, 2);
   rangees.forEach(el => {
     const key = el.dataset.cle, sample = readings?.[key], available = sample?.available;
+    const filter={thermique:'chaleur',eau:'secheresse',feux:'feux',mer:'mer',fleuves:'fleuves',stabilite:'stabilite'}[key],human=humanCopy(langue);
+    el.querySelector('.risk-impact').textContent=available?human.effects[filter]:'';
     const unit = uniteLocale(key === 'feux' ? 'days/year' : key === 'eau' ? 'De Martonne index' : sample?.unit);
     el.querySelector('.risk-reading small').textContent = unit;
     el.querySelector('.risk-number').textContent = available ? format(sample.value) : '—';
@@ -2442,7 +2446,7 @@ function finirRisques(nouveau){
     let plain = el.querySelector('.risk-meaning');
     if (!plain) { plain = document.createElement('p'); plain.className = 'risk-meaning'; el.querySelector('summary').append(plain); }
     plain.textContent = (key === 'mer' || key === 'fleuves')
-      ? sample?.country ? T().ui.populationweighted_mean_of_listed_cities : sample?.regionalFallback ? refinementCopy(langue).regionalFlood : refinementCopy(langue).cell
+      ? sample?.country ? T().panelCountryNote(sample.contributingCities) : sample?.regionalFallback ? refinementCopy(langue).regionalFlood : refinementCopy(langue).cell
       : explanation;
     if (key === 'eau') el.querySelector('.nom-crit').textContent = refinementCopy(langue).humidity;
     if (key === 'eau' && available && !sample.country) {
@@ -2453,7 +2457,7 @@ function finirRisques(nouveau){
       el.querySelector('.detail').append('\n\n', source);
     }
     if (sample?.country) {
-      plain.textContent += ` (${sample.contributingCities})`;
+      if(key!=='mer'&&key!=='fleuves')plain.textContent += ` · ${T().panelCountryNote(sample.contributingCities)}`;
       if (sample.regionalCities) plain.textContent += ` · ${refinementCopy(langue).regionalScore}: ${sample.regionalCities}/${sample.contributingCities}`;
       el.dataset.spatial = 'country';
     } else if (available && sample.regionalFallback) {
@@ -2461,6 +2465,10 @@ function finirRisques(nouveau){
       el.dataset.spatial = 'regional';
     } else el.dataset.spatial = 'native';
     if (!sample?.country && (key === 'mer' || key === 'fleuves')) el.querySelector('.detail').textContent += '\n\n' + (sample?.regionalFallback ? refinementCopy(langue).regionalFlood : refinementCopy(langue).cell);
+    if(available&&impactSources[filter]){
+      const source=impactSources[filter],link=document.createElement('a');link.href=source.url;link.target='_blank';link.rel='noopener';link.textContent=source.name;
+      el.querySelector('.detail').append('\n\n',human.effectScope,' ',link);
+    }
     el.dataset.detail = el.querySelector('.detail').textContent;
     if (nouveau) el.open = false;
   });
@@ -2914,7 +2922,7 @@ async function genererStory(opts){
   for (const [txt, col] of seg){ g.fillStyle = col; g.fillText(txt, x, 200); x += g.measureText(txt).width; }
   g.textAlign = 'center';
   g.letterSpacing = cjk ? '0px' : '3px'; g.font = `500 28px ${sans}`; g.fillStyle = MUTER;
-  g.fillText((T().ui.experimental_climate_index) + an, 540, 320, 840);
+  g.fillText(T().ui.experimental_climate_index + ' · ' + an, 540, 320, 840);
   g.letterSpacing = '0px';
 
   // le nom, ajusté à la largeur
@@ -3935,12 +3943,19 @@ function lectureSurvol(s, an){
         }
         if (diagnostic){
           const words = mapDiagnosticCopy[langue] || mapDiagnosticCopy.en;
+          const plain=readingCopy(langue),human=humanCopy(langue),originalDetail=diagnostic.detail;
           note = words[0].replace('{size}', formatHoverNumber(reading.resolutionDegrees, langue))
             .replace('{km}', String(Math.round(reading.resolutionDegrees * 111.2)));
-          support = note;
+          support = plain.area;
           if (changing || referencing || !['chaleur','secheresse','stabilite'].includes(filter)) note += ' ' + (isFlood ? words[1] : copy.summary[CRITERES.findIndex(c => c.cle === hoverMetricKey[filter])]);
           if (reading.modelCount > 1) note += ' ' + words[2].replace('{n}', String(reading.modelCount));
           else if (!isFlood && filter !== 'feux') note += ' ' + words[3];
+          if(originalDetail)note+='\n'+originalDetail;
+          if(referencing||changing){
+            const reference=referencing?reading.historical:reading.baseline;
+            diagnostic.detail=`${referencing?(isFlood?plain.pastFlood:plain.past):T().ui['2026_illustrative_estimate']}: ${formatHoverNumber(reference,langue,false,2)} ${uniteLocale(reading.unit)} → ${plain.selected}: ${formatHoverNumber(reading.value,langue,false,2)} ${uniteLocale(reading.unit)}`;
+          }else diagnostic.detail=isFlood?plain.floodShare:human.definitions[filter];
+          note+='\n\n'+human.effects[filter]+'\n'+human.effectScope;
         }
       }
     } else {
@@ -4203,8 +4218,14 @@ experienceUI = createExperienceUI({
     mode:uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value',
     location:survolFige&&survolPoint?survolNom.textContent:lieuDossier?nomVille(lieuDossier):'',
     point:survolFige?survolPoint?.s:null}),
-  getSource:()=>({description:experienceCopy(langue).indicators[filtreSurvol]||'',
-    source:T().infoSource[filtreSurvol]||'',method:document.getElementById('layer-method').textContent,technical:T().infoplus[filtreSurvol]||'',
+  getSource:(context='world')=>({description:experienceCopy(langue).indicators[filtreSurvol]||'',
+    plain:context==='local'&&survolFige&&survolPoint
+      ?explainMapReading(filtreSurvol,filtreSurvol==='declin'
+        ?{available:!!populationHover(PAYS_POP[survolPoint.s.iso],etat.annee,uniformsGlobe.uChange.value>.5,langue),value:PAYS_POP[survolPoint.s.iso]?.[etat.annee-2025],baseline:PAYS_POP[survolPoint.s.iso]?.[uniformsGlobe.uChange.value>.5?1:0]}
+        :mapDiagnosticReading({filter:filtreSurvol,year:etat.annee,latitude:survolPoint.s.lat,longitude:survolPoint.s.lon,climate:SCIENCE?.climate,fire:FIRE_WEATHER,floods:FLOOD_HAZARDS}),langue,etat.annee,uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value')
+      :explainSummary(filtreSurvol,globalSummary?.reading(filtreSurvol,etat.annee),langue,etat.annee),
+    source:T().infoSource[filtreSurvol]||'',method:document.getElementById('layer-method').textContent,
+    technical:[T().infoplus[filtreSurvol],...Object.values(technicalSummaryText(filtreSurvol,globalSummary?.reading(filtreSurvol,etat.annee),langue,etat.annee))].filter(Boolean).join('\n\n'),
     notice:T().indicatorNotice,animation:T().betaNotice,summary:[...document.querySelectorAll('#filter-summary .summary-headline,#filter-summary .summary-reference,#filter-summary .summary-detail')].map(el=>el.textContent).filter(Boolean).join('\n')}),
   readYear:year=>survolPoint?lectureSurvol(survolPoint.s,year):null,
   toggleLayer:basculerVisibilite,

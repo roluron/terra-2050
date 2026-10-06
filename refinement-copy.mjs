@@ -1,4 +1,7 @@
 import traditional from './locales/zh-Hant-refinement.mjs';
+import {humanCopy} from './human-impact-copy.mjs';
+import {readingCopy} from './reading-copy.mjs';
+import {placeReadingCopy} from './place-reading-copy.mjs';
 export const mapCopy = {
  en: ['Change since 2026','Level','Sources & reading guide','Move the year to see where conditions change.','No change from the 2026 reference.','Colour saturates at the endpoints. Uncoloured areas may have no estimate.','wetter','drier','percentage points','population decline','population growth'],
  fr: ['Évolution depuis 2026','Niveau','Sources et lecture','Déplacez l’année pour voir où les conditions évoluent.','Aucun changement par rapport à la référence 2026.','La couleur sature aux extrémités. Une zone sans couleur peut manquer de données.','plus humide','plus sec','points de pourcentage','baisse de population','hausse de population'],
@@ -112,7 +115,7 @@ const riverLines = {
   it:'Le linee animate indicano i corsi dei fiumi, non le aree allagate o la portata prevista.'
 };
 for (const [language, text] of Object.entries(riverLines)) copy[language].riverLines = text;
-export const refinementCopy = language => copy[language] || copy.en;
+export const refinementCopy = language => ({...(copy[language] || copy.en),...placeReadingCopy(language)});
 
 // First-use guidance stays separate from the full scientific method.
 const experience = {
@@ -181,7 +184,10 @@ const experience = {
     stabilite:'表示當地年平均氣溫相對1970至2000年的變化，單位為°C。數值越高，當地暖化越明顯。這是模型估算，不是氣候臨界點門檻。',
     declin:'表示全國人口減少的估算。降幅越大，全國居民越少。不預測各城市的人口、就業或服務。'}}
 };
-export const experienceCopy = language => experience[language] || experience.en;
+export const experienceCopy = language => {
+ const original=experience[language]||experience.en,c=humanCopy(language);
+ return {...original,indicators:Object.fromEntries(Object.keys(c.names).map(filter=>[filter,c.definitions[filter]+' '+c.effects[filter]]))};
+};
 
 const moistureBands = {
   en:['Desert climate','Arid climate','Semi-dry climate','Moderately wet climate','Wet climate','Very wet climate'],
@@ -198,6 +204,11 @@ mapCopy['zh-Hant']=traditional.map;
 mapPicker['zh-Hant']=traditional.picker;
 floodMapMeaning['zh-Hant']=traditional.flood;
 moistureBands['zh-Hant']=traditional.bands;
+for(const locale of Object.keys(mapCopy)){
+ const c=readingCopy(locale);
+ mapCopy[locale][0]=c.change;
+ mapCopy[locale][2]=c.more;
+}
 export function moistureBand(value, language) {
   if (!Number.isFinite(value) || value < 0) return '';
   return (moistureBands[language] || moistureBands.en)[value < 5 ? 0 : value < 10 ? 1 : value < 20 ? 2 : value < 30 ? 3 : value <= 60 ? 4 : 5];

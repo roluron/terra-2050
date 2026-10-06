@@ -108,7 +108,7 @@ for (const [name, engine, options] of [
             check(row.number === fmt(sample.value), `${label}: displayed rounded value`, row);
             check(row.changeLabel.startsWith(`2026: ${fmt(sample.baseline)} · `) && row.changeLabel.endsWith(unit), `${label}: fixed baseline label`, row);
             const direction = row.key === 'eau' ? sample.change < 0 ? 'Drier' : 'Wetter' : sample.change > 0 ? 'Increase' : 'Decrease';
-            const status = year === 2026 ? 'Illustrative baseline' : Math.abs(sample.change) < 1e-7 ? 'Unchanged estimate' : direction;
+            const status = year === 2026 ? 'Starting estimate' : Math.abs(sample.change) < 1e-7 ? 'No change since 2026' : direction;
             check(row.status === status, `${label}: direction label`, { expected: status, row });
           }
           check(!/hot\/dry.month|indice de chaleur >|heat index >|COAST-RP|FABDEM|unvalidated proxy/i.test(row.detail), `${label}: no stale proxy claim`, row.detail);

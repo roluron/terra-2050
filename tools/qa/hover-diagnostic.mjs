@@ -6,6 +6,8 @@ import {enter, chooseLanguage} from './entrance.cjs';
 import {hoverCopy, warmingCopy, populationHover, physicalHover, formatHoverNumber} from '../../hover-diagnostic.mjs';
 import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 import {mapValueContext} from '../../map-value-context.mjs';
+import {humanCopy} from '../../human-impact-copy.mjs';
+import {readingCopy} from '../../reading-copy.mjs';
 const annual=JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json',import.meta.url)));
 const climateMeta=JSON.parse(fs.readFileSync(new URL('../../data/climate-manifest.json',import.meta.url)));
 const climateBytes=gunzipSync(fs.readFileSync(new URL('../../data/climate-grid.bin',import.meta.url)));
@@ -109,8 +111,8 @@ try{
    await showWarming();
    assert.equal(await field('.s-indice'),signedTemperature(warmingAt(warmingSample,y),'fr'),name+' historic anomaly '+y);
    assert.equal(await field('.s-sous'),`${warmingCopy.fr.label} · ${y}`);
-   assert.equal(await field('.s-detail'),warmingCopy.fr.reference);
-   assert.equal(await page.locator('[data-map-mode="value"]').textContent(),warmingCopy.fr.value);
+   assert.equal(await field('.s-detail'),humanCopy('fr').definitions.stabilite);
+   assert.equal(await page.locator('[data-map-mode="value"]').textContent(),mapValueContext('stabilite','fr',y).value);
    assert.equal(await page.locator('.map-hint').textContent(),warmingCopy.fr.hint);
    await assertMode('value');snapshots.push({year:y,value:await field('.s-indice'),reference:await field('.s-detail')});
   }
@@ -138,9 +140,9 @@ try{
    assert.equal(await page.locator('#survol').isVisible(),true,name+' translated reading visible');
    assert.equal(await field('.s-indice'),signedTemperature(warmingAt(warmingSample,2026),locale));
    assert.equal(await field('.s-sous'),`${warmingCopy[locale].label} · 2026`);
-   assert.equal(await field('.s-detail'),warmingCopy[locale].reference);
-   assert.equal(await page.locator('[data-map-mode="value"]').textContent(),warmingCopy[locale].value);
-   assert.equal(await page.locator('.map-scale small').textContent(),warmingCopy[locale].reference,name+' legend reference');
+   assert.equal(await field('.s-detail'),humanCopy(locale).definitions.stabilite);
+   assert.equal(await page.locator('[data-map-mode="value"]').textContent(),mapValueContext('stabilite',locale,2026).value);
+   assert.equal(await page.locator('#layer-context .map-scale small').textContent(),warmingCopy[locale].reference,name+' legend reference');
    if(await page.locator('#bouton-reglages').getAttribute('aria-expanded')==='true'){
     if(name==='mobile')await page.locator('#bouton-reglages').tap();else await page.locator('#bouton-reglages').click();
    }
@@ -159,7 +161,7 @@ try{
     await showWarming();assert.equal(await page.locator('#survol').isVisible(),true,name+' heat capture visible');
     const heatExpected=new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(Number(hottestMonthAt(warmingSample,2026).toFixed(2)))+' °C';
     assert.equal(await field('.s-indice'),heatExpected,name+' hottest-month heat from raw packaged fields');
-    assert.equal(await field('.s-detail'),mapValueContext('chaleur',locale,2026).reference);
+    assert.equal(await field('.s-detail'),humanCopy(locale).definitions.chaleur);
     await page.waitForFunction(()=>Number(getComputedStyle(document.getElementById('survol')).opacity)>.99);
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     await page.screenshot({path:`${output}/${name}-${locale}-heat-2026.png`});
@@ -171,11 +173,16 @@ try{
      await mode('value');await assertMode('value');
      const context=mapValueContext(key,locale,2026);
      assert.equal(await page.locator('[data-map-mode="value"]').textContent(),context.value,locale+'/'+key+' compact value control');
-     assert.equal(await page.locator('.map-scale small').textContent(),context.reference,locale+'/'+key+' compact legend reference');
+     assert.equal(await page.locator('#layer-context .map-scale small').textContent(),context.reference,locale+'/'+key+' compact legend reference');
      assert.equal(await page.locator('.map-hint').textContent(),context.hint,locale+'/'+key+' compact contextual hint');
      await page.locator('#map-toggle').tap();
-     const legend=page.locator('.map-scale small');await legend.scrollIntoViewIfNeeded();
-     assert.equal(await legend.isVisible(),true,locale+'/'+key+' compact reference visible');
+     const legend=page.locator('#layer-context .map-scale small');
+     assert.equal(await legend.isVisible(),false,locale+'/'+key+' technical reference is disclosed in the data sheet');
+     await page.locator('#menu-sources').tap();
+     await page.locator('#view-sources .ux-data-details>summary').tap();
+     assert.equal(await page.locator('#view-sources .map-scale small').textContent(),context.reference);
+     assert.equal(await page.locator('#view-sources .map-scale small').isVisible(),true);
+     await page.keyboard.press('Escape');
      const bounds=await page.locator('#map-options').boundingBox();
      assert.ok(bounds.x>=-1&&bounds.y>=-1&&bounds.x+bounds.width<=321&&bounds.y+bounds.height<=569,locale+'/'+key+' compact menu fits viewport');
      assert.equal(await page.locator('#map-options').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,locale+'/'+key+' compact menu no horizontal overflow');
@@ -209,7 +216,7 @@ try{
   for(const key of ['chaleur','secheresse','feux','mer','fleuves','stabilite']){
    await filter(key);await mode('value');await show();console.log(`CHECK ${name} ${key}`);
    assert.ok(await field('.s-indice'),key+' value');
-   assert.equal(await field('.s-detail'),mapValueContext(key,'fr',2050).reference,key+' value reference');
+   assert.equal(await field('.s-detail'),['mer','fleuves'].includes(key)?readingCopy('fr').floodShare:humanCopy('fr').definitions[key],key+' value definition');
    assert.match(await field('.s-note'),/Maille du modèle/);
    if(['mer','fleuves'].includes(key))assert.match(await field('.s-note'),/cellules sources.*centennale/);
    await mode('change');await show();
@@ -217,7 +224,8 @@ try{
    const mk={chaleur:'thermique',secheresse:'eau',feux:'feux',mer:'mer',fleuves:'fleuves',stabilite:'stabilite'}[key];
    const r=readings[mk],unit=r.unit==='days/year'?'jours/an':r.unit==='De Martonne index'?'De Martonne':r.unit;
    assert.equal(await field('.s-indice'),physicalHover(r,2050,true,'fr',unit,['mer','fleuves'].includes(key)?'points de pourcentage':unit).value,key);
-   assert.match(await field('.s-detail'),/2026:.*2050:/);
+   assert.match(await field('.s-detail'),/2026.*→.*Année choisie:/);
+   assert.match(await field('.s-note'),/2026:.*2050:/,'Precise source values remain available');
    await year(2026);if(name==='desktop')await show();
    assert.match(await field('.s-indice'),/^0 /,key+' reference zero');
    await year(2050);await mode('value');

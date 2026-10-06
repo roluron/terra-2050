@@ -30,9 +30,9 @@ try{
    details.push(await row.locator('.detail').textContent());
  }
  assert.equal(new Set(details).size,6);
- const preserved=await page.locator('#dossier-risques details[open]').count();
+ const preserved=await page.locator('#dossier-risques>.risque[open]').count();
  await page.locator('#curseur').focus();for(let i=0;i<3;i++)await page.keyboard.press('ArrowRight');
- assert.equal(await page.locator('#dossier-risques details[open]').count(),preserved);
+ assert.equal(await page.locator('#dossier-risques>.risque[open]').count(),preserved);
  const alt=page.locator('#dossier-ailleurs .alt').first();const city=await alt.locator('.nom').textContent();await alt.click();await page.waitForTimeout(4200);assert.equal(await page.locator('#champ-recherche').inputValue(),city);
  await page.keyboard.press('Meta+k');await page.fill('#champ-recherche','');assert.ok((await page.locator('#resultats').textContent()).includes(city));
  await page.fill('#champ-recherche','Valence');const homonyms=await page.getByRole('option').allTextContents();assert.ok(homonyms.length>=2);assert.equal(new Set(homonyms).size,homonyms.length);

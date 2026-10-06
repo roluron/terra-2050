@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import { createGlobalSummary } from '../../global-summary.mjs';
-import { summarizeText, summaryCopy } from '../../global-summary-copy.mjs';
+import { summarizeText, technicalSummaryText, summaryCopy, explainSummary } from '../../global-summary-copy.mjs';
+import { humanCopy, impactSources } from '../../human-impact-copy.mjs';
+import { explainMapReading, legendCopy } from '../../reading-copy.mjs';
 
 const started = performance.now(), root = new URL('../../', import.meta.url);
 const read = path => readFile(new URL(path, root));
@@ -214,8 +216,8 @@ for (const filter of filters) for (let year = 2026; year <= 2050; year++) {
 assert.equal(summaryCopy.en.aridity, '{n}% of covered land becomes drier');
 assert.equal(summaryCopy.fr.aridity, '{n} % des terres avec données deviennent plus sèches');
 let copyChecks = 0;
-for (const locale of Object.keys(summaryCopy)) for (const filter of filters) for (const year of [2026, 2050]) {
-  const reading = real.reading(filter, year), text = summarizeText(filter, reading, locale, year);
+for (const locale of Object.keys(summaryCopy)) for (const filter of filters) for (let year=2026;year<=2050;year++) {
+  const reading = real.reading(filter, year), text = technicalSummaryText(filter, reading, locale, year);
   assert.ok(text.headline.length && text.detail.includes(String(year)));
   assert.ok(!/[{}]|undefined|NaN/.test(text.headline + (text.reference || '') + text.detail));
   if (filter === 'declin') {
@@ -228,17 +230,38 @@ for (const locale of Object.keys(summaryCopy)) for (const filter of filters) for
     if (filter === 'feux') assert.ok(text.detail.includes('1850'));
     if (['mer', 'fleuves'].includes(filter)) assert.ok(text.detail.includes(summaryCopy[locale].percentagePoints));
   }
+  const simple=summarizeText(filter,reading,locale,year),data=explainSummary(filter,reading,locale,year),human=humanCopy(locale);
+  assert.equal(simple.technicalDetail,[text.headline,text.reference,text.detail].filter(Boolean).join('\n'));
+  assert.equal(simple.detail,human.effects[filter]);
+  assert.ok(!simple.headline.includes(String(year)),'The timeline already supplies the selected year');
+  assert.ok(!/[{}]|undefined|NaN/.test([simple.headline,simple.reference,simple.detail,data.measure,data.comparison,data.values].join('\n')));
+  if(filter!=='declin')assert.ok(data.comparison.includes(reading.referencePeriod.join('–')));
+  for(const field of ['names','definitions','effects'])assert.ok(human[field][filter]);
+  assert.ok(impactSources[filter].url.startsWith('https://'));
   copyChecks++;
 }
 for (const locale of Object.keys(summaryCopy)) {
   const reading = { ...real.reading('chaleur', 2050) };
   for (const value of [0, -.25, .0001, -.0001]) {
-    const text = summarizeText('chaleur', { ...reading, value }, locale, 2050);
+    const text = technicalSummaryText('chaleur', { ...reading, value }, locale, 2050);
     assert.ok(text.headline.includes('°C'));
     if (value < 0) assert.ok(text.headline.includes('−'));
     if (Math.abs(value) === .0001) assert.ok(text.headline.includes('Δ'));
     copyChecks++;
   }
+  const warmer=summarizeText('chaleur',{...reading,value:.25},locale,2050);
+  const cooler=summarizeText('chaleur',{...reading,value:-.25},locale,2050);
+  assert.notEqual(warmer.headline,cooler.headline,'Cooling must not be described as warming');
+  assert.ok(summarizeText('chaleur',{...reading,value:.0001},locale,2050).headline.includes('<'),'Small changes must not round to a false zero');
+  const local=explainMapReading('mer',{available:true,value:2,baseline:1,historical:.5,historicalPeriod:[1979,2014]},locale,2050,'change');
+  assert.ok(local.comparison.includes('2026'));assert.ok(local.values.includes(local.points));
+  assert.equal(explainMapReading('mer',{available:false},locale,2050,'value'),null);
+  const warming=explainMapReading('stabilite',{available:true,value:2,baseline:1,historical:0,historicalPeriod:[1970,2000]},locale,2050,'value');
+  assert.ok(warming.comparison.includes('1970–2000'));assert.ok(!warming.values.includes('(1970–2000): 0'),'A warming anomaly is not an absolute past temperature');
+  const people=explainMapReading('declin',{available:true,value:70,baseline:100},locale,2027,'change');
+  assert.ok(people.values.includes('−30 %'));assert.ok(people.comparison.includes('2026'));
+  assert.equal(legendCopy('stabilite',locale,'value').ticks.length,3);
+  copyChecks+=8;
   assert.equal(summarizeText('chaleur', { available: false }, locale, 2050).headline, ''); copyChecks++;
 }
 assert.deepEqual(summarizeText('chaleur', real.reading('chaleur', 2050), 'unknown', 2050),

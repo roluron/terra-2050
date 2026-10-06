@@ -3,6 +3,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import {chromium} from 'playwright';
 import {enter,chooseLanguage} from './entrance.cjs';
 import {experienceUICopy} from '../../experience-ui-copy.mjs';
+import {legendCopy} from '../../reading-copy.mjs';
 const output=process.env.QA_SORTIE||'/tmp/terra-experience-ui';await mkdir(output,{recursive:true});
 const browser=await chromium.launch({headless:true,...(process.env.QA_CHROMIUM_PATH?{executablePath:process.env.QA_CHROMIUM_PATH}:{}),args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const results=[];let current='startup';
@@ -23,7 +24,8 @@ try{
     await page.locator(`[data-map-mode="${mode}"]`).dispatchEvent('click');
     for(const year of [2026,2050]){
      await page.locator('#curseur').fill(String(year));
-     assert.equal(await page.locator('#visible-legend .ux-scale').textContent(),await page.locator('#layer-context .map-scale').textContent());
+     assert.deepEqual(await page.locator('#visible-legend .ux-scale>span>*').allTextContents(),legendCopy(key,'en',mode).ticks);
+     assert.equal(await page.locator('#visible-legend .ux-scale i').getAttribute('style'),await page.locator('#layer-context .map-scale i').getAttribute('style'));
      const before=await page.locator('.summary-headline').textContent();await page.locator('#layer-visibility').click();
      assert.equal((await page.evaluate(()=>__experience.state())).strength,0);assert.equal(await page.locator('.summary-headline').textContent(),before);assert.equal((await page.evaluate(()=>__experience.state())).filter,key);
      await page.locator('#layer-visibility').click();assert.equal((await page.evaluate(()=>__experience.state())).strength,1);
@@ -33,7 +35,11 @@ try{
    const expected=await page.evaluate(()=>[__experience.read(2026).diagnostic?.value,__experience.read(2050).diagnostic?.value]);
    assert.deepEqual(await page.locator('#view-compare article strong').allTextContents(),expected);
    await page.keyboard.press('Escape');assert.equal(await page.locator('[data-hover-action="compare"]').evaluate(el=>el===document.activeElement),true);
-   await page.locator('[data-hover-action="source"]').click();assert.match(await page.locator('#view-sources').textContent(),/SSP3-7.0|RCP8.5|UN/);await page.keyboard.press('Escape');await page.evaluate(()=>__experience.clear());
+   await page.locator('[data-hover-action="source"]').click();assert.match(await page.locator('#view-sources').textContent(),/SSP3-7.0|RCP8.5|UN/);
+   assert.equal(await page.locator('#view-sources .ux-data-details').getAttribute('open'),null);
+   assert.ok((await page.locator('#view-sources .ux-dialog-content>.ux-row h3').allTextContents()).includes('Values for this area'));
+   await page.locator('#view-sources .ux-data-details>summary').click();assert.equal(await page.locator('#view-sources .ux-data-details').evaluate(el=>el.open),true);
+   await page.keyboard.press('Escape');await page.evaluate(()=>__experience.clear());
   }
   for(const language of ['en','fr','es','it','vi','ja','zh','zh-Hant']){
    current=viewport.width+'/'+language;await chooseLanguage(page,language);await page.locator('#bouton-reglages').click();

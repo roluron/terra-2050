@@ -67,5 +67,13 @@ body:has(.ux-dialog[open]) :is(#survol,#etiquettes){visibility:hidden}
 .ux-scale strong{display:block;font-size:11px;font-weight:400}.ux-scale i{display:block;height:4px;border-radius:4px;margin:9px 0 5px}.ux-scale>span{display:flex;justify-content:space-between;font-size:10px}
 @media(max-width:720px) and (max-height:650px){#filter-summary .summary-detail{display:none}#filter-summary .summary-headline{font-size:23px}#visible-legend{margin-bottom:8px}}
 #survol.fige{z-index:32;max-height:calc(100dvh - 160px - env(safe-area-inset-bottom,0px))}
+#layer-context>p,#layer-context .map-scale small{display:none}
+#filter-summary .summary-reference{color:var(--glass-muted)}
+#filter-summary .summary-detail{display:block;font-size:13px;color:var(--glass-text)}
+.ux-data-details{margin-top:16px}
+.ux-data-details>summary{min-height:32px;font-size:13px;cursor:pointer}
+#dossier .risque .risk-method>summary{display:block;min-height:32px;padding:7px 0;font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.risque .risk-impact{font-size:13px;line-height:1.5;margin:12px 0;color:var(--glass-text)}
+@media(max-width:720px){#filter-summary .summary-detail{display:block;font-size:12px;line-height:1.4}}
 @media(max-width:720px){body:has(#survol.visible.fige) #filter-summary{visibility:hidden;pointer-events:none}}
 body:not(.loupe) #share-view{visibility:hidden;pointer-events:none}

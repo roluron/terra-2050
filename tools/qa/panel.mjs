@@ -40,15 +40,19 @@ for (const [name, engine, options] of [
     assert.ok(bounds.footer.bottom<=bounds.viewport.h+1);
     assert.equal(await page.locator('#dossier-croix svg').isVisible(),true);
     await page.screenshot({path:`${out}/${name}-city.png`});
-    const rows=page.locator('#dossier-risques details'); assert.equal(await rows.count(),6);
+    const rows=page.locator('#dossier-risques>.risque'); assert.equal(await rows.count(),6);
     const notes=await rows.evaluateAll(es=>es.map(e=>Number(e.dataset.note)));
     assert.deepEqual(notes,[...notes].sort((a,b)=>a-b));
     for (const row of await rows.all()) {
-      const summary=row.locator('summary'); await summary.scrollIntoViewIfNeeded();
+      const summary=row.locator(':scope>summary'); await summary.scrollIntoViewIfNeeded();
       assert.ok((await summary.boundingBox()).height>=44);
       if(await row.evaluate(e=>e.open))await summary.click();
       if(options.hasTouch)await summary.tap();else {await summary.focus();await page.keyboard.press('Enter');}
       assert.equal(await row.evaluate(e=>e.open),true);
+      assert.equal(await row.locator('.risk-impact').isVisible(),true);
+      assert.equal(await row.locator('.detail').isVisible(),false);
+      await row.locator('.risk-method>summary').click();
+      assert.equal(await row.locator('.detail').isVisible(),true);
       assert.ok((await row.locator('.detail').textContent()).length>10);
     }
     const opened=await rows.evaluateAll(es=>es.filter(e=>e.open).map(e=>e.dataset.cle));
@@ -61,7 +65,7 @@ for (const [name, engine, options] of [
     assert.match(await page.locator('.fiche-methode').textContent(),/SSP3-7.0/);
     await page.screenshot({path:`${out}/${name}-method.png`});
     await page.click('#bouton-reglages');await chooseLanguage(page, 'fr');
-    assert.match(await page.locator('.fiche-methode summary').textContent(),/Comprendre/);
+    assert.match(await page.locator('.fiche-methode summary').textContent(),/Comment nous utilisons/);
     assert.match(await page.locator('.fiche-temps-label').textContent(),/Année/);
     await page.click('#dossier-story');
     await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);

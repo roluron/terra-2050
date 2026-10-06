@@ -52,7 +52,7 @@ export function createComparison({places, name, country, measures, criteria, pop
           }
           cell.append(node('small', `${c.baseline}: ${format(reading.baseline)}`));
           cell.append(node('span', `${reading.change > 0 ? '+' : ''}${format(reading.change)} ${unit} · ${c.change}`, 'compare-change'));
-          if(reading.country) cell.append(node('small',`${getText().ui.populationweighted_mean_of_listed_cities} (${reading.contributingCities})${reading.regionalCities ? ` · ${c.regionalScore}: ${reading.regionalCities}/${reading.contributingCities}` : ''}`,'compare-provenance'));
+          if(reading.country) cell.append(node('small',`${getText().panelCountryNote(reading.contributingCities)}${reading.regionalCities ? ` · ${c.regionalScore}: ${reading.regionalCities}/${reading.contributingCities}` : ''}`,'compare-provenance'));
           else if(criterion.cle === 'mer' || criterion.cle === 'fleuves') cell.append(node('small',reading.regionalFallback ? c.regionalFlood : c.cell,'compare-provenance'));
           else if(reading.regionalFallback) cell.append(node('small',c.regional,'compare-provenance'));
         } else cell.append(node('strong','—'),node('small', second ? c.missing : c.search));

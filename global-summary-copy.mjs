@@ -1,4 +1,6 @@
 import { formatHoverNumber } from './hover-diagnostic.mjs';
+import {overviewCopy,explainSummary} from './reading-copy.mjs';
+export {explainSummary};
 
 export const summaryCopy = {
   en: {
@@ -102,7 +104,7 @@ const averageReference = {
   'zh-Hant': '相對於{period}年平均值',
 };
 
-export function summarizeText(filter, reading, locale, year) {
+export function technicalSummaryText(filter, reading, locale, year) {
   const copy = summaryCopy[locale] || summaryCopy.en;
   if (!reading?.available || !Number.isFinite(reading.value)) return { headline: '', detail: copy.unavailable };
   if (filter === 'declin') {
@@ -127,4 +129,10 @@ export function summarizeText(filter, reading, locale, year) {
     ? (averageReference[locale] || averageReference.en).replace('{period}', period)
     : copy.compared.replace('{period}', period);
   return { headline: copy[key].replace('{n}', n), reference, detail: details.join(' · ') };
+}
+
+export function summarizeText(filter,reading,locale,year){
+ const technical=technicalSummaryText(filter,reading,locale,year);
+ if(!technical.headline)return technical;
+ return {...overviewCopy(filter,reading,locale),technicalDetail:[technical.headline,technical.reference,technical.detail].filter(Boolean).join('\n')};
 }

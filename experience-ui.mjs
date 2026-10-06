@@ -1,4 +1,6 @@
 import {experienceUICopy} from './experience-ui-copy.mjs';
+import {humanCopy,impactSources} from './human-impact-copy.mjs';
+import {readingCopy,legendCopy} from './reading-copy.mjs';
 const icon=(kind)=>kind==='eye'?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="5" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8 11 8-5M8 13l8 5"/></svg>';
 const el=(tag,text,className)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;};
 const sourceURLs={chaleur:'https://www.worldclim.org/data/cmip6/cmip6climate.html',secheresse:'https://www.worldclim.org/data/cmip6/cmip6climate.html',stabilite:'https://www.worldclim.org/data/cmip6/cmip6climate.html',feux:'https://essd.copernicus.org/articles/15/2153/2023/',mer:'https://www.wri.org/data/aqueduct-floods-hazard-maps',fleuves:'https://www.wri.org/data/aqueduct-floods-hazard-maps',declin:'https://population.un.org/wpp/'};
@@ -8,7 +10,7 @@ export function createExperienceUI(api){
  const menuSource=el('button',undefined,'ux-source-link');menuSource.id='menu-sources';menuSource.type='button';
  $('model-notice').append(menuSource);
  const summarySource=menuSource.cloneNode();summarySource.id='summary-sources';$('filter-summary').append(summarySource);
- const dialogs={};let opener=null;
+ const dialogs={};let opener=null,sourceContext='world';
  for(const name of ['sources','share','compare']){
   const d=el('dialog',undefined,'ux-dialog');d.id='view-'+name;d.setAttribute('aria-labelledby',d.id+'-title');
   const title=el('h2');title.id=d.id+'-title';const close=el('button','×','ux-close');close.type='button';
@@ -28,18 +30,25 @@ export function createExperienceUI(api){
  }
  function render(name){
   const state=api.getState(),c=experienceUICopy(state.language),{d,title,close,content}=dialogs[name];
+  const expanded=content.querySelector('.ux-data-details')?.open;
   title.textContent=c[name];close.setAttribute('aria-label',c.close);content.replaceChildren();
   const filterName=state.filter?document.querySelector(`.calque[data-cle="${state.filter}"] .nom`).textContent:c.choose;
   const modeName=document.querySelector(`[data-map-mode="${state.mode}"]`)?.textContent||'';
   if(name==='sources'){
-   const source=api.getSource();title.textContent=c.sources+' · '+filterName;
-   row(content,c.measure,source.description);
-   row(content,c.summary,source.summary);
-   row(content,c.reading,modeName+' · '+state.year);
-   const scale=$('layer-context').querySelector('.map-scale');if(scale)content.append(scale.cloneNode(true));
-   row(content,c.method,[source.method,source.technical].filter(Boolean).join('\n\n'));
-   const r=row(content,c.source,source.source);if(r&&sourceURLs[state.filter]){const a=el('a',sourceURLs[state.filter]);a.href=sourceURLs[state.filter];a.target='_blank';a.rel='noopener';r.append(a);}
-   row(content,c.limits,[source.notice,source.animation].filter(Boolean).join('\n\n'));
+   const source=api.getSource(sourceContext);title.textContent=c.sources+' · '+filterName+(sourceContext==='local'&&state.location?' · '+state.location:'');
+   const plain=source.plain;
+   if(plain){row(content,plain.measureLabel,plain.measure);row(content,plain.comparisonLabel,plain.comparison);row(content,plain.valuesLabel,plain.values);}
+   else row(content,c.measure,source.description);
+   const details=el('details',undefined,'ux-data-details');details.open=!!expanded;details.append(el('summary',readingCopy(state.language).more));
+   const full=el('div');details.append(full);content.append(details);
+   row(full,c.summary,source.summary);
+   row(full,c.reading,modeName+' · '+state.year);
+   const scale=$('layer-context').querySelector('.map-scale');if(scale)full.append(scale.cloneNode(true));
+   row(full,c.method,[source.method,source.technical].filter(Boolean).join('\n\n'));
+   const r=row(full,c.source,source.source);if(r&&sourceURLs[state.filter]){const a=el('a',c.source);a.href=sourceURLs[state.filter];a.target='_blank';a.rel='noopener';r.append(a);}
+   row(full,c.limits,[source.notice,source.animation].filter(Boolean).join('\n\n'));
+   const human=humanCopy(state.language),impact=row(full,human.effectLabel,[human.effects[state.filter],human.effectScope].filter(Boolean).join('\n'));
+   if(impact&&impactSources[state.filter]){const reference=impactSources[state.filter],link=el('a',reference.name);link.href=reference.url;link.target='_blank';link.rel='noopener';impact.append(link);}
   }else if(name==='share'){
    row(content,c.reading,filterName+' · '+state.year+(state.filter?'\n'+modeName+'\n'+(state.hidden?c.hide:c.show):''));
    row(content,c.location,state.location);
@@ -62,6 +71,7 @@ export function createExperienceUI(api){
  function open(name,event){
   if(name!=='share'&&!api.getState().filter)return;
   opener=event?.currentTarget||document.activeElement;
+  if(name==='sources')sourceContext=event?.currentTarget?.matches('[data-hover-action="source"]')?'local':'world';
   render(name);dialogs[name].d.showModal();
  }
  menuSource.addEventListener('click',e=>open('sources',e));summarySource.addEventListener('click',e=>open('sources',e));
@@ -82,7 +92,10 @@ export function createExperienceUI(api){
   share.querySelector('span').textContent=c.share;share.setAttribute('aria-label',c.share);
   menuSource.textContent=summarySource.textContent=c.sources;menuSource.hidden=!state.filter;
   const legend=$('visible-legend'),scale=$('layer-context').querySelector('.map-scale');legend.replaceChildren();
-  if(scale){const clone=scale.cloneNode(true);clone.classList.replace('map-scale','ux-scale');legend.append(el('p',document.querySelector(`[data-map-mode="${state.mode}"]`).textContent,'ux-legend-mode'),clone);}
+  if(scale){const clone=scale.cloneNode(true),simple=legendCopy(state.filter,state.language,state.mode);clone.classList.replace('map-scale','ux-scale');
+   clone.querySelectorAll('small').forEach(node=>node.remove());
+   [...clone.querySelector('span').children].forEach((node,i)=>{if(simple.ticks[i])node.textContent=simple.ticks[i];});
+   legend.append(el('p',simple.caption,'ux-legend-mode'),clone);}
   $('filter-summary').classList.toggle('layer-hidden',state.hidden);
   translateHover();for(const [name,{d}]of Object.entries(dialogs))if(d.open)render(name);
   layout();
