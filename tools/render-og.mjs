@@ -78,12 +78,15 @@ try {
         overflow:hidden; background:#000; color:#F5F7FA; font-family:'TWK Lausanne',sans-serif;
         -webkit-font-smoothing:antialiased; }
       #og-globe { position:absolute; inset:0; width:1200px; height:630px; }
-      #og-brand { position:absolute; left:66px; top:52px; display:flex; align-items:center;
-        font-size:44px; line-height:1; font-weight:300; letter-spacing:-2.4px; }
+      #og-brand { position:absolute; left:66px; top:52px; display:flex; align-items:baseline; gap:.18em;
+        font-size:44px; line-height:1; font-weight:300; }
+      #og-brand .brand-name { letter-spacing:-.04em; }
+      #og-brand .brand-year { letter-spacing:-.035em; }
       #og-brand em { font-style:normal; color:#1740A9; }
       #og-brand strong { font-weight:600; }
-      #og-credit { position:absolute; left:68px; bottom:26px; display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(245,247,250,.70); }
-      #og-credit img { width:100px; height:auto; }
+      #og-credit { position:absolute; left:68px; bottom:24px; display:grid; gap:6px; font-size:13px; color:rgba(245,247,250,.70); }
+      #og-credit p { margin:0; }
+      #og-credit a { color:inherit; text-decoration:none; }
       #og-heading { position:absolute; left:66px; top:181px; margin:0; width:530px;
         font-size:68px; line-height:.99; font-weight:400; letter-spacing:-3px; }
       #og-count { position:absolute; left:68px; top:429px; font-size:21px; font-weight:400;
@@ -97,11 +100,11 @@ try {
     composition.id = 'og-composition';
     composition.innerHTML = `
       <img id="og-globe" alt="Earth globe" />
-      <div id="og-brand" aria-label="fromearth / 2050">from<strong>earth</strong><em>／</em>2050</div>
+      <div id="og-brand" aria-label="fromearth / 2050"><span class="brand-name">from<strong>earth</strong></span><em>/</em><span class="brand-year">2050</span></div>
       <h1 id="og-heading">Explore<br>climate<br>projections</h1>
       <p id="og-count">7 indicators · 34,099 cities</p>
       <p id="og-disclosure">Model estimates and an experimental index. Assumptions and source limits are disclosed.</p>
-      <p id="og-credit">Created by <img src="./assets/fromanother.svg" alt="fromanother"></p>
+      <div id="og-credit"><p>From an idea by Robin M.</p><p>Created by <a href="https://fromanother.love">fromanother</a></p></div>
     `;
     document.body.append(composition);
     const image = document.getElementById('og-globe');

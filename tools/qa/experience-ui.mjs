@@ -45,7 +45,10 @@ try{
    current=viewport.width+'/'+language;await chooseLanguage(page,language);await page.locator('#bouton-reglages').click();
    assert.equal(await page.locator('#share-view').getAttribute('aria-label'),experienceUICopy(language).share);
    assert.match(await page.title(),/^fromearth/);
-   assert.equal(await page.locator('#wordmark').textContent(),'fromearth／2050');
+   assert.equal(await page.locator('#wordmark').textContent(),'fromearth/2050');
+   assert.match(await page.locator('.creator-idea').textContent(),/Robin M\./);
+   const creditCenters=await page.locator('#menu-reglages,.creator-credit,.creator-studio').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return r.x+r.width/2;}));
+   assert.ok(creditCenters.every(center=>Math.abs(center-creditCenters[0])<1),current+' centered credit');
    assert.equal(await page.locator('#share-view').textContent(),'');
    const boxes=await page.locator('#map-inspector,#layer-visibility,#timeline,#titre,#share-view,#recherche,#util').evaluateAll(nodes=>nodes.map(n=>({id:n.id,...n.getBoundingClientRect().toJSON()})));
    for(const b of boxes)assert.ok(b.x>=-1&&b.right<=viewport.width+1,JSON.stringify(b));

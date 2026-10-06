@@ -225,7 +225,7 @@
 
   <div class="v-centre">
     <div class="v-eyebrow"><span data-t="sous1"></span></div>
-     <div id="v-wordmark" aria-hidden="true"><span class="v-masque"><span class="lettre">from<strong>earth</strong><em>／</em>2050</span></span></div>
+     <div id="v-wordmark" aria-hidden="true"><span class="v-masque"><span class="lettre brand-lockup"><span class="brand-name">from<strong>earth</strong></span><em>/</em><span class="brand-year">2050</span></span></span></div>
     <div class="v-eyebrow v-eyebrow-bas"><span data-t="sous2"></span></div>
 
     <div class="v-charge">
@@ -239,7 +239,7 @@
 </div>
 
 <header id="titre" class="panneau">
-  <h1 id="wordmark" aria-label="fromearth / 2050"><span>from<strong>earth</strong><em>／</em>2050</span></h1>
+  <h1 id="wordmark" aria-label="fromearth / 2050"><span class="brand-lockup"><span class="brand-name">from<strong>earth</strong></span><em>/</em><span class="brand-year">2050</span></span></h1>
   <div class="micro" data-t="sousHeader"></div>
 </header>
 
@@ -307,7 +307,7 @@
       <button class="bouton-ico fa-lien" id="bouton-partager"></button>
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" type="button" aria-haspopup="dialog"></button>
-      <p class="creator-credit"><span data-t="createdBy"></span><a href="https://fromanother.love" target="_blank" rel="noopener"><img src="./assets/fromanother.svg" alt="fromanother"></a></p>
+      <div class="creator-credit"><p class="creator-idea" data-t="ideaBy"></p><p class="creator-studio"><a href="https://fromanother.love" target="_blank" rel="noopener"><span data-t="createdBy"></span> fromanother</a></p></div>
     </div>
   </div>
 </div>
@@ -2901,9 +2901,7 @@ async function genererStory(opts){
   const cjk = ['ja', 'zh', 'zh-Hant'].includes(langue);
   const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const indice50 = pays ? indicePays(l[1], 2050) : (l[7] ? indiceHabitabilite(l, 2050) : null);
-  const creator = new Image();
-  creator.src = './assets/fromanother.svg';
-  await Promise.all([... [`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`,'300 62px "TWK Lausanne"','600 62px "TWK Lausanne"'].map(f => document.fonts.load(f)), creator.decode()]);
+  await Promise.all([`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`,'300 62px "TWK Lausanne"','600 62px "TWK Lausanne"'].map(f => document.fonts.load(f)));
   const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
   const g = cv.getContext('2d');
   const CREME = '#F5F7FA', MUTER = 'rgba(245,247,250,0.65)';
@@ -3013,11 +3011,9 @@ async function genererStory(opts){
     g.letterSpacing = cjk ? '0px' : '2px'; g.fillStyle = 'rgba(245,247,250,0.45)'; g.font = `400 24px ${sans}`;
     g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}&cc=${l[1]}`, 540, 1746);
     g.letterSpacing = '0px';
-    g.font = `400 24px ${sans}`;
-    const label = t.createdBy + ' ', labelWidth = g.measureText(label).width;
-    const creditX = 540 - (labelWidth + 170) / 2;
-    g.textAlign = 'left'; g.fillText(label, creditX, 1830);
-    g.drawImage(creator, creditX + labelWidth, 1809, 170, 170 * creator.naturalHeight / creator.naturalWidth);
+    g.font = `400 24px ${sans}`; g.fillStyle = MUTER;
+    g.fillText(t.ideaBy, 540, 1806, 840);
+    g.fillText(t.createdBy + ' fromanother', 540, 1850, 840);
   }
   return cv;
 }
