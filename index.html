@@ -2601,14 +2601,15 @@ function majRangeePop(iso, an){
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
+  const scoreDisponible = Number.isFinite(indiceHabitabilite(l, an));
   const regional = Object.values(mesuresLieu(l, an) || {}).some(reading => reading.regionalFallback);
   const dossierNeuf = tracerTrajectoire.animer;
   document.getElementById('dossier-nom').textContent = nomVille(l);
   document.getElementById('dossier-scope').textContent = (estPays(l) ? t.panelCountry : `${t.panelCity} · ${nomPays(l[1])}`) + (regional ? ' · ' + refinementCopy(langue).regionalScore : '');
-  document.getElementById('dossier-evolution').textContent = (estPays(l) || l[7]) ? t.panelEvolution(indiceHabitabilite(l, an) - indiceHabitabilite(l, 2026)) : '';
+  document.getElementById('dossier-evolution').textContent = scoreDisponible ? t.panelEvolution(indiceHabitabilite(l, an) - indiceHabitabilite(l, 2026)) : '';
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (T().ui.w)} · ${nomPays(l[1]).toUpperCase()}`;
-  dossierEl.classList.toggle('sans-donnees', !estPays(l) && !l[7]);
+  dossierEl.classList.toggle('sans-donnees', !scoreDisponible);
   const formule = document.getElementById('score-formula');
   if (estPays(l)) formule.textContent = T().ui.country_score_populationweighted_mean_of;
   else if (l[7]) {
@@ -2617,11 +2618,11 @@ function majDossier(){
     formule.textContent = `${T().ui.weighted_exposure} ${average.toFixed(1)} /100 · ${T().ui.strongest_hazard} ${(Math.max(...penalties) * 100).toFixed(1)} /100. ${100} − (${average.toFixed(1)} + ${(Math.max(...penalties) * 100).toFixed(1)}) ÷ 2 ≈ ${indiceHabitabilite(l, an)}.`;
   } else formule.textContent = '';
 
-  if (estPays(l)){
+  if (estPays(l) && scoreDisponible){
     majDossierPays(l, an, t, dossierNeuf);
     return;
   }
-  if (!l[7]){
+  if (!scoreDisponible){
     // sentinelle : île ou atoll hors des grilles — pas de score inventé
     document.getElementById('dossier-annee').textContent = an;   // sinon l'année de la fiche précédente restait
     document.getElementById('dossier-score').textContent = '——';
@@ -3517,7 +3518,7 @@ function chargerAnnuaire(){
   VILLES_PAR_PAYS = {};
   for (const v of LIEUX) (VILLES_PAR_PAYS[v[1]] = VILLES_PAR_PAYS[v[1]] || []).push(v);
   PAYS_LIGNES = Object.keys(VILLES_PAR_PAYS)
-    .filter(iso => PAYS_POP[iso] && VILLES_PAR_PAYS[iso].some(v => v[7]))
+    .filter(iso => PAYS_POP[iso])
     .map(iso => {
       const vs = VILLES_PAR_PAYS[iso];
       let sla = 0, slo = 0, sp = 0;
