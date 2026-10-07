@@ -43,8 +43,8 @@ html:lang(zh-Hant) {--police:'PingFang TC','Microsoft JhengHei','Noto Sans CJK T
 #language-options span {font-size:15px}
 #language-continue {width:100%;justify-content:space-between;border-top:1px solid #ffffff16;padding-top:16px;margin-top:20px;color:#f0f1e9;font-size:14px}
 #language-continue svg {background:linear-gradient(145deg,#dfe1e426,#c8cacd0a);border-color:#cdcfd24d;box-shadow:inset 0 1px #fff3}
-#earth-shell #future {position:relative;min-height:48px;display:inline-flex;align-items:center;gap:24px;font:400 14px var(--police);padding:10px 0;background:none;border:0;border-radius:0;box-shadow:none}
-#earth-shell #future::after {content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:currentColor}
+#earth-shell #future,#explore-city .city-search-label {position:relative;min-height:48px;display:inline-flex;align-items:center;gap:24px;font:400 14px var(--police);padding:10px 0;background:none;border:0;border-radius:0;box-shadow:none}
+#earth-shell #future::after,#explore-city .city-search-label::after {content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:currentColor}
 
 #map-inspector {padding:12px;width:268px}
 #map-inspector #calques {gap:4px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;box-shadow:none}
@@ -275,8 +275,8 @@ body.curseur-verre, body.curseur-verre * {cursor:none!important}
 .compare-time:has(#comparison-year:focus-visible) .regle {outline:1px solid var(--glass-muted);outline-offset:4px;border-radius:4px}
 #layer-context {background:none;border-left:0;padding:0}
 #map-inspector .map-hint {display:block;font-size:12px;line-height:1.5;margin:12px 0}
-#explore-city {position:absolute;inset:0;z-index:4;pointer-events:auto;min-height:48px;padding:12px 16px;border:0;border-radius:16px;background:none;color:var(--glass-text);font:400 14px var(--police);cursor:pointer;white-space:nowrap;transition:opacity .2s var(--ease)}
-#explore-city::after {content:'';position:absolute;bottom:7px;left:24px;right:24px;height:1px;background:#ffffff70;transform-origin:center;transition:transform .25s var(--ease)}
+#explore-city {position:absolute;inset:0;z-index:4;pointer-events:auto;min-height:48px;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:0;background:none;color:#d7dcd3;font:400 14px var(--police);cursor:pointer;white-space:nowrap;transition:opacity .2s var(--ease)}
+#explore-city:hover {color:#fff}
 .city-search-icon {display:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
 body #recherche,body.pret #recherche,body.dossier-ouvert #recherche {position:fixed;z-index:31;top:calc(10px + env(safe-area-inset-top,0px));left:auto;right:calc(100px + env(safe-area-inset-right,0px));transform:none;height:48px;max-width:calc(100vw - 140px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));padding:0;display:block;align-items:initial}
 #recherche #champ-recherche {width:100%;height:48px;min-height:48px;padding:12px 18px;border-radius:16px;text-align:left;transition:opacity .2s var(--ease),border-color .25s,box-shadow .25s}
@@ -286,14 +286,13 @@ body:not(.loupe) #explore-city {opacity:0;pointer-events:none}
 #recherche #resultats {right:auto;top:0;max-width:calc(100vw - 40px)}
 body.loupe #resultats {visibility:hidden}
 body.entree-chrome :is(#titre,#recherche,#bouton-reglages,#map-inspector,#explore-city,#timeline .an,#timeline .regle,#curseur) {transition:none}
-@media(hover:hover) {#explore-city:hover::after {transform:scaleX(.7)}}
 @media(max-width:720px) {
  body #recherche,body.pret #recherche,body.dossier-ouvert #recherche {right:calc(80px + env(safe-area-inset-right,0px));max-width:calc(100vw - 100px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))}
  body:not(.loupe) #titre {visibility:hidden;pointer-events:none}
 }
 @media(max-width:720px),(pointer:coarse) and (max-height:500px) {
  #explore-city {display:grid;place-items:center;padding:0;border:1px solid var(--glass-edge);border-radius:50%;background:var(--glass-surface);box-shadow:var(--glass-shadow)}
- #explore-city::after,#explore-city .city-search-label {display:none}
+ #explore-city .city-search-label {display:none}
  #explore-city .city-search-icon {display:block}
 }
 @media(prefers-reduced-motion:reduce) {#explore-city,#explore-city::after,#recherche #champ-recherche {transition:none}}
