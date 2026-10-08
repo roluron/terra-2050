@@ -12,7 +12,7 @@ Climate change is often described at a scale that is hard to hold in mind: globa
 
 The experience brings climate projections into a globe you can explore. Visitors can search for a city, move the year control between 2026 and 2050, compare two places, switch indicators and share a view. It is designed to make the first encounter with complex information inviting, without removing access to the sources and definitions behind it.
 
-Its visual language combines a restrained interface, tactile imagery and a sense of movement. The campaign extends that language through thermal landscapes, layered contours and a graphite Earth. These illustrations express the idea of changing perspectives; they are separate from the data shown in the live experience.
+Its visual language combines a restrained interface, tactile imagery and a sense of movement. The campaign extends that language through thermal landscapes, meshes built from the experience’s climate data and the Earth from the experience. Conceptual landscapes express the idea of changing perspectives; the temperature meshes are explicitly identified as modeled climate views.
 
 fromearth is an independent creative project, from an idea by Robin M. and created by fromanother. It brings together interaction, design and publicly available climate and population datasets to encourage curiosity and informed conversation. The projections describe modeled scenarios and broad trends, with different assumptions and levels of coverage. They are not predictions of the weather in an individual year or a verdict on where someone should live.
 
@@ -75,17 +75,14 @@ SUGGESTED CAPTIONS
 Thermal identity
 fromearth / 2050 campaign wordmark with a thermal treatment. Campaign illustration; not a climate map.
 
-Thermal relief
-A tactile landscape created for the fromearth / 2050 campaign. Campaign illustration; colors do not encode measurements for a specific place.
-
 Thermal delta
 An imagined delta in mineral and thermal colors, part of the fromearth / 2050 campaign. Campaign illustration.
 
-Layered perspectives
-Place, year and projection represented as layered contours. A conceptual illustration for fromearth / 2050.
+Layered climate
+The same region appears as a flat geographic footprint and native temperature meshes for the 2026 and 2050 views. Height encodes hottest-month mean daily maximum temperature (°C), using the same scale. Values use the experience’s WorldClim/CMIP6 grid and year interpolation: MPI-ESM1-2-HR, SSP3-7.0. These are modeled climate estimates; height does not represent terrain elevation.
 
-Graphite Earth
-A sculptural Earth created for the fromearth / 2050 campaign. Campaign illustration.
+Earth from the experience
+The Earth rendered with the model, shaders and textures used in the fromearth experience, composed as a campaign image. No climate indicator overlay.
 
 Interface footage
 Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.

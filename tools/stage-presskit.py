@@ -6,12 +6,12 @@ from pathlib import Path
 
 source = Path(sys.argv[1]).resolve()
 destination = Path(sys.argv[2]).resolve()
-release = "https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08/"
+release = "https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-clean/"
 library = json.loads((source / "media.json").read_text())
 paths = {
     "press.css", "press.mjs", "press-copy.json", "press-copy-fr.json",
     "press-language.css", "press-language.mjs", "logo-preview.css", "logo-preview.mjs", "media.json",
-    "logos/live/thermal-logo.mjs", "logos/live/earth-loop.mjs",
+    "logos/live/thermal-logo.mjs", "logos/live/earth-loop.mjs", "logos/live/thermal-wordmark.png", "logos/thermal-lockup-white.png",
     "fonts/TWKLausanne-300.woff2", "fonts/TWKLausanne-600.woff2",
     "downloads/fromearth-press-sheet.pdf", "downloads/fromearth-press-text.txt",
 }
@@ -24,6 +24,14 @@ html = (source / "press.html").read_text()
 for path in re.findall(r'(?:src|href)="([^"]+)"', html):
     if not path.startswith(("#", "https:", "http:")) and not path.endswith(".zip"):
         paths.add(path)
+previous = destination / "media.json"
+if previous.exists():
+    for asset in json.loads(previous.read_text())["assets"]:
+        for relative in [asset["path"],asset.get("poster"),*[extra["path"] for extra in asset.get("extras",[])]]:
+            if relative and relative not in paths:
+                stale = (destination / relative).resolve()
+                assert stale.is_relative_to(destination)
+                stale.unlink(missing_ok=True)
 for relative in sorted(paths):
     origin = (source / relative).resolve()
     assert origin.is_relative_to(source) and origin.is_file(), relative

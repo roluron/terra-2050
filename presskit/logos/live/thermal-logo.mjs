@@ -31,7 +31,7 @@ void main(){
  gl_FragColor=vec4(heat,clamp(flow/.1+.5,0.,1.),1.);
 }`;
 const material = `precision highp float;varying vec2 uv;
-uniform sampler2D field,glyph;uniform vec2 resolution;uniform float time,bleed;
+uniform sampler2D field,glyph;uniform vec2 resolution;uniform vec3 paperColor;uniform float time,bleed,effectScale,overlay;
 ${noise}
 vec3 thermal(float h){
  vec3 blue=vec3(.025,.24,1.),cyan=vec3(.06,.65,.88),green=vec3(.30,.73,.38),yellow=vec3(1.,.87,.47),orange=vec3(.96,.25,.035),red=vec3(.50,.025,.012);
@@ -44,35 +44,33 @@ vec3 thermal(float h){
 void main(){
  float heat=texture2D(field,uv).r;
  float n=fbm(uv*vec2(42.,12.)+vec2(time*.65,-time*.46));
- vec2 warp=vec2(n-.5,noise(uv*vec2(26.,7.5)+time*.55)-.5)*vec2(.025,.09)*heat*bleed;
+ vec2 warp=vec2(n-.5,noise(uv*vec2(26.,7.5)+time*.55)-.5)*vec2(.025,.09)*heat*bleed*effectScale;
  vec2 slope=vec2(texture2D(field,uv+vec2(.006,0.)).r-texture2D(field,uv-vec2(.006,0.)).r,texture2D(field,uv+vec2(0.,.02)).r-texture2D(field,uv-vec2(0.,.02)).r);
- warp+=slope*vec2(.018,.064)*bleed;
+ warp+=slope*vec2(.018,.064)*bleed*effectScale;
  vec4 edge=texture2D(glyph,uv+warp),baseGlyph=texture2D(glyph,uv);
  float strength=smoothstep(.025,.45,heat);
- float distance=(edge.g-.5)*.12+heat*.023*(.28+n)*bleed;
+ float distance=(edge.g-.5)*.12+heat*.023*(.28+n)*bleed*effectScale;
  float fleck=noise(gl_FragCoord.xy*.35);
- float softness=1./resolution.x+strength*.0012;
- float ink=mix(edge.a,smoothstep(-softness,softness,distance+(fleck-.5)*.00025*strength),strength*bleed);
- float band=.0015+heat*.021;
+ float softness=1./resolution.x+strength*.0012*effectScale;
+ float ink=mix(edge.a,smoothstep(-softness,softness,distance+(fleck-.5)*.00025*strength*effectScale),strength*bleed);
+ float band=.0015+heat*.021*effectScale;
  float depth=max(0.,distance)/band;
  float mottling=fbm(uv*vec2(115.,32.)+vec2(time*.32,-time*.23))-.5;
  float pigment=clamp(.34+depth*.72+mottling*.18+(fleck-.5)*.025,0.,1.);
- vec3 paper=vec3(.955,.947,.923);
+ vec3 paper=paperColor;
  float colored=strength*(1.-smoothstep(.65,1.8,depth));
  vec3 color=mix(paper,thermal(pigment),colored);
  vec3 clean=mix(paper,thermal(heat),smoothstep(.055,.19,heat));
  color=mix(clean,color,bleed);
- float grain=(fleck-.5)*.045*colored;
- float diffusion=exp(-pow(max(0.,-distance)/(.003+heat*.011),2.)*2.2);
+ float grain=(fleck-.5)*.045*colored*effectScale;
+ float diffusion=exp(-pow(max(0.,-distance)/max(1./resolution.x,(.003+heat*.011)*effectScale),2.)*2.2);
  float dust=diffusion*(.65+.35*fleck)*.78*strength*bleed;
  float alpha=ink+(1.-ink)*dust;
  vec3 fringe=thermal(pow(clamp((distance+.010)/.010,0.,1.),2.)*.32);
  vec3 pigmentColor=(color+grain)*ink+fringe*(1.-ink)*dust;
  float coverage=baseGlyph.r+(1.-baseGlyph.r)*alpha;
- gl_FragColor=vec4((paper*baseGlyph.r+pigmentColor*(1.-baseGlyph.r))/max(coverage,.00001),coverage);
+ gl_FragColor=vec4((paper*baseGlyph.r+pigmentColor*(1.-baseGlyph.r))/max(coverage,.00001),coverage*mix(1.,strength,overlay));
 }`;
-
-export {vertex, material, contourDistance};
 
 function contourDistance(pixels,width,height) {
   const measure=inside=>{
@@ -96,6 +94,9 @@ function contourDistance(pixels,width,height) {
 
 export async function mountThermalLogo(element,mode='bleed',layout='display') {
   await Promise.all([300,600].map(weight=>document.fonts.load(`${weight} 100px "TWK Lausanne"`)));
+  let lockup;
+  if(layout==='display'){lockup=new Image();lockup.src=new URL('./thermal-wordmark.png',import.meta.url);await lockup.decode();}
+  const inkColor=getComputedStyle(element).color.match(/[\d.]+/g).slice(0,3).map(value=>Number(value)/255);
   const canvas = document.createElement('canvas');
   canvas.setAttribute('aria-hidden','true');
   const gl = canvas.getContext('webgl',{alpha:true,premultipliedAlpha:false,antialias:false,depth:false,stencil:false,powerPreference:'low-power'});
@@ -138,7 +139,9 @@ export async function mountThermalLogo(element,mode='bleed',layout='display') {
     gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,width,height);use(programs[1]);
     gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,fields[0].texture);uniform(programs[1],'field',0);
     gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,mask);uniform(programs[1],'glyph',1);
-    uniform(programs[1],'resolution',width,height);uniform(programs[1],'time',time);uniform(programs[1],'bleed',materialMix);gl.drawArrays(gl.TRIANGLES,0,6);
+    uniform(programs[1],'resolution',width,height);uniform(programs[1],'time',time);uniform(programs[1],'bleed',materialMix);
+    gl.uniform3f(gl.getUniformLocation(programs[1],'paperColor'),...inkColor);
+    uniform(programs[1],'effectScale',layout==='inline'?.3:1);uniform(programs[1],'overlay',layout==='inline'?1:0);gl.drawArrays(gl.TRIANGLES,0,6);
   }
   function clear(){
     if(lost||!fields)return;
@@ -147,7 +150,7 @@ export async function mountThermalLogo(element,mode='bleed',layout='display') {
   }
   function resize(){
     if(lost)return;
-    const box={width:element.offsetWidth,height:element.offsetHeight};if(!box.width||!box.height)return;
+    const style=getComputedStyle(element),box={width:parseFloat(style.width),height:parseFloat(style.height)};if(!box.width||!box.height)return;
     const padding=layout==='inline'?20:0;
     const ratio=Math.min(devicePixelRatio||1,2,2560/box.width);
     width=Math.max(1,Math.round((box.width+padding*2)*ratio));height=Math.max(1,Math.round((box.height+padding*2)*ratio));
@@ -155,26 +158,30 @@ export async function mountThermalLogo(element,mode='bleed',layout='display') {
     const shape=document.createElement('canvas');shape.width=width;shape.height=height;
     const ctx=shape.getContext('2d');let size=width*.22;
     if(layout==='inline'){
-      const name=element.querySelector('.brand-name'),style=getComputedStyle(name);
-      size=parseFloat(style.fontSize)*ratio;
+      const name=element.querySelector('.brand-name'),nameStyle=getComputedStyle(name),nameBox=name.getBoundingClientRect(),elementBox=element.getBoundingClientRect();
+      const sx=box.width/elementBox.width,sy=box.height/elementBox.height;
+      size=parseFloat(nameStyle.fontSize)*ratio;
       ctx.font=`300 ${size}px "TWK Lausanne"`;
-      ctx.letterSpacing=`${(parseFloat(style.letterSpacing)||0)*ratio}px`;
-      const metrics=ctx.measureText('fromearth'),x=(padding+name.offsetLeft)*ratio;
-      const y=(padding+name.offsetTop+name.offsetHeight/2)*ratio+(metrics.fontBoundingBoxAscent-metrics.fontBoundingBoxDescent)/2;
-      ctx.fillStyle='#fff';const advance=ctx.measureText('from').width;ctx.fillText('from',x,y);
+      ctx.letterSpacing=`${(parseFloat(nameStyle.letterSpacing)||0)*ratio}px`;
+      const metrics=ctx.measureText('fromearth'),x=(padding+(nameBox.left-elementBox.left)*sx)*ratio;
+      const y=(padding+(nameBox.top-elementBox.top+nameBox.height/2)*sy)*ratio+(metrics.fontBoundingBoxAscent-metrics.fontBoundingBoxDescent)/2;
+      ctx.fillStyle='#fff';const advance=ctx.measureText('from').width;
       ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.fillText('earth',x+advance,y);
     }else{
     ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;
     const from=ctx.measureText('from').width;ctx.font=`600 ${size}px "TWK Lausanne"`;
     size*=width*.924/(from+ctx.measureText('earth').width);
     ctx.letterSpacing=`${-size*.045}px`;ctx.fillStyle='#fff';ctx.font=`300 ${size}px "TWK Lausanne"`;
-    const advance=ctx.measureText('from').width;ctx.fillText('from',width*.044,height*.755);
+    const advance=ctx.measureText('from').width;
     ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.fillText('earth',width*.044+advance,height*.755);
     }
     const pixels=ctx.getImageData(0,0,width,height).data;
     contourDistance(pixels,width,height);
     ctx.clearRect(0,0,width,height);
     if(layout==='display'){
+      ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;
+      const from=ctx.measureText('from');
+      ctx.drawImage(lockup,27,61,884,331,width*.044-from.actualBoundingBoxLeft,height*.755-from.actualBoundingBoxAscent,from.actualBoundingBoxLeft+from.actualBoundingBoxRight,from.actualBoundingBoxAscent+from.actualBoundingBoxDescent);
       ctx.font=`300 ${width*.024}px monospace`;ctx.letterSpacing=`${-width*.0008}px`;ctx.textAlign='right';
       ctx.fillText('/ 2050',width*.965,height*.867);
     }
@@ -244,3 +251,4 @@ export async function mountThermalLogo(element,mode='bleed',layout='display') {
   canvas.addEventListener('webglcontextrestored',()=>{lost=false;try{initialize();}catch(error){element.classList.remove('thermal-ready');console.error('Thermal logo restore:',error);}});
   return {clear,pulse,canvas,metrics,setMode(mode){targetMix=mode==='bleed'?1:0;if(reduced.matches){materialMix=targetMix;present(0);}else wake();}};
 }
+export {vertex,material,contourDistance};

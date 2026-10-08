@@ -3,17 +3,16 @@ const $ = selector => document.querySelector(selector);
 const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const url = path => path.split('/').map(encodeURIComponent).join('/');
 const formatSize = bytes => bytes < 1e6 ? Math.ceil(bytes/1000)+' KB' : bytes >= 1e9 ? (bytes/1e9).toFixed(1)+' GB' : (bytes/1e6).toFixed(1)+' MB';
-let media=[], group='Campaign images', edition='all', limit=12,lang=initialLanguage(),copies={},copy,completeSize='';
+let media=[], group='Campaign images', limit=12,lang=initialLanguage(),copies={},copy,completeSize='';
 const groups=['Campaign images','Motion loops','Campaign films','Interface footage','Logos'];
 const archives={'Campaign images':'fromearth-images.zip','Motion loops':'fromearth-motion.zip','Campaign films':'fromearth-films.zip','Interface footage':'fromearth-interface.zip','Logos':'fromearth-logos.zip'};
 function render(){
  const t=ui[lang];
  const query=$('#asset-search').value.toLowerCase().trim();
- const filtered=media.filter(a=>a.category===group&&(edition==='all'||a.edition===edition)).map(a=>({...assetLocale(a,lang,copies),originalTitle:a.title})).filter(a=>!query||[a.title,a.originalTitle,a.details,a.edition,a.path.split('.').pop(),...(a.extras||[]).map(x=>x.label+' '+x.path)].join(' ').toLowerCase().includes(query));
+ const filtered=media.filter(a=>a.category===group).map(a=>({...assetLocale(a,lang,copies),originalTitle:a.title})).filter(a=>!query||[a.title,a.originalTitle,a.details,a.edition,a.path.split('.').pop(),...(a.extras||[]).map(x=>x.label+' '+x.path)].join(' ').toLowerCase().includes(query));
  $('#asset-count').textContent=t.selection(filtered.length);
- $('#collection-download').href='https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08/'+archives[group];
+ $('#collection-download').href='https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-clean/'+archives[group];
  $('#collection-download').textContent=t.collection(groupLabel(group,lang));
- $('#edition-controls').hidden=!['Campaign images','Motion loops'].includes(group);
  $('#show-more').hidden=filtered.length<=limit;
  $('#show-more').textContent=t.more(Math.min(12,filtered.length-limit));
  $('#assets').innerHTML=filtered.slice(0,limit).map(a=>{
@@ -43,8 +42,7 @@ try{
   try{await navigator.clipboard.writeText(text);$('#copy-status').textContent=ui[lang].copied;}
   catch{$('#copy-status').textContent=ui[lang].clipboardError;}
  }));
- $('#categories').addEventListener('click',e=>{if(!e.target.dataset.group)return;group=e.target.dataset.group;edition='all';limit=12;document.querySelectorAll('[data-group]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.group===group)));document.querySelectorAll('[data-edition]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.edition==='all')));render();});
- $('#edition-controls').addEventListener('click',e=>{if(!e.target.dataset.edition)return;edition=e.target.dataset.edition;limit=12;document.querySelectorAll('[data-edition]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.edition===edition)));render();});
+ $('#categories').addEventListener('click',e=>{if(!e.target.dataset.group)return;group=e.target.dataset.group;limit=12;document.querySelectorAll('[data-group]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.group===group)));render();});
  $('#asset-search').addEventListener('input',()=>{limit=12;render();});
  $('#show-more').addEventListener('click',()=>{limit+=12;render();});
  document.addEventListener('play',e=>{if(e.target.tagName==='VIDEO')document.querySelectorAll('video').forEach(v=>{if(v!==e.target)v.pause();});},true);
