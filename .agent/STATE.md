@@ -54,7 +54,7 @@ Current local design follow-up: VERIFIED panel redesign on branch design/place-p
 runtime9129b5b. See panel/STATE.md and panel/EVIDENCE.md. Local preview8087;
 public deployment below remains the earlier release. Physical gates unchanged.
 
-CURRENT 2026-10-08: share-control correction locally verified; publication pending. index.html adds share to the settings entrance tween; premium.css shares glass/button styling; experience-ui.css preserves visibility rules and aligns the 44px control. Desktop, phone portrait/landscape and reduced-motion journeys pass. Evidence: ../../captures/share-control-2026-10-08. Historical full-product and physical-device gates below remain distinct.
+CURRENT 2026-10-08: share-control correction complete and published as 42d7279 at https://fromearth.love/. index.html adds share to the settings entrance tween; premium.css shares glass/button styling; experience-ui.css preserves visibility rules and aligns the 44px control. Desktop, phone portrait/landscape and reduced-motion journeys pass; deployed hashes match and live desktop journey passes. Evidence: ../../captures/share-control-2026-10-08. Historical full-product and physical-device gates below remain distinct.
 
 STATUS: ACTIVE — full completion not claimed.
 

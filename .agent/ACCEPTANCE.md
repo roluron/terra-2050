@@ -3,7 +3,7 @@
 - [x] Globe header: share/settings styling and size match; opacity and transform match on every observed entrance frame.
 - [x] Share dialog opens and closes; expanded search hides share and clearing it then Escape restores it.
 - [x] Desktop Chromium, portrait/landscape WebKit and reduced motion pass without runtime errors.
-- [ ] Published website serves the verified correction.
+- [x] Published website serves the verified correction: release 42d7279, exact hashes and live desktop journey pass (EVIDENCE.md).
 
 Existing performance budgets are unchanged; this adds no assets or rendering work. Evidence: tools/qa/share-control.mjs and EVIDENCE.md. Physical iPhone behavior remains unverified.
 
