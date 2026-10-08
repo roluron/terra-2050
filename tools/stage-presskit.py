@@ -6,7 +6,7 @@ from pathlib import Path
 
 source = Path(sys.argv[1]).resolve()
 destination = Path(sys.argv[2]).resolve()
-release = "https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-lena/"
+release = "https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-assets/"
 library = json.loads((source / "media.json").read_text())
 paths = {
     "press.css", "press.mjs", "press-copy.json", "press-copy-fr.json",

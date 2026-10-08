@@ -49,7 +49,7 @@ Website: https://fromearth.love/
 
 
 CREDIT
-fromearth / 2050 — Created by fromanother.
+fromearth / 2050 — From an idea by Robin Mahieux, created by fromanother.
 
 
 WHO WE ARE
@@ -94,11 +94,11 @@ The Earth rendered with the model, shaders and textures used in the fromearth ex
 Interface footage
 Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.
 
-Campaign films
-Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.
-
 Motion loops
 Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.
+
+Thermal delta · earlier artwork
+The earlier AI-generated delta illustration, retained as alternative artwork. Graphic colors do not represent measured temperatures or climate projections.
 
 
 EDITORIAL USE
