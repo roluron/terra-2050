@@ -1,4 +1,4 @@
-import {ui,groupLabel,assetLocale,applyLanguage,initialLanguage,installLanguageSwitcher} from './press-language.mjs?v=20261008-logo-video';
+import {ui,groupLabel,assetLocale,applyLanguage,initialLanguage,installLanguageSwitcher} from './press-language.mjs?v=20261008-social-credits';
 const $ = selector => document.querySelector(selector);
 const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const url = path => path.split('/').map(encodeURIComponent).join('/')+(path.includes('03-thermal-delta')?'?v=20261008-assets':'');
