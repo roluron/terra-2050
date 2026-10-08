@@ -12,10 +12,11 @@ for (const locale of ['en', 'fr']) {
   const press = JSON.parse(await fs.readFile(new URL(`../../presskit/press-copy${locale === 'fr' ? '-fr' : ''}.json`, import.meta.url), 'utf8'));
   for (const key of ['aboutTitle', 'aboutIntro', 'aboutBody', 'aboutApproach', 'aboutLink']) assert.equal(press[key], copy[locale][key], `${locale}: inconsistent studio introduction`);
   for (const text of [copy[locale], press]) {
+    assert.match(text === press ? text.credit : text.idea, /Robin Mahieux/);
     assert.match(text.aboutBody, /Vicki Dang and Robin Mahieux|Vicki Dang et Robin Mahieux/);
     const values = Object.values(text).filter(value => typeof value === 'string').join(' ');
     assert.doesNotMatch(values, /Robin M\./);
-    assert.equal((values.match(/Robin Mahieux/g) || []).length, 1);
+    assert.equal((values.match(/Robin Mahieux/g) || []).length, 2);
   }
   assert.match(copy[locale].lead, /future generations|générations futures/);
   assert.match(copy[locale].dataBody, /own datasets|jeux de données/);
