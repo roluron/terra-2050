@@ -1,4 +1,4 @@
-import { translations } from './locales/catalog.mjs';
+import { translations } from './locales/catalog.mjs?v=20261008-partners';
 export { translations };
 export const languageNames = {en:'English', fr:'Français', ja:'日本語', zh:'简体中文', vi:'Tiếng Việt', es:'Español', it:'Italiano', 'zh-Hant':'繁體中文'};
 export function supportedLanguage(code='') {
@@ -135,6 +135,7 @@ export function languageControl(button) {
 function translateStatic() {
   document.documentElement.lang = current;
   for (const element of document.querySelectorAll('[data-ui]')) element.textContent = getText().ui[element.dataset.ui];
+  document.getElementById('institution-partners').href = `partners/?lang=${current}`;
 }
 translateStatic();
 window.addEventListener('terra-language', translateStatic);

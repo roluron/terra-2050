@@ -1,23 +1,25 @@
 fromearth / 2050
 
+
+ONE SENTENCE
 An interactive globe for exploring climate projections through the places we know.
 
 
 SHORT DESCRIPTION
-fromearth / 2050 is a free, browser-based experience that makes climate projections easier to explore. Search for a city, move between 2026 and 2050, compare two places and look at different climate indicators on an interactive globe. From an idea by Robin M. and created by fromanother, the project starts with a simple intuition: the future feels closer when it is connected to somewhere familiar.
+fromearth / 2050 is a free, browser-based experience that makes climate projections easier to explore. Search for a city, move between 2026 and 2050, compare two places and look at different climate indicators on an interactive globe. Created by fromanother, the project starts with a simple intuition: the future feels closer when it is connected to somewhere familiar.
 
 
-FULL PROJECT DESCRIPTION
+FULL DESCRIPTION
 Climate change is often described at a scale that is hard to hold in mind: global averages, distant horizons and very large numbers. fromearth / 2050 begins somewhere smaller and more personal — a city you live in, a place you grew up, somewhere you love.
 
 The experience brings climate projections into a globe you can explore. Visitors can search for a city, move the year control between 2026 and 2050, compare two places, switch indicators and share a view. It is designed to make the first encounter with complex information inviting, without removing access to the sources and definitions behind it.
 
 Its visual language combines a restrained interface, tactile imagery and a sense of movement. The campaign extends that language through thermal landscapes, meshes built from the experience’s climate data and the Earth from the experience. Conceptual landscapes express the idea of changing perspectives; the temperature meshes are explicitly identified as modeled climate views.
 
-fromearth is an independent creative project, from an idea by Robin M. and created by fromanother. It brings together interaction, design and publicly available climate and population datasets to encourage curiosity and informed conversation. The projections describe modeled scenarios and broad trends, with different assumptions and levels of coverage. They are not predictions of the weather in an individual year or a verdict on where someone should live.
+fromearth is an independent creative project by fromanother. It brings together interaction, design and publicly available climate and population datasets to encourage curiosity and informed conversation. The projections describe modeled scenarios and broad trends, with different assumptions and levels of coverage. They are not predictions of the weather in an individual year or a verdict on where someone should live.
 
 
-WHY THE PROJECT EXISTS
+WHY WE MADE IT
 The starting point is a place, not a statistic. We wanted to create an encounter with climate information that begins with something people already care about. A familiar city gives a distant horizon a human scale. The aim is to invite people to look, compare, ask questions and return to the sources — making a complex subject approachable without pretending that its uncertainty has disappeared.
 
 
@@ -38,7 +40,6 @@ Put two places side by side, then share a link or a story image. No account is r
 FACT SHEET
 Project: fromearth / 2050
 Format: Interactive web experience
-Idea: Robin M.
 Created by: fromanother
 Access: Free to explore; no account required
 Time control: 2026–2050
@@ -48,7 +49,13 @@ Website: https://fromearth.love/
 
 
 CREDIT
-fromearth / 2050 — From an idea by Robin M., created by fromanother.
+fromearth / 2050 — Created by fromanother.
+
+
+WHO WE ARE
+fromanother is an artist-led creative studio founded by Vicki Dang and Robin Mahieux. We bring together film, 3D art, design and creative technology to create digital and immersive experiences for institutions, cultural spaces and brands.
+
+Our work begins with a story and the people it is for. We collaborate with curatorial, scientific and education teams to turn complex ideas into experiences that invite curiosity and connection.
 
 
 DATA AND METHODOLOGY

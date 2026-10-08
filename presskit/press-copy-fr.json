@@ -1,8 +1,8 @@
 {
   "title": "fromearth / 2050",
   "line": "Un globe interactif pour explorer les projections climatiques à travers les lieux que nous connaissons.",
-  "short": "fromearth / 2050 est une expérience gratuite, accessible dans un navigateur, qui rend les projections climatiques plus faciles à explorer. Recherchez une ville, passez de 2026 à 2050, comparez deux lieux et découvrez différents indicateurs climatiques sur un globe interactif. Imaginé par Robin M. et créé par fromanother, le projet part d’une intuition simple : le futur semble plus proche lorsqu’il est relié à un endroit familier.",
-  "long": "Le changement climatique est souvent décrit à une échelle difficile à appréhender : des moyennes mondiales, des horizons lointains et des chiffres immenses. fromearth / 2050 commence à une échelle plus personnelle : la ville où vous vivez, le lieu où vous avez grandi, un endroit que vous aimez.\n\nL’expérience rassemble des projections climatiques sur un globe à explorer. Vous pouvez rechercher une ville, déplacer le curseur entre 2026 et 2050, comparer deux lieux, changer d’indicateur et partager une vue. Cette première rencontre avec des informations complexes se veut accueillante, tout en conservant l’accès aux sources et aux définitions qui les accompagnent.\n\nSon langage visuel associe une interface sobre, des images tactiles et le mouvement. La campagne prolonge ce langage à travers des paysages thermiques, des maillages construits à partir des données climatiques de l’expérience et la Terre de l’expérience. Les paysages conceptuels expriment l’idée de changer de perspective ; les maillages de température sont explicitement identifiés comme des vues climatiques modélisées.\n\nfromearth est un projet créatif indépendant, imaginé par Robin M. et créé par fromanother. Il associe interaction, design et jeux de données publics sur le climat et la population pour encourager la curiosité et la discussion informée. Les projections décrivent des scénarios modélisés et de grandes tendances, avec des hypothèses et une couverture variables. Elles ne prédisent pas la météo d’une année précise et ne constituent pas un jugement sur les endroits où vivre.",
+  "short": "fromearth / 2050 est une expérience gratuite, accessible dans un navigateur, qui rend les projections climatiques plus faciles à explorer. Recherchez une ville, passez de 2026 à 2050, comparez deux lieux et découvrez différents indicateurs climatiques sur un globe interactif. Créé par fromanother, le projet part d’une intuition simple : le futur semble plus proche lorsqu’il est relié à un endroit familier.",
+  "long": "Le changement climatique est souvent décrit à une échelle difficile à appréhender : des moyennes mondiales, des horizons lointains et des chiffres immenses. fromearth / 2050 commence à une échelle plus personnelle : la ville où vous vivez, le lieu où vous avez grandi, un endroit que vous aimez.\n\nL’expérience rassemble des projections climatiques sur un globe à explorer. Vous pouvez rechercher une ville, déplacer le curseur entre 2026 et 2050, comparer deux lieux, changer d’indicateur et partager une vue. Cette première rencontre avec des informations complexes se veut accueillante, tout en conservant l’accès aux sources et aux définitions qui les accompagnent.\n\nSon langage visuel associe une interface sobre, des images tactiles et le mouvement. La campagne prolonge ce langage à travers des paysages thermiques, des maillages construits à partir des données climatiques de l’expérience et la Terre de l’expérience. Les paysages conceptuels expriment l’idée de changer de perspective ; les maillages de température sont explicitement identifiés comme des vues climatiques modélisées.\n\nfromearth est un projet créatif indépendant de fromanother. Il associe interaction, design et jeux de données publics sur le climat et la population pour encourager la curiosité et la discussion informée. Les projections décrivent des scénarios modélisés et de grandes tendances, avec des hypothèses et une couverture variables. Elles ne prédisent pas la météo d’une année précise et ne constituent pas un jugement sur les endroits où vivre.",
   "why": "Le point de départ est un lieu, pas une statistique. Nous voulions proposer une rencontre avec l’information climatique qui commence par quelque chose auquel chacun tient déjà. Une ville familière donne une échelle humaine à un horizon lointain. L’objectif est d’inviter à regarder, comparer, poser des questions et revenir aux sources : rendre un sujet complexe accessible, sans prétendre que ses incertitudes ont disparu.",
   "experience": [
     {
@@ -32,10 +32,6 @@
       "Expérience web interactive"
     ],
     [
-      "Idée",
-      "Robin M."
-    ],
-    [
       "Création",
       "fromanother"
     ],
@@ -60,7 +56,7 @@
       "https://fromearth.love/"
     ]
   ],
-  "credit": "fromearth / 2050 — Une idée de Robin M., une création de fromanother.",
+  "credit": "fromearth / 2050 — Une création de fromanother.",
   "editorial": "Pour la couverture éditoriale de fromearth / 2050. Merci de créditer fromearth / fromanother et de faire un lien vers https://fromearth.love/. Préservez le sens des données de l’interface et identifiez les images de campagne comme des illustrations. Pour une interview, d’autres formats ou d’autres usages, contactez le studio.",
   "sources": [
     {
@@ -115,5 +111,10 @@
       "text": "Des animations en boucle d’éléments visuels de l’identité et de l’expérience fromearth / 2050. Éléments animés isolés ou compositions."
     }
   ],
-  "contact": "https://fromanother.love/"
+  "contact": "https://fromanother.love/",
+  "aboutTitle": "Qui sommes-nous ?",
+  "aboutIntro": "Des artistes et des récits pour créer des expériences collectives.",
+  "aboutBody": "fromanother est un studio de création fondé par Vicki Dang et Robin Mahieux. Nous réunissons cinéma, art 3D, design et technologies créatives pour concevoir des expériences numériques et immersives destinées aux institutions, aux lieux culturels et aux marques.",
+  "aboutApproach": "Notre travail commence par une histoire et les personnes qui vont la vivre. Nous collaborons avec les équipes de médiation, de recherche et de création pour rendre les idées complexes accessibles et susciter curiosité et lien.",
+  "aboutLink": "Découvrir fromanother"
 }

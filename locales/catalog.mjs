@@ -6,5 +6,5 @@ import zhHant from './zh-Hant.mjs';
 import vi from './vi.mjs';
 import es from './es.mjs';
 import it from './it.mjs';
-import {applySiteText} from '../site-text-copy.mjs';
+import {applySiteText} from '../site-text-copy.mjs?v=20261008-partners';
 export const translations = applySiteText({...Object.fromEntries(Object.entries(TEXTES).map(([code, text]) => [code, {...text, ui: EXTRA[code]}])), ja, zh, vi, es, it, 'zh-Hant':zhHant});

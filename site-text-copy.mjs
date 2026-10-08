@@ -45,6 +45,7 @@ const scoreRows={
 const creators={en:'Created by',fr:'Créé par',es:'Creado por',it:'Creato da',vi:'Thực hiện bởi',ja:'制作',zh:'制作方','zh-Hant':'製作方'};
 const ideas={en:'From an idea by Robin M.',fr:'Une idée de Robin M.',es:'Una idea de Robin M.',it:'Da un’idea di Robin M.',vi:'Từ ý tưởng của Robin M.',ja:'Robin M. のアイデアから',zh:'源自 Robin M. 的创意','zh-Hant':'源自 Robin M. 的創意'};
 const restarts={en:'Start again',fr:'Recommencer',es:'Empezar de nuevo',it:'Ricomincia',vi:'Bắt đầu lại',ja:'最初からやり直す',zh:'重新开始','zh-Hant':'重新開始'};
+const partners={en:'Museums & institutions',fr:'Musées & institutions',es:'Museos e instituciones',it:'Musei e istituzioni',vi:'Bảo tàng & tổ chức',ja:'博物館・教育機関',zh:'博物馆与机构','zh-Hant':'博物館與機構'};
 export function applySiteText(translations){
  return Object.fromEntries(Object.entries(translations).map(([locale,original])=>{
   const dictionary=Object.fromEntries(keys.map((key,i)=>[key,rows[locale][i]]));
@@ -54,6 +55,6 @@ export function applySiteText(translations){
   return [locale,{...original,...dictionary,createdBy:creators[locale],ideaBy:ideas[locale],partagerSite:original.partagerSite.replace('TERRA','fromearth'),calque:human.names,critere,info:{...human.definitions,mer:original.info.mer,fleuves:original.info.fleuves},verdict,panelVerdict:verdict,
    panelSummary:risk=>t[3].replace('{risk}',risk.toLowerCase()),panelCountryNote:n=>t[4].replace('{n}',n),panelDirection:score[0],atlantide:score[4],
    panelEvolution:n=>n===0?score[1]:score[2].replace('{n}',`${n>0?'+':'−'}${Math.abs(n)}`),
-   aria:{...original.aria,calques:t[6],dossier:t[7]},ui:{...original.ui,...ui,startAgain:restarts[locale],terra2050_will_your_city_still:original.ui.terra2050_will_your_city_still.replace(/TERRA[／/]2050/g,'fromearth · 2050'),countryWeighted:t[5],shareSummary:score[3]}}];
+   aria:{...original.aria,calques:t[6],dossier:t[7]},ui:{...original.ui,...ui,startAgain:restarts[locale],institutionPartners:partners[locale],terra2050_will_your_city_still:original.ui.terra2050_will_your_city_still.replace(/TERRA[／/]2050/g,'fromearth · 2050'),countryWeighted:t[5],shareSummary:score[3]}}];
  }));
 }
