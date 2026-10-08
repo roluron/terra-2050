@@ -169,12 +169,11 @@ export async function mountThermalLogo(element,mode='bleed',layout='display') {
       ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.fillText('earth',x+advance,y);
     }else{
     ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;
-    const from=ctx.measureText('from').width;ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.01}px`;
-    size*=width*.924/(from+ctx.measureText('earth').width+size*.035);
+    const from=ctx.measureText('from').width;ctx.font=`600 ${size}px "TWK Lausanne"`;
+    size*=width*.924/(from+ctx.measureText('earth').width);
     ctx.letterSpacing=`${-size*.045}px`;ctx.fillStyle='#fff';ctx.font=`300 ${size}px "TWK Lausanne"`;
     const advance=ctx.measureText('from').width;
-    ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.01}px`;ctx.strokeStyle='#fff';ctx.lineJoin='miter';ctx.lineWidth=size*.035;
-    ctx.strokeText('earth',width*.044+advance+size*.0175,height*.755);ctx.fillText('earth',width*.044+advance+size*.0175,height*.755);
+    ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.fillText('earth',width*.044+advance,height*.755);
     }
     const pixels=ctx.getImageData(0,0,width,height).data;
     contourDistance(pixels,width,height);
