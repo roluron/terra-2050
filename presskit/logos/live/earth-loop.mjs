@@ -1,4 +1,4 @@
-import {vertex,material,contourDistance} from './thermal-logo.mjs';
+import {vertex,material,contourDistance} from './thermal-logo.mjs?v=20261008-type';
 
 export async function mountEarthLoop(element,options={}){
   await Promise.all([300,600].map(w=>document.fonts.load(`${w} 100px "TWK Lausanne"`)));

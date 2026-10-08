@@ -1,7 +1,7 @@
-import {mountThermalLogo} from './thermal-logo.mjs';
+import {mountThermalLogo} from './thermal-logo.mjs?v=20261008-type';
 import {experienceUICopy} from './experience-ui-copy.mjs';
 
-const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('./thermal-logo.css',import.meta.url).href;
+const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('./thermal-logo.css?v=20261008-type',import.meta.url).href;
 const styled=new Promise((resolve,reject)=>{style.onload=resolve;style.onerror=reject;});document.head.append(style);await styled;
 const copy={
   fr:['Jouer avec le logo','Effacer','Déplace la souris ou dessine avec le doigt. Espace pour une vague de couleur.'],

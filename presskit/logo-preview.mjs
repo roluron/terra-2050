@@ -1,6 +1,6 @@
-import {mountEarthLoop} from './logos/live/earth-loop.mjs';
-import {mountThermalLogo} from './logos/live/thermal-logo.mjs';
-const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('./logo-preview.css',import.meta.url).href;
+import {mountEarthLoop} from './logos/live/earth-loop.mjs?v=20261008-type';
+import {mountThermalLogo} from './logos/live/thermal-logo.mjs?v=20261008-type';
+const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('./logo-preview.css?v=20261008-type',import.meta.url).href;
 const styled=new Promise((resolve,reject)=>{style.onload=resolve;style.onerror=reject;});document.head.append(style);await styled;
 let section=document.querySelector('.current-identity');
 if(!section){section=document.createElement('section');section.className='section current-identity';document.querySelector('#media').before(section);}
