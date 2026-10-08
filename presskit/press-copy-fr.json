@@ -103,12 +103,12 @@
       "text": "Des vues de l’interface fromearth / 2050 enregistrées en octobre 2026. Le site peut évoluer."
     },
     {
-      "name": "Films de campagne",
-      "text": "Des films montés pour fromearth / 2050, associant des captures de l’interface à un travail de typographie et de mouvement."
-    },
-    {
       "name": "Boucles animées",
       "text": "Des animations en boucle d’éléments visuels de l’identité et de l’expérience fromearth / 2050. Éléments animés isolés ou compositions."
+    },
+    {
+      "name": "Delta thermique · visuel antérieur",
+      "text": "L’ancienne illustration de delta générée par IA, conservée comme variante. Les couleurs graphiques ne représentent ni des températures mesurées ni des projections climatiques."
     }
   ],
   "contact": "https://fromanother.love/",
