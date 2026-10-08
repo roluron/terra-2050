@@ -1,7 +1,7 @@
-import {ui,groupLabel,assetLocale,applyLanguage,initialLanguage,installLanguageSwitcher} from './press-language.mjs';
+import {ui,groupLabel,assetLocale,applyLanguage,initialLanguage,installLanguageSwitcher} from './press-language.mjs?v=20261008-lena';
 const $ = selector => document.querySelector(selector);
 const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const url = path => path.split('/').map(encodeURIComponent).join('/');
+const url = path => path.split('/').map(encodeURIComponent).join('/')+(path.includes('03-thermal-delta')?'?v=20261008-lena':'');
 const formatSize = bytes => bytes < 1e6 ? Math.ceil(bytes/1000)+' KB' : bytes >= 1e9 ? (bytes/1e9).toFixed(1)+' GB' : (bytes/1e6).toFixed(1)+' MB';
 let media=[], group='Campaign images', limit=12,lang=initialLanguage(),copies={},copy,completeSize='';
 const groups=['Campaign images','Motion loops','Campaign films','Interface footage','Logos'];
@@ -11,7 +11,7 @@ function render(){
  const query=$('#asset-search').value.toLowerCase().trim();
  const filtered=media.filter(a=>a.category===group).map(a=>({...assetLocale(a,lang,copies),originalTitle:a.title})).filter(a=>!query||[a.title,a.originalTitle,a.details,a.edition,a.path.split('.').pop(),...(a.extras||[]).map(x=>x.label+' '+x.path)].join(' ').toLowerCase().includes(query));
  $('#asset-count').textContent=t.selection(filtered.length);
- $('#collection-download').href='https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-clean/'+archives[group];
+ $('#collection-download').href='https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-lena/'+archives[group];
  $('#collection-download').textContent=t.collection(groupLabel(group,lang));
  $('#show-more').hidden=filtered.length<=limit;
  $('#show-more').textContent=t.more(Math.min(12,filtered.length-limit));
@@ -35,7 +35,7 @@ function renderCopy(){
 installLanguageSwitcher(next=>{lang=next;$('#copy-status').textContent='';if(copy){renderCopy();render();}else applyLanguage(lang);});
 applyLanguage(lang);
 try{
- const [en,fr,library]=await Promise.all(['press-copy.json','press-copy-fr.json','media.json'].map(async path=>{const r=await fetch(path);if(!r.ok)throw new Error(path+' unavailable');return r.json();}));
+ const [en,fr,library]=await Promise.all(['press-copy.json','press-copy-fr.json','media.json'].map(async path=>{const r=await fetch(path,{cache:'no-cache'});if(!r.ok)throw new Error(path+' unavailable');return r.json();}));
  copies={en,fr};media=library.assets;completeSize=library.completeSize||formatSize(library.completeBytes);renderCopy();
  document.querySelectorAll('[data-clipboard]').forEach(button=>button.addEventListener('click',async()=>{
   const key=button.dataset.clipboard,text=key==='captions'?copy.captions.map(x=>x.name+'\n'+x.text).join('\n\n'):copy[key];

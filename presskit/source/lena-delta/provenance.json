@@ -1,0 +1,31 @@
+{
+  "title": "Lena Delta",
+  "credit": "USGS / NASA Landsat 7",
+  "sourcePage": "https://www.usgs.gov/media/images/lena-delta",
+  "download": "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/co/media_gallery/earth_art/lena_delta_jpg.zip",
+  "license": "Public Domain",
+  "verified": "2026-10-08",
+  "sourceSize": [
+    7904,
+    8512
+  ],
+  "sourceSha256": "a15bc8e218d32dd975058d5bf1e61d44d0385f532bd1413d7e831577f7a498c4",
+  "acquired": "2000-07-27",
+  "acquisitionEvidence": "Date printed on the official USGS source poster",
+  "processing": "Crop out the source poster borders; flip vertically; center crop and downsample for a 4:5 campaign composition. Original Landsat false colors retained. No AI generation.",
+  "sourceCrop": [
+    304,
+    772,
+    7592,
+    8060
+  ],
+  "photoLayerSize": [
+    3072,
+    3444
+  ],
+  "masterSize": [
+    3072,
+    3840
+  ],
+  "note": "False-color satellite imagery, not a temperature map or a 2050 climate projection."
+}

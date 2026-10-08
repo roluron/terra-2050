@@ -20,11 +20,11 @@
     },
     {
       "path": "stills/03-thermal-delta.jpg",
-      "title": "Thermal delta",
+      "title": "Lena Delta",
       "category": "Campaign images",
-      "caption": "An imagined delta in mineral and thermal colors, part of the fromearth / 2050 campaign. Campaign illustration.",
+      "caption": "Lena River Delta, captured by Landsat 7 on 27 July 2000. USGS / NASA, public domain: https://www.usgs.gov/media/images/lena-delta. Real false-color satellite imagery, cropped and flipped vertically for the fromearth / 2050 campaign; no AI generation. The colors do not represent temperatures or a 2050 climate projection.",
       "edition": "Original",
-      "bytes": 567910,
+      "bytes": 1754992,
       "kind": "image",
       "details": "1080 \u00d7 1350",
       "width": 1080,
@@ -141,11 +141,11 @@
     },
     {
       "path": "inverted/stills/03-thermal-delta.jpg",
-      "title": "Thermal delta",
+      "title": "Lena Delta",
       "category": "Campaign images",
-      "caption": "An imagined delta in mineral and thermal colors, part of the fromearth / 2050 campaign. Campaign illustration.",
+      "caption": "Lena River Delta, captured by Landsat 7 on 27 July 2000. USGS / NASA, public domain: https://www.usgs.gov/media/images/lena-delta. Real false-color satellite imagery, cropped and flipped vertically for the fromearth / 2050 campaign; no AI generation. The colors do not represent temperatures or a 2050 climate projection.",
       "edition": "Inverse",
-      "bytes": 507024,
+      "bytes": 1756920,
       "kind": "image",
       "details": "1080 \u00d7 1350",
       "width": 1080,
@@ -1718,7 +1718,7 @@
       "poster": "logos/thermal-lockup-white.png"
     }
   ],
-  "completeSize": "449 MB",
+  "completeSize": "505 MB",
   "collections": {
     "Campaign images": 8,
     "Motion loops": 31,

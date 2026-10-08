@@ -6,7 +6,7 @@ from pathlib import Path
 
 source = Path(sys.argv[1]).resolve()
 destination = Path(sys.argv[2]).resolve()
-release = "https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-clean/"
+release = "https://github.com/roluron/terra-2050/releases/download/presskit-2026-10-08-lena/"
 library = json.loads((source / "media.json").read_text())
 paths = {
     "press.css", "press.mjs", "press-copy.json", "press-copy-fr.json",
@@ -14,6 +14,7 @@ paths = {
     "logos/live/thermal-logo.mjs", "logos/live/earth-loop.mjs", "logos/live/thermal-wordmark.png", "logos/thermal-lockup-white.png",
     "fonts/TWKLausanne-300.woff2", "fonts/TWKLausanne-600.woff2",
     "downloads/fromearth-press-sheet.pdf", "downloads/fromearth-press-text.txt",
+    "source/lena-delta/provenance.json",
 }
 for asset in library["assets"]:
     paths.add(asset["path"])
@@ -22,6 +23,7 @@ for asset in library["assets"]:
     paths.update(extra["path"] for extra in asset.get("extras", []))
 html = (source / "press.html").read_text()
 for path in re.findall(r'(?:src|href)="([^"]+)"', html):
+    path = path.split("?", 1)[0]
     if not path.startswith(("#", "https:", "http:")) and not path.endswith(".zip"):
         paths.add(path)
 previous = destination / "media.json"
@@ -39,14 +41,20 @@ for relative in sorted(paths):
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(origin, target)
 html = re.sub(r'href="downloads/([^"/]+\.zip)"', lambda m: f'href="{release}{m[1]}"', html)
-html = html.replace('<link rel="stylesheet" href="press.css">', '<link rel="canonical" href="https://fromearth.love/presskit/"><link rel="stylesheet" href="press.css">')
+html = re.sub(r'https://github.com/roluron/terra-2050/releases/download/presskit-[^/]+/', release, html)
+if 'rel="canonical"' not in html:
+    html = html.replace('<link rel="stylesheet" href="press.css">', '<link rel="canonical" href="https://fromearth.love/presskit/"><link rel="stylesheet" href="press.css">')
 (destination / "index.html").write_text(html)
 module = destination / "press.mjs"
 text = module.read_text()
-assert "'downloads/'+archives[group]" in text
-module.write_text(text.replace("'downloads/'+archives[group]", repr(release) + "+archives[group]"))
+text = text.replace("'downloads/'+archives[group]", repr(release) + "+archives[group]")
+module.write_text(re.sub(r'https://github.com/roluron/terra-2050/releases/download/presskit-[^/]+/', release, text))
 preview = destination / "logo-preview.mjs"
-preview.write_text(preview.read_text().replace("downloads/fromearth-current-thermal-logo.zip", release + "fromearth-current-thermal-logo.zip"))
+text = preview.read_text()
+text = re.sub(r'https://github.com/roluron/terra-2050/releases/download/presskit-[^/]+/', release, text)
+if 'href="downloads/fromearth-current-thermal-logo.zip"' in text:
+    text = text.replace('href="downloads/fromearth-current-thermal-logo.zip"', 'href="'+release+'fromearth-current-thermal-logo.zip"')
+preview.write_text(text)
 for path in destination.rglob("*"):
     if path.is_file():
         assert path.stat().st_size < 100_000_000, path
