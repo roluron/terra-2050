@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<style>html,body{background:#050606}#boot-screen{position:fixed;inset:0;z-index:100000;background:#050606;display:grid;place-items:center}#boot-screen[hidden]{display:none}.planet-sprite{width:96px;height:96px}.return-planet{display:none}.returning-visit #boot-screen picture{display:none}.returning-visit .return-planet{display:block;width:60vmin;height:60vmin;border-radius:50%;background:radial-gradient(circle,#dcdcd6 1px,transparent 1.5px) 0 0/6px 6px;mask-image:radial-gradient(circle,#000 45%,transparent 71%);-webkit-mask-image:radial-gradient(circle,#000 45%,transparent 71%)}</style>
+<style>html,body{background:#050606}#boot-screen{position:fixed;inset:0;z-index:100000;background:#050606;display:grid;place-items:center}#boot-screen[hidden]{display:none}.planet-sprite{width:96px;height:96px}.returning-visit #boot-screen picture{display:none}</style>
 <script>try{if(localStorage.getItem('terra-intro-complete')==='1')document.documentElement.classList.add('returning-visit')}catch{}</script>
 <link rel="preload" as="image" href="./assets/pixel-earth-animated.png" media="(prefers-reduced-motion: no-preference)">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -192,7 +192,7 @@
 </style>
 </head>
 <body>
-<div id="boot-screen" aria-label="Loading"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./assets/favicon-pixel-earth.png"><img class="planet-sprite" src="./assets/pixel-earth-animated.png" width="96" height="96" alt=""></picture><span class="return-planet" aria-hidden="true"></span></div>
+<div id="boot-screen" aria-label="Loading"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./assets/favicon-pixel-earth.png"><img class="planet-sprite" src="./assets/pixel-earth-animated.png" width="96" height="96" alt=""></picture></div>
 <dialog id="earth-shell" lang="en" aria-label="A letter from Earth">
   <canvas id="earth-orb" aria-hidden="true"></canvas>
   <main id="earth-letter-main" tabindex="-1" hidden>
@@ -3646,7 +3646,7 @@ const introVueAccueil = !new URLSearchParams(location.hash.slice(1)).has('v');
 const originalRotationSpeed = controles.autoRotateSpeed;
 window.terraIntro = {
   ready: () => texturesPretes,
-  enter() {
+  enter(returning = false) {
     if (!texturesPretes) return false;
     document.getElementById('bouton-entree').click();
     if (!lieuDossier && introVueAccueil) {
@@ -3654,12 +3654,12 @@ window.terraIntro = {
       controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
       arreterVolCamera();
       controles.autoRotate = false;
-      const orbit = { lon: MOINS_ANIM ? 15 : 46 };
+      const orbit = { lon: MOINS_ANIM || returning ? 15 : 46 };
       const position = () => camera.position.copy(latLonVersVec3(22, orbit.lon, Math.hypot(...Object.values(CAMERA_ACCUEIL))));
       position();
-      introOrbit = gsap.to(orbit, { lon: 15, duration: MOINS_ANIM ? 0 : 9, ease: 'none', onUpdate: position });
+      introOrbit = gsap.to(orbit, { lon: 15, duration: MOINS_ANIM || returning ? 0 : 9, ease: 'none', onUpdate: position });
     }
-    if (!earthSurface) {
+    if (!returning && !earthSurface) {
       try { earthSurface = createEarthSurface(texMasque.image, camera, latLonVersVec3); }
       catch { earthSurface = () => []; }
     }

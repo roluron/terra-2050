@@ -52,7 +52,7 @@ export function startOrb(canvas, origins, options) {
   function tick(now) {
     if (stopped) return;
     const points = options.points();
-    const simplified = options.reduced || !drawingAvailable || (options.ready() && !points.length);
+    const simplified = options.returning || options.reduced || !drawingAvailable || (options.ready() && !points.length);
     if (options.ready() && assembledAt === null) {
       assembledAt = now;
       // départ du vrai morphing depuis la sphère d'attente, pas depuis la lettre
@@ -63,11 +63,11 @@ export function startOrb(canvas, origins, options) {
     if ((time > (options.returning ? 1.8 : 5.4) || simplified) && assembledAt !== null && blendAt === null) {
       blendAt = now;
     }
-    const blend = blendAt === null ? 0 : Math.min(1, (now - blendAt) / (simplified ? 1 : options.returning ? 1200 : 3600));
+    const blend = blendAt === null ? 0 : Math.min(1, (now - blendAt) / (options.reduced ? 1 : options.returning ? 600 : simplified ? 1 : 3600));
     const dissolve = blend * blend * (3 - 2 * blend);
     if (blendAt !== null) options.materialize(dissolve);
     if (blend === 1) { stop(); options.complete(); return; }
-    if (drawingAvailable && !options.reduced) {
+    if (drawingAvailable && !options.reduced && !options.returning) {
       ctx.clearRect(0, 0, width, height);
       const progress = Math.min(1, time / (options.returning ? 1.4 : 4.4));
       const opacity = 1 - dissolve;

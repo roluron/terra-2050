@@ -8,7 +8,7 @@ assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},0),{x:0,y:5});
 assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},1),{x:10,y:15});
 {
   let next, ready = false, completed = 0;
-  Object.assign(globalThis,{innerWidth:800,innerHeight:600,devicePixelRatio:1,document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){}});
+  Object.assign(globalThis,{innerWidth:800,innerHeight:600,devicePixelRatio:1,matchMedia:()=>({matches:false}),document:{createElement:()=>({getContext:()=>null})},window:{addEventListener(){},removeEventListener(){}},requestAnimationFrame:fn=>(next=fn,1),cancelAnimationFrame(){}});
   startOrb({getContext:()=>null},[],{ready:()=>ready,points:()=>[],materialize(){},complete(){completed++;}});
   const now=performance.now();
   next(now+100);assert.equal(completed,0);
@@ -73,7 +73,7 @@ for (const [name, engine, configuration] of [
     await page.route('**/*', async route => {
       if (route.request().resourceType() !== 'document') return route.continue();
       const response = await route.fetch();
-      const html = (await response.text()).replace('</script>\n</body>', `globalThis.__introProbe=()=>({aspect:camera.aspect,rotating:controles.autoRotate,position:camera.position.toArray(),distance:camera.position.length(),homeDistance:CAMERA_ACCUEIL.length(),flightSettled:!volEnCours || volEnCours.progress()===1,yearOffset:Number(gsap.getProperty(document.getElementById('an'),'y')),panelOpen:!!lieuDossier,location:versLatLon(camera.position.clone().normalize()),auraBottom:innerHeight/2+1.16*innerHeight/(2*Math.tan(camera.fov*Math.PI/360)*Math.sqrt(camera.position.lengthSq()-1.16**2)),yearTop:document.getElementById('an').getBoundingClientRect().top});\n</script>\n</body>`);
+      const html = (await response.text()).replace('experienceUI.sync();\n</script>', `experienceUI.sync();\nglobalThis.__introProbe=()=>({aspect:camera.aspect,rotating:controles.autoRotate,position:camera.position.toArray(),distance:camera.position.length(),homeDistance:CAMERA_ACCUEIL.length(),flightSettled:!volEnCours || volEnCours.progress()===1,yearOffset:Number(gsap.getProperty(document.getElementById('an'),'y')),panelOpen:!!lieuDossier,location:versLatLon(camera.position.clone().normalize()),auraBottom:innerHeight/2+1.16*innerHeight/(2*Math.tan(camera.fov*Math.PI/360)*Math.sqrt(camera.position.lengthSq()-1.16**2)),yearTop:document.getElementById('an').getBoundingClientRect().top});\n</script>`);
       await route.fulfill({ response, body: html });
     });
     const errors = [];

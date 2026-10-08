@@ -1,0 +1,6 @@
+2026-10-08 : correction locale vérifiée et revue PASS. Retour sans sphère de 1200 points ni orbite d'introduction ; fondu du globe réel après readiness. Première visite conservée. Flash de l'image de boot supprimé au retour.
+Matrice finale : Chromium desktop, WebKit portrait/paysage, mouvement réduit ; trois visites par format, liens Paris/2050 et première lettre passent, zéro dessin de particules et erreur actuelle.
+Revue indépendante : /tmp/terra-returning-earth-independent-final/REVIEW.md ; retards de modules et redimensionnements passent. BFCache non observé.
+Publication en préparation dans /tmp/terra-returning-earth-release depuis origin/main 909efe3 ; checkout initial 2a6ba7 conservé avec ses modifications existantes.
+Approche serveur Python abandonnée après resets de connexions ; serveur serve utilisé. Tests historiques intro.mjs corrigés pour matchMedia absent du stub et injection obsolète. Assertion historique des sept filtres en cours de comparaison avec le site public avant correction.
+Checkpoint stratégie révisé : finir validation et publication dans 15 minutes ; deux agents maximum ; dépenses additionnelles zéro ; plafond compte UNKNOWN. Aucune nouvelle dépendance produit. npm ci et huit contrôles statiques passent.

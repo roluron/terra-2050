@@ -162,7 +162,7 @@ const codeTimer = setInterval(() => {
 }, 900);
 function enter() {
   if (!departing || entered || !window.terraIntro?.ready()) return;
-  try { entered = window.terraIntro.enter(); }
+  try { entered = window.terraIntro.enter(returning); }
   catch { document.querySelector('#earth-recovery').hidden = false; }
 }
 window.addEventListener('terra-ready', enter);
@@ -217,17 +217,11 @@ if (returning) {
   shell.classList.add('departing', 'returning');
   shell.setAttribute('aria-label', getText().ui.globeSlow);
   document.getElementById('boot-screen').hidden = true;
-  const count = 1200, radius = Math.min(innerWidth, innerHeight) * .3;
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  const origins = Array.from({length:count}, (_, index) => {
-    const y = 1 - (index + .5) / count * 2, r = Math.sqrt(1 - y * y);
-    return {x:innerWidth / 2 + Math.sin(index * golden) * r * radius,y:innerHeight / 2 - y * radius,character:'·'};
-  });
   enter();
-  stopOrb = startOrb(document.getElementById('earth-orb'), origins, {
+  stopOrb = startOrb(document.getElementById('earth-orb'), [], {
     returning:true, reduced:motion.matches,
     ready:() => entered,
-    points:() => window.terraIntro?.points() || [],
+    points:() => [],
     materialize:progress => {
       shell.classList.add('materializing');
       shell.style.setProperty('--earth-veil', String(1 - progress));
