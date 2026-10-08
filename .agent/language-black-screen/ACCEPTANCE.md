@@ -1,0 +1,5 @@
+- [x] First-visit selection reveals the letter and enables word interaction.
+- [x] Completing the letter reaches the globe.
+- [x] Settings language changes update the same language state.
+- [x] Shared-module regression check passes and fails against the broken import.
+- [ ] Public deployment matches the fix and the first-visit journey passes.

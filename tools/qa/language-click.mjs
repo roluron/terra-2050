@@ -46,6 +46,9 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   assert.equal(await page.evaluate(()=>localStorage.getItem('terra-langue')),'fr');
   assert.equal(new URL(page.url()).searchParams.get('lang'),'fr');
   assert.equal(await page.locator('#earth-shell').isVisible(),true);
+  await page.locator('#earth-shell.interaction-ready').waitFor({timeout:15000});
+  assert.equal(await page.locator('#earth-letter-main').isVisible(),true);
+  assert.equal(await page.locator('#earth-shell').getAttribute('lang'),'fr');
   await page.evaluate(async()=>{(await import('./i18n.mjs')).openLanguage(()=>{});});
   assert.equal(await page.locator('#language-title').innerText(),prompts.fr,'reopening starts with the confirmed language');
   await page.locator('#language-options input[value="it"]').hover();
