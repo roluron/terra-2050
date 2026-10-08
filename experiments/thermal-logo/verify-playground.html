@@ -1,0 +1,41 @@
+<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Logo playground verification</title>
+<link rel="stylesheet" href="../../terra-menus.css"><link rel="stylesheet" href="../../premium.css">
+<style>body{background:#101010;color:#eee;font:14px monospace;padding:20px}pre{white-space:pre-wrap}</style>
+<body class="pret"><div id="titre"><h1 id="wordmark"><span class="brand-lockup"><span class="brand-name">from<strong>earth</strong></span><em>/</em><span class="brand-year">2050</span></span></h1></div>
+<div id="v-wordmark"><span class="v-masque"><span class="brand-lockup"><span class="brand-name">from<strong>earth</strong></span><em>/</em><span class="brand-year">2050</span></span></span></div><pre id="result">Running…</pre>
+<script type="module">
+const output=document.querySelector('#result'),checks=[],errors=[];
+const assert=(condition,name)=>{checks.push(`${condition?'PASS':'FAIL'} ${name}`);output.textContent=checks.join('\n');};
+window.addEventListener('error',event=>errors.push(event.message));window.addEventListener('unhandledrejection',event=>errors.push(String(event.reason)));
+const until=async condition=>{const start=performance.now();while(!condition()&&performance.now()-start<3000)await new Promise(requestAnimationFrame);};
+await Promise.all([300,600].map(weight=>document.fonts.load(`${weight} 100px "TWK Lausanne"`)));
+const layout=()=>[...document.querySelectorAll('#wordmark,#v-wordmark,.brand-name,.brand-year,.brand-lockup em')].map(element=>{
+  const box=element.getBoundingClientRect(),style=getComputedStyle(element);
+  return [box.width,box.height,style.fontSize,style.fontWeight,style.letterSpacing,style.color];
+});
+const original=layout();
+await import('../../logo-playground.mjs');
+const restored=layout();
+assert(original.every((item,i)=>item.slice(0,5).every((value,j)=>value===restored[i][j])),'site typography and dimensions match original layout');
+assert([...document.querySelectorAll('.brand-year,.brand-lockup em')].every(element=>getComputedStyle(element).color!=='rgba(0, 0, 0, 0)'),'original slash and date stay visible');
+assert([...document.querySelectorAll('.brand-from')].every(element=>getComputedStyle(element).fontWeight==='300'),'from remains native light typography');
+assert([...document.querySelectorAll('.brand-name strong')].every(element=>getComputedStyle(element).fontWeight==='600'),'earth remains bold');
+const trigger=document.querySelector('#wordmark .thermal-trigger'),intro=document.querySelector('#v-wordmark .thermal-trigger'),dialog=document.querySelector('#logo-playground');
+assert(!!trigger&&!!intro,'both site logos expose a native dialog trigger');
+let pointerBubbles=0,backgroundKeys=0;document.querySelector('#wordmark').addEventListener('pointerdown',()=>pointerBubbles++);window.addEventListener('keydown',()=>backgroundKeys++);
+trigger.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerId:1}));assert(pointerBubbles===0,'trigger pointerdown bypasses parent drawing capture');
+trigger.click();await until(()=>dialog.querySelector('.thermal-ready')&&dialog.contains(document.activeElement));
+assert(dialog.open&&dialog.matches(':modal'),'logo opens as a modal dialog');
+assert(dialog.contains(document.activeElement),'focus enters the enlarged logo');
+assert(getComputedStyle(dialog,'::backdrop').backdropFilter.includes('blur'),'site background is blurred');
+const canvas=dialog.querySelector('canvas'),close=dialog.querySelector('#logo-play-close'),clear=dialog.querySelector('#logo-play-clear');
+clear.focus();clear.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true}));assert(document.activeElement===close,'Tab wraps to close');
+close.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',shiftKey:true,bubbles:true,cancelable:true}));assert(document.activeElement===clear,'Shift Tab wraps to clear');
+dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'k',ctrlKey:true,bubbles:true}));assert(backgroundKeys===0,'modal keys do not reach background shortcuts');
+close.click();await until(()=>document.activeElement===trigger);assert(!dialog.open&&document.activeElement===trigger,'close restores focus to the logo trigger');
+intro.click();await until(()=>dialog.contains(document.activeElement));assert(dialog.open&&dialog.querySelector('canvas')===canvas&&dialog.querySelectorAll('canvas').length===1,'intro opens the same enlarged renderer');
+clear.click();assert(dialog.open,'clear keeps the playground open');
+dialog.querySelector('.logo-play-stage').click();await until(()=>document.activeElement===intro);assert(!dialog.open&&document.activeElement===intro,'background click closes and restores focus');
+assert(errors.length===0,'no runtime errors: '+JSON.stringify(errors));
+checks.push(checks.some(line=>line.startsWith('FAIL'))?'VERDICT FAIL':'VERDICT PASS');output.textContent=checks.join('\n');
+</script></html>

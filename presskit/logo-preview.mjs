@@ -9,6 +9,7 @@ section.innerHTML='<div class="section-heading"><h2 id="identity-title">A living
 const effect=await mountEarthLoop(section.querySelector('#press-logo'),{lockup:new URL('./logos/thermal-lockup-white.png',import.meta.url).href});
 for(const element of document.querySelectorAll('.brand,.footer-wordmark')){
   element.classList.add('thermal-logo');element.removeAttribute('aria-hidden');element.setAttribute('aria-label','fromearth / 2050');
+  if(element.tagName!=='A'){element.tabIndex=0;element.setAttribute('role','img');}
   await mountThermalLogo(element);
 }
 const button=section.querySelector('#logo-pause');

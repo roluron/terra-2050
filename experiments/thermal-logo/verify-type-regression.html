@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Logo type regression</title>
+<link rel="stylesheet" href="../../thermal-logo.css"><style>body{background:#101010;color:#f1efe8;font:300 16px "TWK Lausanne";padding:30px}.inline{position:relative;display:inline-block;font-size:26px}.brand-lockup{display:inline-flex;align-items:baseline;gap:.18em}.brand-name{letter-spacing:-.04em}.brand-from{position:relative;z-index:1}strong{font-weight:600}.brand-year,em{position:relative;z-index:1}em{font-style:normal;color:blue}.thermal-logo{width:900px;color:#f1efe8}.loop{position:relative;width:900px;aspect-ratio:16/5;background:#f1efe8}.loop canvas{width:100%;height:100%}pre{white-space:pre-wrap}</style>
+<div id="inline" class="inline thermal-inline"><span class="brand-lockup"><span class="brand-name"><span class="brand-from">from</span><strong>earth</strong></span><em>/</em><span class="brand-year">2050</span></span></div>
+<div id="large" class="thermal-logo"></div><div id="loop" class="loop"></div><pre id="result">Running…</pre>
+<script type="module">
+import {mountThermalLogo} from '../../thermal-logo.mjs';
+import {mountEarthLoop} from '../../presskit/logos/live/earth-loop.mjs';
+const checks=[],output=document.querySelector('#result'),assert=(pass,name)=>{checks.push(`${pass?'PASS':'FAIL'} ${name}`);output.textContent=checks.join('\n');};
+const snapshot=canvas=>{const read=document.createElement('canvas');read.width=canvas.width;read.height=canvas.height;const ctx=read.getContext('2d');ctx.drawImage(canvas,0,0);return ctx.getImageData(0,0,read.width,read.height).data;};
+await Promise.all([300,600].map(weight=>document.fonts.load(`${weight} 100px "TWK Lausanne"`)));
+document.querySelector('#large').style.aspectRatio='1568 / 438';
+document.querySelector('#inline').style.width='auto';
+const inline=document.querySelector('#inline'),original=inline.getBoundingClientRect(),effect=await mountThermalLogo(inline,'bleed','inline');
+effect.clear();assert(!snapshot(effect.canvas).some((v,i)=>i%4===3&&v),'cold inline canvas is fully transparent');
+assert(getComputedStyle(inline.querySelector('.brand-from')).fontWeight==='300'&&getComputedStyle(inline.querySelector('strong')).fontWeight==='600','native from 300 and earth 600');
+assert(inline.getBoundingClientRect().width===original.width,'inline dimensions preserved');
+const large=await mountThermalLogo(document.querySelector('#large'));large.clear();assert(snapshot(large.canvas).some((v,i)=>i%4===3&&v),'large reference mask draws');
+const loop=await mountEarthLoop(document.querySelector('#loop'),{lockup:'../../presskit/logos/thermal-lockup-white.png'});loop.setPaused(true);loop.render(0);const a=snapshot(loop.canvas);loop.render(4);const b=snapshot(loop.canvas);loop.render(8);const end=snapshot(loop.canvas);
+let fixedPixels=0,fixedChanges=0,changes=0,seam=0;for(let i=0;i<a.length;i+=4){if(loop.fixedMask[i+3]===255){fixedPixels++;if(a[i]!==b[i]||a[i+1]!==b[i+1]||a[i+2]!==b[i+2])fixedChanges++;}if(a[i]!==b[i]||a[i+1]!==b[i+1]||a[i+2]!==b[i+2])changes++;if(a[i]!==end[i]||a[i+1]!==end[i+1]||a[i+2]!==end[i+2])seam++;}
+assert(fixedPixels>1000&&fixedChanges===0,`from and year fixed (${fixedPixels} pixels, ${fixedChanges} changes)`);assert(changes>100,`earth animates (${changes} pixels)`);assert(seam===0,'loop seam exact');
+output.textContent+='\nVERDICT '+(checks.some(x=>x.startsWith('FAIL'))?'FAIL':'PASS');
+</script></html>

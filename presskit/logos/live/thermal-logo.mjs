@@ -241,7 +241,7 @@ export async function mountThermalLogo(element,mode='bleed',layout='display') {
   element.addEventListener('pointerdown',event=>{if(reduced.matches)return;pressed=true;point(event);element.setPointerCapture(event.pointerId);});
   element.addEventListener('pointerup',event=>{pressed=false;if(event.pointerType!=='mouse')leave();});
   element.addEventListener('pointerleave',leave);element.addEventListener('pointercancel',leave);element.addEventListener('lostpointercapture',()=>{pressed=false;});
-  element.addEventListener('keydown',event=>{if(event.code==='Space'||event.code==='Enter'){event.preventDefault();pulse();}});
+  element.addEventListener('keydown',event=>{if(event.code==='Space'||event.code==='Enter'&&element.tagName!=='A'){event.preventDefault();pulse();}});
   document.addEventListener('visibilitychange',()=>{cancelAnimationFrame(frame);frame=0;hover=false;pressed=false;if(!document.hidden&&visible)wake();});
   window.addEventListener('blur',leave);
   reduced.addEventListener('change',()=>{clear();if(!reduced.matches)wake();});

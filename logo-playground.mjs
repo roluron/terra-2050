@@ -19,6 +19,7 @@ document.body.append(dialog);
 const large=dialog.querySelector('.logo-play-large'),close=dialog.querySelector('#logo-play-close'),clear=dialog.querySelector('#logo-play-clear'),hint=dialog.querySelector('#logo-play-hint');
 let enlarged,mounting,opener;
 const logos=await Promise.all([...document.querySelectorAll('#wordmark,#v-wordmark')].map(async element=>{
+  const name=element.querySelector('.brand-name'),from=document.createElement('span');from.className='brand-from';from.textContent='from';name.firstChild.replaceWith(from);
   element.classList.add('thermal-inline');element.removeAttribute('aria-hidden');element.removeAttribute('tabindex');
   const effect=await mountThermalLogo(element,'bleed','inline');
   const trigger=document.createElement('button');trigger.type='button';trigger.className='thermal-trigger';trigger.setAttribute('aria-haspopup','dialog');trigger.setAttribute('aria-controls',dialog.id);element.append(trigger);
