@@ -1,4 +1,4 @@
-import { copy } from './copy.mjs';
+import { copy } from './copy.mjs?v=20261008-credit';
 
 const requested = new URLSearchParams(location.search).get('lang');
 let saved;
