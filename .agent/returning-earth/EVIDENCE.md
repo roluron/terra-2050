@@ -16,4 +16,4 @@ Routes modèles découvertes à l'exécution : codex, Gemini0.54.4, Claude2.1.28
 
 Navigation arrière testée par revue, globe et année fonctionnent ; pageshow.persisted=false, restauration BFCache non observée. iPhone physique non vérifié. Annulations des fetchs de l'ancien document à un reload immédiat distinguées des erreurs actuelles ; la matrice attend networkidle avant chaque reload sans filtrer les erreurs.
 
-Publication et parcours live : en cours.
+Publication : commit 13bdeed90c05c86f4eb73056ceafff34c54116fe sur main, déploiement GitHub Pages 37793706262 terminé avec succès. Les trois URL publiques sans paramètre servent exactement les hash ci-dessus (HTTP 200). Matrice `URL0=https://fromearth.love/ node tools/qa/returning-earth.mjs` PASS : desktop, portrait, paysage, mouvement réduit ; trois visites chacun, zéro particule, zéro pageerror, liens Paris/2050. Première visite publique PASS. JSON et captures dans live/ ; desktop et portrait inspectés. Logs statiques conservés dans static/. QA globale CI encore en file d'attente à la clôture ; son run antérieur 909efe3 est déjà en échec, et l'assertion historique des filtres reste inchangée.
