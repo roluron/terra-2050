@@ -1,4 +1,14 @@
-# Current design evidence: PREMIUM.md and outputs/terra-premium (2026-09-17)
+# Share control correction — 2026-10-08
+
+Baseline: desktop screenshot inspected; share 48px versus settings 44px, missing glass shadow/blur. Share/settings opacity differed in 94 of 117 observed entrance frames. Records: ../../captures/share-control-2026-10-08/baseline-desktop.{json,png}.
+
+Run: QA_SORTIE=../../captures/share-control-2026-10-08 node tools/qa/share-control.mjs against http://127.0.0.1:8089/?lang=en. Desktop Chromium: 122 frames; iPhone SE portrait WebKit: 118; landscape WebKit: 114; reduced-motion Chromium: 7. Every observed frame matched opacity/transform; computed glass styling/size matched. Share dialog and expanded/cleared search journeys passed; no page errors. All four screenshots inspected. Syntax and git diff --check passed. No new dependencies or rendering work; no performance budget changed. Headful engines were required because headless Chromium could not create WebGL.
+
+Snapshot SHA256: index.html 887f9c221f7be2de7853549551f4cbf79e8ebd8fdd55f2f33c93acda32393990; premium.css 14f4971862481f879ab8cff44f22dcd162e58a49f7192695c4164ffefffd9776; experience-ui.css a954759ea7e1c91ca417c2b18f0016eea8a71ef441f45c3f92129cabeff9a817; QA 17751a2beaf712d106d4a21544f76179ba32e711d987f8f21ffcf9db190245e3.
+
+Baseline GitHub CI run 37626779446 already failed with absolute local paths/EACCES, a historical header-spacing assertion, missing matchMedia and startup timeouts. This narrow change does not claim full CI or physical-iPhone validation. Independent review uses a fresh-context OpenAI agent; cross-family access UNKNOWN, no cross-family corroboration claimed. Publication and reviewer verdict pending.
+
+# Historical design evidence: PREMIUM.md and outputs/terra-premium (2026-09-17)
 
 # Historical evidence — 2026-09-07
 

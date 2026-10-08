@@ -67,7 +67,7 @@ body.dossier-ouvert #map-inspector * {visibility:hidden}
 #resultats li {border:0;border-radius:12px;transition:background .2s}
 #resultats li:is(.choisi,:hover) {background:linear-gradient(110deg,#ccced11c,#ffffff07)}
 #resultats li .type-lieu {color:#b4b6b9;letter-spacing:.035em;font-size:10px}
-#bouton-reglages {width:44px;height:44px;border:1px solid #ffffff26;border-radius:50%;background:linear-gradient(140deg,#ffffff10,#ffffff02),#101512d9;box-shadow:inset 0 1px #fff2}
+#bouton-reglages,#share-view {width:44px;height:44px;border:1px solid #ffffff26;border-radius:50%;background:linear-gradient(140deg,#ffffff10,#ffffff02),#101512d9;box-shadow:inset 0 1px #fff2}
 #menu-reglages .bouton-ico {border-radius:12px;font-weight:400}
 #menu-reglages .bouton-ico:hover {background:#ccced115}
 
@@ -166,7 +166,7 @@ body #recherche,body.dossier-ouvert #recherche {padding-right:100px}
 :is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte) {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow)}
 #menu-reglages {--glass-tint:#17171799;backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6)}
 body:has(#menu-reglages.ouvert) #dossier {visibility:hidden;pointer-events:none}
-#bouton-reglages {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+#bouton-reglages,#share-view {background:var(--glass-surface);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
 @media(max-width:720px) {body #recherche,body.dossier-ouvert #recherche{padding-right:80px}#resultats{right:80px}#menu-reglages .bouton-ico{font-size:12px}}
 @media(prefers-reduced-transparency:reduce) {:is(#map-inspector,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#champ-recherche){background:#111610}}
 
@@ -215,8 +215,9 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 @media(max-height:500px) {#map-inspector #map-options{max-height:calc(100dvh - 170px)}}
 @media(prefers-reduced-motion:reduce) {#map-toggle svg {transition:none}}
 
-#bouton-reglages {color:var(--glass-text)}
-#bouton-reglages {display:grid;place-items:center;padding:0}
+#bouton-reglages,#share-view {color:var(--glass-text)}
+#bouton-reglages,#share-view {display:grid;place-items:center;padding:0}
+#share-view:focus-visible {outline:2px solid var(--glass-text);outline-offset:3px}
 #bouton-reglages .rouage {width:20px;height:20px;transform-origin:center;transform-box:fill-box}
 #timeline .regle,#timeline #curseur {width:72%}
 #timeline .regle {height:44px;margin-top:12px}
@@ -239,7 +240,7 @@ body.dossier-ouvert #globe-dock {visibility:hidden}
 #curseur::-moz-range-thumb,#comparison-year::-moz-range-thumb {width:2px;height:44px;opacity:0;border:0;background:transparent;box-shadow:none}
 #timeline:has(#curseur:focus-visible) .regle {outline:1px solid var(--glass-muted);outline-offset:4px;border-radius:4px}
 #story-partager.entree-pedago {font:400 13px/1.4 var(--police)}
-:is(#champ-recherche,#bouton-reglages,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#map-inspector #map-options) {backdrop-filter:blur(2px) saturate(1.35);-webkit-backdrop-filter:blur(2px) saturate(1.35)}
+:is(#champ-recherche,#bouton-reglages,#share-view,#dossier,#city-comparison,#menu-reglages,#resultats,.pedago-carte,#map-inspector #map-options) {backdrop-filter:blur(2px) saturate(1.35);-webkit-backdrop-filter:blur(2px) saturate(1.35)}
 #city-comparison::backdrop,#story-popup,#pedago {background:#02060a66;backdrop-filter:none;-webkit-backdrop-filter:none}
 .language-content::before {display:none}
 #map-inspector #calques .calque.actif,#map-reading button[aria-pressed=true],#resultats li:is(.choisi,:hover),#dossier .risque,#dossier .risque[open],#dossier .actions button,#dossier .actions #dossier-story,.compare-swap,.entree-pedago {background:#ffffff09}
@@ -285,7 +286,7 @@ body.loupe #champ-recherche {opacity:0;pointer-events:none}
 body:not(.loupe) #explore-city {opacity:0;pointer-events:none}
 #recherche #resultats {right:auto;top:0;max-width:calc(100vw - 40px)}
 body.loupe #resultats {visibility:hidden}
-body.entree-chrome :is(#titre,#recherche,#bouton-reglages,#map-inspector,#explore-city,#timeline .an,#timeline .regle,#curseur) {transition:none}
+body.entree-chrome :is(#titre,#recherche,#bouton-reglages,#share-view,#map-inspector,#explore-city,#timeline .an,#timeline .regle,#curseur) {transition:none}
 @media(max-width:720px) {
  body #recherche,body.pret #recherche,body.dossier-ouvert #recherche {right:calc(80px + env(safe-area-inset-right,0px));max-width:calc(100vw - 100px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))}
  body:not(.loupe) #titre {visibility:hidden;pointer-events:none}

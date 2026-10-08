@@ -3747,7 +3747,7 @@ if (texturesPretes) window.dispatchEvent(new Event('terra-ready'));
 const CHROME_DEPART = [
   ['#titre', { opacity: 0 }],
   ['#recherche', { opacity: 0, y: -10 }],
-  ['#bouton-reglages', { opacity: 0, y: -8 }],
+  ['#bouton-reglages, #share-view', { opacity: 0, y: -8 }],
   ['.calque', { opacity: 0, x: -12 }],
   ['#timeline .an', { opacity: 0, y: 18 }],
   ['#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }],
@@ -3764,7 +3764,7 @@ function revelerChrome(){
 
   entree('#titre', { opacity: 0 }, 0);
   entree('#recherche', { opacity: 0, y: -10 }, 0);
-  entree('#bouton-reglages', { opacity: 0, y: -8 }, 0);
+  entree('#bouton-reglages, #share-view', { opacity: 0, y: -8 }, 0);
   entree('.calque', { opacity: 0, x: -12 }, 0);
   entree('#timeline .an', { opacity: 0, y: 18 }, 0);
   entree('#curseur, #timeline .bornes, #timeline .regle', { opacity: 0 }, 0);

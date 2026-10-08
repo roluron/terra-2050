@@ -13,7 +13,7 @@
 #layer-visibility svg,#share-view svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.4;vertical-align:middle}
 #layer-visibility.layer-hidden svg{opacity:.45}
 #filter-summary.layer-hidden #visible-legend{opacity:.45}
-#share-view{position:fixed;z-index:31;top:calc(10px + env(safe-area-inset-top,0px));right:calc(100px + env(safe-area-inset-right,0px));width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid var(--glass-edge);border-radius:50%;padding:0;background:var(--glass-surface);color:var(--glass-text);cursor:pointer}
+#share-view{position:fixed;z-index:31;top:calc(12px + env(safe-area-inset-top,0px));right:calc(100px + env(safe-area-inset-right,0px));cursor:pointer}
 body.loupe #recherche{right:calc(162px + env(safe-area-inset-right,0px))}
 body:not(.pret) #share-view,body:not(.pret) #layer-visibility,body.dossier-ouvert #share-view{visibility:hidden}
 body:has(#earth-shell[open],#city-comparison[open],#story-popup:not([hidden])) #share-view{visibility:hidden}
@@ -50,7 +50,7 @@ body:has(.ux-dialog[open]) :is(#survol,#etiquettes){visibility:hidden}
  #map-toggle::before{content:none}
  #map-toggle{min-width:0;gap:8px}
  #map-inspector #map-options{width:calc(100vw - 24px);max-height:calc(100dvh - 160px);left:-1px;bottom:calc(100% + 14px)}
- #share-view{right:calc(80px + env(safe-area-inset-right,0px));width:44px;height:44px;top:calc(12px + env(safe-area-inset-top,0px))}
+ #share-view{right:calc(80px + env(safe-area-inset-right,0px))}
  body.loupe #recherche{right:calc(138px + env(safe-area-inset-right,0px))}
  #layer-visibility{width:40px;height:44px}
  #visible-legend{width:210px;margin-bottom:10px}

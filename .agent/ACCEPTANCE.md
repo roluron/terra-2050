@@ -1,4 +1,13 @@
-# Current design-pass acceptance: PREMIUM.md (2026-09-17)
+# Share control correction — 2026-10-08
+
+- [x] Globe header: share/settings styling and size match; opacity and transform match on every observed entrance frame.
+- [x] Share dialog opens and closes; expanded search hides share and clearing it then Escape restores it.
+- [x] Desktop Chromium, portrait/landscape WebKit and reduced motion pass without runtime errors.
+- [ ] Published website serves the verified correction.
+
+Existing performance budgets are unchanged; this adds no assets or rendering work. Evidence: tools/qa/share-control.mjs and EVIDENCE.md. Physical iPhone behavior remains unverified.
+
+# Historical design-pass acceptance: PREMIUM.md (2026-09-17)
 
 # Acceptance — historical completion pass, 2026-09-07
 
