@@ -49,4 +49,4 @@ try{
  render();
 }catch(error){$('#asset-count').textContent=ui[lang].unavailable;$('#library-error').hidden=false;console.error(error);}
 
-import './logo-preview.mjs?v=20261008-type';
+import './logo-preview.mjs?v=20261008-heavy';

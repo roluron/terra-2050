@@ -1,4 +1,4 @@
-import {vertex,material,contourDistance} from './thermal-logo.mjs?v=20261008-type';
+import {vertex,material,contourDistance} from './thermal-logo.mjs?v=20261008-heavy';
 
 export async function mountEarthLoop(element,options={}){
   await Promise.all([300,600].map(w=>document.fonts.load(`${w} 100px "TWK Lausanne"`)));
@@ -31,12 +31,13 @@ export async function mountEarthLoop(element,options={}){
   const shape=document.createElement('canvas');shape.width=canvas.width;shape.height=canvas.height;
   const ctx=shape.getContext('2d'),w=canvas.width,h=canvas.height;let size=w*.22;
   ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;const from=ctx.measureText('from').width;
-  ctx.font=`600 ${size}px "TWK Lausanne"`;size*=w*.88/(from+ctx.measureText('earth').width);
+  ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.01}px`;size*=w*.88/(from+ctx.measureText('earth').width+size*.035);
   ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;const advance=ctx.measureText('from').width;
   const left=w*.06,baseline=h*.755;
-  ctx.fillStyle='#fff';ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.fillText('earth',left+advance,baseline);
+  ctx.fillStyle='#fff';ctx.strokeStyle='#fff';ctx.font=`600 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.01}px`;ctx.lineJoin='miter';ctx.lineWidth=size*.035;
+  ctx.strokeText('earth',left+advance+size*.0175,baseline);ctx.fillText('earth',left+advance+size*.0175,baseline);
   const pixels=ctx.getImageData(0,0,w,h).data;contourDistance(pixels,w,h);
-  ctx.clearRect(0,0,w,h);ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.fillText('from',left,baseline);
+  ctx.clearRect(0,0,w,h);ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;ctx.fillText('from',left,baseline);
   ctx.font=`300 ${w*.024}px monospace`;ctx.letterSpacing=`${-w*.0008}px`;ctx.textAlign='right';ctx.fillText('/ 2050',w*.94,h*.867);
   const fixed=ctx.getImageData(0,0,w,h).data;
   if(options.lockup){

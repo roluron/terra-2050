@@ -1,4 +1,4 @@
-import {mountThermalLogo} from './thermal-logo.mjs?v=20261008-type';
+import {mountThermalLogo} from './thermal-logo.mjs?v=20261008-heavy';
 import {experienceUICopy} from './experience-ui-copy.mjs';
 
 const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('./thermal-logo.css?v=20261008-type',import.meta.url).href;
