@@ -95,6 +95,27 @@
       ]
     },
     {
+      "path": "media/logo/fromearth-logo-4x5-social.mp4",
+      "title": "Live logo \u00b7 4:5",
+      "category": "Motion loops",
+      "caption": "The current live WebGL logo rendered frame by frame. Seamless 8-second loop at 60fps; from and / 2050 remain fixed while earth changes. 4:5 social video with a 3840 \u00d7 4800 4K master. Graphic identity treatment, not climate data.",
+      "edition": "Current",
+      "bytes": 10650649,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 4:5 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8,
+      "fps": 60,
+      "poster": "media/logo/fromearth-logo-poster.jpg",
+      "extras": [
+        {
+          "path": "media/logo/fromearth-logo-4x5-4K.mp4",
+          "label": "4K master \u00b7 3840 \u00d7 4800"
+        }
+      ]
+    },
+    {
       "path": "loops/01-thermal-wordmark.mp4",
       "title": "Thermal wordmark",
       "category": "Motion loops",
@@ -884,10 +905,10 @@
       "poster": "logos/thermal-lockup-white.png"
     }
   ],
-  "completeSize": "462 MB",
+  "completeSize": "582 MB",
   "collections": {
     "Campaign images": 10,
-    "Motion loops": 31,
+    "Motion loops": 32,
     "Interface footage": 4,
     "Logos": 2
   }
