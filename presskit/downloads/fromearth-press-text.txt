@@ -1,0 +1,105 @@
+fromearth / 2050
+
+An interactive globe for exploring climate projections through the places we know.
+
+
+SHORT DESCRIPTION
+fromearth / 2050 is a free, browser-based experience that makes climate projections easier to explore. Search for a city, move between 2026 and 2050, compare two places and look at different climate indicators on an interactive globe. From an idea by Robin M. and created by fromanother, the project starts with a simple intuition: the future feels closer when it is connected to somewhere familiar.
+
+
+FULL PROJECT DESCRIPTION
+Climate change is often described at a scale that is hard to hold in mind: global averages, distant horizons and very large numbers. fromearth / 2050 begins somewhere smaller and more personal — a city you live in, a place you grew up, somewhere you love.
+
+The experience brings climate projections into a globe you can explore. Visitors can search for a city, move the year control between 2026 and 2050, compare two places, switch indicators and share a view. It is designed to make the first encounter with complex information inviting, without removing access to the sources and definitions behind it.
+
+Its visual language combines a restrained interface, tactile imagery and a sense of movement. The campaign extends that language through thermal landscapes, layered contours and a graphite Earth. These illustrations express the idea of changing perspectives; they are separate from the data shown in the live experience.
+
+fromearth is an independent creative project, from an idea by Robin M. and created by fromanother. It brings together interaction, design and publicly available climate and population datasets to encourage curiosity and informed conversation. The projections describe modeled scenarios and broad trends, with different assumptions and levels of coverage. They are not predictions of the weather in an individual year or a verdict on where someone should live.
+
+
+WHY THE PROJECT EXISTS
+The starting point is a place, not a statistic. We wanted to create an encounter with climate information that begins with something people already care about. A familiar city gives a distant horizon a human scale. The aim is to invite people to look, compare, ask questions and return to the sources — making a complex subject approachable without pretending that its uncertainty has disappeared.
+
+
+THE EXPERIENCE
+Start somewhere familiar
+Search for a city or explore the globe. The catalog includes 34,099 cities; the availability of individual indicators varies by location.
+
+Move through time
+Use the year control from 2026 to 2050. Intermediate values are interpolated for exploration between dataset reference periods.
+
+Change the perspective
+Explore warmth, aridity, relative warming, fire weather, coastal and river flooding, alongside country-level population estimates.
+
+Compare and share
+Put two places side by side, then share a link or a story image. No account is required.
+
+
+FACT SHEET
+Project: fromearth / 2050
+Format: Interactive web experience
+Idea: Robin M.
+Created by: fromanother
+Access: Free to explore; no account required
+Time control: 2026–2050
+City catalog: 34,099 cities; indicator coverage varies
+Languages: English, French, Japanese, Simplified Chinese, Traditional Chinese, Vietnamese, Spanish and Italian
+Website: https://fromearth.love/
+
+
+CREDIT
+fromearth / 2050 — From an idea by Robin M., created by fromanother.
+
+
+DATA AND METHODOLOGY
+The layers come from different sources, grids and scenarios; they are not one integrated forecast. Values between reference periods are interpolated. Some locations have incomplete coverage, and missing data should not be read as zero risk. Any composite index in the experience is an experimental, design-based summary rather than a validated measure of habitability.
+
+WorldClim / CMIP6
+Temperature, precipitation-based aridity and relative warming. The project uses MPI-ESM1-2-HR under SSP3-7.0. The 2050 climate endpoint represents the 2041–2060 period.
+https://www.worldclim.org/data/cmip6/cmip6climate.html
+
+ETH Zurich fire-weather dataset
+A 21-model ensemble under SSP3-7.0. Fire-weather days measure conditions above a local preindustrial threshold; they are not a count of fires or burned area.
+https://essd.copernicus.org/articles/15/2153/2023/
+
+WRI Aqueduct Floods
+Coastal and river flood hazard layers under RCP8.5, using modeled 100-year events. They do not measure the number of people exposed.
+https://datasets.wri.org/datasets/aqueduct-floods-hazard-maps
+
+UN World Population Prospects 2024
+Country and territory population estimates. These should not be described as city population forecasts.
+https://population.un.org/wpp/
+
+
+SUGGESTED CAPTIONS
+Thermal identity
+fromearth / 2050 campaign wordmark with a thermal treatment. Campaign illustration; not a climate map.
+
+Thermal relief
+A tactile landscape created for the fromearth / 2050 campaign. Campaign illustration; colors do not encode measurements for a specific place.
+
+Thermal delta
+An imagined delta in mineral and thermal colors, part of the fromearth / 2050 campaign. Campaign illustration.
+
+Layered perspectives
+Place, year and projection represented as layered contours. A conceptual illustration for fromearth / 2050.
+
+Graphite Earth
+A sculptural Earth created for the fromearth / 2050 campaign. Campaign illustration.
+
+Interface footage
+Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.
+
+Campaign films
+Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.
+
+Motion loops
+Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.
+
+
+EDITORIAL USE
+For editorial coverage of fromearth / 2050. Please credit fromearth / fromanother and link to https://fromearth.love/. Preserve the meaning of interface data and identify campaign illustrations as illustrations. For interviews, additional formats or other uses, contact the studio.
+
+
+CONTACT
+https://fromanother.love/

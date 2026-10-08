@@ -1,0 +1,1811 @@
+{
+  "assets": [
+    {
+      "path": "stills/01-identity.jpg",
+      "title": "Thermal identity",
+      "category": "Campaign images",
+      "caption": "fromearth / 2050 campaign wordmark with a thermal treatment. Campaign illustration; not a climate map.",
+      "edition": "Original",
+      "bytes": 166034,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "originals/01-identity.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "stills/02-thermal-relief.jpg",
+      "title": "Thermal relief",
+      "category": "Campaign images",
+      "caption": "A tactile landscape created for the fromearth / 2050 campaign. Campaign illustration; colors do not encode measurements for a specific place.",
+      "edition": "Original",
+      "bytes": 464775,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "originals/02-thermal-relief.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "stills/03-thermal-delta.jpg",
+      "title": "Thermal delta",
+      "category": "Campaign images",
+      "caption": "An imagined delta in mineral and thermal colors, part of the fromearth / 2050 campaign. Campaign illustration.",
+      "edition": "Original",
+      "bytes": 567910,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "originals/03-thermal-delta.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "stills/04-layered-perspectives.jpg",
+      "title": "Layered perspectives",
+      "category": "Campaign images",
+      "caption": "Place, year and projection represented as layered contours. A conceptual illustration for fromearth / 2050.",
+      "edition": "Original",
+      "bytes": 428210,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "originals/04-layered-perspectives.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "stills/05-graphite-earth.jpg",
+      "title": "Graphite Earth",
+      "category": "Campaign images",
+      "caption": "A sculptural Earth created for the fromearth / 2050 campaign. Campaign illustration.",
+      "edition": "Original",
+      "bytes": 406457,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "originals/05-graphite-earth.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "loops/01-thermal-wordmark.mp4",
+      "title": "Thermal wordmark",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Original",
+      "bytes": 439474,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "source/checks/01-thermal-wordmark-60.png"
+    },
+    {
+      "path": "loops/02-living-relief.mp4",
+      "title": "Living relief",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Original",
+      "bytes": 10401889,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "source/checks/02-living-relief-60.png"
+    },
+    {
+      "path": "loops/03-contours-to-color.mp4",
+      "title": "Layered contours",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Original",
+      "bytes": 15076436,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "source/checks/03-contours-to-color-60.png"
+    },
+    {
+      "path": "inverted/stills/01-identity.jpg",
+      "title": "Thermal identity",
+      "category": "Campaign images",
+      "caption": "fromearth / 2050 campaign wordmark with a thermal treatment. Campaign illustration; not a climate map.",
+      "edition": "Inverse",
+      "bytes": 174968,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "inverted/originals/01-identity.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "inverted/stills/02-thermal-relief.jpg",
+      "title": "Thermal relief",
+      "category": "Campaign images",
+      "caption": "A tactile landscape created for the fromearth / 2050 campaign. Campaign illustration; colors do not encode measurements for a specific place.",
+      "edition": "Inverse",
+      "bytes": 469771,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "inverted/originals/02-thermal-relief.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "inverted/stills/03-thermal-delta.jpg",
+      "title": "Thermal delta",
+      "category": "Campaign images",
+      "caption": "An imagined delta in mineral and thermal colors, part of the fromearth / 2050 campaign. Campaign illustration.",
+      "edition": "Inverse",
+      "bytes": 507024,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "inverted/originals/03-thermal-delta.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "inverted/stills/04-layered-perspectives.jpg",
+      "title": "Layered perspectives",
+      "category": "Campaign images",
+      "caption": "Place, year and projection represented as layered contours. A conceptual illustration for fromearth / 2050.",
+      "edition": "Inverse",
+      "bytes": 408069,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "inverted/originals/04-layered-perspectives.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "inverted/stills/05-graphite-earth.jpg",
+      "title": "Graphite Earth",
+      "category": "Campaign images",
+      "caption": "A sculptural Earth created for the fromearth / 2050 campaign. Campaign illustration.",
+      "edition": "Inverse",
+      "bytes": 429781,
+      "kind": "image",
+      "details": "1080 \u00d7 1350",
+      "width": 1080,
+      "height": 1350,
+      "extras": [
+        {
+          "path": "inverted/originals/05-graphite-earth.png",
+          "label": "PNG original"
+        }
+      ]
+    },
+    {
+      "path": "inverted/loops/01-thermal-wordmark.mp4",
+      "title": "Thermal wordmark",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Inverse",
+      "bytes": 414080,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "inverted/checks/01-thermal-wordmark-60.png"
+    },
+    {
+      "path": "inverted/loops/02-living-relief.mp4",
+      "title": "Living relief",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Inverse",
+      "bytes": 10390913,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "inverted/checks/02-living-relief-60.png"
+    },
+    {
+      "path": "inverted/loops/03-contours-to-color.mp4",
+      "title": "Layered contours",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Inverse",
+      "bytes": 15041734,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "inverted/checks/03-contours-to-color-60.png"
+    },
+    {
+      "path": "media/interface/VIDEOS/01-full-ui-landscape.mp4",
+      "title": "Full UI",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 20889446,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 212s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 212.0,
+      "fps": 60.0,
+      "poster": "media/interface/POSTERS/01-full-ui-landscape.jpg"
+    },
+    {
+      "path": "media/interface/VIDEOS/02-full-ui-portrait.mp4",
+      "title": "Full UI",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 30915252,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 208s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 208.0,
+      "fps": 60.0,
+      "poster": "media/interface/POSTERS/02-full-ui-portrait.jpg"
+    },
+    {
+      "path": "media/interface/VIDEOS/03-ui-closeup-loop-landscape.mp4",
+      "title": "Ui closeup loop",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 1963523,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 32s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 32.0,
+      "fps": 60.0,
+      "poster": "media/interface/POSTERS/03-ui-closeup-loop-landscape.jpg"
+    },
+    {
+      "path": "media/interface/VIDEOS/04-ui-closeup-loop-portrait.mp4",
+      "title": "Ui closeup loop",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 2487067,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 32s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 32.0,
+      "fps": 60.0,
+      "poster": "media/interface/POSTERS/04-ui-closeup-loop-portrait.jpg"
+    },
+    {
+      "path": "media/interface/POSTERS/01-full-ui-landscape.jpg",
+      "title": "Full UI",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 35391,
+      "kind": "image",
+      "details": "1920 \u00d7 1080",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "media/interface/POSTERS/02-full-ui-portrait.jpg",
+      "title": "Full UI",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 19888,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/interface/POSTERS/03-ui-closeup-loop-landscape.jpg",
+      "title": "Ui closeup loop",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 42192,
+      "kind": "image",
+      "details": "1920 \u00d7 1080",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "media/interface/POSTERS/04-ui-closeup-loop-portrait.jpg",
+      "title": "Ui closeup loop",
+      "category": "Interface footage",
+      "caption": "Recorded views of the fromearth / 2050 interface, captured in October 2026, with campaign branding updated for this press kit. The live website may evolve.",
+      "edition": "",
+      "bytes": 46669,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/01-earth-4x5.mp4",
+      "title": "Earth",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 590340,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/01-earth-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/01-earth-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/02-dots-4x5.mp4",
+      "title": "Particles",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 1769181,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/02-dots-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/02-dots-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/03-glyphs-4x5.mp4",
+      "title": "Decoding glyphs",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 347063,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/03-glyphs-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/03-glyphs-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/04-year-4x5.mp4",
+      "title": "Year control",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 283246,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/04-year-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/04-year-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/05-search-4x5.mp4",
+      "title": "City search",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 72959,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/05-search-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/05-search-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/06-lens-4x5.mp4",
+      "title": "Globe lens",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 1697729,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/06-lens-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/06-lens-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/07-temperature-4x5.mp4",
+      "title": "Temperature",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 90105,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/07-temperature-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/07-temperature-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/08-indicators-4x5.mp4",
+      "title": "Indicators",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 103915,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/08-indicators-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/08-indicators-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/09-settings-4x5.mp4",
+      "title": "Settings",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 78610,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/09-settings-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/09-settings-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/10-country-4x5.mp4",
+      "title": "Country",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 1100448,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/10-country-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/10-country-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-4x5/SOCIAL/11-results-4x5.mp4",
+      "title": "City results",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 83650,
+      "kind": "video",
+      "details": "1080 \u00d7 1350 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1350,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-4x5/POSTERS/11-results-4x5.jpg",
+      "extras": [
+        {
+          "path": "media/effects-4x5/MASTERS/11-results-4x5-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/01-earth-landscape.mp4",
+      "title": "Earth",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 1062497,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 8s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/01-earth-landscape.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/01-earth-landscape-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/01-earth-portrait.mp4",
+      "title": "Earth",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 1093999,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/01-earth-portrait.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/01-earth-portrait-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/02-dots-landscape.mp4",
+      "title": "Particles",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 2469920,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 8s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/02-dots-landscape.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/02-dots-landscape-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/02-dots-portrait.mp4",
+      "title": "Particles",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 2956158,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/02-dots-portrait.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/02-dots-portrait-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/03-glyphs-landscape.mp4",
+      "title": "Decoding glyphs",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 342114,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 8s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/03-glyphs-landscape.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/03-glyphs-landscape-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/03-glyphs-portrait.mp4",
+      "title": "Decoding glyphs",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 337856,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/03-glyphs-portrait.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/03-glyphs-portrait-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/04-year-landscape.mp4",
+      "title": "Year control",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 250090,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 8s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/04-year-landscape.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/04-year-landscape-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/04-year-portrait.mp4",
+      "title": "Year control",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 246074,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/04-year-portrait.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/04-year-portrait-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/05-search-landscape.mp4",
+      "title": "City search",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 122988,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 8s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/05-search-landscape.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/05-search-landscape-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/05-search-portrait.mp4",
+      "title": "City search",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 119176,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/05-search-portrait.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/05-search-portrait-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/06-lens-landscape.mp4",
+      "title": "Globe lens",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 1528990,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 8s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/06-lens-landscape.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/06-lens-landscape-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/06-lens-portrait.mp4",
+      "title": "Globe lens",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 2865412,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/06-lens-portrait.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/06-lens-portrait-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/07-temperature-landscape.mp4",
+      "title": "Temperature",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 154297,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 8s \u00b7 60fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/07-temperature-landscape.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/07-temperature-landscape-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/effects-wide/SOCIAL/07-temperature-portrait.mp4",
+      "title": "Temperature",
+      "category": "Motion loops",
+      "caption": "Looping animations of visual elements from the fromearth / 2050 identity and experience. Isolated or composed motion assets.",
+      "edition": "Interface elements",
+      "bytes": 150510,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 8s \u00b7 60fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.0,
+      "fps": 60.0,
+      "poster": "media/effects-wide/POSTERS/07-temperature-portrait.jpg",
+      "extras": [
+        {
+          "path": "media/effects-wide/MASTERS/07-temperature-portrait-4k.mp4",
+          "label": "High-res master"
+        }
+      ]
+    },
+    {
+      "path": "media/campaign/images/Current/01_Cuts_UI/01-one-gesture-square.jpg",
+      "title": "One gesture",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 122930,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/01_Cuts_UI/01-one-gesture-vertical.jpg",
+      "title": "One gesture",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 166236,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/01_Cuts_UI/02-two-places-square.jpg",
+      "title": "Two places",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 110157,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/01_Cuts_UI/02-two-places-vertical.jpg",
+      "title": "Two places",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 127556,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/01_Cuts_UI/03-pass-it-on-square.jpg",
+      "title": "Pass it on",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 84198,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/01_Cuts_UI/03-pass-it-on-vertical.jpg",
+      "title": "Pass it on",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 123091,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/02_Reels/reel-01-2026-2050.jpg",
+      "title": "Reel 01 2026 2050",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 50684,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/02_Reels/reel-02-summer-heat.jpg",
+      "title": "Reel 02 summer heat",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 176696,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/02_Reels/reel-03-london-tokyo.jpg",
+      "title": "Reel 03 london tokyo",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 198611,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/02_Stories/Paris-2050-1080x1920.jpg",
+      "title": "Paris story \u00b7 2026 view",
+      "category": "Campaign films",
+      "caption": "Recorded Paris story showing the 2026 view, with campaign branding updated for this press kit.",
+      "edition": "Current identity",
+      "bytes": 320520,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/03_Films/fromearth-product-film.jpg",
+      "title": "Fromearth product film",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 56978,
+      "kind": "image",
+      "details": "1920 \u00d7 1080",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/03_Films/hello-human.jpg",
+      "title": "Hello human",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 46430,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/03_Films/impact-film.jpg",
+      "title": "Impact film",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 35745,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/03_Impact/impact-london-en-square.jpg",
+      "title": "Impact london en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 88000,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/03_Impact/impact-london-en-vertical.jpg",
+      "title": "Impact london en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 100880,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/03_Impact/impact-tokyo-en-square.jpg",
+      "title": "Impact tokyo en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 94343,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/03_Impact/impact-tokyo-en-vertical.jpg",
+      "title": "Impact tokyo en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 110558,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/01-cursor.jpg",
+      "title": "Cursor",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 80426,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/02-earth-letter.jpg",
+      "title": "Earth letter",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 46430,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/03-transformation.jpg",
+      "title": "Transformation",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 81346,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/04-year-ruler.jpg",
+      "title": "Year ruler",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 83778,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/05-summer-heat.jpg",
+      "title": "Summer heat",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 118871,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/06-one-planet.jpg",
+      "title": "One planet",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 123500,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/07-languages.jpg",
+      "title": "Languages",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 75216,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/08-two-cities.jpg",
+      "title": "Two cities",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 117679,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/09-hello-to-earth.jpg",
+      "title": "Hello to earth",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 46430,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/10-lens-close-up.jpg",
+      "title": "Lens close up",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 140548,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/11-earth-halo.jpg",
+      "title": "Earth halo",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 126920,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/12-decoding-words.jpg",
+      "title": "Decoding words",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 64158,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/13-macro-planet-lens.jpg",
+      "title": "Macro planet lens",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 128033,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/04_Boucles/14-letter-earth-year.jpg",
+      "title": "Letter earth year",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 46430,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/05_Impact_Loops/05-liveable-2050-en-square.jpg",
+      "title": "Liveable 2050 en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 59426,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/05_Impact_Loops/05-liveable-2050-en-vertical.jpg",
+      "title": "Liveable 2050 en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 68712,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/images/Current/06_Brief/06-climate-risks-en-square.jpg",
+      "title": "Climate risks en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 80671,
+      "kind": "image",
+      "details": "1080 \u00d7 1080",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "media/campaign/images/Current/06_Brief/06-climate-risks-en-vertical.jpg",
+      "title": "Climate risks en",
+      "category": "Campaign films",
+      "caption": "Campaign frame or designed story image. Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 103875,
+      "kind": "image",
+      "details": "1080 \u00d7 1920",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "media/campaign/films/Current/01_Cuts_UI/01-one-gesture-square.mp4",
+      "title": "One gesture",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1748634,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 14.3s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 14.3,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/01_Cuts_UI/01-one-gesture-square.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/01_Cuts_UI/01-one-gesture-vertical.mp4",
+      "title": "One gesture",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 2470560,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 14.3s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 14.3,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/01_Cuts_UI/01-one-gesture-vertical.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/01_Cuts_UI/02-two-places-square.mp4",
+      "title": "Two places",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1164279,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 12.7s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 12.7,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/01_Cuts_UI/02-two-places-square.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/01_Cuts_UI/02-two-places-vertical.mp4",
+      "title": "Two places",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1805033,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 12.7s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 12.7,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/01_Cuts_UI/02-two-places-vertical.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/01_Cuts_UI/03-pass-it-on-square.mp4",
+      "title": "Pass it on",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1667337,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 12.6s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 12.6,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/01_Cuts_UI/03-pass-it-on-square.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/01_Cuts_UI/03-pass-it-on-vertical.mp4",
+      "title": "Pass it on",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 2391209,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 12.6s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 12.6,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/01_Cuts_UI/03-pass-it-on-vertical.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/02_Reels/reel-01-2026-2050.mp4",
+      "title": "Reel 01 2026 2050",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 936728,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 11s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 11.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/02_Reels/reel-01-2026-2050.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/02_Reels/reel-02-summer-heat.mp4",
+      "title": "Reel 02 summer heat",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1652123,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 12.4s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 12.4,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/02_Reels/reel-02-summer-heat.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/02_Reels/reel-03-london-tokyo.mp4",
+      "title": "Reel 03 london tokyo",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1578565,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 12s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 12.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/02_Reels/reel-03-london-tokyo.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/03_Films/fromearth-product-film.mp4",
+      "title": "Fromearth product film",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 6386438,
+      "kind": "video",
+      "details": "1920 \u00d7 1080 \u00b7 54s \u00b7 30fps",
+      "width": 1920,
+      "height": 1080,
+      "duration": 54.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/03_Films/fromearth-product-film.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/03_Films/hello-human.mp4",
+      "title": "Hello human",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1479103,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 24s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 24.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/03_Films/hello-human.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/03_Films/impact-film.mp4",
+      "title": "Impact film",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 2583074,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 26s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 26.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/03_Films/impact-film.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/01-cursor.mp4",
+      "title": "Cursor",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 775594,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/01-cursor.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/02-earth-letter.mp4",
+      "title": "Earth letter",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 701871,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 9s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 9.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/02-earth-letter.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/03-transformation.mp4",
+      "title": "Transformation",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 624767,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/03-transformation.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/04-year-ruler.mp4",
+      "title": "Year ruler",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 264808,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/04-year-ruler.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/05-summer-heat.mp4",
+      "title": "Summer heat",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 577335,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/05-summer-heat.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/06-one-planet.mp4",
+      "title": "One planet",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1286342,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/06-one-planet.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/07-languages.mp4",
+      "title": "Languages",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1005614,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/07-languages.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/08-two-cities.mp4",
+      "title": "Two cities",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 727119,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/08-two-cities.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/09-hello-to-earth.mp4",
+      "title": "Hello to earth",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 917172,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/09-hello-to-earth.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/10-lens-close-up.mp4",
+      "title": "Lens close up",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1328374,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/10-lens-close-up.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/11-earth-halo.mp4",
+      "title": "Earth halo",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1295109,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/11-earth-halo.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/12-decoding-words.mp4",
+      "title": "Decoding words",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 253763,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/12-decoding-words.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/13-macro-planet-lens.mp4",
+      "title": "Macro planet lens",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1050394,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 8s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 8.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/13-macro-planet-lens.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/04_Boucles/14-letter-earth-year.mp4",
+      "title": "Letter earth year",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 732901,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 9s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 9.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/04_Boucles/14-letter-earth-year.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/05_Impact_Loops/05-liveable-2050-en-square.mp4",
+      "title": "Liveable 2050 en",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1124690,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 20s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 20.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/05_Impact_Loops/05-liveable-2050-en-square.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/05_Impact_Loops/05-liveable-2050-en-vertical.mp4",
+      "title": "Liveable 2050 en",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1609242,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 20s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 20.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/05_Impact_Loops/05-liveable-2050-en-vertical.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/06_Brief/06-climate-risks-en-square.mp4",
+      "title": "Climate risks en",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 1448990,
+      "kind": "video",
+      "details": "1080 \u00d7 1080 \u00b7 20s \u00b7 30fps",
+      "width": 1080,
+      "height": 1080,
+      "duration": 20.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/06_Brief/06-climate-risks-en-square.jpg"
+    },
+    {
+      "path": "media/campaign/films/Current/06_Brief/06-climate-risks-en-vertical.mp4",
+      "title": "Climate risks en",
+      "category": "Campaign films",
+      "caption": "Edited films for fromearth / 2050 combining recorded interface material with designed typography and motion.",
+      "edition": "Current identity",
+      "bytes": 2177318,
+      "kind": "video",
+      "details": "1080 \u00d7 1920 \u00b7 20s \u00b7 30fps",
+      "width": 1080,
+      "height": 1920,
+      "duration": 20.0,
+      "fps": 30.0,
+      "poster": "media/campaign/images/Current/06_Brief/06-climate-risks-en-vertical.jpg"
+    },
+    {
+      "path": "logos/thermal-lockup-black.png",
+      "title": "Thermal lockup black",
+      "category": "Logos",
+      "caption": "Canonical fromearth / 2050 identity. Keep the thin from, bold earth, thermal accents and year placement.",
+      "edition": "",
+      "bytes": 745236,
+      "kind": "image",
+      "details": "2030 \u00d7 510",
+      "width": 2030,
+      "height": 510,
+      "poster": "logos/thermal-lockup-black.png"
+    },
+    {
+      "path": "logos/thermal-lockup-white.png",
+      "title": "Thermal lockup white",
+      "category": "Logos",
+      "caption": "Canonical fromearth / 2050 identity. Keep the thin from, bold earth, thermal accents and year placement.",
+      "edition": "",
+      "bytes": 625015,
+      "kind": "image",
+      "details": "2100 \u00d7 510",
+      "width": 2100,
+      "height": 510,
+      "poster": "logos/thermal-lockup-white.png"
+    }
+  ],
+  "completeSize": "294 MB",
+  "collections": {
+    "Campaign images": 10,
+    "Motion loops": 31,
+    "Interface footage": 8,
+    "Campaign films": 65,
+    "Logos": 2
+  }
+}

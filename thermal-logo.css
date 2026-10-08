@@ -1,0 +1,28 @@
+@font-face{font-family:"TWK Lausanne";src:url('./fonts/TWKLausanne-300.woff2') format('woff2');font-weight:300;font-display:swap}
+@font-face{font-family:"TWK Lausanne";src:url('./fonts/TWKLausanne-600.woff2') format('woff2');font-weight:600;font-display:swap}
+.thermal-logo{position:relative;display:block;isolation:isolate;user-select:none;-webkit-user-select:none}
+.thermal-logo>canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.thermal-logo.thermal-ready>.thermal-fallback,.thermal-logo.thermal-ready>.brand-lockup,.thermal-logo.thermal-ready>.v-masque{opacity:0}
+.thermal-inline{position:relative}
+.thermal-inline>canvas{inset:-20px;width:calc(100% + 40px);height:calc(100% + 40px)}
+.thermal-inline.thermal-ready>.brand-lockup,.thermal-inline.thermal-ready>.v-masque{opacity:1}
+.thermal-inline.thermal-ready .brand-name{color:transparent}
+.thermal-inline .brand-year,.thermal-inline .brand-lockup em{position:relative;z-index:1}
+.thermal-trigger{position:absolute;inset:0;z-index:2;width:100%;height:100%;border:0;background:transparent;color:inherit;cursor:pointer}
+.thermal-trigger:focus-visible{outline:1px solid #f4f1eb;outline-offset:4px;border-radius:2px}
+#logo-playground{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:#f4f1eb;overflow:hidden;font:300 14px "TWK Lausanne",sans-serif}
+#logo-playground[open]{display:flex;flex-direction:column;animation:logo-play-enter .25s ease-out}
+#logo-playground::backdrop{background:#05060670;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.logo-play-stage{flex:1;min-height:0;display:grid;place-items:center}
+.logo-play-large{width:min(94vw,1600px);aspect-ratio:1568/438;touch-action:none}
+.logo-play-large:focus-visible{outline:1px solid #f4f1eb55;outline-offset:10px}
+.logo-play-large>.thermal-fallback{position:absolute;inset:0;display:flex;align-items:center;font-size:min(20vw,340px);letter-spacing:-.045em;white-space:nowrap}
+.logo-play-large>.thermal-fallback strong{font-weight:600}
+.logo-play-large>.thermal-fallback small{position:absolute;right:3.5%;bottom:7%;font:300 min(2.4vw,40px) monospace;letter-spacing:-.04em}
+#logo-playground button{min-width:44px;min-height:44px;padding:10px 14px;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+#logo-playground button:focus-visible{outline:1px solid #f4f1eb;outline-offset:3px}
+#logo-play-close{position:absolute;top:max(18px,env(safe-area-inset-top));right:max(20px,env(safe-area-inset-right));font-size:30px!important}
+.logo-play-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px max(4vw,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom));color:#d4d1c9;font-size:12px}
+.logo-play-footer p{margin:0;line-height:1.6;max-width:32em}
+@keyframes logo-play-enter{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#logo-playground[open]{animation:none}}
