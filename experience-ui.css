@@ -80,3 +80,23 @@ body:has(.ux-dialog[open]) :is(#survol,#etiquettes){visibility:hidden}
 @media(max-width:720px){#filter-summary .summary-detail{display:block;font-size:12px;line-height:1.4}}
 @media(max-width:720px){body:has(#survol.visible.fige) #filter-summary{visibility:hidden;pointer-events:none}}
 body:not(.loupe) #share-view{visibility:hidden;pointer-events:none}
+
+:root{--ui-inset-x:max(24px,5vw);--ui-inset-y:max(32px,5dvh);--ui-left:calc(var(--ui-inset-x) + env(safe-area-inset-left,0px));--ui-right:calc(var(--ui-inset-x) + env(safe-area-inset-right,0px));--ui-top:calc(var(--ui-inset-y) + env(safe-area-inset-top,0px))}
+#titre,#util{top:var(--ui-top);height:48px;padding:0}
+#titre{left:var(--ui-left)}
+#util{right:var(--ui-right)}
+#share-view{top:calc(var(--ui-top) + 2px);right:calc(var(--ui-right) + 60px)}
+body #recherche,body.pret #recherche,body.dossier-ouvert #recherche{top:var(--ui-top);right:calc(var(--ui-right) + 60px);max-width:calc(100vw - var(--ui-left) - var(--ui-right) - 60px)}
+body.loupe #recherche{right:calc(var(--ui-right) + 122px)}
+#globe-dock{--dock-bottom:calc(var(--ui-inset-y) + env(safe-area-inset-bottom,0px))}
+#globe-dock > #timeline,body.pret #globe-dock > #timeline{right:var(--ui-right)}
+#map-inspector,#filter-summary{left:var(--ui-left)}
+#filter-summary{max-width:min(580px,calc(100vw - var(--ui-left) - var(--ui-right) - 260px))}
+#map-inspector #map-options{max-width:calc(100vw - var(--ui-left) - var(--ui-right));max-height:calc(100dvh - var(--ui-top) - var(--dock-bottom) - 124px)}
+@media(max-width:720px){
+ :root{--ui-inset-x:max(16px,5vw)}
+ body.loupe #recherche{right:calc(var(--ui-right) + 118px)}
+ #map-inspector{max-width:calc(100vw - var(--ui-left) - var(--ui-right) - 170px)}
+ #filter-summary{max-width:calc(100vw - var(--ui-left) - var(--ui-right))}
+ #map-inspector #map-options{left:0;width:calc(100vw - var(--ui-left) - var(--ui-right))}
+}
