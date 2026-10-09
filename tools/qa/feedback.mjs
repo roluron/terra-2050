@@ -76,13 +76,15 @@ for(const [profile,engine,options] of profiles){
     }
     const invitation=await page.locator('#explore-city').boundingBox();
     const gear=await page.locator('#bouton-reglages').boundingBox();
-    assert.ok(Math.abs(gear.x-invitation.x-invitation.width-16)<1,'city invitation is immediately to the left of settings');
+    const share=await page.locator('#share-view').boundingBox();
+    assert.ok(invitation.x+invitation.width+6<=share.x&&share.x+share.width+6<=gear.x,'search, share and settings stay separated');
     assert.ok(Math.abs(gear.y+gear.height/2-invitation.y-invitation.height/2)<1,'city invitation and settings share a row');
     await page.locator('#explore-city').click();
     assert.equal(await page.locator('#champ-recherche').evaluate(e=>e===document.activeElement),true);
-    await page.waitForFunction(()=>Math.abs(document.getElementById('champ-recherche').getBoundingClientRect().width-Math.min(360,innerWidth-(innerWidth<=720?100:140)))<1);
+    await page.waitForFunction(()=>{const champ=document.getElementById('champ-recherche');return Math.abs(champ.getBoundingClientRect().width-Math.min(7.5*parseFloat(getComputedStyle(champ).minHeight),innerWidth-(innerWidth<=720?100:140),parseFloat(getComputedStyle(document.getElementById('recherche')).maxWidth)))<1;});
     const search=await page.locator('#champ-recherche').boundingBox();
-    assert.ok(Math.abs(search.x+search.width-invitation.x-invitation.width)<1,'the search expands leftward from the invitation, beside settings');
+    assert.ok(Math.abs(search.x+search.width-share.x-share.width)<1,'expanded search uses the sharing space beside settings');
+    assert.equal(await page.locator('#share-view').isVisible(),false);
     assert.equal(search.y,invitation.y);
     assert.equal(await page.locator('#explore-city').getAttribute('aria-hidden'),'true');
     await page.screenshot({path:`${output}/${profile}-search.png`});

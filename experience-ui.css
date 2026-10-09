@@ -81,22 +81,54 @@ body:has(.ux-dialog[open]) :is(#survol,#etiquettes){visibility:hidden}
 @media(max-width:720px){body:has(#survol.visible.fige) #filter-summary{visibility:hidden;pointer-events:none}}
 body:not(.loupe) #share-view{visibility:hidden;pointer-events:none}
 
-:root{--ui-inset-x:max(24px,5vw);--ui-inset-y:max(32px,5dvh);--ui-left:calc(var(--ui-inset-x) + env(safe-area-inset-left,0px));--ui-right:calc(var(--ui-inset-x) + env(safe-area-inset-right,0px));--ui-top:calc(var(--ui-inset-y) + env(safe-area-inset-top,0px))}
-#titre,#util{top:var(--ui-top);height:48px;padding:0}
+:root{--ui-unit:max(10px,.5208333333vw);--ui-inset-x:2.5vw;--ui-inset-y:var(--ui-inset-x);--ui-control:max(44px,calc(4.4 * var(--ui-unit)));--ui-height:max(48px,calc(4.8 * var(--ui-unit)));--ui-gap:calc(1.6 * var(--ui-unit));--ui-step:calc(var(--ui-control) + var(--ui-gap));--ui-year-width:calc(20 * var(--ui-unit));--ui-left:calc(var(--ui-inset-x) + env(safe-area-inset-left,0px));--ui-right:calc(var(--ui-inset-x) + env(safe-area-inset-right,0px));--ui-top:calc(var(--ui-inset-y) + env(safe-area-inset-top,0px))}
+@media(min-width:721px) and (max-width:1199px){:root{--ui-unit:max(10px,1.3020833333vw);--ui-inset-x:4.1666666667vw}}
+@media(max-width:720px){:root{--ui-unit:max(9px,2.6666666667vw);--ui-inset-x:max(16px,4.2666666667vw);--ui-gap:calc(1.2 * var(--ui-unit))}}
+#titre,#util{top:var(--ui-top);height:var(--ui-height);padding:0}
 #titre{left:var(--ui-left)}
 #util{right:var(--ui-right)}
-#share-view{top:calc(var(--ui-top) + 2px);right:calc(var(--ui-right) + 60px)}
-body #recherche,body.pret #recherche,body.dossier-ouvert #recherche{top:var(--ui-top);right:calc(var(--ui-right) + 60px);max-width:calc(100vw - var(--ui-left) - var(--ui-right) - 60px)}
-body.loupe #recherche{right:calc(var(--ui-right) + 122px)}
-#globe-dock{--dock-bottom:calc(var(--ui-inset-y) + env(safe-area-inset-bottom,0px))}
-#globe-dock > #timeline,body.pret #globe-dock > #timeline{right:var(--ui-right)}
+#titre #wordmark{font-size:calc(2.6 * var(--ui-unit))}
+#bouton-reglages,#share-view,#layer-visibility{width:var(--ui-control);height:var(--ui-control)}
+#bouton-reglages .rouage,#share-view svg,#layer-visibility svg,.city-search-icon{width:calc(2 * var(--ui-unit));height:calc(2 * var(--ui-unit))}
+#share-view{top:calc(var(--ui-top) + (var(--ui-height) - var(--ui-control)) / 2);right:calc(var(--ui-right) + var(--ui-step))}
+body #recherche,body.pret #recherche,body.dossier-ouvert #recherche{top:var(--ui-top);right:calc(var(--ui-right) + var(--ui-step));height:var(--ui-height);max-width:calc(100vw - var(--ui-left) - var(--ui-right) - var(--ui-step))}
+body.loupe #recherche{right:calc(var(--ui-right) + 2 * var(--ui-step))}
+#explore-city,#recherche #champ-recherche{min-height:var(--ui-height);height:var(--ui-height);font-size:calc(1.4 * var(--ui-unit))}
+#explore-city .city-search-label{font-size:inherit;min-height:var(--ui-height);padding:var(--ui-unit) 0}
+#recherche #champ-recherche{font-size:max(16px,calc(1.4 * var(--ui-unit)));padding:calc(1.2 * var(--ui-unit)) calc(1.8 * var(--ui-unit))}
+#resultats li .nom-lieu{font-size:calc(1.3 * var(--ui-unit))}
+#resultats li .type-lieu{font-size:calc(1.1 * var(--ui-unit))}
+#resultats li{padding:calc(.9 * var(--ui-unit)) calc(1.8 * var(--ui-unit))}
+#globe-dock{--dock-bottom:calc(max(32px,var(--ui-inset-y)) + env(safe-area-inset-bottom,0px))}
+#globe-dock > #timeline,body.pret #globe-dock > #timeline{right:var(--ui-right);width:var(--ui-year-width)}
+#globe-dock #timeline .an{font-size:calc(8 * var(--ui-unit))}
+#globe-dock #timeline .regle{height:calc(2.4 * var(--ui-unit));margin-top:calc(.4 * var(--ui-unit))}
+#globe-dock #timeline #curseur{height:var(--ui-control);bottom:calc(-2 * var(--ui-unit))}
+#timeline .regle i{height:calc(.7 * var(--ui-unit));width:max(1px,calc(.1 * var(--ui-unit)))}
 #map-inspector,#filter-summary{left:var(--ui-left)}
-#filter-summary{max-width:min(580px,calc(100vw - var(--ui-left) - var(--ui-right) - 260px))}
-#map-inspector #map-options{max-width:calc(100vw - var(--ui-left) - var(--ui-right));max-height:calc(100dvh - var(--ui-top) - var(--dock-bottom) - 124px)}
+#map-inspector{padding:0 calc(1.6 * var(--ui-unit));border-radius:calc(2.4 * var(--ui-unit));max-width:calc(100vw - var(--ui-left) - var(--ui-right) - var(--ui-year-width) - var(--ui-control) - var(--ui-gap))}
+#map-toggle{min-height:var(--ui-control);font-size:calc(1.4 * var(--ui-unit));gap:calc(1.2 * var(--ui-unit))}
+#map-toggle svg{width:calc(2 * var(--ui-unit));height:calc(2 * var(--ui-unit))}
+#filter-summary{bottom:calc(var(--dock-bottom) + 6.4 * var(--ui-unit));max-width:min(calc(58 * var(--ui-unit)),calc(100vw - var(--ui-left) - var(--ui-right) - var(--ui-year-width) - 6 * var(--ui-unit)))}
+#filter-summary .summary-headline{font-size:calc(3.6 * var(--ui-unit))}
+#filter-summary .summary-reference,#filter-summary .summary-detail{font-size:calc(1.3 * var(--ui-unit))}
+#visible-legend{width:calc(24 * var(--ui-unit))}
+#visible-legend :is(.ux-legend-mode,.ux-scale>span,.ux-scale small),#filter-summary .ux-source-link{font-size:calc(1.1 * var(--ui-unit))}
+#map-inspector #map-options{width:calc(49 * var(--ui-unit));max-width:calc(100vw - var(--ui-left) - var(--ui-right));max-height:calc(100dvh - var(--ui-top) - var(--dock-bottom) - 2 * var(--ui-height) - 2.8 * var(--ui-unit));padding:calc(1.2 * var(--ui-unit));border-radius:calc(2.8 * var(--ui-unit))}
+#map-inspector #calques .calque{min-height:var(--ui-height);padding:calc(1.1 * var(--ui-unit)) calc(1.2 * var(--ui-unit))}
+#map-inspector .calque .nom,#map-inspector #map-contact,#map-inspector .ux-source-link{font-size:calc(1.3 * var(--ui-unit))}
+#menu-reglages{width:min(calc(23.2 * var(--ui-unit)),calc(100vw - var(--ui-left) - var(--ui-right)));padding:calc(.8 * var(--ui-unit));max-height:calc(100dvh - var(--ui-top) - var(--ui-height) - 32px);overflow:auto}
+#menu-reglages :is(.bouton-ico,.creator-credit p){font-size:calc(1.3 * var(--ui-unit));min-height:var(--ui-control);padding:calc(var(--ui-unit)) calc(1.2 * var(--ui-unit))}
 @media(max-width:720px){
- :root{--ui-inset-x:max(16px,5vw)}
- body.loupe #recherche{right:calc(var(--ui-right) + 118px)}
- #map-inspector{max-width:calc(100vw - var(--ui-left) - var(--ui-right) - 170px)}
+ :root{--ui-year-width:calc(11.2 * var(--ui-unit))}
+ #titre #wordmark{font-size:max(16px,calc(1.8 * var(--ui-unit)))}
+ #globe-dock #timeline .an{font-size:calc(4.8 * var(--ui-unit))}
+ #map-inspector{padding:0 calc(1.2 * var(--ui-unit))}
+ #map-toggle{gap:calc(.8 * var(--ui-unit));font-size:max(12px,calc(1.2 * var(--ui-unit)))}
+ #map-toggle svg{width:calc(1.2 * var(--ui-unit));height:calc(1.2 * var(--ui-unit))}
+ #filter-summary{bottom:calc(var(--dock-bottom) + 9.6 * var(--ui-unit))}
+ #filter-summary .summary-headline{font-size:calc(2.5 * var(--ui-unit))}
  #filter-summary{max-width:calc(100vw - var(--ui-left) - var(--ui-right))}
  #map-inspector #map-options{left:0;width:calc(100vw - var(--ui-left) - var(--ui-right))}
 }
+@media(max-height:500px){:root{--ui-unit:10px;--ui-inset-y:16px}#filter-summary .summary-headline{font-size:calc(2 * var(--ui-unit))}}

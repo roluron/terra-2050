@@ -2205,10 +2205,11 @@ const RECHERCHE_SMARTPHONE = matchMedia('(max-width:720px), (pointer:coarse) and
 const etatRecherche = { w: largeurInvitation() };
 const invitationRecherche = document.getElementById('explore-city');
 function largeurInvitation(){
-  return RECHERCHE_SMARTPHONE.matches ? 48 : LARGEUR_INVITATION;
+  const hauteur = parseFloat(getComputedStyle(champ).minHeight);
+  return RECHERCHE_SMARTPHONE.matches ? hauteur : LARGEUR_INVITATION * hauteur / 48;
 }
 function largeurBarre(){
-  return Math.min(360, innerWidth - (innerWidth<=720 ? 100 : 140));
+  return Math.min(7.5 * parseFloat(getComputedStyle(champ).minHeight), innerWidth - (innerWidth<=720 ? 100 : 140));
 }
 let placerCaret = () => {};
 function appliquerLargeurRecherche(){
