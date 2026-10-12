@@ -557,7 +557,7 @@ const GRILLES = {};
 let FIRE_WEATHER = null;
 let SCIENCE = null, FLOOD_HAZARDS = null;
 let climateCoverage = null, globalSummary = null, globalSummaryStarted = false;
-let globalSourcesReady = false, populationSourceReady = false;
+let globalSourcesReady = false, populationSourceReady = false, scienceSourceReady = false;
 async function chargerCouvertureClimat(){
   const response = await fetch('./data/climate-coverage.bin');
   if (!response.ok) throw new Error('Climate coverage unavailable: ' + response.status);
@@ -580,7 +580,7 @@ function majSyntheseGlobale(sync = true){
   if(sync)experienceUI?.sync();
 }
 function preparerSyntheseGlobale(){
-  if (globalSummaryStarted || !globalSourcesReady || !populationSourceReady) return;
+  if (globalSummaryStarted || !globalSourcesReady || !populationSourceReady || !scienceSourceReady) return;
   globalSummaryStarted = true;
   createGlobalSummary({ climate: SCIENCE?.climate, fire: FIRE_WEATHER, floods: FLOOD_HAZARDS,
     population: PAYS_POP, climateCoverage }).then(summary => {
@@ -1055,9 +1055,10 @@ function chargerGrillesCalques(){
       texture.minFilter = texture.magFilter = THREE.LinearFilter;
       texture.wrapS = THREE.RepeatWrapping; texture.needsUpdate = true;
       uniformsGlobe.uFireWeather.value = texture;
+      scienceSourceReady = true; preparerSyntheseGlobale();
       rafraichirSurvol(); if (lieuDossier) majDossier();
       return true;
-    }).catch(error => { scienceLoadFailed = true; rafraichirSurvol(); if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
+    }).catch(error => { scienceLoadFailed = true; scienceSourceReady = true; preparerSyntheseGlobale(); rafraichirSurvol(); if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
   ]).then(async r => {
     FLOOD_HAZARDS = r[0];
     globalSourcesReady = true; preparerSyntheseGlobale();
@@ -3529,31 +3530,31 @@ function chargerAnnuaire(){
   if (annuaireLance) return; annuaireLance = true;
   chargerGrillesCalques();
   pixelsDepuisTexture(texC, 'c', './data/grille_c.png');
+  charger('./data/population-annual.json', 'json').then(j => {
+    if (!Object.keys(j).length || !Object.values(j).every(a => Array.isArray(a) && a.length === 26 && a.every(n => Number.isSafeInteger(n) && n > 0))) throw new Error('Invalid annual population data');
+    PAYS_POP = j;
+    for (const row of PAYS_LIGNES) row[4] = PAYS_POP[row[1]]?.[0] ?? 0;
+    preparerPopulation(); rafraichirSurvol();
+  }).catch(error => console.error('annual population unavailable:', error))
+    .finally(() => {
+      populationSourceReady = true; preparerSyntheseGlobale();
+      if (lieuDossier) majDossier();
+      if (champ.value.trim() && (document.activeElement === champ || liste.classList.contains('ouvert'))) afficherResultats();
+    });
   let directoryBytes, directoryBin;
-  return Promise.all([
-  // seules c (masque des terres) et d (derive climatique) sont lues au
-  // processeur ; les grilles a et b ne servent qu aux shaders des calques
-  // grille_c est deja telechargee comme texture (elle bloque l entree) : on
-  // decode ses pixels depuis cette image-la, sans seconde requete
   /* Annuaire : les noms viennent du JSON mince, tout le numérique d'un
      binaire à pas fixe de 24 octets par ville (voir tools/pipeline.py).
      On reconstruit ici les rangées au format historique
      [nom_fr, iso2, lat, lon, pop, capitale, nom_en, risque] : rien d'autre
      dans l'application n'a besoin de savoir que le stockage a changé. */
-  Promise.all([
+  return Promise.all([
     charger('./data/places.json', 'arrayBuffer'),
     charger('./data/places.bin', 'arrayBuffer'),
   ]).then(([jsonBytes, bin]) => {
     LIEUX = decodePlaceDirectory(JSON.parse(new TextDecoder().decode(jsonBytes)), bin);
     LIEUX.forEach((row, i) => SOURCE_INDEX.set(row, i));
     directoryBytes = jsonBytes; directoryBin = bin;
-  }),
-  charger('./data/population-annual.json', 'json').then(j => {
-    if (!Object.keys(j).length || !Object.values(j).every(a => Array.isArray(a) && a.length === 26 && a.every(n => Number.isSafeInteger(n) && n > 0))) throw new Error('Invalid annual population data');
-    PAYS_POP = j; preparerPopulation(); rafraichirSurvol();
-  }).catch(error => console.error('annual population unavailable:', error))
-    .finally(() => { populationSourceReady = true; preparerSyntheseGlobale(); }),
-]).then(() => {
+  }).then(() => {
   for (let i = 0; i < LIEUX.length; i++) LIEUX[i][7] = SCIENCE?.coverage[i] === 63 ? { science: true } : null;
   const nomsRegion = lg => { try { return new Intl.DisplayNames([lg], { type: 'region' }); } catch (e) { return { of: () => null }; } };
   const regionFr = nomsRegion('fr'), regionEn = nomsRegion('en');

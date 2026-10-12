@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
-import * as THREE from '../../assets/lib/three.module.min.js';
 import { buildScientificTextures } from '../../science-textures.mjs';
 
 const root = new URL('../../', import.meta.url);
 const file = path => readFile(new URL(path, root));
+const THREE = await import('data:text/javascript;base64,' + (await file('assets/lib/three.module.min.js')).toString('base64'));
 const decode = bytes => {
   const raw = gunzipSync(bytes);
   return new Float32Array(raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength));
