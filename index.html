@@ -283,7 +283,7 @@
       
     </nav>
 <aside id="model-notice"><div id="map-reading"><button type="button" data-map-mode="reference" aria-pressed="false" hidden></button><button type="button" data-map-mode="change" aria-pressed="true"></button><button type="button" data-map-mode="value" aria-pressed="false"></button></div><div id="layer-context" aria-live="polite"></div><details id="map-method"><summary></summary><div id="layer-method"></div><p data-t="betaNotice"></p></details></aside>
-<a id="map-contact" href="https://github.com/roluron/terra-2050/issues/new" target="_blank" rel="noopener" data-t="betaContact"></a>
+<a id="map-contact" href="mailto:robin@fromanother.love?subject=fromearth%20problem" data-t="betaContact"></a>
 <p class="v-science" data-t="indicatorNotice"></p>
 </div>
 </section>
@@ -307,6 +307,7 @@
       <button class="bouton-ico fa-lien" id="bouton-son">Son · off</button>
       <button class="bouton-ico fa-lien" id="bouton-langue" type="button" aria-haspopup="dialog"></button>
       <button class="bouton-ico" id="bouton-recommencer" type="button" data-ui="startAgain"></button>
+      <a class="bouton-ico" id="report-problem" href="mailto:robin@fromanother.love?subject=fromearth%20problem" data-t="betaContact"></a>
       <a class="bouton-ico" id="institution-partners" href="partners/" target="_blank" rel="noopener" data-ui="institutionPartners">Museums & institutions</a>
       <div class="creator-credit"><p data-t="ideaBy"></p><a class="bouton-ico" href="https://fromanother.love" target="_blank" rel="noopener"><span data-t="createdBy"></span> fromanother</a></div>
     </div>
@@ -417,7 +418,12 @@ import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { language, getText, message, languageControl } from './i18n.mjs';
 import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
-import { createComparison } from './city-comparison.mjs';
+import { createComparison } from './city-comparison.mjs?v=20261012-reliability';
+import { createPlaceLinks } from './place-links.mjs?v=20261012-reliability';
+import { loadSource as charger } from './load-source.mjs?v=20261012-reliability';
+import { createPlaceSearch, normalizePlace, decodePlaceDirectory } from './place-search.mjs';
+import { reliabilityCopy } from './reliability-copy.mjs';
+import { sha256 } from './sha256.mjs';
 import { createYearRuler } from './year-ruler.mjs';
 import { hoverCopy, hoverMetricKey, populationHover, physicalHover, historicalHover, formatHoverNumber } from './hover-diagnostic.mjs';
 import { mapValueContext, mapReferenceContext, historicalFilters } from './map-value-context.mjs';
@@ -634,6 +640,7 @@ function couvertureLieu(l, an = etat.annee){
   return Object.values(mesuresLieu(l, an) || {}).filter(reading => reading.available).length;
 }
 function texteCouverture(l){
+  if (!SCIENCE) return unavailableScienceText().detail;
   const count = couvertureLieu(l);
   return count ? refinementCopy(langue).coverage.replace('{n}', count) : refinementCopy(langue).noClimate;
 }
@@ -1028,6 +1035,7 @@ function chargerGrillesCalques(){
     loadFloodHazards(),
     Promise.all([loadScientificMetrics(), chargerCouvertureClimat().catch(error => { console.error(error); return null; })]).then(([science, coverage]) => {
       SCIENCE = science;
+      for (let i = 0; i < LIEUX.length; i++) LIEUX[i][7] = science.coverage[i] === 63 ? {science: true} : null;
       climateCoverage = coverage;
       SCORE_CACHE.clear();
       _memoPays.clear();
@@ -2006,9 +2014,31 @@ function fermerListe(){
 }
 /* dernières villes choisies — seules candidates au focus sur champ vide */
 let recents = [];
-try { recents = JSON.parse(localStorage.getItem('terra-recents') || '[]'); } catch (e) {}
-const normaliser = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '')
-  .toLowerCase().replace(/[-'’]/g, ' ');
+try {
+  const saved = JSON.parse(localStorage.getItem('terra-recents') || '[]');
+  if (Array.isArray(saved)) recents = saved.filter(name => typeof name === 'string').slice(0, 3);
+} catch (e) {}
+const normaliser = normalizePlace;
+let rechercherLieux = () => [], annuaireErreur = false, nomsSupplementaires = 'loading', liensLieux;
+const regionsLieux = new WeakMap();
+const detailLieu = l => [regionsLieux.get(l), nomPays(l[1])].filter(Boolean).join(' · ');
+
+function afficherErreurRecherche(){
+  const text = reliabilityCopy(langue), item = document.createElement('li');
+  item.className = 'vide'; item.textContent = text.failed + ' ';
+  const retry = document.createElement('button'); retry.type = 'button'; retry.textContent = text.retry;
+  retry.addEventListener('click', () => location.reload()); item.append(retry); liste.append(item);
+}
+
+function ajouterResultat(l){
+  const item = document.createElement('li'); item.role = 'option'; item.setAttribute('aria-selected', 'false');
+  item.id = 'res-' + resultatsActuels.indexOf(l);
+  const title = document.createElement('span'), country = document.createElement('span');
+  title.className = 'nom-lieu'; title.textContent = nomVille(l);
+  country.className = 'type-lieu'; country.textContent = estPays(l) ? T().ui.country : detailLieu(l);
+  item.append(title, country); item.addEventListener('click', () => choisirLieu(l));
+  item.addEventListener('mouseenter', () => SoundManager.play('ui_hover')); liste.append(item);
+}
 
 function afficherResultats(){
   const q = normaliser(champ.value.trim());
@@ -2019,19 +2049,11 @@ function afficherResultats(){
     // champ vide : rien d'imposé — seulement les villes déjà choisies avant
     if (!q && !focusProgramme && document.activeElement === champ && recents.length){
       resultatsActuels = recents
-        .map(n => { const [nom, iso] = n.split('|');   // homonymes (Valence, Suzhou) : l'iso departage
-          const ok = l => l[0] === nom && (!iso || l[1] === iso);
-          return LIEUX.find(ok) || PAYS_LIGNES.find(ok); })
+        .map(n => liensLieux?.restoreRecent(n))
         .filter(Boolean);
       if (resultatsActuels.length){
         for (const l of resultatsActuels){
-          const li = document.createElement('li');
-          li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
-      li.id = 'res-' + resultatsActuels.indexOf(l);
-          li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (T().ui.country) : nomPays(l[1])}</span>`;
-          li.addEventListener('click', () => choisirLieu(l));
-          li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
-          liste.appendChild(li);
+          ajouterResultat(l);
         }
         ouvrirListe();
         return;
@@ -2039,40 +2061,23 @@ function afficherResultats(){
     }
     fermerListe(); return;
   }
-  // priorité au préfixe puis à la population : « par » doit donner Paris d'abord
-  // les deux graphies sont cherchées : « Seville » comme « Séville »
-  const debut = [], dedans = [];
-  for (const l of PAYS_LIGNES){
-    const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
-    if (a.startsWith(q) || b.startsWith(q) || normaliser(nomPays(l[1])).startsWith(q)) debut.push(l);
-  }
-  for (const l of LIEUX){
-    const a = normaliser(l[0]), b = normaliser(l[6] || l[0]);
-    const c2 = l[8] ? normaliser(l[8]) : '';
-    if (a.startsWith(q) || b.startsWith(q) || (c2 && c2.startsWith(q))) debut.push(l);
-    else if (a.includes(q) || b.includes(q) || (c2 && c2.includes(q))) dedans.push(l);
-    if (debut.length > 40) break;
-  }
-  /* un site de villes montre d'abord des VILLES — mais un nom tape en entier
-     gagne toujours, et un pays qui correspond garde sa place plutot que d'etre
-     noye sous ses propres villes (« fran » doit proposer la France). */
-  const exact = l => (normaliser(l[0]) === q || normaliser(l[6] || '') === q || normaliser(nomVille(l)) === q ? 0 : 1);
-  const rang = l => exact(l) * 2 + (estPays(l) ? 1 : 0);
-  debut.sort((a, b) => rang(a) - rang(b) || (b[4] || 0) - (a[4] || 0));
-  resultatsActuels = debut.concat(dedans).slice(0, 7);
-  const pays = debut.find(estPays);
-  if (pays && !resultatsActuels.includes(pays)){
-    resultatsActuels = resultatsActuels.slice(0, 6).concat([pays]);
+  resultatsActuels = rechercherLieux(champ.value);
+  if (!resultatsActuels.length && (annuaireErreur || nomsSupplementaires === 'failed')){
+    afficherErreurRecherche(); ouvrirListe(); return;
   }
   if (!resultatsActuels.length && !donneesPretes){
     liste.innerHTML = `<li class="vide">${T().chargementVilles}</li>`;
+    ouvrirListe(); return;
+  }
+  if (!resultatsActuels.length && nomsSupplementaires === 'loading'){
+    liste.innerHTML = `<li class="vide">${reliabilityCopy(langue).additional}</li>`;
     ouvrirListe(); return;
   }
   if (!resultatsActuels.length){
     // clin d'oeil : la cite deja submergee. Il ne se declenche que dans l'etat
     // « aucun resultat » — Atlantis (Afrique du Sud) existe et garde sa fiche.
     const mythe = /^atlant(is|ide|ida)$/.test(q);
-    liste.innerHTML = `<li class="vide">${mythe ? T().atlantide : T().aucunLieu}</li>`;
+    liste.innerHTML = `<li class="vide">${mythe ? T().atlantide : reliabilityCopy(langue).empty}</li>`;
     if (mythe && !document.body.classList.contains('atlantide')){
       document.body.classList.add('atlantide');
       controles.autoRotate = false; SoundManager.play('camera_fly');
@@ -2088,13 +2093,7 @@ function afficherResultats(){
     }
   } else {
     for (const l of resultatsActuels){
-      const li = document.createElement('li');
-      li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
-      li.id = 'res-' + resultatsActuels.indexOf(l);
-      li.innerHTML = `<span class="nom-lieu">${nomVille(l)}</span><span class="type-lieu">${estPays(l) ? (T().ui.country) : nomPays(l[1])}</span>`;
-      li.addEventListener('click', () => choisirLieu(l));
-      li.addEventListener('mouseenter', () => SoundManager.play('ui_hover'));
-      liste.appendChild(li);
+      ajouterResultat(l);
     }
   }
   ouvrirListe();
@@ -2108,7 +2107,7 @@ function choisirLieu(l){
   else if (lieuVs === l || (lieuVs && estPays(lieuVs) !== estPays(l))) lieuVs = null;
   cacherAccroche();
   fermerListe();
-  const cleRecent = l[0] + '|' + l[1];
+  const cleRecent = liensLieux.recent(l);
   recents = [cleRecent, ...recents.filter(n => n !== cleRecent)].slice(0, 3);
   try { localStorage.setItem('terra-recents', JSON.stringify(recents)); } catch (e) {}
   champ.value = nomVille(l); champ.blur();
@@ -2572,7 +2571,8 @@ document.getElementById('dossier-duel').addEventListener('click', () => {
   comparaison.open(lieuDossier, lieuVs, etat.annee);
 });
 const comparaison = createComparison({
-  places: () => [...LIEUX, ...PAYS_LIGNES], name: nomVille, country: nomPays, isCountry: estPays,
+  findPlaces: (query, options) => rechercherLieux(query, options), name: nomVille, detail: detailLieu, isCountry: estPays,
+  searchStatus: () => annuaireErreur ? 'failed' : nomsSupplementaires, retrySearch: () => location.reload(),
   measures: mesuresLieu, criteria: CRITERES, population: populationAnnuelle,
   normalize: normaliser,
   onYear: year => { curseur.value = year; curseur.dispatchEvent(new Event('input')); },
@@ -2603,11 +2603,13 @@ function majRangeePop(iso, an){
 
 function majDossier(){
   const l = lieuDossier, an = etat.annee, t = T();
+  if (storyOuvert && storyContexte !== contexteStory()) majApercuStory();
+  annoncer();
   const scoreDisponible = Number.isFinite(indiceHabitabilite(l, an));
   const regional = Object.values(mesuresLieu(l, an) || {}).some(reading => reading.regionalFallback);
   const dossierNeuf = tracerTrajectoire.animer;
   document.getElementById('dossier-nom').textContent = nomVille(l);
-  document.getElementById('dossier-scope').textContent = (estPays(l) ? t.panelCountry : `${t.panelCity} · ${nomPays(l[1])}`) + (regional ? ' · ' + refinementCopy(langue).regionalScore : '');
+  document.getElementById('dossier-scope').textContent = (estPays(l) ? t.panelCountry : `${t.panelCity} · ${detailLieu(l)}`) + (regional ? ' · ' + refinementCopy(langue).regionalScore : '');
   document.getElementById('dossier-evolution').textContent = scoreDisponible ? t.panelEvolution(indiceHabitabilite(l, an) - indiceHabitabilite(l, 2026)) : '';
   document.getElementById('dossier-coords').textContent =
     `${Math.abs(l[2]).toFixed(2)}°${l[2] >= 0 ? 'N' : 'S'} · ${Math.abs(l[3]).toFixed(2)}°${l[3] >= 0 ? 'E' : (T().ui.w)} · ${nomPays(l[1]).toUpperCase()}`;
@@ -2631,7 +2633,7 @@ function majDossier(){
     document.getElementById('dossier-frappe').textContent = '';
     majDuel(l, an);
     odoIndice.colonnes = null;        // le nœud est détruit : forcer la reconstruction
-    document.getElementById('dossier-verdict-txt').textContent = couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees;
+    document.getElementById('dossier-verdict-txt').textContent = !SCIENCE ? unavailableScienceText().title : couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees;
     document.getElementById('dossier-verdict').className = 'verdict';
     document.getElementById('dossier-delta').textContent = '';
     document.getElementById('dossier-conseil').textContent = texteCouverture(l);
@@ -2786,6 +2788,7 @@ function distanceAccueil(){
 const CAMERA_ACCUEIL = latLonVersVec3(22, 15, distanceAccueil());
 controles.maxDistance = Math.max(6.4, CAMERA_ACCUEIL.length());
 function fermerDossier(depuisChamp){
+  if (storyOuvert) fermerStory();
   arreterVolCamera();
   timelineRepere.after(timelineEl);
   dossierEl.inert = true;
@@ -2846,8 +2849,7 @@ function majLien(immediat, pousser){
   const ecrire = () => { if (!lieuDossier) return;
     history[pousser ? 'pushState' : 'replaceState'](
       { terra: 'ville' }, '',
-      `#v=${encodeURIComponent(lieuDossier[0])}&an=${etat.annee}&cc=${lieuDossier[1]}`
-      + (lieuVs ? `&vs=${encodeURIComponent(lieuVs[0])}&vc=${lieuVs[1]}` : '')); };
+      liensLieux.hash(lieuDossier, etat.annee, lieuVs)); };
   // Safari plafonne replaceState (~100/30 s) : le scrub est différé
   if (immediat) ecrire(); else minuterieLien = setTimeout(ecrire, 350);
 }
@@ -2938,13 +2940,13 @@ async function genererStory(opts){
   while (g.measureText(nom).width > 930 && taille > 54){ taille -= 6; g.font = `400 ${taille}px ${sans}`; }
   g.fillStyle = CREME; g.fillText(nom, 540, 545);
   g.letterSpacing = cjk ? '0px' : '6px'; g.font = `500 28px ${sans}`; g.fillStyle = MUTER;
-  g.fillText(pays ? (T().ui.country) : nomPays(l[1]).toUpperCase(), 540, 615);
+    g.fillText(pays ? (T().ui.country) : detailLieu(l).toUpperCase(), 540, 615, 950);
   g.letterSpacing = '0px';
 
   // le score — ou la sentinelle
   if (indice === null){
     g.fillStyle = MUTER; g.font = `600 200px ${sans}`; g.fillText('——', 540, 1020);
-    g.font = `400 46px ${sans}`; g.fillText(couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees, 540, 1130, 900);
+    g.font = `400 46px ${sans}`; g.fillText(!SCIENCE ? unavailableScienceText().title : couvertureLieu(l) ? refinementCopy(langue).partial : t.sansDonnees, 540, 1130, 900);
   } else {
     const teinte = CREME;
     g.font = `300 340px ${sans}`;
@@ -3008,7 +3010,7 @@ async function genererStory(opts){
     g.fillStyle = MUTER; g.font = `500 26px ${sans}`;
     g.fillText(T().ui.modelled_indicators_not_a_local, 540, 1690, 840);
     g.letterSpacing = cjk ? '0px' : '2px'; g.fillStyle = 'rgba(245,247,250,0.45)'; g.font = `400 24px ${sans}`;
-    g.fillText(location.host + location.pathname + `#v=${encodeURIComponent(l[0])}&an=${an}&cc=${l[1]}`, 540, 1746);
+    g.fillText(location.host + location.pathname + liensLieux.hash(l, an), 540, 1746);
     g.letterSpacing = '0px';
     g.font = `400 24px ${sans}`; g.fillStyle = MUTER;
     g.fillText(t.ideaBy, 540, 1806, 840);
@@ -3021,7 +3023,10 @@ const storyPopup = document.getElementById('story-popup');
 const storyApercu = document.getElementById('story-apercu');
 let storyOuvert = false, storyGen = 0, storyOuvertA = 0;
 let optsStory = { planete: true, trajectoire: true, axes: true, population: true };
-try { optsStory = { ...optsStory, ...JSON.parse(localStorage.getItem('terra-story-opts') || '{}') }; } catch (e) {}
+try {
+  const saved = JSON.parse(localStorage.getItem('terra-story-opts') || '{}');
+  for (const key of Object.keys(optsStory)) if (typeof saved?.[key] === 'boolean') optsStory[key] = saved[key];
+} catch (e) {}
 storyPopup.querySelectorAll('input[data-opt]').forEach(ch => {
   ch.checked = optsStory[ch.dataset.opt];
   ch.addEventListener('change', () => {
@@ -3032,21 +3037,25 @@ storyPopup.querySelectorAll('input[data-opt]').forEach(ch => {
 });
 // le fichier est prepare des l'apercu : au clic, navigator.share part sans
 // await (iOS Safari revoque l'activation utilisateur pendant un rendu long)
-let storyFichier = null;
+let storyFichier = null, storyContexte = '';
+function contexteStory(){
+  return [liensLieux.recent(lieuDossier), etat.annee, langue, !!SCIENCE, scienceLoadFailed,
+    lieuVs ? liensLieux.recent(lieuVs) : '', populationSourceReady, detailLieu(lieuDossier)].join('|');
+}
 function nomFichierStory(){ return `fromearth-${normaliser(lieuDossier[0]).replace(/[^a-z0-9]+/g, '-')}.jpg`; }
 async function majApercuStory(){
-  const jeton = ++storyGen; storyFichier = null;
+  const jeton = ++storyGen, contexte = contexteStory(); storyFichier = null; storyContexte = contexte;
   const bouton = document.getElementById('story-partager'), nom = nomFichierStory();
   bouton.disabled = true; bouton.setAttribute('aria-busy', 'true');
   bouton.textContent = T().storyPreparation;
   try {
     const cv = await genererStory(optsStory);
-    if (jeton !== storyGen) return;
+    if (jeton !== storyGen || contexte !== contexteStory()) return;
     if (!cv) throw new Error('Story canvas unavailable');
     const g = storyApercu.getContext('2d');
     g.clearRect(0, 0, 540, 960); g.drawImage(cv, 0, 0, 540, 960);
     const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
-    if (jeton !== storyGen) return;
+    if (jeton !== storyGen || contexte !== contexteStory()) return;
     if (!blob) throw new Error('Story image encoding failed');
     storyFichier = new File([blob], nom, { type: 'image/jpeg' });
     bouton.textContent = navigator.canShare && navigator.canShare({ files: [storyFichier] })
@@ -3100,6 +3109,7 @@ function ouvrirStory(){
 }
 function fermerStory(){
   storyPopup.hidden = true; storyOuvert = false;
+  storyGen++; storyFichier = null;
   if (rendreFocus){ rendreFocus(); rendreFocus = null; }
 }
 document.getElementById('dossier-story').addEventListener('click', ouvrirStory);
@@ -3118,7 +3128,7 @@ async function partagerStory(){
   if (!lieuDossier) return;
   majLien(true);
   const fichier = storyFichier;
-  if (!fichier){ await majApercuStory(); return; }
+  if (!fichier || storyContexte !== contexteStory()){ await majApercuStory(); return; }
   const t = T();
   // la feuille de partage native EST le chemin vers Instagram Stories : le
   // systeme y propose « Stories » des que l'app est installee. L'appel part
@@ -3160,30 +3170,19 @@ function ouvrirDepuisLien(sansDefi){
      On lit chaque parametre pour lui-meme. */
   const q = new URLSearchParams(location.hash.replace(/^#/, ''));
   if (!q.has('v')) return;
-  const m = [null, q.get('v'), (q.get('an') || '').match(/^\d{4}$/) ? q.get('an') : null,
-             (q.get('cc') || '').match(/^[A-Za-z]{2}$/) ? q.get('cc').toUpperCase() : null,
-             q.get('vs'), (q.get('vc') || '').match(/^[A-Za-z]{2}$/) ? q.get('vc').toUpperCase() : null];
-  // URLSearchParams a deja decode : un second decodage casserait un lien
-  // double-encode et jetterait sur un « % » solitaire
-  const nom = m[1];
-  if (!nom) return;
-  // homonymes (Valence, Suzhou…) : l'iso2 du lien départage
-  const cands = LIEUX.filter(x => x[0] === nom || x[6] === nom)
-    .concat(PAYS_LIGNES.filter(x => x[0] === nom || x[6] === nom));
-  const l = (m[3] && cands.find(x => x[1] === m[3])) || cands[0];
-  if (!l) return;
-  if (m[4]){
-    const nomVs = m[4];
-    if (nomVs){
-      const cVs = LIEUX.filter(x => x[0] === nomVs || x[6] === nomVs)
-        .concat(PAYS_LIGNES.filter(x => x[0] === nomVs || x[6] === nomVs));
-      lieuVs = (m[5] && cVs.find(x => x[1] === m[5])) || cVs[0] || null;
-      if (lieuVs === l || (lieuVs && estPays(lieuVs) !== estPays(l))) lieuVs = null;
-    }
+  const l = liensLieux.resolve(q);
+  lieuVs = null; defiLien = null;
+  if (!l) {
+    champ.value = q.get('v') + (q.get('cc') ? ', ' + q.get('cc') : '');
+    afficherResultats(); return;
+  }
+  if (q.has('vs')) {
+    lieuVs = liensLieux.resolve(q, true);
+    if (lieuVs === l || (lieuVs && estPays(lieuVs) !== estPays(l))) lieuVs = null;
   } else if (!sansDefi){
     defiLien = l;    // le destinataire d'un lien simple sera invité à comparer
   }
-  if (m[2]){ curseur.value = m[2]; curseur.dispatchEvent(new Event('input')); }
+  if (/^\d{4}$/.test(q.get('an') || '')) { curseur.value = q.get('an'); curseur.dispatchEvent(new Event('input')); }
   // a l arrivee (pas au retour arriere) : le lien devient deux entrees,
   // le globe puis la ville, pour que le Precedent reste dans le site
   // Le lien devient deux entrees, le globe puis la ville : le Precedent
@@ -3444,6 +3443,11 @@ function traduire(){
     const v = t[el.dataset.t];
     if (typeof v === 'string') el.textContent = v;
   }
+  actualiserSignalement();
+  for (const id of ['map-contact', 'report-problem']) {
+    const link = document.getElementById(id), text = reliabilityCopy(langue);
+    link.textContent = text.report;
+  }
   for (const btn of document.querySelectorAll('.calque')){
     btn.querySelector('[data-t-calque]').textContent = btn.dataset.cle === 'feux' ? t.critere.feux : t.calque[btn.dataset.cle];
   }
@@ -3466,6 +3470,15 @@ window.addEventListener('terra-language', () => {
   langue = language();
   SoundManager.play('ui_click');
   traduire();
+  if (champ.value.trim() && document.activeElement === champ) afficherResultats();
+});
+function actualiserSignalement(){
+  for (const id of ['map-contact', 'report-problem']) document.getElementById(id).href =
+    `mailto:robin@fromanother.love?subject=${encodeURIComponent('fromearth · ' + reliabilityCopy(langue).report)}&body=${encodeURIComponent('\n\n' + location.href)}`;
+}
+for (const id of ['map-contact', 'report-problem']) document.getElementById(id).addEventListener('click', () => {
+  if (lieuDossier) majLien(true);
+  actualiserSignalement();
 });
 traduire();
 
@@ -3473,43 +3486,70 @@ traduire();
    DONNÉES — grilles de risque, annuaire de villes, événements en cours.
    Le chrome reste utilisable pendant le chargement : rien ne bloque.
    ===================================================================== */
-// un 404 servi en HTML ne doit jamais passer pour des donnees
-const charger = (url, mode) => fetch(url).then(r => { if (!r.ok) throw new Error(url + ' ' + r.status); return r[mode](); });
+async function chargerNomsSupplementaires(jsonBytes, bin){
+  try {
+    const [metadata, jsonHash, binHash] = await Promise.all([
+      charger('./data/place-search.json?v=20261012-reliability', 'json'), sha256(jsonBytes), sha256(bin),
+    ]);
+    if (metadata.version !== 1 || metadata.inputs?.count !== LIEUX.length
+      || metadata.inputs.placesJsonSha256 !== jsonHash || metadata.inputs.placesBinSha256 !== binHash
+      || !Array.isArray(metadata.places) || metadata.places.length !== LIEUX.length
+      || !metadata.places.every((row, i) => row === null || (Array.isArray(row) && Number.isSafeInteger(row[0])
+        && row[1] === LIEUX[i][1] && typeof row[2] === 'string' && Array.isArray(row[3]) && row[3].every(name => typeof name === 'string')))
+      || !metadata.regions || !Object.values(metadata.regions).every(names => Array.isArray(names) && names.every(name => typeof name === 'string')))
+      throw new Error('Invalid additional city names');
+    rechercherLieux = createPlaceSearch([...LIEUX, ...PAYS_LIGNES], metadata);
+    const homonyms = new Map();
+    for (const place of LIEUX) {
+      const key = normaliser(place[0]) + '|' + place[1];
+      if (!homonyms.has(key)) homonyms.set(key, []);
+      homonyms.get(key).push(place);
+    }
+    for (const group of homonyms.values()) if (group.length > 1) {
+      const labels = group.map(place => {
+        const row = metadata.places[SOURCE_INDEX.get(place)];
+        return row && metadata.regions[`${row[1]}.${row[2]}`]?.[0];
+      });
+      group.forEach((place, index) => regionsLieux.set(place, labels[index] && labels.filter(label => label === labels[index]).length === 1
+        ? labels[index] : `${labels[index] ? labels[index] + ' · ' : ''}${place[2]}°, ${place[3]}°`));
+    }
+    nomsSupplementaires = 'ready';
+  } catch (error) {
+    nomsSupplementaires = 'failed'; console.error('additional city names unavailable:', error);
+  }
+  if (champ.value.trim() && document.activeElement === champ) afficherResultats();
+  if (lieuDossier) majDossier();
+  window.dispatchEvent(new Event('terra-search-ready'));
+}
 let annuaireLance = false;
 function chargerAnnuaire(){
   if (annuaireLance) return; annuaireLance = true;
+  chargerGrillesCalques();
+  pixelsDepuisTexture(texC, 'c', './data/grille_c.png');
+  let directoryBytes, directoryBin;
   return Promise.all([
-  chargerGrillesCalques(),
   // seules c (masque des terres) et d (derive climatique) sont lues au
   // processeur ; les grilles a et b ne servent qu aux shaders des calques
   // grille_c est deja telechargee comme texture (elle bloque l entree) : on
   // decode ses pixels depuis cette image-la, sans seconde requete
-  pixelsDepuisTexture(texC, 'c', './data/grille_c.png'),
   /* Annuaire : les noms viennent du JSON mince, tout le numérique d'un
      binaire à pas fixe de 24 octets par ville (voir tools/pipeline.py).
      On reconstruit ici les rangées au format historique
      [nom_fr, iso2, lat, lon, pop, capitale, nom_en, risque] : rien d'autre
      dans l'application n'a besoin de savoir que le stockage a changé. */
   Promise.all([
-    charger('./data/places.json', 'json'),
+    charger('./data/places.json', 'arrayBuffer'),
     charger('./data/places.bin', 'arrayBuffer'),
-  ]).then(([j, bin]) => {
-    const dv = new DataView(bin), REC = 24;
-    if (bin.byteLength !== j.villes.length * REC) throw new Error('places.bin : taille inattendue ' + bin.byteLength);
-    LIEUX = j.villes.map((n, i) => {
-      const o = i * REC;
-      const rangee = [n[0], n[1],
-        dv.getInt16(o, true) / 100, dv.getInt16(o + 2, true) / 100,
-        n[2], n[3], n[4], null];
-      rangee[8] = n[5] || '';        // alias GeoNames : cherchable, jamais affiché
-      SOURCE_INDEX.set(rangee, i);
-      return rangee;
-    });
+  ]).then(([jsonBytes, bin]) => {
+    LIEUX = decodePlaceDirectory(JSON.parse(new TextDecoder().decode(jsonBytes)), bin);
+    LIEUX.forEach((row, i) => SOURCE_INDEX.set(row, i));
+    directoryBytes = jsonBytes; directoryBin = bin;
   }),
   charger('./data/population-annual.json', 'json').then(j => {
     if (!Object.keys(j).length || !Object.values(j).every(a => Array.isArray(a) && a.length === 26 && a.every(n => Number.isSafeInteger(n) && n > 0))) throw new Error('Invalid annual population data');
     PAYS_POP = j; preparerPopulation(); rafraichirSurvol();
-  }).finally(() => { populationSourceReady = true; preparerSyntheseGlobale(); }),
+  }).catch(error => console.error('annual population unavailable:', error))
+    .finally(() => { populationSourceReady = true; preparerSyntheseGlobale(); }),
 ]).then(() => {
   for (let i = 0; i < LIEUX.length; i++) LIEUX[i][7] = SCIENCE?.coverage[i] === 63 ? { science: true } : null;
   const nomsRegion = lg => { try { return new Intl.DisplayNames([lg], { type: 'region' }); } catch (e) { return { of: () => null }; } };
@@ -3520,7 +3560,6 @@ function chargerAnnuaire(){
   VILLES_PAR_PAYS = {};
   for (const v of LIEUX) (VILLES_PAR_PAYS[v[1]] = VILLES_PAR_PAYS[v[1]] || []).push(v);
   PAYS_LIGNES = Object.keys(VILLES_PAR_PAYS)
-    .filter(iso => PAYS_POP[iso])
     .map(iso => {
       const vs = VILLES_PAR_PAYS[iso];
       let sla = 0, slo = 0, sp = 0;
@@ -3528,9 +3567,12 @@ function chargerAnnuaire(){
       const nomFr = regionFr.of(iso) || iso;
       const nomEn = regionEn.of(iso) || iso;
       return [nomFr, iso, sla / Math.max(sp, 1), slo / Math.max(sp, 1),
-              PAYS_POP[iso][0], 2, nomEn, null];
+              PAYS_POP[iso]?.[0] ?? 0, 2, nomEn, null];
     });
   indexerVilles();
+  liensLieux = createPlaceLinks(LIEUX, PAYS_LIGNES);
+  rechercherLieux = createPlaceSearch([...LIEUX, ...PAYS_LIGNES]);
+  chargerNomsSupplementaires(directoryBytes, directoryBin);
   rafraichirSurvol();
   calquesPrets.then(chargerPays);   // 50 Ko, après les grilles : jamais sur le chemin critique
   document.body.classList.add('donnees-pretes');
@@ -3542,11 +3584,10 @@ function chargerAnnuaire(){
   if (lieuDossier) majDossier();
   ouvrirDepuisLien();
 }).catch(err => {
-  donneesPretes = true; peutEntrer();   // l entree reste possible, la recherche le dira
+  annuaireErreur = true; peutEntrer();
   document.body.classList.remove('villes-en-attente');
-  // le chrome et le globe restent utilisables ; la recherche affichera
-  // simplement « aucune ville » tant que l'annuaire manque
   console.error('données indisponibles :', err);
+  if (champ.value.trim()) afficherResultats();
 });
 }
 

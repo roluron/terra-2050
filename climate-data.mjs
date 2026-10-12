@@ -1,3 +1,5 @@
+import { loadSource } from './load-source.mjs';
+
 export function sampleGrid(grid, latitude, longitude) {
   if (!grid || !Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90) return null;
   const { width, height, fields } = grid.metadata;
@@ -34,11 +36,9 @@ export function climateAtYear(grid, latitude, longitude, year, pointIndex = -1) 
 }
 
 export async function loadFireWeather() {
-  const [metadataResponse, dataResponse] = await Promise.all([
-    fetch('./data/fire-weather.json'), fetch('./data/fire-weather.bin'),
+  const [metadata, buffer] = await Promise.all([
+    loadSource('./data/fire-weather.json'), loadSource('./data/fire-weather.bin', 'arrayBuffer'),
   ]);
-  if (!metadataResponse.ok || !dataResponse.ok) throw new Error('Fire-weather data unavailable');
-  const [metadata, buffer] = await Promise.all([metadataResponse.json(), dataResponse.arrayBuffer()]);
   if (metadata.schema !== 2 || metadata.width !== 144 || metadata.height !== 72 || metadata.fields.length !== 8 || metadata.fields[3] !== 'pairedChangeMean' || buffer.byteLength !== 144 * 72 * 8 * 4) {
     throw new Error('Invalid fire-weather data schema');
   }
@@ -49,15 +49,11 @@ export async function loadFireWeather() {
 }
 
 export async function loadFloodHazards() {
-  const response = await fetch('./data/flood-metadata.json');
-  if (!response.ok) throw new Error('Flood metadata unavailable');
-  const metadata = await response.json();
+  const metadata = await loadSource('./data/flood-metadata.json');
   if (metadata.width !== 720 || metadata.height !== 360) throw new Error('Invalid flood grid');
   const entries = await Promise.all(['coast', 'river'].map(async hazard => {
     const descriptor = metadata.hazards[hazard];
-    const response = await fetch(`./data/flood-${hazard}.bin`);
-    if (!response.ok || !response.body) throw new Error(`${hazard} flood data unavailable`);
-    const buffer = await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+    const buffer = await loadSource(`./data/flood-${hazard}.bin`, 'gzip');
     if (buffer.byteLength !== metadata.width * metadata.height * descriptor.fields.length * 4) throw new Error('Invalid flood payload');
     const view = new DataView(buffer), values = new Float32Array(buffer.byteLength / 4);
     for (let i = 0; i < values.length; i++) values[i] = view.getFloat32(i * 4, true);
@@ -67,16 +63,12 @@ export async function loadFloodHazards() {
 }
 
 export async function loadWorldClim() {
-  const response = await fetch('./data/climate-manifest.json');
-  if (!response.ok) throw new Error('Climate metadata unavailable');
-  const source = await response.json();
+  const source = await loadSource('./data/climate-manifest.json');
   if (source.abi !== 'terra-climate-v2' || source.width !== 720 || source.height !== 360 || source.fields.length !== 12) throw new Error('Invalid climate grid');
   const names = ['temperature', 'precipitation', 'summerMaximum', 'aridity'];
   const fields = ['historical', 'near', 'future'].flatMap(period => names.map(name => `${period}_${name}`));
   const arrays = await Promise.all(['grid', 'points'].map(async key => {
-    const response = await fetch(`./data/climate-${key}.bin`);
-    if (!response.ok || !response.body) throw new Error('Climate data unavailable');
-    const buffer = await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+    const buffer = await loadSource(`./data/climate-${key}.bin`, 'gzip');
     if (buffer.byteLength !== source[key].uncompressed_bytes) throw new Error('Invalid climate payload');
     const view = new DataView(buffer), values = new Float32Array(buffer.byteLength / 4);
     for (let i = 0; i < values.length; i++) values[i] = view.getFloat32(i * 4, true);

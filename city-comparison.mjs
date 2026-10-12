@@ -1,8 +1,9 @@
 import {language, getText} from './i18n.mjs';
 import {createYearRuler} from './year-ruler.mjs';
 import {refinementCopy, moistureBand, moistureSource, experienceCopy} from './refinement-copy.mjs';
+import {reliabilityCopy} from './reliability-copy.mjs';
 
-export function createComparison({places, name, country, isCountry, measures, criteria, population, normalize, onPair, onYear}) {
+export function createComparison({findPlaces, searchStatus, retrySearch, name, detail, isCountry, measures, criteria, population, normalize, onPair, onYear}) {
   const dialog = document.createElement('dialog');
   dialog.id = 'city-comparison';
   dialog.innerHTML = '<div class="compare-shell"><header><div><p class="compare-eyebrow">fromearth · 2050</p><h2 id="comparison-title"></h2></div><button class="compare-close" type="button">×</button></header><div class="compare-picker"><label for="comparison-search"></label><input id="comparison-search" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="comparison-results"><ul id="comparison-results" role="listbox"></ul></div><div class="compare-time"><label for="comparison-year"></label><output for="comparison-year"></output><div class="regle" aria-hidden="true"></div><input id="comparison-year" type="range" min="2026" max="2050" value="2050"><button class="compare-swap" type="button"></button></div><p class="compare-period"></p><div class="compare-table-wrap"><table><thead></thead><tbody></tbody></table></div></div>';
@@ -32,7 +33,7 @@ export function createComparison({places, name, country, isCountry, measures, cr
     for(const place of [first,second]) {
       const cell = node('th', place ? name(place) : searchLabel);
       cell.scope = 'col';
-      if(place && !isCountry(place)) cell.append(node('small', country(place[1])));
+      if(place && !isCountry(place)) cell.append(node('small', detail(place)));
       heading.append(cell);
     }
     dialog.querySelector('thead').replaceChildren(heading);
@@ -81,17 +82,25 @@ export function createComparison({places, name, country, isCountry, measures, cr
   }
   function find() {
     const query = normalize(search.value.trim()); active = -1;
-    results = query ? places().filter(place => place !== first && isCountry(place) === isCountry(first) && normalize([name(place),place[0],place[6],place[8]].join(' ')).includes(query)).sort((a,b)=> b[4]-a[4]).slice(0,8) : [];
+    results = query ? findPlaces(search.value, {exclude: first, countriesOnly: isCountry(first), limit: 8}) : [];
     list.replaceChildren(...results.map((place,index)=>{
-      const item = node('li',isCountry(place) ? name(place) : `${name(place)} · ${country(place[1])}`);
+      const item = node('li',isCountry(place) ? name(place) : `${name(place)} · ${detail(place)}`);
       item.id = `compare-result-${index}`; item.role = 'option'; item.setAttribute('aria-selected','false');
       item.addEventListener('click',()=>select(place)); return item;
     }));
-    if(query && !results.length) list.append(node('li',text().emptyPlace,'compare-empty'));
+    if(query && !results.length) {
+      const state = searchStatus(), copy = reliabilityCopy(language());
+      const item = node('li',state === 'failed' ? copy.failed : state === 'loading' ? copy.additional : copy.empty,'compare-empty');
+      if(state === 'failed') {
+        const retry = node('button',copy.retry); retry.type = 'button'; retry.addEventListener('click',retrySearch); item.append(retry);
+      }
+      list.append(item);
+    }
     search.setAttribute('aria-expanded',String(!!query)); search.removeAttribute('aria-activedescendant');
   }
   search.addEventListener('input',find);
   search.addEventListener('keydown',event=>{
+    if(event.isComposing || event.keyCode === 229) return;
     if(['ArrowDown','ArrowUp'].includes(event.key) && results.length) {
       event.preventDefault(); active = active < 0 ? (event.key === 'ArrowDown' ? 0 : results.length - 1) : (active + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length;
       [...list.children].forEach((el,index)=>el.setAttribute('aria-selected',String(index === active)));
@@ -107,7 +116,8 @@ export function createComparison({places, name, country, isCountry, measures, cr
   dialog.querySelector('.compare-close').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('close',()=>trigger?.focus());
   dialog.addEventListener('keydown',event=>event.stopPropagation());
-  window.addEventListener('terra-language',()=>{if(dialog.open)render();});
+  window.addEventListener('terra-language',()=>{if(dialog.open){render();find();}});
+  window.addEventListener('terra-search-ready',()=>{if(dialog.open){render();if(search.value.trim())find();}});
   return {
     open(a,b,year) {first=a;second=b && b !== a && isCountry(b) === isCountry(a) ? b : null;trigger=document.activeElement;slider.value=year;search.value=second?name(second):'';clearResults();render();dialog.showModal();dialog.scrollTop=0;search.focus({preventScroll:true});search.select();}
   };

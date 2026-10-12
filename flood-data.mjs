@@ -1,4 +1,5 @@
 import { sha256 } from './sha256.mjs';
+import { loadSource } from './load-source.mjs';
 
 const fieldMaps = new WeakMap();
 const epochs = ['historical', 'near', 'future'];
@@ -133,9 +134,7 @@ export function floodCityAtYear(cities, index, year, hazard) {
 }
 
 async function fetchBuffer(path) {
-  const response = await fetch(path);
-  if (!response.ok) throw new Error(`Flood input unavailable: ${path}`);
-  return response.arrayBuffer();
+  return loadSource(path, 'arrayBuffer');
 }
 
 export async function loadFloodCities() {

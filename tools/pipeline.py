@@ -633,14 +633,14 @@ def villes():
     for ligne in lignes:
         f = ligne.split('\t')
         retenues.append([f[1], f[8], round(float(f[4]), 3), round(float(f[5]), 3),
-                         int(f[14] or 0), 1 if f[7] == 'PPLC' else 0, int(f[0])])
+                         int(f[14] or 0), 1 if f[7] == 'PPLC' else 0, int(f[0]), f[2]])
     ids = {v[6] for v in retenues}
     noms = noms_localises(ids)
     for v in retenues:
         fr, en = noms.get(v[6], (None, None))
         v[0] = fr or v[0]
-        v.append(en or v[0])          # nom anglais, pour le basculement de langue
-        v.pop(6)                      # l'identifiant GeoNames ne sert plus
+        v[6] = en or v[0]
+        v[7] = v[7] if v[7] not in (v[0], v[6]) else ''
     retenues.sort(key=lambda v: -v[4])
     _VILLES_CACHE = retenues
     return retenues
@@ -856,9 +856,9 @@ def main():
         buf += rec
     assert len(buf) == 24 * len(v)
     (OUT / 'places.bin').write_bytes(buf)
-    noms = [[l[0], l[1], l[4], l[5], l[6]] for l in v]
+    noms = [[l[0], l[1], l[4], l[5], l[6], l[7]] for l in v]
     (OUT / 'places.json').write_text(json.dumps(
-        {'schema': ['nom_fr', 'iso2', 'pop', 'capitale', 'nom_en'], 'villes': noms},
+        {'schema': ['nom_fr', 'iso2', 'pop', 'capitale', 'nom_en', 'alias'], 'villes': noms},
         ensure_ascii=False, separators=(',', ':')))
     print(f'  -> places.json {len(v)} villes, {(OUT / "places.json").stat().st_size // 1024} Ko'
           f' + places.bin {(OUT / "places.bin").stat().st_size // 1024} Ko')

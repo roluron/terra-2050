@@ -1,15 +1,14 @@
 import { loadWorldClim, loadFireWeather, loadFloodHazards, fireAtYear, climateAtYear } from './climate-data.mjs';
 import { floodCityAtYear, floodAtYear, loadFloodCities } from './flood-data.mjs';
 import { sha256 as hash } from './sha256.mjs';
+import { loadSource } from './load-source.mjs';
 
 const axes = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
 const units = ['°C', 'De Martonne index', 'days/year', 'm', 'm', '°C'];
 const finite = value => Number.isFinite(value) ? (value === 0 ? 0 : value) : null;
 
 async function buffer(path) {
-  const response = await fetch(path);
-  if (!response.ok) throw new Error(`Scientific source unavailable: ${path}`);
-  return response.arrayBuffer();
+  return loadSource(path, 'arrayBuffer');
 }
 
 function metric(value, baseline, future, unit, source, extra = {}) {
