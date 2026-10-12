@@ -20,7 +20,11 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await p.waitForFunction(()=>__glassProbe().search>.1);
   const focused=await p.evaluate(()=>__glassProbe());assert.ok(focused.search>.1,'Focused search lens active');
   await p.locator('#bouton-reglages').click();await p.waitForTimeout(650);
-  const type=await p.locator('#bouton-langue').evaluate(e=>{const s=getComputedStyle(e);return [s.fontSize,s.textTransform,s.letterSpacing]});assert.deepEqual(type,['13px','none','normal']);
+  const type=await p.locator('#bouton-langue').evaluate(e=>{
+    const reference=document.createElement('span');reference.style.fontSize='calc(1.3 * var(--ui-unit))';document.body.append(reference);
+    const expectedFont=getComputedStyle(reference).fontSize;reference.remove();
+    const s=getComputedStyle(e);return {actual:[s.fontSize,s.textTransform,s.letterSpacing],expectedFont};
+  });assert.deepEqual(type.actual,[type.expectedFont,'none','normal']);
   await p.waitForFunction(()=>{const probe=__glassProbe();return probe.search>.1&&probe.panel>.1&&probe.radius>0;});
   const probe=await p.evaluate(()=>__glassProbe());assert.ok(probe.search>.1&&probe.panel>.1&&probe.radius>0);
   await p.screenshot({path:`${out}/${name}-settings.png`});
@@ -31,6 +35,6 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await p.locator('#dossier-comparer').click();await p.waitForTimeout(300);assert.ok((await p.evaluate(()=>__glassProbe())).panel>.1,'Comparison lens active');await p.locator('.compare-close').click();
   await p.locator('#dossier-story').click();await p.waitForTimeout(500);assert.ok((await p.evaluate(()=>__glassProbe())).panel>.1,'Story lens active');await p.locator('#story-fermer').click();
   await p.locator('#dossier-croix').click();await p.waitForTimeout(2200);
-  assert.deepEqual(errors,[]);console.log(`PASS ${name}: search gap ${g.x-a.x-a.width}px; quiet 13px settings; active GPU refraction ${JSON.stringify(probe)}`);
+  assert.deepEqual(errors,[]);console.log(`PASS ${name}: search gap ${g.x-a.x-a.width}px; quiet ${type.expectedFont} settings; active GPU refraction ${JSON.stringify(probe)}`);
  }finally{await b.close();}
 }

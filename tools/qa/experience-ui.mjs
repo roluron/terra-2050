@@ -75,7 +75,7 @@ try{
   assert.equal(await page.locator('#champ-recherche').evaluate(el=>el===document.activeElement),true);
   await openSearch(page);await page.locator('#champ-recherche').fill('Paris');await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();
   await page.locator('#story-popup').waitFor({state:'visible'});await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);
-  assert.equal(await page.locator('#story-popup .story-opt').count(),4);await page.locator('.story-opt input[data-opt="planete"]').uncheck();
+  assert.equal(await page.locator('#story-popup .story-opt').count(),4);const planetOption=page.locator('.story-opt').filter({has:page.locator('input[data-opt="planete"]')});assert.equal(await planetOption.locator('input').isChecked(),true);await planetOption.click();assert.equal(await planetOption.locator('input').isChecked(),false);
   await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);await page.keyboard.press('Escape');
   await page.locator('#dossier-croix').click();await page.waitForFunction(()=>document.body.classList.contains('loupe'));
   await page.evaluate(()=>__experience.show());await page.locator('#layer-visibility').click();await page.locator('#share-view').click();
