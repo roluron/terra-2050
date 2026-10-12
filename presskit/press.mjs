@@ -37,7 +37,7 @@ function renderCopy(){
 installLanguageSwitcher(next=>{lang=next;$('#copy-status').textContent='';if(copy){renderCopy();render();}else applyLanguage(lang);});
 applyLanguage(lang);
 try{
- const [en,fr,library]=await Promise.all(['press-copy.json','press-copy-fr.json','media.json'].map(path=>loadSource(new URL(path,import.meta.url))));
+ const [en,fr,library]=await Promise.all(['press-copy.json','press-copy-fr.json','media.json'].map(path=>loadSource(new Request(new URL(path,import.meta.url),{cache:'no-cache'}))));
  copies={en,fr};media=library.assets;completeSize=library.completeSize||formatSize(library.completeBytes);renderCopy();
  document.querySelectorAll('[data-clipboard]').forEach(button=>button.addEventListener('click',async()=>{
   const key=button.dataset.clipboard,text=key==='captions'?copy.captions.map(x=>x.name+'\n'+x.text).join('\n\n'):copy[key];

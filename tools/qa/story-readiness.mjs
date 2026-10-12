@@ -128,5 +128,5 @@ for(const mode of ['loaded','rejected','pending']){
 const pressSource=await readFile(new URL('../../presskit/press.mjs',import.meta.url),'utf8');
 assert.match(pressSource,/import\('\.\/logo-preview\.mjs[^']*'\)\.catch/);
 assert.doesNotMatch(pressSource,/import '\.\/logo-preview\.mjs/);
-assert.match(pressSource,/map\(path=>loadSource\(new URL\(path,import\.meta\.url\)\)\)/);
+assert.match(pressSource,/map\(path=>loadSource\(new Request\(new URL\(path,import\.meta\.url\),\{cache:'no-cache'\}\)\)\)/);
 console.log('PASS story/press readiness: font/image/CSS deadlines, preserved masks, cleanup, late settlement and independent media loading');

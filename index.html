@@ -3506,7 +3506,7 @@ traduire();
 async function chargerNomsSupplementaires(jsonBytes, bin){
   try {
     const [metadata, jsonHash, binHash] = await Promise.all([
-      charger('./data/place-search.json?v=20261012-reliability', 'json'), sha256(jsonBytes), sha256(bin),
+      charger('./data/place-search.json?v=20261012-population', 'json'), sha256(jsonBytes), sha256(bin),
     ]);
     if (metadata.version !== 1 || metadata.inputs?.count !== LIEUX.length
       || metadata.inputs.placesJsonSha256 !== jsonHash || metadata.inputs.placesBinSha256 !== binHash
