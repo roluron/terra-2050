@@ -13,7 +13,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
    Object.defineProperty(CanvasRenderingContext2D.prototype,'font',{...font,set(value){if(this.canvas.width===1080&&this.canvas.height===1920)storyFonts.push(value);font.set.call(this,value);}});
    Object.defineProperty(navigator,'canShare',{value:()=>false});
   });
-  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await enter(page);
+  await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await page.bringToFront();await enter(page);
   const year=await page.locator('#an').boundingBox(),timeline=await page.locator('#timeline').boundingBox(),filter=await page.locator('#map-inspector').boundingBox(),search=await page.locator('#explore-city').boundingBox(),gear=await page.locator('#bouton-reglages').boundingBox();
   const inset=await page.locator('#timeline').evaluate(el=>parseFloat(getComputedStyle(el).right));
   assert.ok(Number.isFinite(inset)&&inset>=0&&Math.abs(page.viewportSize().width-timeline.x-timeline.width-inset)<1,'Timeline is anchored at the scaled right inset');

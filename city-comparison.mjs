@@ -1,5 +1,5 @@
 import {language, getText} from './i18n.mjs';
-import {createYearRuler} from './year-ruler.mjs';
+import {createYearRuler} from './year-ruler.mjs?v=20261012-time';
 import {refinementCopy, moistureBand, moistureSource, experienceCopy} from './refinement-copy.mjs';
 import {reliabilityCopy} from './reliability-copy.mjs';
 

@@ -25,4 +25,19 @@ send('pointerdown',200);send('lostpointercapture',200);send('pointermove',340);a
 send('pointerdown',340,{pointerType:'mouse'});assert.equal(slider.value,'2036');
 send('pointerdown',340,{isPrimary:false});assert.equal(slider.value,'2036');
 slider.disabled=true;send('pointerdown',340);assert.equal(slider.value,'2036');
-console.log('PASS: continuous touch years, endpoint clamping, capture, cancellation, second finger, disabled and native mouse path');
+slider.disabled=false;slider.value='2026';ruler.getClientRects=()=>[{}];
+globalThis.matchMedia=()=>({matches:false});
+const scale=()=>Number(ruler.children[0].style.transform.match(/scaleY\(([^)]+)\)/)?.[1]||1);
+let update=createYearRuler(slider,ruler);
+for(let i=0;i<3;i++)update();
+assert.equal(scale(),2.103,'Default calls preserve the original 60fps easing');
+for(const fps of [1,15,30,60,120]){
+  update=createYearRuler(slider,ruler);
+  for(let i=0;i<fps;i++)update(i/fps,1000/fps);
+  assert.ok(scale()>=3&&scale()<=3.1,'Selected tick settles within one elapsed second at '+fps+'fps');
+  assert.ok(Number(ruler.children[0].style.opacity)>.98,'Opacity settles at '+fps+'fps');
+}
+update=createYearRuler(slider,ruler);update(3.333,3333);assert.equal(scale(),3.1);
+globalThis.matchMedia=()=>({matches:true});
+update=createYearRuler(slider,ruler);update(0,0);assert.equal(scale(),3.1);
+console.log('PASS: touch geometry/capture, default easing, elapsed-time settling at1–120fps and immediate reduced motion');
