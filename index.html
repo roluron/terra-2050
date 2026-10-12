@@ -559,9 +559,7 @@ let SCIENCE = null, FLOOD_HAZARDS = null;
 let climateCoverage = null, globalSummary = null, globalSummaryStarted = false;
 let globalSourcesReady = false, populationSourceReady = false, scienceSourceReady = false;
 async function chargerCouvertureClimat(){
-  const response = await fetch('./data/climate-coverage.bin');
-  if (!response.ok) throw new Error('Climate coverage unavailable: ' + response.status);
-  const bytes = new Uint8Array(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+  const bytes = new Uint8Array(await charger('./data/climate-coverage.bin', 'gzip'));
   if (bytes.length !== 720 * 360 * 12 || bytes.some(n => n > 9)) throw new Error('Invalid climate coverage');
   return bytes;
 }
@@ -883,12 +881,24 @@ const PETIT_ECRAN = PIXELS_RENDUS < 1100;
    d un chargeur non surveille, si bien que le bouton Explorer s ouvrait sur
    une planete noire et que l annuaire demarrait dans les jambes du JPEG
    encore en cours de telechargement. */
-const WEBP_OK = await new Promise(res => {
-  const i = new Image();
-  i.onload = () => res(i.height === 1);
-  i.onerror = () => res(false);
-  i.src = 'data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA==';
-});
+function chargerImage(url){
+  return new Promise(res => {
+    const im = new Image();
+    let fini = false, minuterie;
+    const terminer = chargee => {
+      if (fini) return;
+      fini = true; clearTimeout(minuterie);
+      im.onload = im.onerror = null;
+      if (!chargee) im.removeAttribute('src');
+      res(chargee ? im : null);
+    };
+    im.onload = () => terminer(true); im.onerror = () => terminer(false);
+    minuterie = setTimeout(() => terminer(false), 30000);
+    try { im.src = url; } catch { terminer(false); }
+  });
+}
+const WEBP_OK = await chargerImage('data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA==')
+  .then(im => !!im && im.height === 1);
 /* Le gestionnaire de Three.js considere une image en echec comme « terminee »
    et libere le bouton Explorer : la planete restait noire et l annuaire
    partait dans les jambes du repli. Les trois images du chemin critique sont
@@ -907,16 +917,13 @@ function chargerTextureImage(webp, repli, donnees){
     tex.minFilter = tex.magFilter = THREE.LinearFilter;
     tex.generateMipmaps = false;
   }
-  IMAGES_CRITIQUES.push(new Promise(res => {
-    const essayer = (url, suite) => {
-      const im = new Image();
-      im.onload = () => { tex.image = im; tex.needsUpdate = true; res(true); };
-      im.onerror = () => { if (suite) return essayer(suite, null); cartesPerdues = true; res(false); };
-      im.src = url;
-    };
+  IMAGES_CRITIQUES.push((async () => {
     const premier = WEBP_OK ? webp : (repli || webp);
-    essayer(premier, repli && repli !== premier ? repli : null);
-  }));
+    let im = await chargerImage(premier);
+    if (!im && repli && repli !== premier) im = await chargerImage(repli);
+    if (!im){ cartesPerdues = true; return false; }
+    tex.image = im; tex.needsUpdate = true; return true;
+  })());
   return tex;
 }
 /* On entre TOUJOURS sur la texture 2048 : 202 Ko au lieu de 712, six secondes
@@ -1448,7 +1455,7 @@ const groupeFleuves = new THREE.Group();
 /* Tracés réels : Natural Earth 10m rivers & lake centerlines, scalerank <= 4
    (data/rivers.json, produit par tools/pipeline.py). Un seul LineSegments
    pour les 400+ tronçons : 1 draw call au lieu de 400 tubes. */
-calquesPrets.then(() => fetch('./data/rivers.json').then(r => r.json())).then(fleuves => {
+calquesPrets.then(() => charger('./data/rivers.json', 'json')).then(fleuves => {
   const sommets = [], parcours = [];
   for (const f of fleuves){
     let cumul = 0;
@@ -1477,7 +1484,7 @@ calquesPrets.then(() => fetch('./data/rivers.json').then(r => r.json())).then(fl
         gl_FragColor = vec4(vec3(0.15, 0.62, 1.0) * eclat, eclat * (0.45 + 0.55 * uCrue));
       }`,
   })));
-});
+}).catch(error => console.error('River outlines unavailable', error));
 /* Ces lignes sont le TRACE des grands fleuves (Natural Earth), pas une carte
    d'inondation : elles ne portent plus le calque « inondation fluviale », qui
    lit desormais la meme carte JRC que la fiche. */
@@ -2905,7 +2912,13 @@ async function genererStory(opts){
   const cjk = ['ja', 'zh', 'zh-Hant'].includes(langue);
   const indice = pays ? indicePays(l[1], an) : (l[7] ? indiceHabitabilite(l, an) : null);
   const indice50 = pays ? indicePays(l[1], 2050) : (l[7] ? indiceHabitabilite(l, 2050) : null);
-  await Promise.all([`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`,'300 62px "TWK Lausanne"','600 62px "TWK Lausanne"'].map(f => document.fonts.load(f)));
+  let fontTimer;
+  try {
+    await Promise.race([
+      Promise.allSettled([`300 340px ${sans}`,`400 150px ${sans}`,`500 36px ${sans}`,`600 62px ${sans}`,'300 62px "TWK Lausanne"','600 62px "TWK Lausanne"'].map(f => document.fonts.load(f))),
+      new Promise(resolve => { fontTimer=setTimeout(resolve,5000); }),
+    ]);
+  } finally { clearTimeout(fontTimer); }
   const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
   const g = cv.getContext('2d');
   const CREME = '#F5F7FA', MUTER = 'rgba(245,247,250,0.65)';
@@ -2926,7 +2939,7 @@ async function genererStory(opts){
 
   g.letterSpacing = '-3px'; g.textAlign = 'left';
   const logoParts = [['from',300],['earth',600],[' / ',300],['2050',300]].map(([text,weight]) => {
-    g.font = `${weight} 62px "TWK Lausanne"`; return {text,font:g.font,width:g.measureText(text).width};
+    g.font = `${weight} 62px "TWK Lausanne", sans-serif`; return {text,font:g.font,width:g.measureText(text).width};
   });
   let logoX = (1080 - logoParts.reduce((width,part) => width + part.width,0)) / 2;
   for (const part of logoParts){
@@ -3505,17 +3518,22 @@ async function chargerNomsSupplementaires(jsonBytes, bin){
     rechercherLieux = createPlaceSearch([...LIEUX, ...PAYS_LIGNES], metadata);
     const homonyms = new Map();
     for (const place of LIEUX) {
-      const key = normaliser(place[0]) + '|' + place[1];
-      if (!homonyms.has(key)) homonyms.set(key, []);
-      homonyms.get(key).push(place);
+      for (const name of new Set([place[0], place[6]].filter(Boolean).map(normaliser))) {
+        const key = name + '|' + place[1];
+        if (!homonyms.has(key)) homonyms.set(key, []);
+        homonyms.get(key).push(place);
+      }
     }
     for (const group of homonyms.values()) if (group.length > 1) {
       const labels = group.map(place => {
         const row = metadata.places[SOURCE_INDEX.get(place)];
         return row && metadata.regions[`${row[1]}.${row[2]}`]?.[0];
       });
-      group.forEach((place, index) => regionsLieux.set(place, labels[index] && labels.filter(label => label === labels[index]).length === 1
-        ? labels[index] : `${labels[index] ? labels[index] + ' · ' : ''}${place[2]}°, ${place[3]}°`));
+      group.forEach((place, index) => {
+        if (labels[index] && labels.filter(label => label === labels[index]).length === 1) {
+          if (!regionsLieux.has(place)) regionsLieux.set(place, labels[index]);
+        } else regionsLieux.set(place, `${labels[index] ? labels[index] + ' · ' : ''}${place[2]}°, ${place[3]}°`);
+      });
     }
     nomsSupplementaires = 'ready';
   } catch (error) {
@@ -3852,9 +3870,7 @@ function preparerPopulation(){
   majContexteCalques();
 }
 function chargerPays(){
-  const image = new Promise(res => {
-    const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = './data/pays.png';
-  });
+  const image = chargerImage('./data/pays.png');
   return Promise.all([charger('./data/pays_index.json', 'json'), image]).then(([idx, im]) => {
     if (!im || !idx || !Array.isArray(idx.iso) || idx.iso.length > 256) return;
     const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
@@ -4288,6 +4304,6 @@ experienceUI = createExperienceUI({
 });
 experienceUI.sync();
 </script>
-<script type="module" src="./logo-playground.mjs?v=20261012-touch"></script>
+<script type="module" src="./logo-playground.mjs?v=20261012-readiness"></script>
 </body>
 </html>

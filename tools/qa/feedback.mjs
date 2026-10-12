@@ -72,7 +72,17 @@ for(const [profile,engine,options] of profiles){
     assert.equal(await page.locator('#explore-city').getAttribute('aria-label'),experienceCopy('en').journey,'the icon keeps a localized accessible name');
     if(profile==='phone'){
       await page.setViewportSize({width:852,height:393});
-      await page.waitForFunction(()=>Math.abs(document.querySelector('#explore-city').getBoundingClientRect().width-48)<1);
+      try{
+        await page.waitForFunction(()=>innerWidth===852&&innerHeight===393&&Math.abs(document.querySelector('#explore-city').getBoundingClientRect().width-48)<1);
+      }catch(error){
+        error.stack+='\nphone landscape layout '+JSON.stringify(await page.evaluate(()=>({inner:[innerWidth,innerHeight],screen:[screen.width,screen.height],
+          visualViewport:visualViewport&&{width:visualViewport.width,height:visualViewport.height,scale:visualViewport.scale},
+          coarse:matchMedia('(pointer:coarse)').matches,short:matchMedia('(max-height:500px)').matches,
+          smartphone:matchMedia('(max-width:720px), (pointer:coarse) and (max-height:500px)').matches,
+          body:document.body.className,invitation:document.querySelector('#explore-city').getBoundingClientRect().toJSON(),
+          searchWidth:document.querySelector('#recherche').style.width,minHeight:getComputedStyle(document.querySelector('#champ-recherche')).minHeight})));
+        throw error;
+      }
       assert.equal(await page.locator('.city-search-icon').isVisible(),true,'smartphone landscape keeps the icon');
       await page.setViewportSize(options.viewport);
     }

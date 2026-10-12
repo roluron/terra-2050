@@ -31,12 +31,22 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
    assert.equal(await page.locator('#comparison-year').inputValue(),key==='Home'?'2026':'2050');
    assert.equal(await page.locator('#curseur').inputValue(),await page.locator('#comparison-year').inputValue());
    const endpoint=key==='Home'?0:24;
-   await page.waitForFunction(index=>{
-    const bars=document.querySelectorAll('.compare-time .regle i'),bar=bars[index];
-    if(bars.length!==25||!bar)return false;
-    const base=parseFloat(getComputedStyle(bar).height),scale=bar.getBoundingClientRect().height/base;
-    return base>0&&scale>=3&&scale<=4.05;
-   },endpoint,{timeout:10000});
+   try{
+    await page.waitForFunction(index=>{
+     const bars=document.querySelectorAll('.compare-time .regle i'),bar=bars[index];
+     if(bars.length!==25||!bar)return false;
+     const base=parseFloat(getComputedStyle(bar).height),scale=bar.getBoundingClientRect().height/base;
+     return base>0&&scale>=3&&scale<=4.05;
+    },endpoint,{timeout:10000});
+   }catch(error){
+    error.stack+='\n'+name+' '+key+' ruler '+JSON.stringify(await page.evaluate(index=>({
+     year:document.querySelector('#comparison-year').value,mainYear:document.querySelector('#curseur').value,
+     visible:document.visibilityState,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,
+     bar:[...document.querySelectorAll('.compare-time .regle i')].filter((_,i)=>i===index).map(e=>({
+      cssHeight:getComputedStyle(e).height,rect:e.getBoundingClientRect().toJSON(),transform:e.style.transform,
+      computedTransform:getComputedStyle(e).transform}))}),endpoint));
+    throw error;
+   }
    const bars=await page.locator('.compare-time .regle i').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).height)));
    assert.equal(bars.length,25);assert.ok(bars[endpoint]>=3&&bars[endpoint]<=4.05,'Selected endpoint reaches the source ruler height');
   }

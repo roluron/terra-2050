@@ -82,6 +82,7 @@ def executer(avec_qa: bool, shard=None) -> int:
                 print(f'DELEGUE  {f.name}  (another shard; requires all {count} shards)')
         qa = selected
 
+    qa.sort(key=lambda f: f.name not in ('feedback.mjs', 'unified-ui.mjs'))
     for f in qa:
         if not avec_qa:
             print(f"SAUTE  {f.name}  (lance avec --qa ; demande un navigateur "

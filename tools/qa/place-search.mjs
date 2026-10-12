@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {performance} from 'node:perf_hooks';
 import {createHash} from 'node:crypto';
+import vm from 'node:vm';
 import {createPlaceSearch, decodePlaceDirectory, normalizePlace} from '../../place-search.mjs';
 
 const jsonBytes = await readFile(new URL('../../data/places.json', import.meta.url));
@@ -14,6 +15,41 @@ const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 assert.equal(metadata.inputs.placesJsonSha256, hash(jsonBytes));
 assert.equal(metadata.inputs.placesBinSha256, hash(coordinates));
 assert.equal(metadata.places.length, places.length);
+const html = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
+const loaderStart = html.indexOf('async function chargerNomsSupplementaires(');
+const groupingStart = html.indexOf('    const homonyms = new Map();', loaderStart);
+const groupingEnd = html.indexOf("    nomsSupplementaires = 'ready';", groupingStart);
+assert.ok(loaderStart >= 0 && groupingStart > loaderStart && groupingEnd > groupingStart);
+const groupingSource = html.slice(groupingStart, groupingEnd);
+function regionLabels(rows, names) {
+  const regionsLieux = new WeakMap();
+  vm.runInNewContext(groupingSource, {LIEUX: rows, metadata: names, normaliser: normalizePlace,
+    SOURCE_INDEX: new Map(rows.map((row, index) => [row, index])), regionsLieux});
+  return regionsLieux;
+}
+const labels = regionLabels(places, metadata);
+const solo = ['Solo', 'ZZ', 1, 2, 1, 0, 'Solo'];
+assert.equal(regionLabels([solo], {places: [[1, 'ZZ', 'A', []]], regions: {'ZZ.A': ['Region A']}}).get(solo), undefined);
+for (const [indices, expected] of [
+  [[514, 6845], ['Guangxi', 'Shaanxi']],
+  [[1565, 2300], ['Wakayama', 'Tokyo']],
+  [[4118, 4194], ['Madrid', 'Castille and León']],
+]) {
+  assert.equal(places[indices[0]][6], places[indices[1]][6]);
+  assert.notEqual(places[indices[0]][0], places[indices[1]][0]);
+  assert.deepEqual(indices.map(index => labels.get(places[index])), expected);
+}
+const overlapping = [
+  ['Alpha', 'ZZ', 1, 2, 1, 0, 'Shared'],
+  ['Alpha', 'ZZ', 3, 4, 1, 0, 'Unique'],
+  ['Gamma', 'ZZ', 5, 6, 1, 0, 'Shared'],
+];
+const overlapMetadata = {places: [[1, 'ZZ', 'A', []], [2, 'ZZ', 'A', []], [3, 'ZZ', 'B', []]],
+  regions: {'ZZ.A': ['Region A'], 'ZZ.B': ['Region B']}};
+const overlapLabels = regionLabels(overlapping, overlapMetadata);
+assert.deepEqual(overlapping.map(row => overlapLabels.get(row)), ['Region A · 1°, 2°', 'Region A · 3°, 4°', 'Region B']);
+const missingRegion = regionLabels(overlapping, {...overlapMetadata, regions: {}});
+assert.deepEqual(overlapping.map(row => missingRegion.get(row)), ['1°, 2°', '3°, 4°', '5°, 6°']);
 assert.equal(normalizePlace('  Washington, D.C.  '), 'washington dc');
 assert.equal(normalizePlace('New  York'), 'new york');
 assert.equal(normalizePlace('Hà Nội'), 'ha noi');

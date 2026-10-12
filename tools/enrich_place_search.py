@@ -31,9 +31,9 @@ def read_source(archive):
                 fields = line.decode('utf-8').rstrip('\r\n').split('\t')
                 if len(fields) != 19:
                     raise ValueError(f'Invalid GeoNames row {number}')
-                gid, lat, lon = int(fields[0]), float(fields[4]), float(fields[5])
+                gid, lat, lon, population = int(fields[0]), float(fields[4]), float(fields[5]), int(fields[14])
                 iso, admin = fields[8], fields[10]
-                if gid <= 0 or gid in ids or not re.fullmatch(r'[A-Z]{2}', iso) or not (-90 <= lat <= 90 and -180 <= lon <= 180):
+                if gid <= 0 or gid in ids or population < 0 or not re.fullmatch(r'[A-Z]{2}', iso) or not (-90 <= lat <= 90 and -180 <= lon <= 180):
                     raise ValueError(f'Invalid GeoNames identity or coordinates on row {number}')
                 ids.add(gid)
                 aliases = list(dict.fromkeys(name for name in [fields[1], fields[2], *fields[3].split(',')] if name))
@@ -41,7 +41,7 @@ def read_source(archive):
                     raise ValueError(f'Empty GeoNames names on row {number}')
                 record = [gid, iso, admin, aliases]
                 key = (iso, round(round(lat, 3) * 100), round(round(lon, 3) * 100))
-                records[key].append((record, {normalize(name) for name in aliases}))
+                records[key].append((record, {normalize(name) for name in aliases}, population))
     return records, len(ids)
 
 
@@ -59,9 +59,13 @@ def enrich(rows, coordinates, records):
             raise ValueError(f'Invalid existing aliases on row {index}')
         names = {normalize(name) for name in [row[0], row[4], *aliases] if name}
         lat, lon = struct.unpack_from('<hh', coordinates, index * 24)
-        candidates = [record for record, source_names in records.get((row[1], lat, lon), []) if names & source_names]
+        candidates = [(record, population) for record, source_names, population in records.get((row[1], lat, lon), []) if names & source_names]
+        if len(candidates) > 1 and type(row[2]) is int and row[2] > 0:
+            population_matches = [candidate for candidate in candidates if candidate[1] == row[2]]
+            if len(population_matches) == 1:
+                candidates = population_matches
         if len(candidates) == 1:
-            matched.append(candidates[0])
+            matched.append(candidates[0][0])
         else:
             matched.append(None)
             (unmatched if not candidates else ambiguous).append(index)

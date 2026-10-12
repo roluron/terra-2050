@@ -1,4 +1,6 @@
 import {ui,groupLabel,assetLocale,applyLanguage,initialLanguage,installLanguageSwitcher} from './press-language.mjs?v=20261008-social-credits';
+import {loadSource} from '../load-source.mjs';
+import('./logo-preview.mjs?v=20261012-readiness').catch(error=>console.error('Logo preview unavailable',error));
 const $ = selector => document.querySelector(selector);
 const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const url = path => path.split('/').map(encodeURIComponent).join('/')+(path.includes('03-thermal-delta')?'?v=20261008-assets':'');
@@ -35,7 +37,7 @@ function renderCopy(){
 installLanguageSwitcher(next=>{lang=next;$('#copy-status').textContent='';if(copy){renderCopy();render();}else applyLanguage(lang);});
 applyLanguage(lang);
 try{
- const [en,fr,library]=await Promise.all(['press-copy.json','press-copy-fr.json','media.json'].map(async path=>{const r=await fetch(path,{cache:'no-cache'});if(!r.ok)throw new Error(path+' unavailable');return r.json();}));
+ const [en,fr,library]=await Promise.all(['press-copy.json','press-copy-fr.json','media.json'].map(path=>loadSource(new URL(path,import.meta.url))));
  copies={en,fr};media=library.assets;completeSize=library.completeSize||formatSize(library.completeBytes);renderCopy();
  document.querySelectorAll('[data-clipboard]').forEach(button=>button.addEventListener('click',async()=>{
   const key=button.dataset.clipboard,text=key==='captions'?copy.captions.map(x=>x.name+'\n'+x.text).join('\n\n'):copy[key];
@@ -48,5 +50,3 @@ try{
  document.addEventListener('play',e=>{if(e.target.tagName==='VIDEO')document.querySelectorAll('video').forEach(v=>{if(v!==e.target)v.pause();});},true);
  render();
 }catch(error){$('#asset-count').textContent=ui[lang].unavailable;$('#library-error').hidden=false;console.error(error);}
-
-import './logo-preview.mjs?v=20261008-logo-video';

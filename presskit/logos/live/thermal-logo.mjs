@@ -93,9 +93,25 @@ function contourDistance(pixels,width,height) {
 }
 
 export async function mountThermalLogo(element,mode='bleed',layout='display') {
-  await Promise.all([300,600].map(weight=>document.fonts.load(`${weight} 100px "TWK Lausanne"`)));
+  let fontTimer;
+  try {
+    await Promise.race([
+      Promise.allSettled([300,600].map(weight=>document.fonts.load(`${weight} 100px "TWK Lausanne"`))),
+      new Promise(resolve=>{fontTimer=setTimeout(resolve,5000);}),
+    ]);
+  } finally { clearTimeout(fontTimer); }
   let lockup;
-  if(layout==='display'){lockup=new Image();lockup.src=new URL('./thermal-wordmark.png',import.meta.url);await lockup.decode();}
+  if(layout==='display'){
+    lockup=new Image();lockup.src=new URL('./thermal-wordmark.png',import.meta.url);
+    let imageTimer,decoded;
+    try {
+      decoded=await Promise.race([
+        lockup.decode().then(()=>true,()=>false),
+        new Promise(resolve=>{imageTimer=setTimeout(()=>resolve(false),30000);}),
+      ]);
+    } catch { decoded=false; } finally { clearTimeout(imageTimer); }
+    if(!decoded){lockup.removeAttribute('src');return null;}
+  }
   const inkColor=getComputedStyle(element).color.match(/[\d.]+/g).slice(0,3).map(value=>Number(value)/255);
   const canvas = document.createElement('canvas');
   canvas.setAttribute('aria-hidden','true');

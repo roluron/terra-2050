@@ -1,7 +1,11 @@
-import {mountEarthLoop} from './logos/live/earth-loop.mjs?v=20261008-assets';
-import {mountThermalLogo} from './logos/live/thermal-logo.mjs?v=20261008-assets';
+import {mountEarthLoop} from './logos/live/earth-loop.mjs?v=20261012-readiness';
+import {mountThermalLogo} from './logos/live/thermal-logo.mjs?v=20261012-readiness';
 const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('./logo-preview.css?v=20261008-type',import.meta.url).href;
-const styled=new Promise((resolve,reject)=>{style.onload=resolve;style.onerror=reject;});document.head.append(style);await styled;
+const styled=new Promise(resolve=>{
+  const finish=loaded=>{clearTimeout(timer);style.onload=style.onerror=null;resolve(loaded);};
+  const timer=setTimeout(()=>finish(false),30000);
+  style.onload=()=>finish(true);style.onerror=()=>finish(false);
+});document.head.append(style);if(!await styled){style.remove();throw new Error('Logo stylesheet unavailable');}
 let section=document.querySelector('.current-identity');
 if(!section){section=document.createElement('section');section.className='section current-identity';document.querySelector('#media').before(section);}
 section.setAttribute('aria-labelledby','identity-title');

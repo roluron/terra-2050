@@ -1,7 +1,13 @@
-import {vertex,material,contourDistance} from './thermal-logo.mjs?v=20261008-restored';
+import {vertex,material,contourDistance} from './thermal-logo.mjs?v=20261012-readiness';
 
 export async function mountEarthLoop(element,options={}){
-  await Promise.all([300,600].map(w=>document.fonts.load(`${w} 100px "TWK Lausanne"`)));
+  let fontTimer;
+  try {
+    await Promise.race([
+      Promise.allSettled([300,600].map(w=>document.fonts.load(`${w} 100px "TWK Lausanne"`))),
+      new Promise(resolve=>{fontTimer=setTimeout(resolve,5000);}),
+    ]);
+  } finally { clearTimeout(fontTimer); }
   const canvas=document.createElement('canvas');canvas.width=1600;canvas.height=500;canvas.setAttribute('aria-hidden','true');
   const gl=canvas.getContext('webgl',{alpha:false,antialias:false,preserveDrawingBuffer:true});
   if(!gl)return null;
@@ -40,10 +46,19 @@ export async function mountEarthLoop(element,options={}){
   ctx.font=`300 ${w*.024}px monospace`;ctx.letterSpacing=`${-w*.0008}px`;ctx.textAlign='right';ctx.fillText('/ 2050',w*.94,h*.867);
   const fixed=ctx.getImageData(0,0,w,h).data;
   if(options.lockup){
-    const image=new Image();image.src=options.lockup;await image.decode();
-    ctx.clearRect(0,0,w,h);ctx.textAlign='left';ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;
-    const from=ctx.measureText('from');ctx.drawImage(image,27,61,884,331,left-from.actualBoundingBoxLeft,baseline-from.actualBoundingBoxAscent,from.actualBoundingBoxLeft+from.actualBoundingBoxRight,from.actualBoundingBoxAscent+from.actualBoundingBoxDescent);
-    ctx.font=`300 ${w*.024}px monospace`;ctx.letterSpacing=`${-w*.0008}px`;ctx.textAlign='right';ctx.fillText('/ 2050',w*.94,h*.867);fixed.set(ctx.getImageData(0,0,w,h).data);
+    const image=new Image();image.src=options.lockup;
+    let imageTimer,decoded;
+    try {
+      decoded=await Promise.race([
+        image.decode().then(()=>true,()=>false),
+        new Promise(resolve=>{imageTimer=setTimeout(()=>resolve(false),30000);}),
+      ]);
+    } catch { decoded=false; } finally { clearTimeout(imageTimer); }
+    if(decoded){
+      ctx.clearRect(0,0,w,h);ctx.textAlign='left';ctx.font=`300 ${size}px "TWK Lausanne"`;ctx.letterSpacing=`${-size*.045}px`;
+      const from=ctx.measureText('from');ctx.drawImage(image,27,61,884,331,left-from.actualBoundingBoxLeft,baseline-from.actualBoundingBoxAscent,from.actualBoundingBoxLeft+from.actualBoundingBoxRight,from.actualBoundingBoxAscent+from.actualBoundingBoxDescent);
+      ctx.font=`300 ${w*.024}px monospace`;ctx.letterSpacing=`${-w*.0008}px`;ctx.textAlign='right';ctx.fillText('/ 2050',w*.94,h*.867);fixed.set(ctx.getImageData(0,0,w,h).data);
+    } else image.removeAttribute('src');
   }
   for(let i=0;i<pixels.length;i+=4)pixels[i]=fixed[i+3];
   const flipped=new Uint8Array(pixels.length),row=w*4;

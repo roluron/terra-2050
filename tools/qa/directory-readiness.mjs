@@ -3,6 +3,8 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {decodePlaceDirectory, createPlaceSearch} from '../../place-search.mjs';
 import {createPlaceLinks} from '../../place-links.mjs';
+import {loadSource} from '../../load-source.mjs';
+import {gzipSync} from 'node:zlib';
 
 const html = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
 function extract(start, end) {
@@ -94,4 +96,45 @@ for (const scienceAvailable of [true, false]) {
   context.preparerSyntheseGlobale();
   assert.equal(calls.length, 1);
 }
-console.log('PASS directory readiness: both population orders, country identity, late science and failed science');
+const coverageSource = extract('async function chargerCouvertureClimat(){', '\nfunction majSyntheseGlobale');
+const layersSource = extract('function chargerGrillesCalques(){', '\nconst uniformsGlobe');
+const originalNetwork = {fetch, setTimeout, clearTimeout};
+let expireCoverage, coverageTimerCleared;
+globalThis.setTimeout = (callback, duration) => {assert.equal(duration,30000);expireCoverage=callback;coverageTimerCleared=false;return 1;};
+globalThis.clearTimeout = () => {coverageTimerCleared=true;};
+try {
+  const context = {Uint8Array, charger:loadSource};
+  vm.createContext(context);vm.runInContext(coverageSource,context);
+  const valid = new Uint8Array(720*360*12);
+  globalThis.fetch = async () => new Response(gzipSync(valid));
+  assert.equal((await context.chargerCouvertureClimat()).length,valid.length);assert(coverageTimerCleared);
+  globalThis.fetch = async () => new Response(gzipSync(Uint8Array.of(1)));
+  await assert.rejects(context.chargerCouvertureClimat(),/Invalid climate coverage/);
+  valid[0]=10;globalThis.fetch = async () => new Response(gzipSync(valid));
+  await assert.rejects(context.chargerCouvertureClimat(),/Invalid climate coverage/);
+  for(const bodyPending of [false,true]) {
+    globalThis.fetch = async (path,{signal}) => {
+      assert.equal(path,'./data/climate-coverage.bin');
+      if(!bodyPending)return new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(new DOMException('Timed out','AbortError'))));
+      return new Response(new ReadableStream({start(controller){signal.addEventListener('abort',()=>controller.error(new DOMException('Timed out','AbortError')));}}));
+    };
+    const state={Promise,Uint8Array,Float32Array,Uint16Array,Number,Object,charger:loadSource,
+      calquesCharges:null,SCIENCE:null,LIEUX:[],climateCoverage:null,SCORE_CACHE:new Map(),_memoPays:new Map(),
+      FIRE_WEATHER:null,FLOOD_HAZARDS:null,scienceSourceReady:false,globalSourcesReady:false,scienceLoadFailed:false,
+      lieuDossier:null,uniformsGlobe:{uFireWeather:{value:null}},console:{error(){}},
+      THREE:{DataTexture:function(){},DataUtils:{toHalfFloat:n=>n}},moteur:{extensions:{has:()=>false}},
+      loadFloodHazards:async()=>({}),loadScientificMetrics:async()=>({coverage:new Uint8Array(),climate:{},fire:{metadata:{width:1,height:1},values:new Float32Array(8).fill(1)}}),
+      buildScientificTextures:async()=>({}),preparerSyntheseGlobale(){},rafraichirSurvol(){},
+      resoudreCalques:ready=>{state.settled=ready;},
+    };
+    vm.createContext(state);vm.runInContext(coverageSource+layersSource,state);
+    expireCoverage=null;
+    const pending=state.chargerGrillesCalques();await flush();
+    assert.equal(state.SCIENCE,null);assert.equal(state.scienceSourceReady,false);
+    assert.equal(typeof expireCoverage,'function');expireCoverage();
+    assert.equal(await pending,true);assert(coverageTimerCleared);
+    assert.ok(state.SCIENCE);assert.equal(state.climateCoverage,null);
+    assert.equal(state.scienceSourceReady,true);assert.equal(state.globalSourcesReady,true);assert.equal(state.settled,true);
+  }
+} finally {Object.assign(globalThis,originalNetwork);}
+console.log('PASS directory readiness: population orders, country identity, late/failed science, bounded coverage headers/body and validation');
