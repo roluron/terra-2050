@@ -41,7 +41,7 @@ def lancer(nom, argv, env=None):
     print(f"{etat}  {nom}  (code {r.returncode})", flush=True)
     if r.returncode != 0:
         for ligne in (r.stdout + r.stderr).strip().splitlines()[-12:]:
-            print("       | " + ligne)
+            print("       | " + ligne, flush=True)
     return int(r.returncode != 0)
 
 

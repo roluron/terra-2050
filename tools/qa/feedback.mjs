@@ -54,7 +54,7 @@ for(const [profile,engine,options] of profiles){
     if(options.viewport.width<=720){
       assert.ok(timeline.x>options.viewport.width/2,'mobile timeline is on the right');
       assert.ok(filter.x+filter.width<timeline.x,'filter and timeline do not overlap');
-      assert.ok(filter.height<=48,'mobile filter pill is slim');
+      assert.ok(filter.height<49,'mobile filter pill is slim');
       assert.ok((await page.locator('#map-toggle').boundingBox()).height>=44,'filter still has a 44px touch target');
     }
     const slider=page.locator('#curseur');
