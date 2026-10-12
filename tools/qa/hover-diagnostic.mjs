@@ -8,6 +8,7 @@ import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 import {mapValueContext} from '../../map-value-context.mjs';
 import {humanCopy} from '../../human-impact-copy.mjs';
 import {readingCopy} from '../../reading-copy.mjs';
+import {experienceUICopy} from '../../experience-ui-copy.mjs';
 const annual=JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json',import.meta.url)));
 const climateMeta=JSON.parse(fs.readFileSync(new URL('../../data/climate-manifest.json',import.meta.url)));
 const climateBytes=gunzipSync(fs.readFileSync(new URL('../../data/climate-grid.bin',import.meta.url)));
@@ -202,7 +203,7 @@ try{
   }
   await show();assert.equal(await field('.s-nom'),'Chine');
   assert.equal(await field('.s-indice'),'');
-  assert.match(await field('.s-sous'),/Choisissez un filtre.*2026/);
+  assert.equal(await field('.s-sous'),`${experienceUICopy('fr').choose} · 2026`);
   await year(2050);
   if(name==='mobile'){assert.match(await field('.s-sous'),/2050/);assert.equal(await page.locator('#survol').getAttribute('role'),'group');}
   else await show();

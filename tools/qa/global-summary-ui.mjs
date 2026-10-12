@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import { chromium } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, injectModule } from './entrance.cjs';
 import { createGlobalSummary } from '../../global-summary.mjs';
 import { summarizeText, summaryCopy } from '../../global-summary-copy.mjs';
 import { historicalFilters } from '../../map-value-context.mjs';
@@ -59,9 +59,8 @@ try {
     });
     await page.route('**/*', async route => {
       if (route.request().resourceType() !== 'document') return route.fallback();
-      const response = await route.fetch(), html = await response.text(), marker = '</script>\n</body>';
-      assert.ok(html.includes(marker));
-      const body = html.replace(marker, `
+      const response = await route.fetch(), html = await response.text();
+      const body = injectModule(html, `
         globalThis.__summaryAudit={
           ready:()=>!!globalSummary&&!!SCIENCE&&!!FIRE_WEATHER&&!!FLOOD_HAZARDS&&!!PAYS_RASTER,
           state:()=>({filter:filtreSurvol,year:etat.annee,langue,
@@ -82,7 +81,7 @@ try {
           closeCity:()=>fermerDossier(true),
           shader:()=>({error:moteur.getContext().getError(),failedPrograms:moteur.info.programs.filter(p=>p.diagnostics&&!p.diagnostics.runnable).map(p=>p.name),programs:moteur.info.programs.length})
         };
-      </script>\n</body>`);
+      `);
       await route.fulfill({ response, body });
     });
     context = profile + ' entrance';

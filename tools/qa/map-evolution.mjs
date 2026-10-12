@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { chromium, webkit, devices } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, chooseFilter } from './entrance.cjs';
 
 const out = process.env.QA_SORTIE || '/tmp/terra-map-evolution';
 await fs.mkdir(out,{recursive:true});
@@ -16,8 +16,7 @@ for(const mobile of [false,true]){
  try{
   await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=it');await enter(page);
   for(const key of keys){
-   await page.locator('#map-toggle').click();
-   await page.locator(`.calque[data-cle="${key}"]`).click();
+   await chooseFilter(page, key);
    if(await page.locator('#pedago').isVisible())await page.locator('#pedago-fermer').click();
    assert.equal(await page.locator('.calque.actif').count(),1);
    await page.locator('#curseur').press('Home');await page.waitForTimeout(700);
@@ -38,6 +37,7 @@ for(const mobile of [false,true]){
   await page.locator('#menu-sources').click();
   await page.screenshot({path:`${out}/${name}-sources.png`});
   await page.locator('#view-sources .ux-close').click();
+  if(await page.locator('#map-toggle').getAttribute('aria-expanded')!=='true')await page.locator('#map-toggle').click();
   await page.locator('[data-map-mode="value"]').click();
   assert.equal(await page.locator('[data-map-mode="value"]').getAttribute('aria-pressed'),'true');
   assert.equal(errors.length,0,errors.join('\n'));

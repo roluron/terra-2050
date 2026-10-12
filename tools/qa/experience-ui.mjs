@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {chromium} from 'playwright';
-import {enter,chooseLanguage, injectModule } from './entrance.cjs';
+import {enter,chooseLanguage, injectModule, openSearch} from './entrance.cjs';
 import {experienceUICopy} from '../../experience-ui-copy.mjs';
 import {legendCopy} from '../../reading-copy.mjs';
 const output=process.env.QA_SORTIE||'/tmp/terra-experience-ui';await mkdir(output,{recursive:true});
@@ -35,10 +35,13 @@ try{
    const expected=await page.evaluate(()=>[__experience.read(2026).diagnostic?.value,__experience.read(2050).diagnostic?.value]);
    assert.deepEqual(await page.locator('#view-compare article strong').allTextContents(),expected);
    await page.keyboard.press('Escape');assert.equal(await page.locator('[data-hover-action="compare"]').evaluate(el=>el===document.activeElement),true);
+   const details=page.locator('#view-sources .ux-data-details');
+   const expanded=await details.count()?await details.evaluate(el=>el.open):false;
    await page.locator('[data-hover-action="source"]').click();assert.match(await page.locator('#view-sources').textContent(),/SSP3-7.0|RCP8.5|UN/);
-   assert.equal(await page.locator('#view-sources .ux-data-details').getAttribute('open'),null);
+   assert.equal(await details.evaluate(el=>el.open),expanded);
    assert.ok((await page.locator('#view-sources .ux-dialog-content>.ux-row h3').allTextContents()).includes('Values for this area'));
-   await page.locator('#view-sources .ux-data-details>summary').click();assert.equal(await page.locator('#view-sources .ux-data-details').evaluate(el=>el.open),true);
+   if(expanded){await details.locator(':scope > summary').click();assert.equal(await details.evaluate(el=>el.open),false);}
+   await details.locator(':scope > summary').click();assert.equal(await details.evaluate(el=>el.open),true);
    await page.keyboard.press('Escape');await page.evaluate(()=>__experience.clear());
   }
   for(const language of ['en','fr','es','it','vi','ja','zh','zh-Hant']){
@@ -61,12 +64,12 @@ try{
   }
   await page.locator('#explore-city').click();assert.equal(await page.locator('#share-view').isVisible(),false);await page.locator('#champ-recherche').press('Escape');await page.waitForFunction(()=>document.body.classList.contains('loupe'));
   await page.locator('#share-view').click();await page.locator('#view-share .ux-story').click();await page.locator('#champ-recherche').press('Tab');
-  await page.waitForFunction(()=>document.body.classList.contains('loupe'));await page.locator('#explore-city').click();await page.locator('#champ-recherche').fill('Paris');
+  await page.waitForFunction(()=>document.body.classList.contains('loupe'));await page.locator('#explore-city').click();await openSearch(page);await page.locator('#champ-recherche').fill('Paris');
   await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();assert.equal(await page.locator('#story-popup').isVisible(),false);
   await page.locator('#dossier-croix').click();await page.waitForFunction(()=>document.body.classList.contains('loupe'));
   await page.locator('#share-view').click();await page.locator('#view-share .ux-story').click();
   assert.equal(await page.locator('#champ-recherche').evaluate(el=>el===document.activeElement),true);
-  await page.locator('#champ-recherche').fill('Paris');await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();
+  await openSearch(page);await page.locator('#champ-recherche').fill('Paris');await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();
   await page.locator('#story-popup').waitFor({state:'visible'});await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);
   assert.equal(await page.locator('#story-popup .story-opt').count(),4);await page.locator('.story-opt input[data-opt="planete"]').uncheck();
   await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);await page.keyboard.press('Escape');

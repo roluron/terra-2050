@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { chromium, webkit, devices } from 'playwright';
-import { enter } from './entrance.cjs';
+import {enter, openSearch} from './entrance.cjs';
 
 const base = process.env.URL0 || 'http://localhost:8087/';
 const out = process.env.QA_SORTIE || '/tmp/terra-scientific-ui';
@@ -58,7 +58,7 @@ for (const [name, engine, options] of [
     });
     for (const city of cities) {
       if (await page.locator('#dossier').evaluate(el => el.classList.contains('ouvert'))) await page.locator('#dossier-croix').click();
-      await page.locator('#champ-recherche').fill(city.name);
+      await openSearch(page);await page.locator('#champ-recherche').fill(city.name);
       const option = page.getByRole('option').filter({ hasText: city.name }).first();
       await option.waitFor({ state: 'visible' });
       await option.click();

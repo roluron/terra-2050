@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { enter, chooseLanguage } from './entrance.cjs';
+import {enter, chooseLanguage, openSearch} from './entrance.cjs';
 import os from 'node:os';
 import assert from 'node:assert/strict';
 import {chromium, webkit, devices} from 'playwright';
@@ -75,7 +75,7 @@ for (const [name, engine, options] of [
     assert.equal(await page.locator('#curseur').isVisible(),true);
     assert.equal(await page.locator('#dossier').evaluate(e=>e.inert),true);
     if(name==='panel-desktop' || name==='panel-se') {
-      await page.click('#champ-recherche');await page.fill('#champ-recherche','France');
+      await openSearch(page);await page.fill('#champ-recherche','France');
       await page.getByRole('option',{name:/France (PAYS|COUNTRY)/}).click();
       await page.waitForFunction(()=>!document.querySelector('#dossier').inert);
       assert.equal(await page.locator('#dossier-nom').textContent(),'France');

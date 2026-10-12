@@ -4,7 +4,7 @@ import {gunzipSync} from 'node:zlib';
 import {resolve} from 'node:path';
 import {pathToFileURL, fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
-import {enter, welcome, chooseLanguage} from './entrance.cjs';
+import {enter, welcome, chooseLanguage, injectModule} from './entrance.cjs';
 import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 import {warmingCopy} from '../../hover-diagnostic.mjs';
 import {mapValueContext,mapReferenceContext,historicalFilters,historicalPeriods} from '../../map-value-context.mjs';
@@ -143,9 +143,7 @@ try {
     await page.route('**/*',async route=> {
       if(route.request().resourceType()!=='document')return route.continue();
       const response=await route.fetch(),html=await response.text();
-      const marker='</script>\n</body>';
-      assert.ok(html.includes(marker),'Expected final inline-module boundary for test-only hook');
-      const body=html.replace(marker,`
+      const body=injectModule(html,`
         globalThis.__dataIntegrityAudit={
           ready:()=>!!PAYS_RASTER&&!!SCIENCE&&!!FIRE_WEATHER&&!!FLOOD_HAZARDS&&PAYS_LIGNES.length>0,
           show:(s,x=100,y=150,pinned=false)=>montrerSurvol(s,x,y,pinned),
@@ -177,7 +175,7 @@ try {
           state:()=>({filter:filtreSurvol,year:etat.annee,mode:uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value',langue,
             controls:Object.fromEntries([...document.querySelectorAll('[data-map-mode]')].map(b=>[b.dataset.mapMode,b.getAttribute('aria-pressed')]))})
         };
-      </script>\n</body>`);
+      `);
       await route.fulfill({response,body});
     });
     await page.goto((process.env.URL0||'http://localhost:8080/')+'?lang=fr');

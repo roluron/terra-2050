@@ -21,9 +21,9 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await page.waitForSelector('#earth-shell.interaction-ready');
   for(const word of await page.locator('#earth-shell .word').all())await word.focus();
   await page.waitForSelector('#earth-shell.complete');
-  await page.evaluate(()=>{window.transitionFrames=[];let last=performance.now();function sample(now){window.transitionFrames.push({dt:now-last,veil:Number(getComputedStyle(document.querySelector('#earth-shell')).getPropertyValue('--earth-veil')||1)});last=now;if(document.querySelector('#earth-shell').open)requestAnimationFrame(sample)}requestAnimationFrame(sample)});
+   const transition=page.evaluate(()=>new Promise(resolve=>{const frames=[];let last=performance.now();function sample(now){frames.push({dt:now-last,veil:Number(getComputedStyle(document.querySelector('#earth-shell')).getPropertyValue('--earth-veil')||1)});last=now;if(document.querySelector('#earth-shell').open)requestAnimationFrame(sample);else resolve(frames)}requestAnimationFrame(sample)}));
   await page.locator('#future').click();await page.waitForFunction(()=>!document.querySelector('#earth-shell').open,null,{timeout:25000});
-  const frames=await page.evaluate(()=>window.transitionFrames),intervals=frames.map(f=>f.dt).sort((a,b)=>a-b);
+   const frames=await transition,intervals=frames.map(f=>f.dt).sort((a,b)=>a-b);
   assert.ok(frames.every((f,i)=>!i||f.veil<=frames[i-1].veil+.001),'Reveal never reverses');
   if(name==='desktop')assert.ok(frames.at(-1).veil<.001);
   assert.equal(await page.locator('#earth-shell').evaluate(e=>Number(e.style.getPropertyValue('--earth-veil'))),0);assert.deepEqual(errors,[]);

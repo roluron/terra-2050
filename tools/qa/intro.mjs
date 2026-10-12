@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium, webkit, devices } from 'playwright';
-import { discover, welcome } from './entrance.cjs';
+import {discover, welcome, openSearch} from './entrance.cjs';
 import { morphPoint, startOrb } from '../../earth-orb.mjs';
 
 assert.deepEqual(morphPoint({x:0,y:5},{x:10,y:15},0),{x:0,y:5});
@@ -27,8 +27,7 @@ async function verifierRetourCamera(page, name){
     await page.waitForFunction(() => !document.querySelector('#earth-shell').open && document.querySelector('#dossier').classList.contains('ouvert'));
     assert.equal(await page.locator('#curseur').inputValue(), '2050');
     if (order === 'search-resize') {
-      await page.locator('#champ-recherche').click();
-      await page.locator('#champ-recherche').fill('Paris');
+      await openSearch(page);await page.locator('#champ-recherche').fill('Paris');
       await page.getByRole('option').filter({hasText:'Paris'}).first().click();
       await page.locator('#champ-recherche').focus();
     }
@@ -161,8 +160,8 @@ for (const [name, engine, configuration] of [
       const revealed = await page.evaluate(() => window.__filterReveal);
       assert.ok(revealed[0] > result.duration, 'Filters appear after the Earth transition');
       assert.ok(revealed.every((time, i) => !i || time >= revealed[i - 1]), 'Filters enter in order: ' + JSON.stringify(revealed));
-      assert.ok(new Set(revealed).size >= 4 && revealed.at(-1) - revealed[0] >= 700,
-        'Filter reveal remains visibly staggered across sampled frames: ' + JSON.stringify(revealed));
+      assert.ok(Math.max(...revealed) - Math.min(...revealed) < 100,
+        'Filters share the current chrome entrance: ' + JSON.stringify(revealed));
       result.filterRevealTimes = revealed;
     }
     if (name === 'desktop') await page.mouse.move(viewport.width / 2, viewport.height / 2);

@@ -1,4 +1,4 @@
-import { enter as enterEarth } from './entrance.cjs';
+import {enter as enterEarth, openSearch} from './entrance.cjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import assert from 'node:assert/strict';
@@ -41,7 +41,7 @@ for (const [name, type, options, native, mode] of [
     const page = await context.newPage();
     await page.goto(url); await page.waitForSelector('#voile.pret', { state: 'attached' });
     await enterEarth(page); await page.waitForTimeout(1500);
-    await page.click('#champ-recherche'); await page.fill('#champ-recherche', 'Paris');
+    await openSearch(page); await page.fill('#champ-recherche', 'Paris');
     await page.getByRole('option').filter({ hasText: 'Paris' }).first().click();
     await page.click('#dossier-story');
     const year = await page.locator('#curseur').inputValue();

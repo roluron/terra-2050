@@ -17,7 +17,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await p.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=it#v=New%20York&an=2026&cc=US');await enter(p);await p.evaluate(()=>__glassStop());await p.waitForTimeout(1600);
   const a=await p.locator('#champ-recherche').boundingBox(),g=await p.locator('#bouton-reglages').boundingBox();assert.ok(g.x-a.x-a.width>=12,`${name} gap ${g.x-a.x-a.width}`);
   await p.locator('#bouton-reglages').click();await p.waitForTimeout(650);
-  const type=await p.locator('#bouton-langue').evaluate(e=>{const s=getComputedStyle(e);return [s.fontSize,s.textTransform,s.letterSpacing]});assert.deepEqual(type,['12px','none','normal']);
+  const type=await p.locator('#bouton-langue').evaluate(e=>{const s=getComputedStyle(e);return [s.fontSize,s.textTransform,s.letterSpacing]});assert.deepEqual(type,['13px','none','normal']);
   const probe=await p.evaluate(()=>__glassProbe());assert.ok(probe.search>.1&&probe.panel>.1&&probe.radius>0);
   await p.screenshot({path:`${out}/${name}-settings.png`});
   await p.locator('#bouton-reglages').click();
@@ -26,6 +26,6 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await p.locator('#dossier-comparer').click();await p.waitForTimeout(300);assert.ok((await p.evaluate(()=>__glassProbe())).panel>.1,'Comparison lens active');await p.locator('.compare-close').click();
   await p.locator('#dossier-story').click();await p.waitForTimeout(500);assert.ok((await p.evaluate(()=>__glassProbe())).panel>.1,'Story lens active');await p.locator('#story-fermer').click();
   await p.locator('#dossier-croix').click();await p.waitForTimeout(2200);
-  assert.deepEqual(errors,[]);console.log(`PASS ${name}: search gap ${g.x-a.x-a.width}px; quiet 12px settings; active GPU refraction ${JSON.stringify(probe)}`);
+  assert.deepEqual(errors,[]);console.log(`PASS ${name}: search gap ${g.x-a.x-a.width}px; quiet 13px settings; active GPU refraction ${JSON.stringify(probe)}`);
  }finally{await b.close();}
 }

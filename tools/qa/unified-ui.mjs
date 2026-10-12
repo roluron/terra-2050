@@ -1,7 +1,7 @@
 import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import {enter} from './entrance.cjs';
+import {enter, openSearch} from './entrance.cjs';
 const out=process.env.QA_SORTIE||'/tmp/terra-unified';await fs.mkdir(out,{recursive:true});
 for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,height:900},deviceScaleFactor:2}],['phone',webkit,devices['iPhone SE']]]){
  const browser=await engine.launch({headless:false});
@@ -14,12 +14,15 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
    Object.defineProperty(navigator,'canShare',{value:()=>false});
   });
   await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=en');await enter(page);
-  const year=await page.locator('#an').boundingBox(),timeline=await page.locator('#timeline').boundingBox(),filter=await page.locator('#map-inspector').boundingBox(),search=await page.locator('#champ-recherche').boundingBox(),gear=await page.locator('#bouton-reglages').boundingBox();
-  assert.ok(Math.abs(page.viewportSize().width-timeline.x-timeline.width-(page.viewportSize().width<=720?20:24))<1,'Timeline is anchored on the right');
+  const year=await page.locator('#an').boundingBox(),timeline=await page.locator('#timeline').boundingBox(),filter=await page.locator('#map-inspector').boundingBox(),search=await page.locator('#explore-city').boundingBox(),gear=await page.locator('#bouton-reglages').boundingBox();
+  const inset=await page.locator('#timeline').evaluate(el=>parseFloat(getComputedStyle(el).right));
+  assert.ok(Number.isFinite(inset)&&inset>=0&&Math.abs(page.viewportSize().width-timeline.x-timeline.width-inset)<1,'Timeline is anchored at the scaled right inset');
   assert.ok(filter.x<30&&filter.x+filter.width<year.x,'Filters remain left of year');
-  assert.ok(Math.abs(search.width-search.height)<1&&Math.abs(search.height-gear.height)<1,'Matching round search and gear');
+  assert.ok(search.width>=44&&search.height>=44&&gear.width>=44&&gear.height>=44,'Search and settings retain usable targets');
+  assert.ok(search.x+search.width<=gear.x,'Search stays left of settings');
+  if(page.viewportSize().width<=720)assert.ok(Math.abs(search.width-search.height)<1,'Compact search target stays round');
   await page.screenshot({path:`${out}/${name}-home.png`});
-  await page.locator('#champ-recherche').fill('New York');await page.getByRole('option').filter({hasText:'New York'}).first().click();
+  await openSearch(page);await page.locator('#champ-recherche').fill('New York');await page.getByRole('option').filter({hasText:'New York'}).first().click();
   await page.locator('#dossier-comparer').click();
   assert.equal(await page.locator('#comparison-year').isVisible(),true);
   assert.equal(await page.locator('.compare-time .regle i').count(),25);

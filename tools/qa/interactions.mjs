@@ -1,4 +1,4 @@
-import { enter as enterEarth } from './entrance.cjs';
+import {enter as enterEarth, openSearch} from './entrance.cjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import assert from 'node:assert/strict';
@@ -39,7 +39,7 @@ for (const [name, type, options] of [
       }
     });
     const search = async (query, country) => {
-      await page.click('#champ-recherche');
+      await openSearch(page);
       await page.fill('#champ-recherche', query);
       const option = country ? page.getByRole('option', { name: `${query} COUNTRY`, exact: true }) : page.getByRole('option').filter({ hasText: query }).first();
       await option.click();
@@ -142,7 +142,7 @@ await check('iphone SE: search remains tappable after history and story', async 
   try {
     const page = await browser.newPage({ ...devices['iPhone SE'], locale: 'en-US' });
     await page.goto(url); await page.waitForSelector('#voile.pret', { state: 'attached' }); await enterEarth(page);
-    await page.click('#champ-recherche'); await page.fill('#champ-recherche', 'Paris');
+    await openSearch(page); await page.fill('#champ-recherche', 'Paris');
     await page.getByRole('option').filter({ hasText: 'Paris' }).first().click();
     await page.waitForTimeout(4200);
     await page.goBack(); await page.waitForTimeout(1200);
@@ -150,7 +150,7 @@ await check('iphone SE: search remains tappable after history and story', async 
     await page.click('#dossier-story'); await page.waitForSelector('#story-partager:not([disabled])');
     await page.keyboard.press('Escape'); await page.waitForSelector('#story-popup', { state: 'hidden' });
     await page.waitForTimeout(700);
-    await page.locator('#champ-recherche').tap();
+    await openSearch(page);
     assert.equal(await page.locator('#champ-recherche').evaluate(e => e === document.activeElement), true);
     assert.equal(await page.locator('#bouton-reglages').getAttribute('aria-expanded'), 'false');
     await page.screenshot({ path: `${out}/iphone-se-search.png` });

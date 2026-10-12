@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {chromium} from 'playwright';
 import {enter, injectModule } from './entrance.cjs';
+import {translations} from '../../locales/catalog.mjs';
 
 const annual=JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json',import.meta.url)));
 const browser=await chromium.launch({executablePath:chromium.executablePath()});
@@ -44,8 +45,8 @@ try {
     await page.waitForTimeout(600);
     const result=await page.evaluate(expected=>globalThis.__populationAudit(expected),annual);
     assert.equal(result.values,6162);
-    assert.ok(result.texts.includes(`EXPERIMENTAL CLIMATE INDEX ${year}`));
-    assert.ok(result.texts.includes('MODELLED INDICATORS · NOT A LOCAL FORECAST'));
+    assert.ok(result.texts.includes(`${translations.en.ui.experimental_climate_index} · ${year}`));
+    assert.ok(result.texts.includes(translations.en.ui.modelled_indicators_not_a_local));
     const label=`Country population · 2025 → ${year}`;
     const i=result.texts.indexOf(label);assert.ok(i>=0,label);
     const delta=Math.round((annual.FR[year-2025]/annual.FR[0]-1)*100);

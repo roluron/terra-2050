@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium,webkit,devices} from 'playwright';
-import {enter} from './entrance.cjs';
+import {enter, openSearch} from './entrance.cjs';
 
 const out=process.env.QA_SORTIE||'/tmp/terra-premium';
 await fs.mkdir(out,{recursive:true});
@@ -19,11 +19,12 @@ for(const [name,engine,options] of [
   const type=await page.locator('#language-title').evaluate(e=>({family:getComputedStyle(e).fontFamily,weight:getComputedStyle(e).fontWeight}));
   assert.match(type.family,/TWK Lausanne/);assert.equal(type.weight,'300');
   const footer=await page.locator('#language-options input:checked').boundingBox();assert.ok(footer.y+footer.height<=page.viewportSize().height);
-  const before=await card.evaluate(e=>getComputedStyle(e,'::before').transform);
+   const before=await card.evaluate(e=>{const s=getComputedStyle(e,'::before');return {display:s.display,transform:s.transform};});
+   assert.equal(before.display,'none');
   await page.screenshot({path:`${out}/${name}-light-a.png`});
   await page.waitForTimeout(1000);
-  const after=await card.evaluate(e=>getComputedStyle(e,'::before').transform);
-  assert.equal(before===after,name==='desktop-reduced');
+   const after=await card.evaluate(e=>{const s=getComputedStyle(e,'::before');return {display:s.display,transform:s.transform};});
+   assert.deepEqual(after,before);
   await page.screenshot({path:`${out}/${name}-light-b.png`});
   if(name.startsWith('desktop')){
    const b=await card.boundingBox();await page.mouse.move(b.x+30,b.y+30);await page.waitForTimeout(100);
@@ -33,8 +34,8 @@ for(const [name,engine,options] of [
    assert.equal(a===z,name==='desktop-reduced');
   }
   await enter(page);
-  await page.locator('#champ-recherche').fill('zzzznoresult');await page.locator('#resultats .vide').waitFor();
-  await page.locator('#champ-recherche').fill('Paris');await page.getByRole('option').filter({hasText:'Paris'}).first().click();
+  await openSearch(page);await page.locator('#champ-recherche').fill('zzzznoresult');await page.locator('#resultats .vide').waitFor();
+  await openSearch(page);await page.locator('#champ-recherche').fill('Paris');await page.getByRole('option').filter({hasText:'Paris'}).first().click();
   await page.locator('#dossier.ouvert').waitFor();await page.waitForTimeout(900);
   await page.locator('.risque').first().scrollIntoViewIfNeeded();await page.screenshot({path:`${out}/${name}-metrics.png`});
   await page.locator('.risque summary').first().click();await page.locator('.risque[open]').waitFor();await page.screenshot({path:`${out}/${name}-detail.png`});
@@ -44,6 +45,6 @@ for(const [name,engine,options] of [
    await page.setViewportSize({width:568,height:320});await page.locator('#map-toggle').tap();
    const b=await page.locator('#map-inspector').boundingBox();assert.ok(b.x>=0&&b.y>=0&&b.y+b.height<=320);await page.screenshot({path:`${out}/phone-landscape.png`});
   }
-  assert.deepEqual(errors,[]);console.log(`PASS ${name}: type, footer, gradient motion, pointer/reduced motion, empty search, metric/detail/trajectory, close`);
+   assert.deepEqual(errors,[]);console.log(`PASS ${name}: type, footer, quiet surface, pointer/reduced motion, empty search, metric/detail/trajectory, close`);
  }finally{await context.close();await browser.close();}
 }

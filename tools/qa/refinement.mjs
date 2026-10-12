@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium, webkit, devices } from 'playwright';
-import { discover } from './entrance.cjs';
+import {discover, openSearch} from './entrance.cjs';
 import { moistureBand } from '../../refinement-copy.mjs';
 
 assert.deepEqual([0,5,10,20,30,60,61].map(value=>moistureBand(value,'en')), ['Desert climate','Arid climate','Semi-dry climate','Moderately wet climate','Wet climate','Wet climate','Very wet climate']);
@@ -23,7 +23,7 @@ for (const [name, engine, options] of [
     await page.locator('#language-dialog').waitFor();
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(1800);
-    assert.equal(await page.locator('#language-dialog').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(5, 7, 7)');
+    assert.equal(await page.locator('#language-dialog').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(5, 6, 6)');
     await page.screenshot({path:`${output}/${name}-language.png`});
     if (name === 'desktop') {
       await page.locator('#language-options input[value="fr"]').focus();
@@ -43,7 +43,7 @@ for (const [name, engine, options] of [
     assert.equal(await page.locator('#bouton-son').getAttribute('class').then(c => c.includes('actif')), false);
     assert.equal(await page.evaluate(() => window.Howler._muted), true);
     await page.waitForFunction(() => document.body.classList.contains('donnees-pretes'));
-    await page.locator('#champ-recherche').fill('New York');
+    await openSearch(page);await page.locator('#champ-recherche').fill('New York');
     await page.getByRole('option').filter({hasText:'New York'}).first().click();
     await page.waitForFunction(() => document.querySelector('[data-cle="thermique"].risque')?.dataset.value);
     assert.doesNotMatch(await page.locator('#dossier-verdict-txt').innerText(), /No data|Sans données/i);

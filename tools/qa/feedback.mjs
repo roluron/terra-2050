@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {chromium, webkit, devices} from 'playwright';
-import {enter, chooseLanguage} from './entrance.cjs';
+import {enter, chooseLanguage, openSearch} from './entrance.cjs';
 import {experienceCopy} from '../../refinement-copy.mjs';
+import {humanCopy} from '../../human-impact-copy.mjs';
 
 const url=process.env.URL0||'http://localhost:8080/';
 const output=process.env.QA_SORTIE||'/tmp/terra-feedback';
@@ -88,7 +89,7 @@ for(const [profile,engine,options] of profiles){
     assert.equal(search.y,invitation.y);
     assert.equal(await page.locator('#explore-city').getAttribute('aria-hidden'),'true');
     await page.screenshot({path:`${output}/${profile}-search.png`});
-    await page.locator('#champ-recherche').fill('');await page.locator('#champ-recherche').press('Escape');
+    await openSearch(page);await page.locator('#champ-recherche').fill('');await page.locator('#champ-recherche').press('Escape');
     await page.waitForFunction(()=>document.body.classList.contains('loupe')&&document.querySelector('#explore-city').tabIndex===0);
     await page.keyboard.press('Control+k');
     assert.equal(await page.locator('#champ-recherche').evaluate(e=>e===document.activeElement),true,'keyboard shortcut expands the same search');
@@ -99,7 +100,9 @@ for(const [profile,engine,options] of profiles){
     assert.equal(await page.locator('#pedago').isVisible(),false);
     await page.locator('#map-toggle').click();await page.locator('#menu-sources').click();
     assert.equal(await page.locator('#etiquettes').evaluate(e=>getComputedStyle(e).visibility),'hidden');
-    assert.ok((await page.locator('#view-sources').innerText()).includes(experienceCopy('en').indicators.chaleur));
+    assert.ok((await page.locator('#view-sources').innerText()).includes(humanCopy('en').definitions.chaleur));
+    const sourceDetails=page.locator('#view-sources .ux-data-details');
+    if(!await sourceDetails.evaluate(el=>el.open))await sourceDetails.locator(':scope > summary').click();
     assert.match(await page.locator('#view-sources').innerText(),/SSP3-7.0/);
     await page.screenshot({path:`${output}/${profile}-help.png`});
     await page.locator('#view-sources .ux-close').click();
@@ -113,7 +116,7 @@ for(const [profile,engine,options] of profiles){
     assert.equal(await page.evaluate(()=>window.Howler._muted),false);
     await page.locator('#bouton-son').click();assert.equal(await page.evaluate(()=>window.Howler._muted),true);
     await page.locator('#bouton-reglages').click();
-    await page.locator('#champ-recherche').fill('Paris');await page.getByRole('option').filter({hasText:'Paris'}).first().click();
+    await openSearch(page);await page.locator('#champ-recherche').fill('Paris');await page.getByRole('option').filter({hasText:'Paris'}).first().click();
     if(options.viewport.width<=720){
       const citySearch=await page.locator('#champ-recherche').boundingBox(),close=await page.locator('#dossier-croix').boundingBox();
       assert.ok(citySearch.y+citySearch.height<=close.y||citySearch.x+citySearch.width<=close.x,'city search leaves the close button accessible');
@@ -148,7 +151,7 @@ for(const [profile,engine,options] of profiles){
     assert.ok(await page.locator('#city-comparison').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
     await page.locator('.compare-close').click();await page.locator('#dossier-croix').click();
     await page.waitForFunction(()=>!document.body.classList.contains('dossier-ouvert')&&Number(getComputedStyle(document.getElementById('dossier')).opacity)<.01);
-    await page.locator('#champ-recherche').fill('France');await page.getByRole('option').filter({hasText:'France'}).first().click();
+    await openSearch(page);await page.locator('#champ-recherche').fill('France');await page.getByRole('option').filter({hasText:'France'}).first().click();
     await page.locator('#dossier-comparer').click();
     assert.equal(await page.locator('#comparison-search').getAttribute('placeholder'),'Choose another country');
     await page.locator('#comparison-search').fill('Tokyo');

@@ -1,3 +1,4 @@
+import {openSearch} from './entrance.cjs';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {webkit,chromium,devices} from 'playwright';
@@ -9,8 +10,8 @@ for(const [name,engine,options] of [
  const tap=async selector=>page.locator(selector).tap();
  const shot=async suffix=>{await page.waitForTimeout(650);await page.screenshot({path:`${out}/${name}-${suffix}.png`});};
  const glass=async selector=>{
-  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
-  assert.match(surface.background,/gradient/);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
+  const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,color:s.backgroundColor,border:s.borderTopStyle,borderWidth:parseFloat(s.borderTopWidth),blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
+  assert.equal(surface.background,'none');assert.match(surface.color,/^rgba\(/);assert.equal(surface.border,'solid');assert.ok(surface.borderWidth>=1);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
  };
  const target=async selector=>{for(const item of await page.locator(selector).all()){const b=await item.boundingBox();assert.ok(b&&b.height>=44&&b.width>=44,`${selector}: ${JSON.stringify(b)}`);}};
  try{
@@ -24,7 +25,7 @@ for(const [name,engine,options] of [
   if(mobile){assert.equal(await page.locator('#map-toggle').getAttribute('aria-expanded'),'false');assert.equal(await page.evaluate(()=>document.getElementById('calques').contains(document.activeElement)),false);}
   await tap('#map-toggle');await glass('#map-options');await target('[data-map-mode="value"]');await shot('map');await tap('#menu-sources');await shot('sources');await tap('#view-sources .ux-close');
   await tap('#bouton-reglages');await glass('#menu-reglages');await target('#bouton-langue');await shot('settings');await tap('#bouton-reglages');
-  await tap('#champ-recherche');await page.locator('#champ-recherche').fill('Paris');await page.getByRole('option').filter({hasText:'Paris'}).first().waitFor();await glass('#resultats');await shot('search');await page.getByRole('option').filter({hasText:'Paris'}).first().tap();await page.locator('#dossier.ouvert').waitFor();await page.waitForTimeout(1000);await glass('#dossier');await target('#dossier-croix');await shot('city');
+  await openSearch(page);await page.locator('#champ-recherche').fill('Paris');await page.getByRole('option').filter({hasText:'Paris'}).first().waitFor();await glass('#resultats');await shot('search');await page.getByRole('option').filter({hasText:'Paris'}).first().tap();await page.locator('#dossier.ouvert').waitFor();await page.waitForTimeout(1000);await glass('#dossier');await target('#dossier-croix');await shot('city');
   await tap('#dossier-comparer');await glass('#city-comparison');await target('.compare-close');await page.locator('#comparison-search').fill('Tokyo');await page.locator('#comparison-results [role="option"]').first().tap();assert.equal(await page.locator('#city-comparison td[data-value]').count(),12);await shot('comparison');await tap('.compare-close');
   await tap('#dossier-story');await page.locator('#story-partager:not([disabled]):not([aria-busy="true"])').waitFor();await glass('.story-carte');await target('#story-fermer');await target('.story-opt');await shot('story');await tap('#story-fermer');await tap('#dossier-croix');
   assert.equal(await page.locator('#map-inspector').isVisible(),true);assert.equal(errors.length,0,errors.join('\n'));console.log(`PASS ${name}: touch-only language, filters, sources, settings, search, city, comparison, story, close; glass and targets`);

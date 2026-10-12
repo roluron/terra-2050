@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
-import { enter, injectModule } from './entrance.cjs';
+import {enter, injectModule, openSearch} from './entrance.cjs';
+import {formatHoverNumber} from '../../hover-diagnostic.mjs';
 
 const base = process.env.URL0 || 'http://localhost:8087/';
 const annual = JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json', import.meta.url)));
@@ -25,7 +26,7 @@ try {
   await page.waitForFunction(() => document.body.classList.contains('donnees-pretes'));
   for (const [name, iso] of [['Paris', 'FR'], ['Ho Chi Minh City', 'VN'], ['France', 'FR'], ['Ouagadougou', 'BF']]) {
     if (await page.locator('#dossier').evaluate(el => el.classList.contains('ouvert'))) await page.locator('#dossier-croix').click();
-    await page.locator('#champ-recherche').fill(name);
+    await openSearch(page);await page.locator('#champ-recherche').fill(name);
     await page.getByRole('option', { name: name === 'France' ? /France (COUNTRY|PAYS)/ : new RegExp(name === 'Ho Chi Minh City' ? 'Ho Chi Minh' : name) }).first().click();
     await page.waitForFunction(() => !document.querySelector('#dossier').inert);
     await page.waitForTimeout(700);
@@ -61,7 +62,7 @@ try {
         assert.ok(Math.abs(source.change - (source.value - source.baseline)) < 1e-6, label);
         if (year === 2050) assert.ok(Math.abs(source.value - source.future) < 1e-6, label);
         assert.equal(card.unit, card.key === 'eau' ? 'De Martonne' : source.unit, label);
-        assert.equal(card.number, source.value.toLocaleString('en', { maximumFractionDigits: 2 }), label);
+        assert.equal(card.number, formatHoverNumber(source.value, 'en', false, 2), label);
         assert.doesNotMatch(card.detail, /unvalidated proxy|fixed river|FABDEM|COAST-RP/i, label);
       }
       cases++;

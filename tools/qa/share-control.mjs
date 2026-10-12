@@ -1,7 +1,7 @@
 import { chromium, webkit, devices } from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { discover } from './entrance.cjs';
+import {discover, openSearch} from './entrance.cjs';
 
 const url = process.env.URL0 || 'http://127.0.0.1:8089/?lang=en';
 const out = process.env.QA_SORTIE || '/tmp/terra-share-control';
@@ -50,9 +50,9 @@ for (const [name, engine, options] of cases.filter(([name]) => !process.env.QA_C
     await page.locator('#view-share[open]').waitFor();
     await page.locator('#view-share .ux-close').click();
     await page.locator('#explore-city').click();
-    await page.locator('#champ-recherche').fill('Paris');
+    await openSearch(page);await page.locator('#champ-recherche').fill('Paris');
     assert.equal(await page.locator('#share-view').isVisible(), false, 'Share leaves room for expanded search');
-    await page.locator('#champ-recherche').fill('');
+    await openSearch(page);await page.locator('#champ-recherche').fill('');
     await page.keyboard.press('Escape');
     await page.locator('#share-view').waitFor({ state: 'visible' });
     assert.deepEqual(errors, [], 'No runtime errors');

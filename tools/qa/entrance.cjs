@@ -10,6 +10,17 @@ exports.chooseLanguage = async function(page, code) {
   await page.locator(`#language-options input[value="${code}"]`).click();
   await page.locator('#language-dialog').waitFor({state:'hidden'});
 };
+exports.openSearch = async function(page) {
+  const input = page.locator('#champ-recherche');
+  if (await input.getAttribute('aria-hidden') === 'true') await page.locator('#explore-city').click();
+  await input.click();
+  return input;
+};
+exports.chooseFilter = async function(page, key) {
+  const filter = page.locator(`.calque[data-cle="${key}"]`);
+  if (!await filter.isVisible()) await page.locator('#map-toggle').click();
+  await filter.click();
+};
 exports.discover = async function(page) {
   await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 });
   await exports.welcome(page);
@@ -18,11 +29,14 @@ exports.discover = async function(page) {
   await page.waitForSelector('#earth-shell.complete');
 };
 exports.enter = async function(page, repeated = false) {
-  await exports.discover(page);
-  await page.locator('#future').click();
-  if (repeated) {
-    await page.locator('#future').dispatchEvent('click');
-    await page.locator('#future').dispatchEvent('click');
+  const returning = await page.locator('html').evaluate(el => el.classList.contains('returning-visit'));
+  if (!returning) {
+    await exports.discover(page);
+    await page.locator('#future').click();
+    if (repeated) {
+      await page.locator('#future').dispatchEvent('click');
+      await page.locator('#future').dispatchEvent('click');
+    }
   }
   await page.waitForFunction(() => !document.getElementById('earth-shell').open, null, { timeout: 20000 });
   await page.waitForFunction(() => [...document.querySelectorAll('.calque')].every(el => !el.style.opacity && !el.style.transform)).catch(async error => {

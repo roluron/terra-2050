@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
-import { enter, injectModule } from './entrance.cjs';
+import { enter, injectModule, chooseFilter } from './entrance.cjs';
 
 const out = process.env.QA_SORTIE || '/tmp/terra-scientific-maps';
 await fs.mkdir(out, { recursive: true });
@@ -114,15 +114,15 @@ await page.route('**/*',async route=>{
 });
 try {
   await page.goto(process.env.URL0||'http://localhost:8087/');await enter(page);
-  await page.locator('.calque[data-cle="chaleur"]').click();
+  await chooseFilter(page, 'chaleur');
   if(await page.locator('#pedago').isVisible())await page.locator('#pedago-fermer').click();
   await page.waitForFunction(()=>globalThis.__mapsReady(),null,{timeout:30000});
   const audit=await page.evaluate(()=>globalThis.__mapsProbe());
   for(const image of audit.images)await fs.writeFile(`${out}/${image.name}.png`,Buffer.from(image.data.split(',')[1],'base64'));
   delete audit.images;Object.assign(result,audit);
   for(const key of ['chaleur','secheresse','stabilite','mer','fleuves','feux']){
-    for(const active of await page.locator('.calque.actif').all())await active.click();
-    await page.locator(`.calque[data-cle="${key}"]`).click();
+    for(const active of await page.locator('.calque.actif').all())await chooseFilter(page, await active.getAttribute('data-cle'));
+    await chooseFilter(page, key);
     if(await page.locator('#pedago').isVisible())await page.locator('#pedago-fermer').click();
     await page.locator('#curseur').focus();await page.keyboard.press('Home');await page.waitForTimeout(700);
     await page.screenshot({path:`${out}/ui-${key}-2026.png`});

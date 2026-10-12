@@ -40,7 +40,9 @@ for (const [name, engine, options] of [
       await page.locator(`#language-options input[value="${code}"]`).click();
       await page.locator('#language-dialog').waitFor({state:'hidden'});
       assert.equal(await page.locator('html').getAttribute('lang'), code);
-      assert.equal(await page.locator('#earth-shell h1').textContent(), text.ui.letterTitle);
+      assert.equal(await page.locator('#earth-shell h1').evaluate(el=>{
+        const heading=el.cloneNode(true);for(const glyph of heading.querySelectorAll('[aria-hidden="true"]'))glyph.remove();return heading.textContent;
+      }), text.ui.letterTitle);
       await discover(page);
       await page.waitForFunction(() => Number(getComputedStyle(document.querySelector('#future')).opacity) > .99);
       await page.locator('#earth-shell h1').click();

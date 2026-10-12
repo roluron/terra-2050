@@ -1,6 +1,6 @@
 import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
-import {enter} from './entrance.cjs';
+import {enter, openSearch} from './entrance.cjs';
 for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,height:900}}],['phone',webkit,devices['iPhone SE']]]){
  const browser=await engine.launch({headless:false});try{
  const page=await browser.newPage(options),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -22,10 +22,11 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await page.mouse.move(400,80);await page.waitForTimeout(400);
   assert.equal(await page.locator('.glass-cursor').isVisible(),true,'Dot over empty space');
   assert.ok(await page.locator('.glass-cursor').evaluate(e=>e.getBoundingClientRect().width<8),'Small dot over empty space');
+  await page.waitForFunction(async()=> (await import('./glass-cursor.mjs')).glassCursor.radius===3,null,{timeout:5000});
   assert.equal(await page.evaluate(async()=> (await import('./glass-cursor.mjs')).glassCursor.radius),3,'Refraction radius follows the dot on the canvas');
   await page.mouse.move(720,450);await page.waitForTimeout(200);
   await page.screenshot({path:(process.env.QA_SORTIE||'/tmp')+'/globe-only-cursor.png'});
-  await page.locator('#champ-recherche').fill('New York');
+  await openSearch(page);await page.locator('#champ-recherche').fill('New York');
   await page.getByRole('option').filter({hasText:'New York'}).first().click();
   await page.locator('#dossier-comparer').click();await page.locator('.compare-close').hover();await page.waitForTimeout(100);
   assert.equal(await page.locator('.glass-cursor').isVisible(),false,'Comparison is modal: native cursor');

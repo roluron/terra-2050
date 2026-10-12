@@ -1,4 +1,4 @@
-import { enter as enterEarth, chooseLanguage } from './entrance.cjs';
+import {enter as enterEarth, chooseLanguage, openSearch} from './entrance.cjs';
 /* Matrice de lancement TERRA/2050 — 25 controles sur 7 configurations.
  *
  *   URL0=https://roluron.github.io/terra-2050/ node tools/qa/matrice.mjs
@@ -51,7 +51,7 @@ async function open(bt, ctxOpts = {}, { init, route, hash = '' } = {}) {
 }
 const enter = async (page) => { await page.waitForSelector('#voile.pret', { state: 'attached', timeout: 30000 }); await enterEarth(page); await page.waitForTimeout(2500); };
 const search = async (page, q, mobile) => {
-  if (mobile) await page.tap('#champ-recherche'); else await page.keyboard.press('Meta+k');
+  if (mobile) await openSearch(page); else await page.keyboard.press('Meta+k');
   await page.waitForTimeout(500); await page.keyboard.type(q); await page.waitForTimeout(600); await page.keyboard.press('Enter'); await page.waitForTimeout(2200);
 };
 const chrome = (page) => page.evaluate(() => ['recherche', 'calques', 'util', 'timeline', 'titre'].map(id => { const e = document.getElementById(id); const cs = getComputedStyle(e); const r = e.getBoundingClientRect(); return { id, op: +cs.opacity, x: r.x, y: r.y, w: r.width, h: r.height, r: r.right, b: r.bottom }; }));

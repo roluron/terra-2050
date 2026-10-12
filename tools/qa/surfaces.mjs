@@ -23,7 +23,7 @@ try{
  const details=[];
  for(const row of await page.locator('#dossier-risques .risque').all()){
    if(!await row.evaluate(e=>e.open)) {
-     if(name==='iphone')await row.locator('summary').tap();else await row.locator('summary').click();
+     if(name==='iphone')await row.locator(':scope > summary').tap();else await row.locator(':scope > summary').click();
    }
    assert.equal(await row.locator('.detail').isVisible(),true);
    assert.equal(await row.locator('.detail').textContent(),await row.getAttribute('data-detail'));
