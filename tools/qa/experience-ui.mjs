@@ -66,11 +66,12 @@ try{
    await page.screenshot({path:output+'/sources-'+viewport.width+'-'+language+'.png'});await page.keyboard.press('Escape');await page.locator('#map-toggle').click();
   }
   await page.locator('#explore-city').click();assert.equal(await page.locator('#share-view').isVisible(),false);await page.locator('#champ-recherche').press('Escape');await page.waitForFunction(()=>document.body.classList.contains('loupe'));
-  await page.locator('#share-view').click();await page.locator('#view-share .ux-story').click();await page.locator('#champ-recherche').press('Tab');
+  await page.locator('#share-view').click();await page.locator('#view-share .ux-story').click();await page.waitForFunction(()=>document.querySelector('#champ-recherche')===document.activeElement);await page.locator('#champ-recherche').press('Tab');
   await page.waitForFunction(()=>document.body.classList.contains('loupe'));await page.locator('#explore-city').click();await openSearch(page);await page.locator('#champ-recherche').fill('Paris');
   await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();assert.equal(await page.locator('#story-popup').isVisible(),false);
   await page.locator('#dossier-croix').click();await page.waitForFunction(()=>document.body.classList.contains('loupe'));
   await page.locator('#share-view').click();await page.locator('#view-share .ux-story').click();
+  await page.waitForFunction(()=>document.querySelector('#champ-recherche')===document.activeElement);
   assert.equal(await page.locator('#champ-recherche').evaluate(el=>el===document.activeElement),true);
   await openSearch(page);await page.locator('#champ-recherche').fill('Paris');await page.locator('#resultats [role="option"]').filter({has:page.locator('.nom-lieu').filter({hasText:/^Paris$/})}).first().click();
   await page.locator('#story-popup').waitFor({state:'visible'});await page.waitForFunction(()=>!document.querySelector('#story-partager').disabled);

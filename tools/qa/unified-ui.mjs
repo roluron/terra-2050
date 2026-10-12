@@ -27,10 +27,18 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   assert.equal(await page.locator('#comparison-year').isVisible(),true);
   assert.equal(await page.locator('.compare-time .regle i').count(),25);
   for(const key of ['Home','End']){
-   await page.locator('#comparison-year').focus();await page.keyboard.press(key);await page.waitForTimeout(700);
+   await page.locator('#comparison-year').focus();await page.keyboard.press(key);
+   assert.equal(await page.locator('#comparison-year').inputValue(),key==='Home'?'2026':'2050');
    assert.equal(await page.locator('#curseur').inputValue(),await page.locator('#comparison-year').inputValue());
-   const bars=await page.locator('.compare-time .regle i').evaluateAll(es=>es.map(e=>e.style.transform));
-   assert.match(bars[key==='Home'?0:24],/3\.0|3\.1/);
+   const endpoint=key==='Home'?0:24;
+   await page.waitForFunction(index=>{
+    const bars=document.querySelectorAll('.compare-time .regle i'),bar=bars[index];
+    if(bars.length!==25||!bar)return false;
+    const base=parseFloat(getComputedStyle(bar).height),scale=bar.getBoundingClientRect().height/base;
+    return base>0&&scale>=3&&scale<=4.05;
+   },endpoint,{timeout:10000});
+   const bars=await page.locator('.compare-time .regle i').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).height)));
+   assert.equal(bars.length,25);assert.ok(bars[endpoint]>=3&&bars[endpoint]<=4.05,'Selected endpoint reaches the source ruler height');
   }
   await page.screenshot({path:`${out}/${name}-comparison.png`});await page.locator('.compare-close').click();
   await page.locator('#dossier-story').click();await page.waitForFunction(()=>!document.getElementById('story-partager').disabled);

@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import assert from 'node:assert/strict';
 import { chromium, webkit, devices } from 'playwright';
+import {translations} from '../../locales/catalog.mjs';
 
 const url = process.env.URL0 || 'http://localhost:8080/';
 const out = process.env.QA_SORTIE || fs.mkdtempSync(os.tmpdir() + '/terra-sharing-');
@@ -16,14 +17,16 @@ for (const [name, type, options, native, mode] of [
 ]) {
   const browser = await type.launch({ executablePath: type.executablePath() });
   try {
-    const context = await browser.newContext(options);
+    const context = await browser.newContext({...options,locale:'en-US'});
     await context.addInitScript(({ native, mode }) => {
       window.qaShares = [];
+      window.qaEncodingAttempts = 0; window.qaEncodingFaults = 0;
       const toBlob = HTMLCanvasElement.prototype.toBlob;
       let failed = false;
       HTMLCanvasElement.prototype.toBlob = function (callback, ...args) {
         if (this.width === 1080 && this.height === 1920) {
-          if (mode === 'fail' && !failed) { failed = true; setTimeout(() => callback(null), 50); return; }
+          window.qaEncodingAttempts++;
+          if (mode === 'fail' && !failed) { failed = true; window.qaEncodingFaults++; setTimeout(() => callback(null), 50); return; }
           if (mode === 'delay') { setTimeout(() => toBlob.call(this, callback, ...args), 2500); return; }
         }
         return toBlob.call(this, callback, ...args);
@@ -47,10 +50,12 @@ for (const [name, type, options, native, mode] of [
     const year = await page.locator('#curseur').inputValue();
     if (mode === 'delay') assert.equal(await page.locator('#story-partager').isDisabled(), true);
     if (mode === 'fail') {
-      await page.getByRole('button', { name: 'Retry image ↻' }).waitFor();
+      await page.getByRole('button', { name: translations.en.storyReessayer, exact:true }).waitFor();
+      assert.equal(await page.evaluate(()=>window.qaEncodingFaults),1);
       await page.click('#story-partager');
     }
     await page.waitForFunction(() => !document.querySelector('#story-partager').disabled);
+    if(mode==='fail')assert.ok(await page.evaluate(()=>window.qaEncodingAttempts)>=2,'Retry performs another JPEG encoding');
     await page.waitForTimeout(4200);
     assert.equal(await page.locator('#curseur').inputValue(), year, 'Year changed after preview opened');
     if (native) {

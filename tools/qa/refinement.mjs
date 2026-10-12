@@ -33,7 +33,8 @@ for (const [name, engine, options] of [
       assert.equal(await page.locator('html').getAttribute('lang'), 'fr');
     } else {
       await page.locator('#language-options input[value="en"]').tap();
-      await page.locator('#language-options input:checked').tap();
+      await page.locator('#language-dialog').waitFor({state:'hidden'});
+      assert.equal(await page.locator('html').getAttribute('lang'),'en');
     }
     await discover(page);
     await page.locator('#future').click();

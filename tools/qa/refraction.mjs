@@ -27,6 +27,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   await p.locator('#bouton-reglages').click();
   await p.waitForTimeout(450);await p.screenshot({path:`${out}/${name}-refracted.png`});
   await p.evaluate(()=>globalThis.__flatGlass=true);await p.waitForTimeout(100);await p.screenshot({path:`${out}/${name}-flat.png`});await p.evaluate(()=>globalThis.__flatGlass=false);
+  await openSearch(p);await p.getByRole('option').filter({hasText:'New York'}).first().click();await p.locator('#dossier.ouvert').waitFor();
   await p.locator('#dossier-comparer').click();await p.waitForTimeout(300);assert.ok((await p.evaluate(()=>__glassProbe())).panel>.1,'Comparison lens active');await p.locator('.compare-close').click();
   await p.locator('#dossier-story').click();await p.waitForTimeout(500);assert.ok((await p.evaluate(()=>__glassProbe())).panel>.1,'Story lens active');await p.locator('#story-fermer').click();
   await p.locator('#dossier-croix').click();await p.waitForTimeout(2200);

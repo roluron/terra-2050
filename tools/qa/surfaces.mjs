@@ -25,6 +25,11 @@ try{
    if(!await row.evaluate(e=>e.open)) {
      if(name==='iphone')await row.locator(':scope > summary').tap();else await row.locator(':scope > summary').click();
    }
+   const method=row.locator('.risk-method');
+   if(!await method.evaluate(e=>e.open)) {
+     if(name==='iphone')await method.locator(':scope > summary').tap();else await method.locator(':scope > summary').click();
+   }
+   assert.equal(await method.evaluate(e=>e.open),true);
    assert.equal(await row.locator('.detail').isVisible(),true);
    assert.equal(await row.locator('.detail').textContent(),await row.getAttribute('data-detail'));
    details.push(await row.locator('.detail').textContent());

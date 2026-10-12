@@ -167,7 +167,7 @@ for(const [profile,engine,options] of profiles){
         if(await page.locator('#bouton-reglages').getAttribute('aria-expanded')==='true')await page.locator('#bouton-reglages').click();
         assert.equal(await page.locator('#explore-city').innerText(),experienceCopy(code).journey);
         await page.locator('#map-toggle').click();
-        assert.equal(await page.locator('[data-map-mode="value"]').innerText(),experienceCopy(code).value.replace('{year}','2050'));
+        assert.equal(await page.locator('[data-map-mode="value"]').innerText(),mapValueContext('chaleur',code,2050).value);
         await page.locator('#map-toggle').click();
       }
     }
