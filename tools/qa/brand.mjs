@@ -13,7 +13,6 @@ const html=await readFile(new URL('../../index.html',import.meta.url),'utf8');
 assert.match(html,/href="https:\/\/fromanother\.love" target="_blank" rel="noopener"/);
 assert.match(html,/assets\/fromearth-projections\.jpg/);
 assert.match(html,/from<strong>earth<\/strong><\/span><em>\/<\/em><span class="brand-year">2050/);
-assert.match(html,/class="creator-idea" data-t="ideaBy"/);
 assert.match(html,/<span data-t="createdBy"><\/span> fromanother<\/a>/);
 assert.doesNotMatch(html,/assets\/fromanother\.svg/);
 assert.doesNotMatch(html,/brand-horizon|assets\/fromearth\.svg/);

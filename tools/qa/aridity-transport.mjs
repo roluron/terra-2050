@@ -18,8 +18,8 @@ const fm = JSON.parse(await file('data/flood-metadata.json'));
 const floods = Object.fromEntries(await Promise.all(['coast', 'river'].map(async hazard => [hazard,
   { metadata: { ...fm, ...fm.hazards[hazard] }, values: decode(await file(`data/flood-${hazard}.bin`)) }])));
 const textures = await buildScientificTextures(THREE, climate, floods);
-assert.deepEqual(Object.keys(textures), ['heat', 'aridity', 'warming', 'coast', 'river', 'aridityTemperature', 'aridityPrecipitation']);
-assert.equal(textures.heat.userData.scientific.stats.bytes, 20736000);
+assert.deepEqual(Object.keys(textures), ['heat', 'aridity', 'warming', 'coast', 'river', 'aridityTemperature', 'aridityPrecipitation', 'historicalClimate', 'historicalFlood']);
+assert.equal(textures.heat.userData.scientific.stats.bytes, 29030400);
 const temps = textures.aridityTemperature, rain = textures.aridityPrecipitation;
 for (const texture of [temps, rain]) {
   assert.equal(texture.type, THREE.FloatType);
@@ -102,7 +102,7 @@ assert.ok(Number.isFinite(ratioAfter));
 assert.ok(Math.abs(oldInterpolated - ratioAfter) > 500, 'Regression witness must distinguish the two methods near -10 C');
 console.log(JSON.stringify({ status: 'PASS', cellsChecked: 259200, validPairedCells: cells,
   oldMaskDifferences, texturesBytes: textures.heat.userData.scientific.stats.bytes,
-  checks: ['all seven textures', 'all anchor values and masks', 'all grid cells at 2040',
+  checks: ['all nine textures', 'all anchor values and masks', 'all grid cells at 2040',
     'north/south row mapping', 'Float32 domain near -10C', 'valid precipitation zero',
     'missing and negative precipitation', 'linear-float capability', 'nonlinear interpolation regression'],
   nearMinus10Regression: { ratioAfterInterpolation: ratioAfter, legacyRatioInterpolation: oldInterpolated } }, null, 2));

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {gunzipSync} from 'node:zlib';
 import {chromium} from 'playwright';
-import {enter, chooseLanguage} from './entrance.cjs';
+import {enter, chooseLanguage, injectModule } from './entrance.cjs';
 import {hoverCopy, warmingCopy, populationHover, physicalHover, formatHoverNumber} from '../../hover-diagnostic.mjs';
 import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 import {mapValueContext} from '../../map-value-context.mjs';
@@ -66,7 +66,7 @@ try{
   await page.route('**/*',async route=>{
    if(route.request().resourceType()!=='document')return route.continue();
    const response=await route.fetch();
-   const body=(await response.text()).replace('</script>\n</body>',`
+   const body=injectModule(await response.text(),`
     globalThis.__hoverAudit={
      ready:()=>!!PAYS_RASTER && !!SCIENCE && PAYS_LIGNES.length>0,
      show:(iso,x=100,y=150,pinned=false)=>montrerSurvol({iso,lat:iso==='ZZ'?undefined:35,lon:iso==='ZZ'?undefined:105},x,y,pinned),
@@ -80,7 +80,7 @@ try{
      hit:(x,y)=>sousPointeur(x,y),
      hide:()=>cacherSurvol(),
     };
-   </script>\n</body>`);
+   `);
    await route.fulfill({response,body});
   });
   await page.goto((process.env.URL0||'http://localhost:8080/')+'?lang=fr');await enter(page);

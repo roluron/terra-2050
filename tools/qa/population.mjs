@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {chromium} from 'playwright';
-import {enter} from './entrance.cjs';
+import {enter, injectModule } from './entrance.cjs';
 
 const annual=JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json',import.meta.url)));
 const browser=await chromium.launch({executablePath:chromium.executablePath()});
@@ -11,7 +11,7 @@ try {
   await page.route('**/*',async route=>{
     if(route.request().resourceType()!=='document')return route.continue();
     const response=await route.fetch();
-    const body=(await response.text()).replace('</script>\n</body>',`
+    const body=injectModule(await response.text(),`
       globalThis.__populationReady=()=>uniformsGlobe.uPopulation.value!==texVide;
       globalThis.__populationAudit=async expected=>{
         let values=0,texels=0;
@@ -34,7 +34,7 @@ try {
         try{await genererStory({population:true});}finally{CanvasRenderingContext2D.prototype.fillText=original;}
         return {values,texels,texts};
       };
-    </script>\n</body>`);
+    `);
     await route.fulfill({response,body});
   });
   await page.goto((process.env.URL0||'http://localhost:8087/')+'#v=Paris&an=2026&cc=FR');

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, injectModule } from './entrance.cjs';
 
 const base = process.env.URL0 || 'http://localhost:8087/';
 const annual = JSON.parse(fs.readFileSync(new URL('../../data/population-annual.json', import.meta.url)));
@@ -15,8 +15,8 @@ try {
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   await page.route(url => url.pathname === '/', async route => {
     const response = await route.fetch();
-    const body = (await response.text()).replace('</script>\n</body>',
-      `globalThis.__temporalRead=()=>({year:etat.annee,globe:uniformsGlobe.uProgression.value,readings:mesuresLieu(lieuDossier,etat.annee)});\n</script>\n</body>`);
+    const body = injectModule(await response.text(),
+      `globalThis.__temporalRead=()=>({year:etat.annee,globe:uniformsGlobe.uProgression.value,readings:mesuresLieu(lieuDossier,etat.annee)});`);
     assert.ok(body.includes('globalThis.__temporalRead='));
     await route.fulfill({ response, body });
   });

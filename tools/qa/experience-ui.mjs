@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {chromium} from 'playwright';
-import {enter,chooseLanguage} from './entrance.cjs';
+import {enter,chooseLanguage, injectModule } from './entrance.cjs';
 import {experienceUICopy} from '../../experience-ui-copy.mjs';
 import {legendCopy} from '../../reading-copy.mjs';
 const output=process.env.QA_SORTIE||'/tmp/terra-experience-ui';await mkdir(output,{recursive:true});
@@ -14,7 +14,7 @@ try{
   await page.route('**/*',async route=>{
    if(route.request().resourceType()!=='document')return route.fallback();
    const response=await route.fetch(),html=await response.text();
-   await route.fulfill({response,body:html.replace('</script>\n</body>',`globalThis.__experience={ready:()=>!!globalSummary&&!!PAYS_RASTER, state:()=>({filter:filtreSurvol,year:etat.annee,hidden:coucheMasquee,mode:uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value',strength:CALQUES[filtreSurvol]?.uniforme.value}),show:()=>montrerSurvol({iso:'FR',lat:48.8,lon:2.3,ville:null},innerWidth/2,innerHeight/2,true),read:year=>lectureSurvol({iso:'FR',lat:48.8,lon:2.3},year),clear:()=>cacherSurvol(),shader:()=>moteur.info.programs.filter(p=>p.diagnostics&&!p.diagnostics.runnable).length};</script>\n</body>`)});
+   await route.fulfill({response,body:injectModule(html,`globalThis.__experience={ready:()=>!!globalSummary&&!!PAYS_RASTER, state:()=>({filter:filtreSurvol,year:etat.annee,hidden:coucheMasquee,mode:uniformsGlobe.uReference.value>.5?'reference':uniformsGlobe.uChange.value>.5?'change':'value',strength:CALQUES[filtreSurvol]?.uniforme.value}),show:()=>montrerSurvol({iso:'FR',lat:48.8,lon:2.3,ville:null},innerWidth/2,innerHeight/2,true),read:year=>lectureSurvol({iso:'FR',lat:48.8,lon:2.3},year),clear:()=>cacherSurvol(),shader:()=>moteur.info.programs.filter(p=>p.diagnostics&&!p.diagnostics.runnable).length};`)});
   });
   await page.goto((process.env.URL0||'http://localhost:8080/')+'?lang=en');await enter(page);await page.waitForFunction(()=>__experience.ready(),null,{timeout:60000});
   const choose=async key=>{await page.locator('#map-toggle').click();await page.locator(`[data-cle="${key}"]`).click();};

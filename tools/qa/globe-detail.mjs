@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { chromium, webkit, devices } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, injectModule } from './entrance.cjs';
 
 const out = process.env.QA_SORTIE || '/tmp/terra-globe-detail';
 await fs.mkdir(out, { recursive: true });
@@ -16,8 +16,8 @@ for (const [name, engine, options, expected] of [
     await page.route('**/*', async route => {
       if (route.request().resourceType() !== 'document') return route.continue();
       const response = await route.fetch();
-      await route.fulfill({ response, body: (await response.text()).replace('</script>\n</body>',
-        'globalThis.__detail=()=>({width:texCouleur.image.width,draws:moteur.info.render.calls});\n</script>\n</body>') });
+      await route.fulfill({ response, body: injectModule(await response.text(),
+        'globalThis.__detail=()=>({width:texCouleur.image.width,draws:moteur.info.render.calls});') });
     });
     await page.goto((process.env.URL0 || 'http://localhost:8087/') + '#v=Le%20Caire&an=2026&cc=EG');
     await enter(page);

@@ -5,7 +5,7 @@
     python3 tools/check.py --autotest            # prouve que ce lanceur sait dire non
 
 Il **découvre** les contrôles au lieu de les énumérer : tout `tools/verifier_*.py`
-et tout `tools/qa/*.mjs`. Un contrôle ajouté demain sera lancé sans que personne
+et tout `tools/qa/*.py` ou `*.mjs`, hors `capture-*`. Un contrôle ajouté demain sera lancé sans que personne
 ne pense à l'inscrire ici, et c'est le seul moyen que son absence ne passe pas
 pour un silence rassurant.
 
@@ -48,21 +48,28 @@ def lancer(nom, argv, env=None):
 def trouver():
     """Les contrôles ne sont jamais énumérés : on les cherche."""
     py = sorted(TOOLS.glob("verifier_*.py"))
-    qa = sorted((TOOLS / "qa").glob("*.mjs"))
-    return py, qa
+    scripts = sorted(p for p in (TOOLS / "qa").glob("*.mjs") if not p.name.startswith('capture-'))
+    qa = [p for p in scripts if 'playwright' in p.read_text(encoding='utf8')]
+    pure = sorted((TOOLS / "qa").glob("*.py")) + [p for p in scripts if p not in qa]
+    return py, pure, qa
 
 
 def executer(avec_qa: bool, shard=None) -> int:
-    py, qa = trouver()
-    if not py and not qa:
+    py, pure, qa = trouver()
+    if not py and not pure and not qa:
         print("ECHEC  aucun controle decouvert — le lanceur est casse, "
               "pas le projet")
         return 1
 
     fautes = 0
+    for f in sorted((TOOLS / 'qa').glob('capture-*.mjs')):
+        print(f'MEDIA  {f.name}  (production capture; run manually)')
     for f in py:
         fautes += lancer(f.name, [sys.executable, str(f)])
         fautes += lancer(f.name + " --autotest", [sys.executable, str(f), "--autotest"])
+
+    for f in pure:
+        fautes += lancer(f.name, [sys.executable if f.suffix == '.py' else 'node', str(f)])
 
     if shard:
         index, count = shard
@@ -84,7 +91,7 @@ def executer(avec_qa: bool, shard=None) -> int:
         suite_out.mkdir(parents=True, exist_ok=True)
         fautes += lancer(f.name, ["node", str(f)], {'QA_SORTIE': str(suite_out)})
 
-    total = len(py) * 2 + (len(qa) if avec_qa else 0)
+    total = len(py) * 2 + len(pure) + (len(qa) if avec_qa else 0)
     print(f"\n{total - fautes} sur {total} controles passent"
           f"{'' if avec_qa else ' (suites QA non lancees)'}.")
     return 1 if fautes else 0
@@ -109,18 +116,27 @@ def autotest() -> int:
             qa = TOOLS / 'qa'
             qa.mkdir()
             for i in range(7):
-                (qa / f'case-{i}.mjs').touch()
+                (qa / f'case-{i}.mjs').write_text("import {chromium} from 'playwright';\n", encoding='utf8')
+            (qa / 'pure.py').touch()
+            (qa / 'pure.mjs').touch()
+            (qa / 'capture-media.mjs').write_text("throw new Error('Capture must not run');\n", encoding='utf8')
+            assert trouver()[1] == [qa / 'pure.py', qa / 'pure.mjs']
+            assert len(trouver()[2]) == 7
             seen = []
             def record(name, argv, env=None):
-                if name.endswith('.mjs'):
+                if name.startswith('case-'):
                     seen.append(name)
                 return 0
             with patch(__name__ + '.lancer', side_effect=record):
+                assert executer(False) == 0
+                assert not seen, 'Browser suite ran in fast checks'
                 for count in (3, 4):
                     seen.clear()
                     for index in range(1, count + 1):
                         assert executer(True, (index, count)) == 0
-                    assert sorted(seen) == [p.name for p in sorted(qa.glob('*.mjs'))]
+                    assert sorted(seen) == [p.name for p in trouver()[2]]
+            with patch(__name__ + '.lancer', side_effect=lambda name, argv, env=None: int(name == 'pure.mjs')):
+                assert executer(False) == 1, 'Failed pure check accepted'
         print('OK     discovery, empty suite, failure, failed mutation-test propagation and complete disjoint shards')
         return 0
     finally:

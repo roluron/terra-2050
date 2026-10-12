@@ -34,3 +34,9 @@ exports.enter = async function(page, repeated = false) {
     throw error;
   });
 };
+exports.injectModule = (html, code) => {
+  const start = html.indexOf('<script type="module">');
+  const end = html.indexOf('</script>', start);
+  if (start < 0 || end < 0) throw new Error('Inline module fixture target missing');
+  return html.slice(0, end) + '\n' + code + '\n' + html.slice(end);
+};

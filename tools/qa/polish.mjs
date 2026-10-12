@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {chromium, webkit, devices} from 'playwright';
-import {enter} from './entrance.cjs';
+import {enter, injectModule } from './entrance.cjs';
 
 for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440,height:900}}],['phone',webkit,devices['iPhone 15 Pro']]]) {
   const browser = await engine.launch({executablePath:engine.executablePath()});
@@ -10,7 +10,7 @@ for (const [name, engine, options] of [['desktop',chromium,{viewport:{width:1440
     await page.route('**/*', async route => {
       if (route.request().resourceType() !== 'document') return route.continue();
       const response = await route.fetch();
-      const body = (await response.text()).replace('</script>\n</body>', `globalThis.__polish=()=>({texture:texCouleur.image.width,heat:matAtmo.uniforms.uProgression.value,time:matAtmo.uniforms.uTemps.value,draws:moteur.info.render.calls,coast:mesuresLieu(lieuDossier,etat.annee)?.mer});\n</script>\n</body>`);
+      const body = injectModule(await response.text(), `globalThis.__polish=()=>({texture:texCouleur.image.width,heat:matAtmo.uniforms.uProgression.value,time:matAtmo.uniforms.uTemps.value,draws:moteur.info.render.calls,coast:mesuresLieu(lieuDossier,etat.annee)?.mer});`);
       await route.fulfill({response,body});
     });
     await page.goto((process.env.URL0 || 'http://localhost:8087/') + '#v=Dacca&an=2050&cc=BD');

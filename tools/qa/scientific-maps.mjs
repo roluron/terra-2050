@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
-import { enter } from './entrance.cjs';
+import { enter, injectModule } from './entrance.cjs';
 
-const out = process.env.QA_SORTIE || '/Users/robinmahieux/Documents/Codex/2026-09-07/new-chat/outputs/scientific-maps';
+const out = process.env.QA_SORTIE || '/tmp/terra-scientific-maps';
 await fs.mkdir(out, { recursive: true });
 const result = { errors: [], failures: [], runtimeHashes: {}, method: 'Production materials, isolated globe renders; fixed camera/time/light, no atmosphere, markers, DOM or postprocessing. Separate real UI video.' };
 async function probe() {
@@ -108,7 +108,7 @@ await page.route('**/*',async route=>{
   const response=await route.fetch(), html=await response.text();
   result.runtimeHashes.index=createHash('sha256').update(html).digest('hex');
   const injection=`globalThis.__mapsProbe=${probe.toString()};globalThis.__mapsReady=()=>!!uniformsGlobe.uScientific_river.value.image?.data&&!!feux.geometry.attributes.aDanger.array.some(v=>v>0);`;
-  const modified=html.replace('</script>\n</body>',injection+'\n</script>\n</body>');
+  const modified=injectModule(html,injection);
   if(modified===html)throw new Error('QA instrumentation insertion failed');
   await route.fulfill({response,body:modified});
 });

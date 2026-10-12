@@ -97,12 +97,14 @@ const cached = harness([{ score: null }]);
 assert.equal(cached.score(), null);
 cached.scores.set(cached.cities[0], 70);
 const cityCache = new Map([[2050, new Map([[0, null]])]]);
-const newScience = { revision: 'replacement-source' };
+const newScience = { revision: 'replacement-source', coverage: Uint8Array.of(63) };
 const loaderContext = vm.createContext({ SCIENCE: null, science: newScience,
-  SCORE_CACHE: cityCache, _memoPays: cached.cache });
+  SCORE_CACHE: cityCache, _memoPays: cached.cache, LIEUX: cached.cities,
+  coverage: null, climateCoverage: null });
 vm.runInContext(source.slice(loadStart, loadEnd), loaderContext,
   { filename: 'production-scientific-source-assignment.js' });
 assert.equal(cityCache.size, 0, 'Changing scientific source invalidates cached city scores');
+assert.equal(cached.cities[0][7].science, true, 'Source coverage is assigned to the original city');
 assert.equal(cached.cache.size, 0, 'Changing scientific source invalidates cached country scores');
 assert.equal(cached.score(), 70, 'An old cached missing score does not hide newly available data');
 

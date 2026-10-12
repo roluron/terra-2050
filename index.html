@@ -1055,6 +1055,7 @@ function chargerGrillesCalques(){
       texture.minFilter = texture.magFilter = THREE.LinearFilter;
       texture.wrapS = THREE.RepeatWrapping; texture.needsUpdate = true;
       uniformsGlobe.uFireWeather.value = texture;
+      rafraichirSurvol(); if (lieuDossier) majDossier();
       return true;
     }).catch(error => { scienceLoadFailed = true; rafraichirSurvol(); if (lieuDossier) majDossier(); console.error('Scientific measurements unavailable', error); return false; }),
   ]).then(async r => {
@@ -2849,7 +2850,8 @@ function majLien(immediat, pousser){
   const ecrire = () => { if (!lieuDossier) return;
     history[pousser ? 'pushState' : 'replaceState'](
       { terra: 'ville' }, '',
-      liensLieux.hash(lieuDossier, etat.annee, lieuVs)); };
+      liensLieux.hash(lieuDossier, etat.annee, lieuVs));
+    actualiserSignalement(); };
   // Safari plafonne replaceState (~100/30 s) : le scrub est différé
   if (immediat) ecrire(); else minuterieLien = setTimeout(ecrire, 350);
 }
@@ -3170,9 +3172,11 @@ function ouvrirDepuisLien(sansDefi){
      On lit chaque parametre pour lui-meme. */
   const q = new URLSearchParams(location.hash.replace(/^#/, ''));
   if (!q.has('v')) return;
+  if (/^\d{4}$/.test(q.get('an') || '')) { curseur.value = q.get('an'); curseur.dispatchEvent(new Event('input')); }
   const l = liensLieux.resolve(q);
   lieuVs = null; defiLien = null;
   if (!l) {
+    deployerRecherche();
     champ.value = q.get('v') + (q.get('cc') ? ', ' + q.get('cc') : '');
     afficherResultats(); return;
   }
@@ -3182,7 +3186,6 @@ function ouvrirDepuisLien(sansDefi){
   } else if (!sansDefi){
     defiLien = l;    // le destinataire d'un lien simple sera invité à comparer
   }
-  if (/^\d{4}$/.test(q.get('an') || '')) { curseur.value = q.get('an'); curseur.dispatchEvent(new Event('input')); }
   // a l arrivee (pas au retour arriere) : le lien devient deux entrees,
   // le globe puis la ville, pour que le Precedent reste dans le site
   // Le lien devient deux entrees, le globe puis la ville : le Precedent
@@ -3470,7 +3473,7 @@ window.addEventListener('terra-language', () => {
   langue = language();
   SoundManager.play('ui_click');
   traduire();
-  if (champ.value.trim() && document.activeElement === champ) afficherResultats();
+  if (champ.value.trim() && (document.activeElement === champ || liste.classList.contains('ouvert'))) afficherResultats();
 });
 function actualiserSignalement(){
   for (const id of ['map-contact', 'report-problem']) document.getElementById(id).href =
@@ -3517,7 +3520,7 @@ async function chargerNomsSupplementaires(jsonBytes, bin){
   } catch (error) {
     nomsSupplementaires = 'failed'; console.error('additional city names unavailable:', error);
   }
-  if (champ.value.trim() && document.activeElement === champ) afficherResultats();
+  if (champ.value.trim() && (document.activeElement === champ || liste.classList.contains('ouvert'))) afficherResultats();
   if (lieuDossier) majDossier();
   window.dispatchEvent(new Event('terra-search-ready'));
 }

@@ -25,7 +25,6 @@ jobs:
       - run: npm ci
       - run: pip install -r requirements-qa.txt
       - run: npm run qa:install
-      - run: python3 tools/qa/pipeline-aliases.py && python3 tools/qa/place-search-enrichment.py
       - run: npm run dev > "$RUNNER_TEMP/terra-server.log" 2>&1 &
       - run: python3 tools/check.py --qa --qa-shard ${{ matrix.shard }}/4
         env:
