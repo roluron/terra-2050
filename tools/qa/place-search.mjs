@@ -56,9 +56,31 @@ for (const place of places) {
     assert.ok(search(name, {limit: Infinity}).includes(place), `Exact name is unreachable: ${name}, ${place[1]}`);
   }
 }
+const reachable = {nameIso: 0, admin1: 0};
+for (const [index, place] of places.entries()) {
+  const names = [...new Set([place[0], place[6]])];
+  if (names.some(name => search(`${name} ${place[1]}`, {limit: 7}).includes(place))) {
+    reachable.nameIso++;
+    continue;
+  }
+  const extra = metadata.places[index];
+  const regions = extra ? metadata.regions[`${extra[1]}.${extra[2]}`] || [] : [];
+  assert.ok(names.some(name => regions.some(region =>
+    search(`${name} ${region} ${place[1]}`, {limit: 7}).includes(place))),
+  `City is unreachable at UI limit: ${index}, ${place[0]}, ${place[1]}`);
+  reachable.admin1++;
+}
+for (const [index, query, region] of [
+  [31392, 'Springfield Tennessee US', 'US.TN'],
+  [33619, 'Kong Savanes District CI', 'CI.87'],
+]) {
+  const extra = metadata.places[index];
+  assert.equal(`${extra[1]}.${extra[2]}`, region);
+  assert.ok(search(query, {limit: 7}).includes(places[index]), `${query} must return the original city row`);
+}
 const samples = ['s', 'sa', 'san', 'san f', 'san francisco', 'San Francisco, CA', 'NYC', '東京', 'zzzzzzzz'];
 const times = samples.map(query => {
   const started = performance.now(); search(query); return {query, milliseconds: +(performance.now() - started).toFixed(2)};
 });
 console.log(JSON.stringify({status: 'PASS', cities: places.length, buildMs: +buildMs.toFixed(2),
-  allExactNamesMs: +(performance.now() - fullStart).toFixed(2), queries: times}));
+  allExactNamesMs: +(performance.now() - fullStart).toFixed(2), reachableAtLimit7: reachable, queries: times}));
