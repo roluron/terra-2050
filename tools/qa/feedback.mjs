@@ -162,7 +162,8 @@ for(const [profile,engine,options] of profiles){
     assert.equal(await page.locator('#recherche').evaluate(e=>getComputedStyle(e).visibility),'hidden');
     assert.ok(await page.locator('#city-comparison').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
     await page.locator('.compare-close').click();await page.locator('#dossier-croix').click();
-    await page.waitForFunction(()=>!document.body.classList.contains('dossier-ouvert')&&Number(getComputedStyle(document.getElementById('dossier')).opacity)<.01);
+    await page.waitForFunction(()=>!document.body.classList.contains('dossier-ouvert')&&Number(getComputedStyle(document.getElementById('dossier')).opacity)<.01
+      &&document.body.classList.contains('loupe')&&document.getElementById('champ-recherche').getAttribute('aria-hidden')==='true');
     await openSearch(page);await page.locator('#champ-recherche').fill('France');await page.getByRole('option').filter({hasText:'France'}).first().click();
     await page.locator('#dossier-comparer').click();
     assert.equal(await page.locator('#comparison-search').getAttribute('placeholder'),'Choose another country');

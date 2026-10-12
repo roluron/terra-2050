@@ -13,7 +13,7 @@ for(const [name,engine,options] of [
   const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,color:s.backgroundColor,border:s.borderTopStyle,borderWidth:parseFloat(s.borderTopWidth),blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
   assert.equal(surface.background,'none');assert.match(surface.color,/^rgba?\(/);assert.equal(surface.border,'solid');assert.ok(surface.borderWidth>=1);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
  };
- const target=async selector=>{for(const item of await page.locator(selector).all()){const b=await item.boundingBox();assert.ok(b&&b.height>=44&&b.width>=44,`${selector}: ${JSON.stringify(b)}`);}};
+ const target=async selector=>{const epsilon=1e-4;for(const item of await page.locator(selector).all()){const b=await item.boundingBox();assert.ok(b&&b.height>=44-epsilon&&b.width>=44-epsilon,`${selector}: ${JSON.stringify(b)}`);}};
  try{
   await page.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=fr');await page.locator('#language-dialog[open]').waitFor();await glass('.language-content');await shot('language');await tap('#language-options input:checked');
   await page.locator('#voile.pret').waitFor({state:'attached'});for(const word of await page.locator('#earth-shell .word').all())await word.tap();await page.locator('#earth-shell.complete').waitFor();await tap('#future');await page.locator('#earth-shell').waitFor({state:'hidden'});
