@@ -25,7 +25,6 @@ try {
   await enter(page);
   await page.waitForFunction(() => document.body.classList.contains('donnees-pretes'));
   for (const [name, iso] of [['Paris', 'FR'], ['Ho Chi Minh City', 'VN'], ['France', 'FR'], ['Ouagadougou', 'BF']]) {
-    if (await page.locator('#dossier').evaluate(el => el.classList.contains('ouvert'))) await page.locator('#dossier-croix').click();
     await openSearch(page);await page.locator('#champ-recherche').fill(name);
     await page.getByRole('option', { name: name === 'France' ? /France (COUNTRY|PAYS)/ : new RegExp(name === 'Ho Chi Minh City' ? 'Ho Chi Minh' : name) }).first().click();
     await page.waitForFunction(() => !document.querySelector('#dossier').inert);

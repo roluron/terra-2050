@@ -5,6 +5,7 @@ import {chromium, webkit, devices} from 'playwright';
 import {enter, chooseLanguage, openSearch} from './entrance.cjs';
 import {experienceCopy} from '../../refinement-copy.mjs';
 import {humanCopy} from '../../human-impact-copy.mjs';
+import {mapValueContext} from '../../map-value-context.mjs';
 
 const url=process.env.URL0||'http://localhost:8080/';
 const output=process.env.QA_SORTIE||'/tmp/terra-feedback';
@@ -108,8 +109,9 @@ for(const [profile,engine,options] of profiles){
     await page.locator('#view-sources .ux-close').click();
     if(await page.locator('#map-toggle').getAttribute('aria-expanded')==='false')await page.locator('#map-toggle').click();
     await page.locator('[data-map-mode="value"]').click();
-    assert.equal(await page.locator('[data-map-mode="value"]').innerText(),'Estimate in 2026');
-    assert.match(await page.locator('.map-hint').innerText(),/estimated conditions in 2026/);
+    const valueCopy=mapValueContext('chaleur','en',2026);
+    assert.equal(await page.locator('[data-map-mode="value"]').innerText(),valueCopy.value);
+    assert.equal(await page.locator('.map-hint').innerText(),valueCopy.hint);
     await page.locator('#map-toggle').click();
     await page.locator('#bouton-reglages').click();await page.locator('#bouton-son').click();
     await page.waitForFunction(()=>window.Howler._howls.some(h=>h._src?.endsWith('/ambient_loop.mp3')&&h.state()==='loaded'&&h.playing()));

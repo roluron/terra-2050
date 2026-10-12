@@ -9,6 +9,9 @@ import {mapDiagnosticCopy} from '../../map-diagnostic-copy.mjs';
 import {warmingCopy} from '../../hover-diagnostic.mjs';
 import {mapValueContext,mapReferenceContext,historicalFilters,historicalPeriods} from '../../map-value-context.mjs';
 import {mapCopy, refinementCopy} from '../../refinement-copy.mjs';
+import {readingCopy} from '../../reading-copy.mjs';
+import {humanCopy} from '../../human-impact-copy.mjs';
+import {translations} from '../../locales/catalog.mjs';
 
 // Browser integration checks. Numeric expectations use raw packaged fields,
 // independently of production mapDiagnosticReading/physicalHover helpers.
@@ -83,13 +86,13 @@ function expectedDisplay(filter,year,mode,s,locale) {
     return {available:true,value:`${format((level/baseline-1)*100,locale,true,1)} %`,
       detail:`${format(level,locale,false,0)} · ${reference} → ${year}`};
   }
-  const unit=ex.unit==='days/year'?dayUnits[locale]:ex.unit;
+  const unit=ex.unit==='days/year'?dayUnits[locale]:ex.unit,plain=readingCopy(locale),flood=['mer','fleuves'].includes(filter);
   if(mode==='reference')return {available:true,value:`${format(ex.value-ex.historical,locale,true)} ${['mer','fleuves'].includes(filter)?mapCopy[locale][8]:unit}`,
-    detail:`${historicalPeriods[filter]}: ${format(ex.historical,locale)} ${unit} → ${year}: ${format(ex.value,locale)} ${unit}`,resolution:ex.resolution};
+    detail:`${flood?plain.pastFlood:plain.past}: ${format(ex.historical,locale)} ${unit} → ${plain.selected}: ${format(ex.value,locale)} ${unit}`,resolution:ex.resolution};
   const changing=mode==='change',displayUnit=changing&&['mer','fleuves'].includes(filter)?mapCopy[locale][8]:unit;
   return {available:true,value:`${format(changing?ex.value-ex.baseline:ex.value,locale,changing||filter==='stabilite')} ${displayUnit}`,
-    detail:changing?`2026: ${format(ex.baseline,locale)} ${unit} → ${year}: ${format(ex.value,locale)} ${unit}`:
-      mapValueContext(filter,locale,year).reference,resolution:ex.resolution};
+    detail:changing?`${translations[locale].ui['2026_illustrative_estimate']}: ${format(ex.baseline,locale)} ${unit} → ${plain.selected}: ${format(ex.value,locale)} ${unit}`:
+      flood?plain.floodShare:humanCopy(locale).definitions[filter],resolution:ex.resolution};
 }
 const snapshotScript = () => {
   const el=document.getElementById('survol'), rect=el.getBoundingClientRect();
@@ -121,6 +124,7 @@ function validate(snapshot,filter,year,mode,s,locale,context) {
   }
   if(mode==='change'&&filter!=='declin')assert.ok(snapshot.subtitle.includes(refinementCopy(locale).change),context+' reference label');
   if(mode==='reference')assert.ok(snapshot.subtitle.includes(mapReferenceContext(filter,locale).value),context+' historical reference label');
+  if(ex.available&&mode==='reference'&&filter!=='declin')assert.ok(snapshot.note.includes(`${historicalPeriods[filter]}:`),context+' historical period retained in source detail');
   if(ex.available&&mode==='value'&&filter==='stabilite')assert.equal(snapshot.subtitle,`${warmingCopy[locale].label} · ${year}`,context+' estimated warming label');
   if(ex.available&&mode==='value'&&filter==='declin')assert.equal(snapshot.note,mapValueContext(filter,locale,year).hint,context+' annual population reference and decline-only colours');
   assert.equal(snapshot.horizontalOverflow,false,context+' horizontal page overflow');

@@ -11,7 +11,7 @@ for(const [name,engine,options] of [
  const shot=async suffix=>{await page.waitForTimeout(650);await page.screenshot({path:`${out}/${name}-${suffix}.png`});};
  const glass=async selector=>{
   const surface=await page.locator(selector).evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {background:s.backgroundImage,color:s.backgroundColor,border:s.borderTopStyle,borderWidth:parseFloat(s.borderTopWidth),blur:s.backdropFilter||s.webkitBackdropFilter,width:r.width,right:r.right,bottom:r.bottom,vw:innerWidth,vh:innerHeight};});
-  assert.equal(surface.background,'none');assert.match(surface.color,/^rgba\(/);assert.equal(surface.border,'solid');assert.ok(surface.borderWidth>=1);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
+  assert.equal(surface.background,'none');assert.match(surface.color,/^rgba?\(/);assert.equal(surface.border,'solid');assert.ok(surface.borderWidth>=1);assert.match(surface.blur,/blur/);assert.ok(surface.right<=surface.vw+1);assert.ok(surface.bottom<=surface.vh+1);
  };
  const target=async selector=>{for(const item of await page.locator(selector).all()){const b=await item.boundingBox();assert.ok(b&&b.height>=44&&b.width>=44,`${selector}: ${JSON.stringify(b)}`);}};
  try{

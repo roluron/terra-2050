@@ -57,7 +57,6 @@ for (const [name, engine, options] of [
       });
     });
     for (const city of cities) {
-      if (await page.locator('#dossier').evaluate(el => el.classList.contains('ouvert'))) await page.locator('#dossier-croix').click();
       await openSearch(page);await page.locator('#champ-recherche').fill(city.name);
       const option = page.getByRole('option').filter({ hasText: city.name }).first();
       await option.waitFor({ state: 'visible' });

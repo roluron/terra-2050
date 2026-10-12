@@ -1,4 +1,5 @@
 import {enter as enterEarth, chooseLanguage, openSearch} from './entrance.cjs';
+import {reliabilityCopy} from '../../reliability-copy.mjs';
 /* Matrice de lancement TERRA/2050 — 25 controles sur 7 configurations.
  *
  *   URL0=https://roluron.github.io/terra-2050/ node tools/qa/matrice.mjs
@@ -174,7 +175,8 @@ if (cases.includes('E')) {
   await enterEarth(page); await page.waitForTimeout(2000);
   await page.keyboard.press('Meta+k'); await page.keyboard.type('Bang'); await page.waitForTimeout(800);
   const li = await page.$$eval('#resultats li', l => l.map(x => x.textContent.trim()));
-  ok('E panne données : recherche ne plante pas', li.length === 1 && /No city found|Aucune ville/.test(li[0]) && errs.every(e => !e.startsWith('pageerror')), JSON.stringify(li));
+  const loadFailure=reliabilityCopy(await page.locator('html').getAttribute('lang'));
+  ok('E panne données : recherche ne plante pas', li.length === 1 && li[0].includes(loadFailure.failed) && await page.locator('#resultats button').count() === 1 && errs.every(e => !e.startsWith('pageerror')), JSON.stringify(li));
   ok('E panne données : erreurs = 404 + 1 message', errs.filter(e => e.startsWith('données')).length === 1 && errs.filter(e => e.startsWith('pageerror')).length === 0, errs.join(' | '));
   await page.screenshot({ path: OUT + 'E-panne.png' });
   await browser.close();

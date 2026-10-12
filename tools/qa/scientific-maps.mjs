@@ -47,7 +47,7 @@ async function probe() {
   for(const [lat,lon] of locations){
     const x=Math.floor((lon+180)/2.5),y=Math.floor((90-lat)/2.5),offset=((71-y)*144+x)*4;
     const actual=Array.from(fireTexture.slice(offset,offset+4),half),sample=fireAtYear(FIRE_WEATHER,lat,lon,2050);
-    const expected=sample?[sample.near,sample.future,sample.signAgreement,1]:[0,0,0,0];
+    const expected=sample?[sample.near,sample.future,Number.isFinite(sample.historical)?sample.historical:-1,1]:[0,0,0,0];
     const pass=expected.every((v,i)=>Math.abs(actual[i]-v)<=Math.max(1e-6,Math.abs(v)*.001));
     sourceChecks.push({name:'fire',lat,lon,actual,expected,pass});
     if(!pass)failures.push(`Fire texture geography mismatch ${lat},${lon}`);

@@ -79,7 +79,7 @@ for (const [name, engine, options] of [
       await page.getByRole('option',{name:/France (PAYS|COUNTRY)/}).click();
       await page.waitForFunction(()=>!document.querySelector('#dossier').inert);
       assert.equal(await page.locator('#dossier-nom').textContent(),'France');
-      assert.match(await page.locator('#dossier-conseil').textContent(),/pondérée|weighted/);
+      assert.match(await page.locator('#dossier-conseil').textContent(),/pondérée|weighted|plus peuplées comptent davantage/);
       await page.screenshot({path:`${out}/${name}-country.png`});
     }
     assert.deepEqual(errors,[]);

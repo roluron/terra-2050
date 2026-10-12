@@ -8,7 +8,7 @@
 .thermal-inline.thermal-ready>.brand-lockup,.thermal-inline.thermal-ready>.v-masque{opacity:1}
 .thermal-inline .brand-from{position:relative;z-index:1}
 .thermal-inline .brand-year,.thermal-inline .brand-lockup em{position:relative;z-index:1}
-.thermal-trigger{position:absolute;inset:0;z-index:2;width:100%;height:100%;border:0;background:transparent;color:inherit;cursor:pointer}
+.thermal-trigger{position:absolute;inset:0;z-index:2;width:100%;height:100%;min-width:44px;min-height:44px;border:0;background:transparent;color:inherit;cursor:pointer}
 .thermal-trigger:focus-visible{outline:1px solid #f4f1eb;outline-offset:4px;border-radius:2px}
 #logo-playground{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:#f4f1eb;overflow:hidden;font:300 14px "TWK Lausanne",sans-serif}
 #logo-playground[open]{display:flex;flex-direction:column;animation:logo-play-enter .25s ease-out}

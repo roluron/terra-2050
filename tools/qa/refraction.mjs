@@ -1,7 +1,7 @@
 import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import {enter, injectModule } from './entrance.cjs';
+import {enter, injectModule, openSearch} from './entrance.cjs';
 const out=process.env.QA_SORTIE||'/tmp/terra-refraction';await fs.mkdir(out,{recursive:true});
 for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,height:900},deviceScaleFactor:2}],['phone',webkit,devices['iPhone SE']]]){
  const b=await engine.launch({headless:false});
@@ -16,8 +16,12 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   });
   await p.goto((process.env.URL0||'http://127.0.0.1:8088/')+'?lang=it#v=New%20York&an=2026&cc=US');await enter(p);await p.evaluate(()=>__glassStop());await p.waitForTimeout(1600);
   const a=await p.locator('#champ-recherche').boundingBox(),g=await p.locator('#bouton-reglages').boundingBox();assert.ok(g.x-a.x-a.width>=12,`${name} gap ${g.x-a.x-a.width}`);
+  await openSearch(p);
+  await p.waitForFunction(()=>__glassProbe().search>.1);
+  const focused=await p.evaluate(()=>__glassProbe());assert.ok(focused.search>.1,'Focused search lens active');
   await p.locator('#bouton-reglages').click();await p.waitForTimeout(650);
   const type=await p.locator('#bouton-langue').evaluate(e=>{const s=getComputedStyle(e);return [s.fontSize,s.textTransform,s.letterSpacing]});assert.deepEqual(type,['13px','none','normal']);
+  await p.waitForFunction(()=>{const probe=__glassProbe();return probe.search>.1&&probe.panel>.1&&probe.radius>0;});
   const probe=await p.evaluate(()=>__glassProbe());assert.ok(probe.search>.1&&probe.panel>.1&&probe.radius>0);
   await p.screenshot({path:`${out}/${name}-settings.png`});
   await p.locator('#bouton-reglages').click();

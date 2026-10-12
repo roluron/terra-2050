@@ -19,6 +19,7 @@ fs.mkdirSync(out, { recursive: true });
 async function verifierRetourCamera(page, name){
   const results = [];
   for (const order of ['resize-close', 'close-resize', 'search-resize']) {
+    await page.evaluate(() => localStorage.removeItem('terra-intro-complete'));
     await page.goto('about:blank');
     await page.setViewportSize({width:1440,height:900});
     await page.goto((process.env.URL0 || 'http://localhost:8080/') + '#v=Dacca&an=2050&cc=BD');

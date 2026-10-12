@@ -77,6 +77,9 @@ for (const [name, engine, options] of [
       assert.equal(await page.locator('#story-titre').textContent(), text.storyTitre);
       await page.screenshot({path:`${out}/${name}-${code}-story.png`});
       await page.goto(url + '?lang=toString');
+      await enter(page);
+      await page.locator('#bouton-reglages').click();
+      await page.locator('#bouton-langue').click();
       await page.locator('#language-dialog').waitFor();
       assert.equal(await page.locator('#language-options input:checked').inputValue(), code);
       assert.equal(await page.locator('html').getAttribute('lang'), code);

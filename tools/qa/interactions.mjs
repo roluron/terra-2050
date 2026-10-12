@@ -123,7 +123,7 @@ for (const [name, type, options] of [
       await page.mouse.move(720, 450, { steps: 3 }); await page.mouse.up();
       assert.equal(await page.locator('#dossier').evaluate(e => e.classList.contains('ouvert')), false);
     });
-    if (name === 'iphone') await check(`${name}: pinned tooltip is dismissed when the year changes`, async () => {
+    if (name === 'iphone') await check(`${name}: pinned tooltip follows the selected year`, async () => {
       await page.click('#dossier-croix'); await page.waitForTimeout(2500);
       const label = page.locator('.etiquette:not([hidden])').first();
       const box = await label.boundingBox(); assert.ok(box);
@@ -132,7 +132,9 @@ for (const [name, type, options] of [
       const initialYear = await page.locator('#curseur').inputValue();
       await page.locator('#curseur').focus(); await page.keyboard.press(initialYear === '2026' ? 'End' : 'Home');
       assert.notEqual(await page.locator('#curseur').inputValue(), initialYear);
-      assert.equal(await page.locator('#survol').evaluate(e => e.classList.contains('visible')), false);
+      const selectedYear = await page.locator('#curseur').inputValue();
+      assert.equal(await page.locator('#survol').evaluate(e => e.classList.contains('visible')), true);
+      assert.match(await page.locator('#survol .s-sous').textContent(), new RegExp(selectedYear));
     });
     await check(`${name}: no browser errors`, async () => assert.deepEqual(errors, []));
   } finally { await browser.close(); }

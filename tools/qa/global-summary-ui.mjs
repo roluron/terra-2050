@@ -209,7 +209,7 @@ try {
           assert.ok(bounds.x >= 0 && bounds.y >= 0 && bounds.x + bounds.width <= 321 && bounds.y + bounds.height <= 569, context + ' compact menu bounds');
           assert.equal(await page.locator('#map-options').evaluate(el => el.scrollWidth <= el.clientWidth + 1), true, context + ' compact menu no overflow');
           if (locale === 'fr' && key === 'feux') {
-            await page.locator('.map-scale small').first().scrollIntoViewIfNeeded();
+            await page.locator('#visible-legend').scrollIntoViewIfNeeded();
             const path = `${output}/compact-fr-fire-reference-menu.png`; await page.screenshot({path}); if (!report.captures.includes(path)) report.captures.push(path);
           }
           await closeMenu();

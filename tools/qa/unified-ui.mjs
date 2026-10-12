@@ -17,7 +17,7 @@ for(const [name,engine,options] of [['desktop',chromium,{viewport:{width:1440,he
   const year=await page.locator('#an').boundingBox(),timeline=await page.locator('#timeline').boundingBox(),filter=await page.locator('#map-inspector').boundingBox(),search=await page.locator('#explore-city').boundingBox(),gear=await page.locator('#bouton-reglages').boundingBox();
   const inset=await page.locator('#timeline').evaluate(el=>parseFloat(getComputedStyle(el).right));
   assert.ok(Number.isFinite(inset)&&inset>=0&&Math.abs(page.viewportSize().width-timeline.x-timeline.width-inset)<1,'Timeline is anchored at the scaled right inset');
-  assert.ok(filter.x<30&&filter.x+filter.width<year.x,'Filters remain left of year');
+  assert.ok(Math.abs(filter.x-inset)<1&&filter.x+filter.width<year.x,'Filters share the scaled inset and remain left of year');
   assert.ok(search.width>=44&&search.height>=44&&gear.width>=44&&gear.height>=44,'Search and settings retain usable targets');
   assert.ok(search.x+search.width<=gear.x,'Search stays left of settings');
   if(page.viewportSize().width<=720)assert.ok(Math.abs(search.width-search.height)<1,'Compact search target stays round');
