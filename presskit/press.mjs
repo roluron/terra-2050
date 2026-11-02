@@ -1,5 +1,5 @@
 import {ui,groupLabel,assetLocale,applyLanguage,initialLanguage,installLanguageSwitcher} from './press-language.mjs?v=20261008-social-credits';
-import {loadSource} from '../load-source.mjs';
+import {loadSource} from '../load-source.mjs?v=20261102-progress';
 import('./logo-preview.mjs?v=20261012-readiness').catch(error=>console.error('Logo preview unavailable',error));
 const $ = selector => document.querySelector(selector);
 const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

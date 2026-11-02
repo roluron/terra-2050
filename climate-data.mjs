@@ -1,4 +1,4 @@
-import { loadSource } from './load-source.mjs';
+import { loadSource } from './load-source.mjs?v=20261102-progress';
 
 export function sampleGrid(grid, latitude, longitude) {
   if (!grid || !Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90) return null;

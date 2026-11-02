@@ -88,8 +88,9 @@ export function createComparison({findPlaces, searchStatus, retrySearch, name, d
       item.id = `compare-result-${index}`; item.role = 'option'; item.setAttribute('aria-selected','false');
       item.addEventListener('click',()=>select(place)); return item;
     }));
-    if(query && !results.length) {
-      const state = searchStatus(), copy = reliabilityCopy(language());
+    const state = searchStatus();
+    if(query && (!results.length || state === 'failed')) {
+      const copy = reliabilityCopy(language());
       const item = node('li',state === 'failed' ? copy.failed : state === 'loading' ? copy.additional : copy.empty,'compare-empty');
       if(state === 'failed') {
         const retry = node('button',copy.retry); retry.type = 'button'; retry.addEventListener('click',retrySearch); item.append(retry);

@@ -1,7 +1,7 @@
-import { loadWorldClim, loadFireWeather, loadFloodHazards, fireAtYear, climateAtYear } from './climate-data.mjs';
-import { floodCityAtYear, floodAtYear, loadFloodCities } from './flood-data.mjs';
+import { loadWorldClim, loadFireWeather, loadFloodHazards, fireAtYear, climateAtYear } from './climate-data.mjs?v=20261102-progress';
+import { floodCityAtYear, floodAtYear, loadFloodCities } from './flood-data.mjs?v=20261102-progress';
 import { sha256 as hash } from './sha256.mjs';
-import { loadSource } from './load-source.mjs';
+import { loadSource } from './load-source.mjs?v=20261102-progress';
 
 const axes = ['thermique', 'eau', 'feux', 'mer', 'fleuves', 'stabilite'];
 const units = ['°C', 'De Martonne index', 'days/year', 'm', 'm', '°C'];

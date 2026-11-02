@@ -412,15 +412,15 @@
 <script type="module">
 import * as THREE from 'three';
 import { createEarthSurface } from './earth-surface.mjs';
-import { loadScientificMetrics } from './science-metrics.mjs';
-import { loadFloodHazards } from './climate-data.mjs';
+import { loadScientificMetrics } from './science-metrics.mjs?v=20261102-progress';
+import { loadFloodHazards } from './climate-data.mjs?v=20261102-progress';
 import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { language, getText, message, languageControl } from './i18n.mjs';
 import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
-import { createComparison } from './city-comparison.mjs?v=20261012-time';
+import { createComparison } from './city-comparison.mjs?v=20261102-search-recovery';
 import { createPlaceLinks } from './place-links.mjs?v=20261012-reliability';
-import { loadSource as charger } from './load-source.mjs?v=20261012-reliability';
+import { loadSource as charger } from './load-source.mjs?v=20261102-progress';
 import { createPlaceSearch, normalizePlace, decodePlaceDirectory } from './place-search.mjs';
 import { reliabilityCopy } from './reliability-copy.mjs';
 import { sha256 } from './sha256.mjs';
@@ -2104,6 +2104,7 @@ function afficherResultats(){
     for (const l of resultatsActuels){
       ajouterResultat(l);
     }
+    if (annuaireErreur || nomsSupplementaires === 'failed') afficherErreurRecherche();
   }
   ouvrirListe();
 }
@@ -3186,8 +3187,9 @@ function ouvrirDepuisLien(sansDefi){
      On lit chaque parametre pour lui-meme. */
   const q = new URLSearchParams(location.hash.replace(/^#/, ''));
   if (!q.has('v')) return;
-  if (/^\d{4}$/.test(q.get('an') || '')) { curseur.value = q.get('an'); curseur.dispatchEvent(new Event('input')); }
   const l = liensLieux.resolve(q);
+  if (!l && lieuDossier) fermerDossier(true);
+  if (/^\d{4}$/.test(q.get('an') || '')) { curseur.value = q.get('an'); curseur.dispatchEvent(new Event('input')); }
   lieuVs = null; defiLien = null;
   if (!l) {
     deployerRecherche();

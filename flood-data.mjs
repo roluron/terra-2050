@@ -1,5 +1,5 @@
 import { sha256 } from './sha256.mjs';
-import { loadSource } from './load-source.mjs';
+import { loadSource } from './load-source.mjs?v=20261102-progress';
 
 const fieldMaps = new WeakMap();
 const epochs = ['historical', 'near', 'future'];

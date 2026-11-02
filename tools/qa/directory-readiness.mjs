@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-import {decodePlaceDirectory, createPlaceSearch} from '../../place-search.mjs';
+import {decodePlaceDirectory, createPlaceSearch, normalizePlace} from '../../place-search.mjs';
 import {createPlaceLinks} from '../../place-links.mjs';
 import {loadSource} from '../../load-source.mjs';
 import {gzipSync} from 'node:zlib';
@@ -100,7 +100,7 @@ const coverageSource = extract('async function chargerCouvertureClimat(){', '\nf
 const layersSource = extract('function chargerGrillesCalques(){', '\nconst uniformsGlobe');
 const originalNetwork = {fetch, setTimeout, clearTimeout};
 let expireCoverage, coverageTimerCleared;
-globalThis.setTimeout = (callback, duration) => {assert.equal(duration,30000);expireCoverage=callback;coverageTimerCleared=false;return 1;};
+globalThis.setTimeout = (callback, duration) => {assert.ok(duration===30000||duration===120000);if(duration===30000)expireCoverage=callback;coverageTimerCleared=false;return duration;};
 globalThis.clearTimeout = () => {coverageTimerCleared=true;};
 try {
   const context = {Uint8Array, charger:loadSource};
@@ -137,4 +137,35 @@ try {
     assert.equal(state.scienceSourceReady,true);assert.equal(state.globalSourcesReady,true);assert.equal(state.settled,true);
   }
 } finally {Object.assign(globalThis,originalNetwork);}
-console.log('PASS directory readiness: population orders, country identity, late/failed science, bounded coverage headers/body and validation');
+const comparison = await readFile(new URL('../../city-comparison.mjs', import.meta.url), 'utf8');
+const findStart = comparison.indexOf('  function find() {'), findEnd = comparison.indexOf("  search.addEventListener('input'", findStart);
+assert.ok(findStart >= 0 && findEnd > findStart);
+function node(tag, text = '', className = '') {
+  return {tag, textContent: text, className, children: [], handlers: {}, attributes: {},
+    append(...children) {this.children.push(...children);}, replaceChildren(...children) {this.children = children;},
+    set innerHTML(value) {this.children = [];}, setAttribute(key, value) {this.attributes[key] = value;},
+    removeAttribute(key) {delete this.attributes[key];}, addEventListener(event, handler) {this.handlers[event] = handler;}};
+}
+for (const count of [0, 2]) for (const failed of [false, true]) for (const mode of ['main', 'comparison']) {
+  const list = node('ul'), input = {value: 'Springfield', setAttribute() {}, removeAttribute() {}}, places = directory.villes.slice(0, count);
+  const copy = {failed: 'Names unavailable', retry: 'Retry', empty: 'No city', additional: 'Loading'};
+  let retries = 0;
+  const state = {normaliser: normalizePlace, normalize: normalizePlace, reliabilityCopy: () => copy, langue: 'en', language: () => 'en',
+    champ: input, search: input, liste: list, list, document: {createElement: node}, location: {reload: () => retries++}, node,
+    resultatsActuels: [], results: [], indiceChoisi: -1, active: -1,
+    rechercherLieux: () => places, findPlaces: () => places, annuaireErreur: false, nomsSupplementaires: failed ? 'failed' : 'ready',
+    donneesPretes: true, searchStatus: () => failed ? 'failed' : 'ready', retrySearch: () => retries++, first: {},
+    nomVille: place => place[0], name: place => place[0], detailLieu: () => 'Country', detail: () => 'Country',
+    estPays: () => false, isCountry: () => false, ouvrirListe() {}, choisirLieu() {}, select() {}, SoundManager: {play() {}},
+  };
+  const source = mode === 'main'
+    ? extract('function afficherErreurRecherche(){', 'let storyDepuisRecherche')
+    : comparison.slice(findStart, findEnd);
+  vm.createContext(state);vm.runInContext(source, state);
+  if (mode === 'main') state.afficherResultats(); else state.find();
+  assert.equal(list.children.filter(item => item.role === 'option').length, count, mode);
+  const buttons = list.children.flatMap(item => item.children).filter(item => item.tag === 'button');
+  assert.equal(buttons.length, failed ? 1 : 0, `${mode}: failure remains visible with ${count} results`);
+  if (failed) {buttons[0].handlers.click();assert.equal(retries, 1);}
+}
+console.log('PASS directory readiness: population orders, country identity, late/failed science, bounded coverage and validation; main/comparison failures retain results and retry actions');
