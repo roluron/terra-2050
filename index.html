@@ -418,7 +418,7 @@ import { buildScientificTextures } from './science-textures.mjs';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { language, getText, message, languageControl } from './i18n.mjs';
 import { refinementCopy, moistureBand, moistureSource, mapCopy, floodMapMeaning, mapPicker, experienceCopy } from './refinement-copy.mjs';
-import { createComparison } from './city-comparison.mjs?v=20261102-search-recovery';
+import { createComparison } from './city-comparison.mjs?v=20261102-navigation';
 import { createPlaceLinks } from './place-links.mjs?v=20261012-reliability';
 import { loadSource as charger } from './load-source.mjs?v=20261102-progress';
 import { createPlaceSearch, normalizePlace, decodePlaceDirectory } from './place-search.mjs';
@@ -3172,6 +3172,7 @@ document.getElementById('story-fermer').addEventListener('click', fermerStory);
 let retourHistorique = false;
 addEventListener('popstate', () => {
   retourHistorique = true;
+  comparaison.close();
   // le duel epingle survivait au retour et `majLien` reecrivait alors
   // l entree restauree : l URL n etait plus celle qui avait ete empilee.
   // Le lien lui-meme dira s il porte un duel.

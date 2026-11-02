@@ -42,7 +42,7 @@ const navigationSource = extract('function fermerDossier(depuisChamp){', '/* ===
   + extract("addEventListener('popstate'", '/* ---- marqueur de la ville');
 for (const hash of ['#v=Springfield&cc=US&an=2040', '#v=Missing&cc=US&an=2040', '#v=Paris&cc=FR&p=NaN,0&an=2040']) {
   const timers = new Map(), listeners = {}, classes = new Set(['dossier-ouvert']);
-  let timerId = 0, selected = null, resultsShown = false;
+  let timerId = 0, selected = null, resultsShown = false, comparisonOpen = true;
   const element = () => ({classList: {remove() {}}, inert: false});
   const state = {URLSearchParams, Event, lieuDossier: paris, lieuVs: springfields[0], defiLien: null,
     liensLieux: links, estPays: place => place[5] === 2, etat: {annee: 2050, crise: true}, location: {hash},
@@ -54,16 +54,20 @@ for (const hash of ['#v=Springfield&cc=US&an=2040', '#v=Missing&cc=US&an=2040', 
     champ: {value: 'Paris'}, dossierEl: element(), scrimEl: element(),
     document: {getElementById: element, body: {classList: {remove: key => classes.delete(key)}}},
     timelineRepere: {after() {}}, timelineEl: {}, storyOuvert: false, retourHistorique: false,
+    comparaison: {close() {comparisonOpen = false;}},
+    CAMERA_ACCUEIL: {setLength() {}, length: () => 3}, controles: {}, camera: {position: {}},
+    distanceAccueil: () => 3, reprendreRotation() {}, MOINS_ANIM: true,
     minuterieLien: null, minuterieAnnonce: null, survolFige: false, EASE: '',
     SoundManager: {play() {}, stop() {}}, odoAn: {set() {}}, gsap: {to() {}}, T: () => ({distanceAn: () => ''}),
     choisirLieu: place => {selected = place;}, afficherResultats: () => {resultsShown = true;},
   };
   for (const name of ['arreterVolCamera', 'retirerMarqueur', 'calerTimeline', 'cacherSurvol', 'majDistanceAn',
-    'majContexteCalques', 'majDossier', 'annoncer', 'actualiserSignalement', 'deployerRecherche']) state[name] = () => {};
+    'majContexteCalques', 'majDossier', 'annoncer', 'actualiserSignalement', 'deployerRecherche', 'cacherAccroche', 'fermerListe', 'replierRecherche']) state[name] = () => {};
   vm.createContext(state);vm.runInContext(navigationSource, state);
   state.majLien();
   assert.equal(timers.size, 1);
   listeners.popstate();
+  assert.equal(comparisonOpen, false, 'Navigation must close the dialog above the place chooser');
   assert.equal(state.lieuDossier, null, 'An unresolved link must close the previous city');
   assert.equal(classes.has('dossier-ouvert'), false);
   assert.equal(state.dossierEl.inert, true);
@@ -77,10 +81,38 @@ for (const hash of ['#v=Springfield&cc=US&an=2040', '#v=Missing&cc=US&an=2040', 
   assert.equal(state.location.hash, hash);
   state.location.hash = links.hash(springfields[0], 2037, springfields[1]);
   state.history.state = {terra: 'ville'};
+  comparisonOpen = true;
   listeners.popstate();
+  assert.equal(comparisonOpen, false);
   assert.equal(selected, springfields[0]);
   assert.equal(state.lieuVs, springfields[1]);
   assert.equal(state.etat.annee, 2037);
   assert.equal(state.interdirePile, true);
+  state.location.hash = '';
+  state.lieuDossier = paris;
+  selected = null;
+  comparisonOpen = true;
+  listeners.popstate();
+  assert.equal(comparisonOpen, false, 'Back to the globe must close the comparison');
+  assert.equal(state.lieuDossier, null);
+  assert.equal(state.lieuVs, null);
+  assert.equal(selected, null);
+  assert.equal(state.etat.annee, 2037);
+}
+const comparison = fs.readFileSync(new URL('../../city-comparison.mjs', import.meta.url), 'utf8');
+const closeListener = comparison.split('\n').find(line => line.includes("dialog.addEventListener('close'"));
+const apiStart = comparison.lastIndexOf('  return {'), apiEnd = comparison.lastIndexOf('\n}');
+assert.ok(closeListener && apiStart >= 0 && apiEnd > apiStart);
+for (const navigation of [false, true]) {
+  let focused = 'comparison', pendingClose;
+  const state = {opener: {focus() {focused = 'opener';}}, dialog: {open: true,
+    addEventListener(event, callback) {assert.equal(event, 'close');this.onclose = callback;},
+    close() {this.open = false;focused = 'opener';pendingClose = this.onclose;}}};
+  const api = vm.runInNewContext('let trigger = opener;\n' + closeListener + '\n(function(){' + comparison.slice(apiStart, apiEnd) + '})()', state);
+  if (navigation) api.close(); else state.dialog.close();
+  assert.equal(state.dialog.open, false);
+  focused = 'chooser';
+  pendingClose();
+  assert.equal(focused, navigation ? 'chooser' : 'opener', 'Only navigation suppresses delayed opener focus');
 }
 console.log(`PASS: ${cities.length} city and ${countries.length} country links and recents; ambiguous navigation cancels stale dossiers and URL writes; typed comparisons retain identity and year.`);

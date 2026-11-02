@@ -120,6 +120,7 @@ export function createComparison({findPlaces, searchStatus, retrySearch, name, d
   window.addEventListener('terra-language',()=>{if(dialog.open){render();find();}});
   window.addEventListener('terra-search-ready',()=>{if(dialog.open){render();if(search.value.trim())find();}});
   return {
+    close() {trigger=null;dialog.close();},
     open(a,b,year) {first=a;second=b && b !== a && isCountry(b) === isCountry(a) ? b : null;trigger=document.activeElement;slider.value=year;search.value=second?name(second):'';clearResults();render();dialog.showModal();dialog.scrollTop=0;search.focus({preventScroll:true});search.select();}
   };
 }
